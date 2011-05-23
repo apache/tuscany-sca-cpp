@@ -18,24 +18,23 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://domain/test"
   name="domain-test">
         
     <component name="python-test">
-        <t:implementation.python script="server-test.py"/>
+        <implementation.python script="server-test.py"/>
         <service name="test">
-            <t:binding.http uri="python"/>
+            <binding.http uri="python"/>
         </service>
     </component>     
 
     <component name="client-test">
-        <t:implementation.python script="client-test.py"/>
+        <implementation.python script="client-test.py"/>
         <service name="client">
-            <t:binding.http uri="client"/>
+            <binding.http uri="client"/>
         </service>
         <reference name="ref" target="python-test">
-            <t:binding.http/>
+            <binding.http/>
         </reference>
     </component>
 

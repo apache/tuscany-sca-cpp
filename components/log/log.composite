@@ -18,7 +18,6 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="log">
         
@@ -26,14 +25,14 @@
         <implementation.cpp path="." library="liblog"/>
         <property name="category">default</property>
         <service name="log">
-            <t:binding.http uri="log"/>
+            <binding.http uri="log"/>
         </service>
     </component>     
 
     <component name="client">
         <implementation.scheme script="client-test.scm"/>
         <service name="client">
-            <t:binding.http uri="client"/>
+            <binding.http uri="client"/>
         </service>
         <reference name="adder" target="logger"/>
     </component>     
@@ -42,7 +41,7 @@
         <implementation.cpp path="." library="liblogger"/>
         <property name="category">default</property>
         <service name="logger">
-            <t:binding.http uri="logger"/>
+            <binding.http uri="logger"/>
         </service>
         <reference name="relay" target="adder"/>
     </component>     
@@ -50,7 +49,7 @@
     <component name="adder">
         <implementation.scheme script="adder-test.scm"/>
         <service name="adder">
-            <t:binding.http uri="adder"/>
+            <binding.http uri="adder"/>
         </service>
     </component>     
 

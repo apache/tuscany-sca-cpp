@@ -86,35 +86,35 @@ scdl.documentation = function(l) {
  * Returns the title of a component or componentType.
  */
 scdl.title = function(l) {
-    return namedAttributeValue("'t:title", l);
+    return namedAttributeValue("'title", l);
 };
 
 /**
  * Returns the display style of a component, componentType, reference or property.
  */
 scdl.style = function(l) {
-    return namedAttributeValue("'t:style", l);
+    return namedAttributeValue("'style", l);
 };
 
 /**
  * Returns the color of a component or componentType.
  */
 scdl.color = function(l) {
-    return namedAttributeValue("'t:color", l);
+    return namedAttributeValue("'color", l);
 };
 
 /**
  * Returns the x position of a component.
  */
 scdl.x = function(l) {
-    return namedAttributeValue("'t:x", l);
+    return namedAttributeValue("'x", l);
 };
 
 /**
  * Returns the y position of a component.
  */
 scdl.y = function(l) {
-    return namedAttributeValue("'t:y", l);
+    return namedAttributeValue("'y", l);
 };
 
 /**
@@ -149,21 +149,21 @@ scdl.uri = function(l) {
  * Returns the align attribute of a service or reference.
  */
 scdl.align = function(l) {
-    return namedAttributeValue("'t:align", l);
+    return namedAttributeValue("'align", l);
 };
 
 /**
  * Returns the visible attribute of a service or reference.
  */
 scdl.visible = function(l) {
-    return namedAttributeValue("'t:visible", l);
+    return namedAttributeValue("'visible", l);
 };
 
 /**
  * Returns the clonable attribute of a reference.
  */
 scdl.clonable = function(l) {
-    return namedAttributeValue("'t:clonable", l);
+    return namedAttributeValue("'clonable", l);
 };
 
 /**

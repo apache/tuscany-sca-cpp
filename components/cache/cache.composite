@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="memcache">
         
     <component name="memcache">
         <implementation.cpp path="." library="libmemcache"/>
         <service name="memcache">
-            <t:binding.http uri="memcache"/>
+            <binding.http uri="memcache"/>
         </service>
         <property name="servers">localhost,localhost:11212,localhost:11213</property>
     </component>
@@ -33,7 +32,7 @@
     <component name="l2cache">
         <implementation.cpp path="." library="libmemcache"/>
         <service name="l2cache">
-            <t:binding.http uri="l2cache"/>
+            <binding.http uri="l2cache"/>
         </service>
         <property name="servers">localhost:11411,localhost:11412,localhost:11413</property>
     </component>
@@ -41,7 +40,7 @@
     <component name="datacache">
         <implementation.cpp path="." library="libdatacache"/>
         <service name="datacache">
-            <t:binding.http uri="datacache"/>
+            <binding.http uri="datacache"/>
         </service>
         <reference name="l1reader" target="memcache"/>
         <reference name="l1writer" target="memcache"/>
@@ -52,7 +51,7 @@
     <component name="memocache">
         <implementation.cpp path="." library="libmemocache"/>
         <service name="memocache">
-            <t:binding.http uri="memocache"/>
+            <binding.http uri="memocache"/>
         </service>
         <reference name="relay" target="adder"/>
         <reference name="cache" target="memcache"/>
@@ -61,7 +60,7 @@
     <component name="adder">
         <implementation.scheme script="adder-test.scm"/>
         <service name="adder">
-            <t:binding.http uri="adder"/>
+            <binding.http uri="adder"/>
         </service>
     </component>     
 

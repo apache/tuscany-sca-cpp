@@ -47,7 +47,7 @@ bool testComponents() {
     const value store = car(c);
     assert(name(store) == string("Store"));
     const value impl = implementation(store);
-    assert(implementationType(impl) == "t:implementation.scheme");
+    assert(implementationType(impl) == "implementation.scheme");
     assert(attributeValue("script", impl) == string("store.scm"));
 
     const value catalog = named(string("Catalog"), c);
@@ -70,7 +70,7 @@ bool testServices() {
     assert(length(bindings(widget)) == 1);
     const value binding = car(bindings(widget));
     assert(uri(binding) == string("/store"));
-    assert(bindingType(binding) == "t:binding.http");
+    assert(bindingType(binding) == "binding.http");
     return true;
 }
 
@@ -87,7 +87,7 @@ bool testReferences() {
     assert(length(bindings(catalog)) == 1);
     const value binding = car(bindings(catalog));
     assert(uri(binding) == value());
-    assert(bindingType(binding) == "t:binding.jsonrpc");
+    assert(bindingType(binding) == "binding.jsonrpc");
 
     const list<value> t = mkbtree(sort(referenceToTargetAssoc(references(store))));
     assert(assoctree<value>("shoppingCart", t) == mklist<value>(string("shoppingCart"), string("ShoppingCart/Cart")));

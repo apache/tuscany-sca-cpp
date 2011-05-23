@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://store"
   name="store-backend">
         
     <component name="Cache">
         <implementation.python script="gmemcache.py"/>
         <service name="Cache">
-            <t:binding.atom uri="cache"/>
+            <binding.atom uri="cache"/>
         </service>
     </component>     
 

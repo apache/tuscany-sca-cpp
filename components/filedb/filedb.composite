@@ -18,7 +18,6 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="filedb">
         
@@ -27,7 +26,7 @@
         <property name="dbname">tmp/testdb</property>
         <property name="format">scheme</property>
         <service name="filedb">
-            <t:binding.http uri="filedb"/>
+            <binding.http uri="filedb"/>
         </service>
     </component>     
 

@@ -18,7 +18,6 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="sqldb">
         
@@ -27,7 +26,7 @@
         <property name="conninfo">host=localhost port=5432 dbname=db</property>
         <property name="table">test</property>
         <service name="sqldb">
-            <t:binding.http uri="sqldb"/>
+            <binding.http uri="sqldb"/>
         </service>
     </component>     
 

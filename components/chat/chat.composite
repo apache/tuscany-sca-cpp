@@ -18,7 +18,6 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="chat">
         
@@ -27,7 +26,7 @@
         <property name="jid">sca1@localhost</property>
         <property name="password">sca1</property>
         <service name="print-sender">
-            <t:binding.http uri="print-sender"/>
+            <binding.http uri="print-sender"/>
         </service>
     </component>
 
@@ -36,15 +35,15 @@
         <property name="jid">sca2@localhost</property>
         <property name="password">sca2</property>
         <service name="print-chatter">
-            <t:binding.http uri="print-chatter"/>
+            <binding.http uri="print-chatter"/>
         </service>
         <reference name="relay" target="print"/>
     </component>
 
     <component name="print">
-        <t:implementation.scheme script="server-test.scm"/>
+        <implementation.scheme script="server-test.scm"/>
         <service name="print">
-            <t:binding.http uri="print"/>
+            <binding.http uri="print"/>
         </service>
         <reference name="report" target="print-chatter"/>
     </component>     

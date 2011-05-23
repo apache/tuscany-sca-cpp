@@ -18,21 +18,20 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://domain/test"
   name="domain-test">
         
     <component name="scheme-test">
-        <t:implementation.scheme script="server-test.scm"/>
+        <implementation.scheme script="server-test.scm"/>
         <service name="test">
-            <t:binding.http uri="test"/>
+            <binding.http uri="test"/>
         </service>
     </component>     
 
     <component name="property-test">
-        <t:implementation.scheme script="property-test.scm"/>
+        <implementation.scheme script="property-test.scm"/>
         <service name="properties">
-            <t:binding.http uri="properties"/>
+            <binding.http uri="properties"/>
         </service>
         <property name="host"></property>
         <property name="path"></property>
@@ -42,17 +41,17 @@
     <component name="cpp-test">
         <implementation.cpp path="." library="libimpl-test"/>
         <service name="cpp">
-            <t:binding.http uri="cpp"/>
+            <binding.http uri="cpp"/>
         </service>
     </component>
 
     <component name="client-test">
-        <t:implementation.scheme script="client-test.scm"/>
+        <implementation.scheme script="client-test.scm"/>
         <service name="client">
-            <t:binding.http uri="client"/>
+            <binding.http uri="client"/>
         </service>
         <reference name="ref" target="scheme-test">
-            <t:binding.http/>
+            <binding.http/>
         </reference>
     </component>
 

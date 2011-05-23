@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://shared"
   name="shared">
         
     <component name="Cache">
         <implementation.cpp path="../../../components/cache" library="libdatacache"/>
         <service name="Cache">
-            <t:binding.atom uri="cache"/>
+            <binding.atom uri="cache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -36,7 +35,7 @@
     <component name="Memcache">
         <implementation.cpp path="../../../components/cache" library="libmemcache"/>
         <service name="Memcache">
-            <t:binding.atom uri="memcache"/>
+            <binding.atom uri="memcache"/>
         </service>
         <property name="servers">localhost:11211,localhost:11212,localhost:11213</property>
     </component>
@@ -46,7 +45,7 @@
         <property name="conninfo">host=localhost port=5432 dbname=db</property>
         <property name="table">store</property>
         <service name="Masterdb">
-            <t:binding.atom uri="masterdb"/>
+            <binding.atom uri="masterdb"/>
         </service>
     </component>
 
@@ -55,7 +54,7 @@
         <property name="conninfo">host=localhost port=5433 dbname=db</property>
         <property name="table">store</property>
         <service name="Standbydb">
-            <t:binding.atom uri="standbydb"/>
+            <binding.atom uri="standbydb"/>
         </service>
     </component>
 

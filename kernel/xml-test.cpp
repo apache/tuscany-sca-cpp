@@ -35,7 +35,7 @@ namespace tuscany {
 
 const string currencyXML =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<composite xmlns=\"http://docs.oasis-open.org/ns/opencsa/sca/200912\" xmlns:t=\"http://tuscany.apache.org/xmlns/sca/1.1\" targetNamespace=\"http://services\" name=\"currency\">\n"
+"<composite xmlns=\"http://docs.oasis-open.org/ns/opencsa/sca/200912\" targetNamespace=\"http://services\" name=\"currency\">\n"
 " <component name=\"CurrencyConverterWebService\">\n"
 "  <implementation.java class=\"services.CurrencyConverterImpl\"/>\n"
 "  <service name=\"CurrencyConverter\">\n"

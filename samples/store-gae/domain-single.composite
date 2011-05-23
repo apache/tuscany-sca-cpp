@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://store"
   name="store">
         
     <component name="Store">
-        <t:implementation.python script="store.py"/>
+        <implementation.python script="store.py"/>
         <service name="Widget">
-            <t:binding.http uri="store"/>
+            <binding.http uri="store"/>
         </service>
         <reference name="catalog" target="Catalog"/>
         <reference name="shoppingCart" target="ShoppingCart/Cart"/>
@@ -33,21 +32,21 @@
     </component>
     
     <component name="Catalog">
-        <t:implementation.python script="fruits-catalog.py"/> 
+        <implementation.python script="fruits-catalog.py"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
-            <t:binding.jsonrpc uri="catalog"/>
+            <binding.jsonrpc uri="catalog"/>
         </service>
         <reference name="currencyConverter" target="CurrencyConverter"/>
     </component> 
      
     <component name="ShoppingCart">
-        <t:implementation.python script="shopping-cart.py"/>
+        <implementation.python script="shopping-cart.py"/>
         <service name="Cart">
-            <t:binding.atom uri="shoppingCart"/>
+            <binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">
-            <t:binding.jsonrpc uri="total"/>
+            <binding.jsonrpc uri="total"/>
         </service>        
         <reference name="cache" target="Cache"/>
         <property name="host">localhost</property>
@@ -55,16 +54,16 @@
     </component>
     
     <component name="CurrencyConverter">
-        <t:implementation.python script="currency-converter.py"/>
+        <implementation.python script="currency-converter.py"/>
         <service name="CurrencyConverter">
-            <t:binding.jsonrpc uri="currencyConverter"/>
+            <binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     
 
     <component name="Cache">
         <implementation.python script="gmemcache.py"/>
         <service name="Cache">
-            <t:binding.atom uri="cache"/>
+            <binding.atom uri="cache"/>
         </service>
     </component>     
 

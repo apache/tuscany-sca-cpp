@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://store"
   name="store">
         
     <component name="Store">
-        <t:implementation.widget location="store.html"/>
+        <implementation.widget location="store.html"/>
         <service name="Widget">
-            <t:binding.http uri="store"/>
+            <binding.http uri="store"/>
         </service>
         <reference name="catalog" target="Catalog"/>
         <reference name="shoppingCart" target="ShoppingCart/Cart"/>
@@ -36,7 +35,7 @@
         <implementation.cpp path="." library="libfruits-catalog"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
-            <t:binding.jsonrpc uri="catalog"/>
+            <binding.jsonrpc uri="catalog"/>
         </service>
         <reference name="currencyConverter" target="CurrencyConverter"/>
     </component> 
@@ -44,10 +43,10 @@
     <component name="ShoppingCart">
         <implementation.cpp path="." library="libshopping-cart"/>
         <service name="ShoppingCart">
-            <t:binding.atom uri="shoppingCart"/>
+            <binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">
-            <t:binding.jsonrpc uri="total"/>
+            <binding.jsonrpc uri="total"/>
         </service>        
         <reference name="cache" target="Cache"/>
     </component>
@@ -55,14 +54,14 @@
     <component name="CurrencyConverter">
         <implementation.cpp path="." library="libcurrency-converter"/>
         <service name="CurrencyConverter">
-            <t:binding.jsonrpc uri="currencyConverter"/>
+            <binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     
 
     <component name="Cache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
         <service name="Cache">
-            <t:binding.atom uri="cache"/>
+            <binding.atom uri="cache"/>
         </service>
         <property name="servers">localhost:11211</property>
     </component>     

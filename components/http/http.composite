@@ -18,22 +18,21 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="http">
         
     <component name="httpget">
         <implementation.cpp path="." library="libhttpget"/>
         <service name="httpget">
-            <t:binding.http uri="httpget"/>
+            <binding.http uri="httpget"/>
         </service>
         <reference name="url" target="url-test"/>
     </component>
 
     <component name="url-test">
-        <t:implementation.scheme script="url-test.scm"/>
+        <implementation.scheme script="url-test.scm"/>
         <service name="url-test">
-            <t:binding.http uri="url-test"/>
+            <binding.http uri="url-test"/>
         </service>
     </component>
 

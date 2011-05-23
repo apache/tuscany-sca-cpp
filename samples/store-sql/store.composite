@@ -18,14 +18,13 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://store"
   name="store">
         
     <component name="Store">
-        <t:implementation.scheme script="store.scm"/>
+        <implementation.scheme script="store.scm"/>
         <service name="Widget">
-            <t:binding.http uri="store"/>
+            <binding.http uri="store"/>
         </service>
         <reference name="catalog" target="Catalog"/>
         <reference name="shoppingCart" target="ShoppingCart/Cart"/>
@@ -33,36 +32,36 @@
     </component>
     
     <component name="Catalog">
-        <t:implementation.scheme script="fruits-catalog.scm"/> 
+        <implementation.scheme script="fruits-catalog.scm"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
-            <t:binding.jsonrpc uri="catalog"/>
+            <binding.jsonrpc uri="catalog"/>
         </service>
         <reference name="currencyConverter" target="CurrencyConverter"/>
     </component> 
      
     <component name="ShoppingCart">
-        <t:implementation.scheme script="shopping-cart.scm"/>
+        <implementation.scheme script="shopping-cart.scm"/>
         <service name="Cart">
-            <t:binding.atom uri="shoppingCart"/>
+            <binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">
-            <t:binding.jsonrpc uri="total"/>
+            <binding.jsonrpc uri="total"/>
         </service>        
         <reference name="cache" target="Cache"/>
     </component>
     
     <component name="CurrencyConverter">
-        <t:implementation.scheme script="currency-converter.scm"/>
+        <implementation.scheme script="currency-converter.scm"/>
         <service name="CurrencyConverter">
-            <t:binding.jsonrpc uri="currencyConverter"/>
+            <binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     
 
     <component name="Cache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="Cache">
-            <t:binding.atom uri="cache"/>
+            <binding.atom uri="cache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -73,7 +72,7 @@
     <component name="Memcache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
         <service name="Memcache">
-            <t:binding.atom uri="memcache"/>
+            <binding.atom uri="memcache"/>
         </service>
         <property name="servers">localhost:11211</property>
     </component>     
@@ -83,7 +82,7 @@
         <property name="conninfo">host=localhost port=5432 dbname=db</property>
         <property name="table">store</property>
         <service name="Sqldb">
-            <t:binding.atom uri="sqldb"/>
+            <binding.atom uri="sqldb"/>
         </service>
     </component>     
 
