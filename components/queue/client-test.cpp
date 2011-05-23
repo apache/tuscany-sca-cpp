@@ -80,7 +80,7 @@ bool testListen() {
 
 bool testPost() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const failable<value> id = http::post(entry, "http://localhost:8090/print-sender", ch);
     assert(hasContent(id));
     return true;

@@ -33,7 +33,7 @@ namespace tuscany {
 namespace http {
 
 const bool testGet(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
-    CURLSession ch(ca, cert, key);
+    CURLSession ch(ca, cert, key, "");
     const failable<value> val = get(url, ch);
     assert(hasContent(val));
     cout << content(val) << endl;

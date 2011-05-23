@@ -33,6 +33,7 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "../scdl/scdl.hpp"
+#include "../http/http.hpp"
 #include "../http/httpd.hpp"
 
 extern "C" {
@@ -292,7 +293,7 @@ const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
 
     // Resolve the configured virtual contribution under
     // the virtual host's SCA contribution root
-    sc.contributionPath = sc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
+    sc.contributionPath = sc.virtualHostContributionPath + http::subDomain(httpd::hostName(r)) + "/";
     sc.compositeName = sc.virtualHostCompositeName;
 
     // Configure the wiring for the deployed components
@@ -309,7 +310,7 @@ int translate(request_rec *r) {
         return DECLINED;
 
     // No translation needed for a component or tunnel request
-    if (!strncmp(r->uri, "/components/", 12))
+    if (!strncmp(r->uri, "/components/", 12) || !strncmp(r->uri, "/c/", 3))
         return DECLINED;
 
     // Create a scoped memory pool
@@ -328,7 +329,7 @@ int translate(request_rec *r) {
     }
 
     // Translate a component reference request
-    if (!strncmp(r->uri, "/references/", 12))
+    if (!strncmp(r->uri, "/references/", 12) || !strncmp(r->uri, "/r/", 3))
         return translateReference(usevh? vhc.sc: sc, r);
 
     // Translate a service request

@@ -41,7 +41,7 @@ const string datacacheuri("http://localhost:8090/datacache");
 const string memocacheuri("http://localhost:8090/memocache");
 
 bool testCache(const string& uri) {
-    http::CURLSession cs("", "", "");
+    http::CURLSession cs("", "", "", "");
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
@@ -101,7 +101,7 @@ bool testDatacache() {
 }
 
 bool testMemocache() {
-    http::CURLSession cs("", "", "");
+    http::CURLSession cs("", "", "", "");
 
     const failable<value> res = http::evalExpr(mklist<value>(string("add"), 33, 22), memocacheuri, cs);
     assert(hasContent(res));
@@ -137,7 +137,7 @@ bool testGetPerf() {
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "");
+    http::CURLSession cs("", "", "", "");
     const failable<value> id = http::post(a, memcacheuri, cs);
     assert(hasContent(id));
     const string p = path(content(id));

@@ -35,6 +35,7 @@
 #include <apr_network_io.h>
 #include <apr_portable.h>
 #include <apr_poll.h>
+#include <apr_uri.h>
 
 #include "string.hpp"
 #include "gc.hpp"
@@ -65,13 +66,13 @@ public:
  */
 class CURLSession {
 public:
-    CURLSession() : h(NULL), p(NULL), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(false), ca(""), cert(""), key("") {
+    CURLSession() : h(NULL), p(NULL), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(false), ca(""), cert(""), key(""), cookie("") {
     }
 
-    CURLSession(const string& ca, const string& cert, const string& key) : h(curl_easy_init()), p(gc_pool(mkpool())), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(true), ca(ca), cert(cert), key(key) {
+    CURLSession(const string& ca, const string& cert, const string& key, const string& cookie) : h(curl_easy_init()), p(gc_pool(mkpool())), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(true), ca(ca), cert(cert), key(key), cookie(cookie) {
     }
 
-    CURLSession(const CURLSession& c) : h(c.h), p(c.p), sock(c.sock), wpollset(c.wpollset), wpollfd(c.wpollfd), rpollset(c.rpollset), rpollfd(c.rpollfd), owner(false), ca(c.ca), cert(c.cert), key(c.key) {
+    CURLSession(const CURLSession& c) : h(c.h), p(c.p), sock(c.sock), wpollset(c.wpollset), wpollfd(c.wpollfd), rpollset(c.rpollset), rpollfd(c.rpollfd), owner(false), ca(c.ca), cert(c.cert), key(c.key), cookie(c.cookie) {
     }
 
     ~CURLSession() {
@@ -104,6 +105,7 @@ public:
     string ca;
     string cert;
     string key;
+    string cookie;
 };
 
 /**
@@ -185,6 +187,34 @@ const string escapeArg(const string& arg) {
 }
 
 /**
+ * Parse a URI and return its host name.
+ */
+const string hostName(const string& uri, const gc_pool& p) {
+    apr_uri_t u;
+    const apr_status_t rc = apr_uri_parse(pool(p), c_str(uri), &u);
+    if (rc != APR_SUCCESS)
+        return "";
+    if (u.hostname == NULL)
+        return "";
+    return u.hostname;
+}
+
+/**
+ * Return the first subdomain name in a host name.
+ */
+const string subDomain(const string& host) {
+    return substr(host, 0, find(host, '.'));
+}
+
+/**
+ * Return the top domain name in a host name.
+ */
+const string topDomain(const string& host) {
+    const size_t d = find(host, '.');
+    return d == length(host) ? host : substr(host, d + 1);
+}
+
+/**
  * Setup a CURL session
  */
 const failable<CURL*> setup(const string& url, const CURLSession& cs) {
@@ -216,6 +246,10 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
         debug(cs.key, "http::setup::key");
         curl_easy_setopt(ch, CURLOPT_SSLKEY, c_str(cs.key));
         curl_easy_setopt(ch, CURLOPT_SSLKEYTYPE, "PEM");
+    }
+    if (cs.cookie != "") {
+        debug(cs.cookie, "http::setup::cookie");
+        curl_easy_setopt(ch, CURLOPT_COOKIE, c_str(cs.cookie));
     }
 
     // Set target URL
@@ -567,7 +601,7 @@ const failable<value, string> del(const string& url, const CURLSession& cs) {
 /**
  * Returns the current host name.
  */
-const string hostname() {
+const string hostName() {
     char h[256];
     if (gethostname(h, 256) == -1)
         return "localhost";
@@ -722,7 +756,7 @@ const value escapeQuery(const value& arg) {
  * HTTP client proxy function.
  */
 struct proxy {
-    proxy(const string& uri, const string& ca, const string& cert, const string& key, const gc_pool& p) : p(p), uri(uri), ca(ca), cert(cert), key(key), cs(*(new (gc_new<CURLSession>(p)) CURLSession(ca, cert, key))) {
+    proxy(const string& uri, const string& ca, const string& cert, const string& key, const string& cookie, const gc_pool& p) : p(p), uri(uri), ca(ca), cert(cert), key(key), cookie(cookie), cs(*(new (gc_new<CURLSession>(p)) CURLSession(ca, cert, key, cookie))) {
     }
     
     const value operator()(const list<value>& args) const {
@@ -757,6 +791,7 @@ struct proxy {
     const string ca;
     const string cert;
     const string key;
+    const string cookie;
     const CURLSession& cs;
 };
 

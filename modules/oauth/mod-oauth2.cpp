@@ -345,7 +345,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));
 
     // Setup a CURL session
-    sc.cs = *(new (gc_new<http::CURLSession>()) http::CURLSession(sc.ca, sc.cert, sc.key));
+    sc.cs = *(new (gc_new<http::CURLSession>()) http::CURLSession(sc.ca, sc.cert, sc.key, ""));
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);

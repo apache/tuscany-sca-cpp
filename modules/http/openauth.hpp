@@ -63,9 +63,9 @@ const maybe<string> sessionID(const list<string> c) {
 }
 
 const maybe<string> sessionID(const request_rec* r) {
-    const char* c = apr_table_get(r->headers_in, "Cookie");
+    const string c = httpd::cookie(r);
     debug(c, "openauth::sessionid::cookies");
-    if (c == NULL)
+    if (length(c) == 0)
         return maybe<string>();
     return sessionID(tokenize(";", c));
 }

@@ -69,7 +69,7 @@ private:
  */
 const failable<value> start(const list<value>& params) {
     // Create a CURL session
-    http::CURLSession& ch = *(new (gc_new<http::CURLSession>()) http::CURLSession("", "", ""));
+    http::CURLSession& ch = *(new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", ""));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyhttp(car(params), ch)));

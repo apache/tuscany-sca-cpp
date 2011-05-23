@@ -46,7 +46,7 @@ ostream* curlWriter(const string& s, ostream* os) {
 
 const bool testGet() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     {
         ostringstream os;
         const failable<list<ostream*> > r = http::get<ostream*>(curlWriter, &os, "http://localhost:8090/index.html", ch);
@@ -76,7 +76,7 @@ struct getLoop {
 
 const bool testGetPerf() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const lambda<bool()> gl = getLoop(ch);
     cout << "Static GET test " << time(gl, 5, 200) << " ms" << endl;
     return true;
@@ -84,7 +84,7 @@ const bool testGetPerf() {
 
 const bool testEval() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), testURI, ch));
     assert(val == string("Hello"));
     return true;
@@ -119,7 +119,7 @@ struct blobEvalLoop {
 
 const bool testEvalPerf() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const lambda<bool()> el = evalLoop(testURI, ch);
     cout << "JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << endl;
 
@@ -139,7 +139,7 @@ bool testPost() {
             + (list<value>() + "title" + string("item"))
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const failable<value> id = http::post(a, testURI, ch);
     assert(hasContent(id));
     return true;
@@ -174,7 +174,7 @@ struct postBlobLoop {
 
 const bool testPostPerf() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     {
         const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
@@ -206,7 +206,7 @@ const bool testPostPerf() {
 
 const bool postThread(const string& uri, const int count, const value& val) {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
     return true;
@@ -263,7 +263,7 @@ const bool testPostThreadPerf() {
 
 const bool postProc(const string& uri, const int count, const value& val) {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
     return true;
@@ -333,7 +333,7 @@ const bool testPut() {
             + (list<value>() + "title" + string("item"))
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     value rc = content(http::put(a, testURI + "/111", ch));
     assert(rc == value(true));
     return true;
@@ -341,7 +341,7 @@ const bool testPut() {
 
 const bool testDel() {
     gc_scoped_pool pool;
-    http::CURLSession ch("", "", "");
+    http::CURLSession ch("", "", "", "");
     value rc = content(http::del(testURI + "/111", ch));
     assert(rc == value(true));
     return true;

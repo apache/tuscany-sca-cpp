@@ -145,13 +145,6 @@ const string hostName(request_rec* r, const string& def = "localhost") {
 }
 
 /**
- * Return the first subdomain name in a host name.
- */
-const string subdomain(const string& host) {
-    return substr(host, 0, find(host, '.'));
-}
-
-/**
  * Return true if a request is targeting a virtual host.
  */
 const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
@@ -187,6 +180,16 @@ const string contentType(const request_rec* r) {
     if (ct == NULL)
         return "";
     return ct;
+}
+
+/**
+ * Return the cookie header of a request.
+ */
+const string cookie(const request_rec* r) {
+    const char* c = apr_table_get(r->headers_in, "Cookie");
+    if (c == NULL)
+        return "";
+    return c;
 }
 
 /**

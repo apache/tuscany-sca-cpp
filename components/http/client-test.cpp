@@ -39,7 +39,7 @@ namespace http {
 const string uri("http://localhost:8090/httpget");
 
 bool testGet() {
-    http::CURLSession cs("", "", "");
+    http::CURLSession cs("", "", "", "");
 
     const failable<value> val = http::get(uri, cs);
     assert(hasContent(val));
@@ -61,7 +61,7 @@ struct getLoop {
 };
 
 bool testGetPerf() {
-    http::CURLSession cs("", "", "");
+    http::CURLSession cs("", "", "", "");
 
     const lambda<bool()> gl = getLoop(cs);
     cout << "HTTP get test " << time(gl, 5, 200) << " ms" << endl;

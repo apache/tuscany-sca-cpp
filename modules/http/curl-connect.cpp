@@ -36,7 +36,7 @@ namespace http {
 const bool testConnect(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
     gc_scoped_pool p;
 
-    CURLSession cs(ca, cert, key);
+    CURLSession cs(ca, cert, key, "");
     const failable<bool> crc = connect(url, cs);
     assert(hasContent(crc));
 

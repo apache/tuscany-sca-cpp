@@ -97,6 +97,25 @@ const failable<value> failableResult(const list<value>& v) {
 }
 
 /**
+ * Store current HTTP request for access from property and proxy lambda functions.
+ */
+#ifdef WANT_THREADS
+__thread
+#endif
+request_rec* currentRequest = NULL;
+
+class ScopedRequest {
+public:
+    ScopedRequest(request_rec* r) {
+        currentRequest = r;
+    }
+
+    ~ScopedRequest() {
+        currentRequest = NULL;
+    }
+};
+
+/**
  * Handle an HTTP GET.
  */
 const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>& impl) {
@@ -311,7 +330,7 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
 int translate(request_rec *r) {
     if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
         return DECLINED;
-    if (strncmp(r->uri, "/components/", 12) != 0)
+    if (strncmp(r->uri, "/components/", 12) != 0 && strncmp(r->uri, "/c/", 3) != 0)
         return DECLINED;
     r->handler = "mod_tuscany_eval";
     return OK;
@@ -323,7 +342,7 @@ int translate(request_rec *r) {
 const value mkhttpProxy(const ServerConf& sc, const string& ref, const string& base) {
     const string uri = base + ref;
     debug(uri, "modeval::mkhttpProxy::uri");
-    return lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, sc.p));
+    return lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, "", sc.p));
 }
 
 /**
@@ -331,7 +350,7 @@ const value mkhttpProxy(const ServerConf& sc, const string& ref, const string& b
  */
 const value mkhttpProxy(const ServerConf& sc, const string& uri) {
     debug(uri, "modeval::mkhttpProxy::uri");
-    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", sc.p));
+    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", sc.p));
 }
 
 /**
@@ -342,17 +361,7 @@ public:
     implProxy(const ServerConf& sc, const value& name) : sc(sc), name(name) {
     }
 
-    const value operator()(const list<value>& params) const {
-        debug(name, "modeval::implProxy::name");
-        debug(params, "modeval::implProxy::input");
-
-        // If no component name was configured, use the first param as component name
-        const value cname = isNil(name)? cadr(params) : name;
-        const list<value> aparams = isNil(name)? cons<value>(car(params), cddr(params)) : params;
-        if (isNil(name)) {
-            debug(cname, "modeval::implProxy::wiredByImpl::name");
-            debug(aparams, "modeval::implProxy::wiredByImpl::input");
-        }
+    const value callImpl(const value& cname, const list<value>& aparams) const {
 
         // Lookup the component implementation
         const list<value> impl(assoctree<value>(cname, sc.implTree));
@@ -369,6 +378,43 @@ public:
         return content(val);
     }
 
+    const value operator()(const list<value>& params) const {
+        debug(name, "modeval::implProxy::name");
+        debug(params, "modeval::implProxy::input");
+
+        // If the reference was 'wiredByImpl' use the first param as target
+        if (isNil(name)) {
+            const value uri = cadr(params);
+            const list<value> aparams = cons<value>(car(params), cddr(params));
+            debug(uri, "modeval::implProxy::wiredByImpl::uri");
+            debug(aparams, "modeval::implProxy::wiredByImpl::input");
+
+            // Use an HTTP proxy if the target is an absolute http:// target
+            if (httpd::isAbsolute(uri)) {
+                gc_pool p(currentRequest->pool);
+                
+                // Pass our certificate and the cookie from the current request
+                // if the target is in the same domain
+                if (http::topDomain(http::hostName(uri, p)) == http::topDomain(httpd::hostName(currentRequest))) {
+                    debug(uri, "modeval::implProxy::httpproxy::samedomain");
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, httpd::cookie(currentRequest), p));
+                    return px(aparams);
+                }
+
+                // No certificate or cookie on a cross domain call
+                debug(uri, "modeval::implProxy::httpproxy::crossdomain");
+                const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", p));
+                return px(aparams);
+            }
+
+            // Call the component implementation
+            return callImpl(uri, aparams);
+        }
+
+        // Call the component implementation
+        return callImpl(name, params);
+    }
+
 private:
     const ServerConf& sc;
     const value name;
@@ -380,9 +426,43 @@ const value mkimplProxy(const ServerConf& sc, const value& name) {
 }
 
 /**
+ * Return a proxy lambda for an unwired reference.
+ */
+class unwiredProxy {
+public:
+    unwiredProxy(const value& name) : name(name) {
+    }
+
+    const value operator()(const list<value>& params) const {
+        debug(name, "modeval::unwiredProxy::name");
+        debug(params, "modeval::unwiredProxy::input");
+
+        // Get function returns a default empty value
+        if (car(params) == "get") {
+            debug(value(), "modeval::unwiredProxy::result");
+            return value();
+        }
+
+        // All other functions return a failure
+        return mkfailure<value>(string("Reference is not wired: ") + name);
+    }
+
+private:
+    const value name;
+};
+
+/**
+ * Make a proxy lambda for an unwired reference.
+ */
+const value mkunwiredProxy(const string& ref) {
+    debug(ref, "modeval::mkunwiredProxy::ref");
+    return lambda<value(const list<value>&)>(unwiredProxy(ref));
+}
+
+/**
  * Convert a list of component references to a list of proxy lambdas.
  */
-const value mkrefProxy(const ServerConf& sc, const value& ref, const string& base) {
+const value mkrefProxy(const ServerConf& sc, const value& ref, unused const string& base) {
     const value target = scdl::target(ref);
     const bool wbyimpl = scdl::wiredByImpl(ref);
     debug(ref, "modeval::mkrefProxy::ref");
@@ -393,7 +473,7 @@ const value mkrefProxy(const ServerConf& sc, const value& ref, const string& bas
     if (wbyimpl)
         return mkimplProxy(sc, value());
     if (isNil(target))
-        return mkhttpProxy(sc, scdl::name(ref), base);
+        return mkunwiredProxy(scdl::name(ref));
     if (httpd::isAbsolute(target))
         return mkhttpProxy(sc, target);
     return mkimplProxy(sc, car(pathValues(target)));
@@ -404,25 +484,6 @@ const list<value> refProxies(const ServerConf& sc, const list<value>& refs, cons
         return refs;
     return cons(mkrefProxy(sc, car(refs), base), refProxies(sc, cdr(refs), base));
 }
-
-/**
- * Store current HTTP request for access from property lambda functions.
- */
-#ifdef WANT_THREADS
-__thread
-#endif
-request_rec* currentRequest = NULL;
-
-class ScopedRequest {
-public:
-    ScopedRequest(request_rec* r) {
-        currentRequest = r;
-    }
-
-    ~ScopedRequest() {
-        currentRequest = NULL;
-    }
-};
 
 /**
  * Convert a list of component properties to a list of lambda functions that just return
@@ -682,7 +743,7 @@ const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, re
 
     // Resolve the configured virtual contribution under
     // the virtual host's SCA contribution root
-    vsc.contributionPath = vsc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
+    vsc.contributionPath = vsc.virtualHostContributionPath + http::subDomain(httpd::hostName(r)) + "/";
     vsc.compositeName = vsc.virtualHostCompositeName;
 
     // Chdir to the virtual host's contribution

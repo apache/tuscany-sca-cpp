@@ -141,7 +141,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
     apr_socket_t* csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
 
     // Open connection to target
-    http::CURLSession cs(ca, cert, key);
+    http::CURLSession cs(ca, cert, key, "");
     const failable<bool> crc = http::connect(url, cs);
     if (!hasContent(crc))
         return abort(conn, csock, reason(crc));
