@@ -15,9 +15,9 @@
 ;  specific language governing permissions and limitations
 ;  under the License.
 
-; URL test case
+; Content test case
 
 (define (get id)
-    "http://localhost:8090/test"
+    (list (list 'entry '(title "Item") '(id "111") '(content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99)))))
 )
 

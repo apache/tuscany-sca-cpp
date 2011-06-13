@@ -29,11 +29,60 @@
         <reference name="url" target="url-test"/>
     </component>
 
+    <component name="httppost">
+        <implementation.cpp path="." library="libhttppost"/>
+        <service name="httppost">
+            <binding.http uri="httppost"/>
+        </service>
+        <reference name="url" target="url-test"/>
+        <reference name="content" target="content-test"/>
+    </component>
+
+    <component name="httpput">
+        <implementation.cpp path="." library="libhttpput"/>
+        <service name="httpput">
+            <binding.http uri="httpput"/>
+        </service>
+        <reference name="url" target="url-test"/>
+        <reference name="content" target="content-test"/>
+    </component>
+
+    <component name="httppatch">
+        <implementation.cpp path="." library="libhttppatch"/>
+        <service name="httppatch">
+            <binding.http uri="httppatch"/>
+        </service>
+        <reference name="url" target="url-test"/>
+        <reference name="content" target="content-test"/>
+    </component>
+
+    <component name="httpdelete">
+        <implementation.cpp path="." library="libhttpdelete"/>
+        <service name="httpdelete">
+            <binding.http uri="httpdelete"/>
+        </service>
+        <reference name="url" target="url-test"/>
+    </component>
+
     <component name="url-test">
         <implementation.scheme script="url-test.scm"/>
         <service name="url-test">
             <binding.http uri="url-test"/>
         </service>
     </component>
+
+    <component name="content-test">
+        <implementation.scheme script="content-test.scm"/>
+        <service name="content-test">
+            <binding.http uri="content-test"/>
+        </service>
+    </component>
+
+    <component name="scheme-test">
+        <implementation.scheme script="server-test.scm"/>
+        <service name="test">
+            <binding.http uri="test"/>
+        </service>
+    </component>     
 
 </composite>

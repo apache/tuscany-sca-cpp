@@ -44,6 +44,7 @@
 #include "element.hpp"
 #include "monad.hpp"
 #include "parallel.hpp"
+#include "../scheme/io.hpp"
 #include "../atom/atom.hpp"
 #include "../rss/rss.hpp"
 #include "../json/json.hpp"
@@ -187,6 +188,13 @@ const string escapeArg(const string& arg) {
 }
 
 /**
+ * Return true if a URI is absolute.
+ */
+const bool isAbsolute(const string& uri) {
+    return contains(uri, "://");
+}
+
+/**
  * Parse a URI and return its host name.
  */
 const string hostName(const string& uri, const gc_pool& p) {
@@ -197,6 +205,19 @@ const string hostName(const string& uri, const gc_pool& p) {
     if (u.hostname == NULL)
         return "";
     return u.hostname;
+}
+
+/**
+ * Parse a URI and return its scheme.
+ */
+const string scheme(const string& uri, const gc_pool& p) {
+    apr_uri_t u;
+    const apr_status_t rc = apr_uri_parse(pool(p), c_str(uri), &u);
+    if (rc != APR_SUCCESS)
+        return "";
+    if (u.scheme == NULL)
+        return "";
+    return u.scheme;
 }
 
 /**
@@ -223,6 +244,9 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
     CURL* ch = handle(cs);
     curl_easy_reset(ch);
     curl_easy_setopt(ch, CURLOPT_USERAGENT, "libcurl/1.0");
+#ifdef WANT_MAINTAINER_MODE
+    curl_easy_setopt(ch, CURLOPT_VERBOSE, true);
+#endif
 
     // Setup protocol options
     curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
@@ -250,6 +274,29 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
     if (cs.cookie != "") {
         debug(cs.cookie, "http::setup::cookie");
         curl_easy_setopt(ch, CURLOPT_COOKIE, c_str(cs.cookie));
+    }
+
+    // Set up HTTP basic auth if requested
+    apr_uri_t u;
+    apr_pool_t* p = gc_current_pool();
+    const apr_status_t prc = apr_uri_parse(p, c_str(url), &u);
+    if (prc == APR_SUCCESS) {
+        if (u.user != NULL) {
+            debug(u.user, "http::setup::user");
+            curl_easy_setopt(ch, CURLOPT_USERNAME, u.user);
+        }
+        if (u.password != NULL) {
+            debug(u.password, "http::setup::pass");
+            curl_easy_setopt(ch, CURLOPT_PASSWORD, u.password);
+        }
+        if (u.user != NULL || u.password != NULL) {
+            curl_easy_setopt(ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            
+            // Set target URL, omitting the user:password part
+            curl_easy_setopt(ch, CURLOPT_URL, c_str(escapeURI(apr_uri_unparse(p, &u, APR_URI_UNP_OMITUSERINFO))));
+
+            return ch;
+        }
     }
 
     // Set target URL
@@ -353,6 +400,10 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     } else if (verb == "PUT") {
         curl_easy_setopt(ch, CURLOPT_UPLOAD, true);
         curl_easy_setopt(ch, CURLOPT_INFILESIZE, sz);
+    } else if (verb == "PATCH") {
+        curl_easy_setopt(ch, CURLOPT_UPLOAD, true);
+        curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+        curl_easy_setopt(ch, CURLOPT_INFILESIZE, sz);
     } else if (verb == "DELETE")
         curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "DELETE");
     const CURLcode rc = curl_easy_perform(ch);
@@ -424,9 +475,9 @@ const failable<string> location(const list<string>& h) {
 /**
  * Convert a location to an entry id.
  */
-const failable<value> entryId(const failable<string> l) {
+const value entryId(const failable<string> l) {
     if (!hasContent(l))
-        return mkfailure<value>(reason(l));
+        return list<value>();
     const string ls(content(l));
     return value(mklist<value>(string(substr(ls, find_last(ls, '/') + 1))));
 }
@@ -536,26 +587,107 @@ const failable<value> get(const string& url, const CURLSession& cs) {
 }
 
 /**
+ * Form an HTTP content request.
+ */
+const failable<list<list<string> > > writeRequest(const failable<list<string> >& ls, const string& ct) {
+    if (!hasContent(ls))
+        return mkfailure<list<list<string> > >(reason(ls));
+    const list<list<string> > req =  mklist<list<string> >(mklist<string>(string("Content-Type: ") + ct), content(ls));
+    debug(req, "http::writeRequest::req");
+    return req;
+}
+
+/**
+ * Convert a value to an HTTP content request.
+ */
+const failable<list<list<string> > > contentRequest(const value& c, unused const string& url) {
+
+    // Check if the client requested a specific format
+    //TODO derive that from given URL
+    const list<value> fmt = assoc<value>("format", list<value>());
+
+    // Write as a scheme value if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "scheme")
+        return writeRequest(mklist<string>(scheme::writeValue(c)), "text/plain; charset=utf-8");
+
+    // Write a simple value as a JSON value
+    if (!isList(c)) {
+        js::JSContext cx;
+        if (isSymbol(c)) {
+            const list<value> lc = mklist<value>(mklist<value>("name", value(string(c))));
+            debug(lc, "http::contentRequest::symbol");
+            return writeRequest(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8");
+        }
+        const list<value> lc = mklist<value>(mklist<value>("value", c));
+        debug(lc, "http::contentRequest::value");
+        return writeRequest(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8");
+    }
+
+    // Write an empty list as a JSON empty value
+    if (isNil((list<value>)c)) {
+        js::JSContext cx;
+        debug(list<value>(), "http::contentRequest::empty");
+        return writeRequest(json::writeJSON(list<value>(), cx), "application/json; charset=utf-8");
+    }
+
+    // Write content-type / content-list pair
+    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
+        return writeRequest(convertValues<string>(cadr<value>(c)), car<value>(c));
+
+    // Write an assoc value as a JSON result
+    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
+        js::JSContext cx;
+        const list<value> lc = mklist<value>(c);
+        debug(lc, "http::contentRequest::assoc");
+        debug(valuesToElements(lc), "http::contentRequest::assoc::element");
+        return writeRequest(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8");
+    }
+
+    // Write value as JSON if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "json") {
+        js::JSContext cx;
+        return writeRequest(json::writeJSON(valuesToElements(c), cx), "application/json; charset=utf-8");
+    }
+
+    // Convert list of values to element values
+    const list<value> e = valuesToElements(c);
+    debug(e, "http::contentRequest::elements");
+
+    // Write an ATOM feed or entry
+    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
+        const list<value> el = car<value>(e);
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
+            if (cadr<value>(el) == atom::feed)
+                return writeRequest(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8");
+            if (cadr<value>(el) == atom::entry)
+                return writeRequest(atom::writeATOMEntry(e), "application/atom+xml; charset=utf-8");
+        }
+    }
+
+    // Write any other compound value as a JSON value
+    js::JSContext cx;
+    return writeRequest(json::writeJSON(e, cx), "application/json; charset=utf-8");
+}
+
+/**
  * HTTP POST.
  */
 const failable<value> post(const value& val, const string& url, const CURLSession& cs) {
-
-    // Convert value to an ATOM entry
-    const failable<list<string> > entry = atom::writeATOMEntry(valuesToElements(val));
-    if (!hasContent(entry))
-        return mkfailure<value>(reason(entry));
     debug(url, "http::post::url");
-    debug(content(entry), "http::post::input");
+
+    // Convert value to a content request
+    const failable<list<list<string> > > req = contentRequest(val, url);
+    if (!hasContent(req))
+        return mkfailure<value>(reason(req));
+    debug(content(req), "http::post::input");
 
     // POST it to the URL
-    const list<string> h = mklist<string>("Content-Type: application/atom+xml");
-    const list<list<string> > req = mklist<list<string> >(h, content(entry));
-    const failable<list<list<string> > > res = apply<list<string>>(req, rcons<string>, list<string>(), url, "POST", cs);
+    const failable<list<list<string> > > res = apply<list<string>>(content(req), rcons<string>, list<string>(), url, "POST", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
-    // Return the new entry id from the HTTP location header
-    const failable<value> eid(entryId(location(car(content(res)))));
+    // Return the new entry id from the HTTP location header, if any
+    const value eid(entryId(location(car(content(res)))));
     debug(eid, "http::post::result");
     return eid;
 }
@@ -564,22 +696,41 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
  * HTTP PUT.
  */
 const failable<value> put(const value& val, const string& url, const CURLSession& cs) {
-
-    // Convert value to an ATOM entry
-    const failable<list<string> > entry = atom::writeATOMEntry(valuesToElements(val));
-    if (!hasContent(entry))
-        return mkfailure<value>(reason(entry));
     debug(url, "http::put::url");
-    debug(content(entry), "http::put::input");
+
+    // Convert value to a content request
+    const failable<list<list<string> > > req = contentRequest(val, url);
+    if (!hasContent(req))
+        return mkfailure<value>(reason(req));
+    debug(content(req), "http::put::input");
 
     // PUT it to the URL
-    const list<string> h = mklist<string>("Content-Type: application/atom+xml");
-    const list<list<string> > req = mklist<list<string> >(h, content(entry));
-    const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "PUT", cs);
+    const failable<list<list<string> > > res = apply<list<string> >(content(req), rcons<string>, list<string>(), url, "PUT", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
     debug(true, "http::put::result");
+    return value(true);
+}
+
+/**
+ * HTTP PATCH.
+ */
+const failable<value> patch(const value& val, const string& url, const CURLSession& cs) {
+    debug(url, "http::put::patch");
+
+    // Convert value to a content request
+    const failable<list<list<string> > > req = contentRequest(val, url);
+    if (!hasContent(req))
+        return mkfailure<value>(reason(req));
+    debug(content(req), "http::patch::input");
+
+    // PATCH it to the URL
+    const failable<list<list<string> > > res = apply<list<string> >(content(req), rcons<string>, list<string>(), url, "PATCH", cs);
+    if (!hasContent(res))
+        return mkfailure<value>(reason(res));
+
+    debug(true, "http::patch::result");
     return value(true);
 }
 
@@ -776,6 +927,10 @@ struct proxy {
         }
         if (fun == "put") {
             const failable<value> val = put(caddr(args), uri + path(cadr(args)), cs);
+            return content(val);
+        }
+        if (fun == "patch") {
+            const failable<value> val = patch(caddr(args), uri + path(cadr(args)), cs);
             return content(val);
         }
         if (fun == "delete") {

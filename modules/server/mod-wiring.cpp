@@ -106,11 +106,10 @@ int translateReference(const ServerConf& sc, request_rec *r) {
 
     // Route to an absolute target URI using mod_proxy or an HTTP client redirect
     const list<value> pathInfo = cdddr(rpath);
-    if (httpd::isAbsolute(target)) {
+    if (http::isAbsolute(target)) {
         if (useModProxy) {
             // Build proxy URI
-            // current request's protocol scheme, reference target uri and request path info
-            string turi = httpd::scheme(r) + substr(target, find(target, "://")) + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
+            string turi = target + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
             r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + turi));
             debug(r->filename, "modwiring::translateReference::filename");
             r->proxyreq = PROXYREQ_REVERSE;

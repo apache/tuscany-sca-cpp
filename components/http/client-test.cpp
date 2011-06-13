@@ -36,15 +36,16 @@
 namespace tuscany {
 namespace http {
 
-const string uri("http://localhost:8090/httpget");
+const string getURI("http://localhost:8090/httpget");
+const string postURI("http://localhost:8090/httppost");
+const string putURI("http://localhost:8090/httpput");
+const string deleteURI("http://localhost:8090/httpdelete");
 
 bool testGet() {
     http::CURLSession cs("", "", "", "");
 
-    const failable<value> val = http::get(uri, cs);
+    const failable<value> val = http::get(getURI, cs);
     assert(hasContent(val));
-    assert(contains(string(car<value>(cadr<value>(content(val)))), "It works"));
-
     return true;
 }
 
@@ -53,9 +54,8 @@ struct getLoop {
     getLoop(http::CURLSession cs) : cs(cs) {
     }
     const bool operator()() const {
-        const failable<value> val = http::get(uri, cs);
+        const failable<value> val = http::get(getURI, cs);
         assert(hasContent(val));
-        assert(contains(string(car<value>(cadr<value>(content(val)))), "It works"));
         return true;
     }
 };
@@ -69,6 +69,30 @@ bool testGetPerf() {
     return true;
 }
 
+bool testPost() {
+    http::CURLSession cs("", "", "", "");
+
+    const failable<value> val = http::get(postURI, cs);
+    assert(hasContent(val));
+    return true;
+}
+
+bool testPut() {
+    http::CURLSession cs("", "", "", "");
+
+    const failable<value> val = http::get(putURI, cs);
+    assert(hasContent(val));
+    return true;
+}
+
+bool testDelete() {
+    http::CURLSession cs("", "", "", "");
+
+    const failable<value> val = http::get(deleteURI, cs);
+    assert(hasContent(val));
+    return true;
+}
+
 }
 }
 
@@ -77,6 +101,9 @@ int main() {
 
     tuscany::http::testGet();
     tuscany::http::testGetPerf();
+    tuscany::http::testPost();
+    tuscany::http::testPut();
+    tuscany::http::testDelete();
 
     tuscany::cout << "OK" << tuscany::endl;
 

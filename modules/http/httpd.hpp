@@ -152,13 +152,6 @@ const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
 }
 
 /**
- * Return true if a URI is absolute.
- */
-const bool isAbsolute(const string& uri) {
-    return contains(uri, "://");
-}
-
-/**
  * Return the protocol scheme for a server.
  */
 const string scheme(const server_rec* s, const string& def = "http") {
@@ -170,6 +163,20 @@ const string scheme(const server_rec* s, const string& def = "http") {
  */
 const string scheme(request_rec* r, const string& def = "http") {
     return r->server->server_scheme != NULL? r->server->server_scheme : def;
+}
+
+/**
+ * Return the port number for a server.
+ */
+const int port(const server_rec* s, const int def = 80) {
+    return s->port != 0? s->port : def;
+}
+
+/**
+ * Return the port number from an HTTP request.
+ */
+const int port(request_rec* r, const int def = 80) {
+    return r->server->port != 0? r->server->port : def;
 }
 
 /**

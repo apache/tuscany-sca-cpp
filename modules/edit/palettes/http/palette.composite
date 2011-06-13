@@ -7,22 +7,23 @@
  <service name="keychain" promote="keychain"/>
  <service name="param" promote="param"/>
  <service name="params" promote="params"/>
+ <service name="patch" promote="patch"/>
  <service name="path" promote="path"/>
  <service name="post" promote="post"/>
  <service name="put" promote="put"/>
  <service name="url" promote="url"/>
  <service name="user" promote="user"/>
- <component x="180" y="230" name="delete" title="delete" color="green1">
+ <component x="90" y="240" name="delete" title="delete" color="green1">
   <implementation.cpp path="lib/http" library="libhttpdelete"/>
   <service name="delete"/>
   <reference name="url"/>
  </component>
- <component x="160" y="110" name="email" title="email" color="green1">
+ <component x="250" y="60" name="email" title="email" color="green1">
   <implementation.python script="nuvem/email.py"/>
   <service name="email"/>
   <property name="email" visible="false"/>
  </component>
- <component x="150" y="160" name="get" title="get" color="green1">
+ <component x="90" y="170" name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference name="url"/>
@@ -32,47 +33,53 @@
   <service name="host"/>
   <property name="host" visible="false"/>
  </component>
- <component x="230" y="110" name="keychain" title="keychain" color="green1">
+ <component x="90" y="110" name="keychain" title="keychain" color="green1">
   <implementation.python script="nuvem/keychain.py"/>
   <service name="keychain"/>
   <reference name="name"/>
   <reference name="account" target="Accounts" visible="false"/>
  </component>
- <component x="180" y="60" name="param" title="?param" color="green1">
+ <component x="90" y="60" name="param" title="?param" color="green1">
   <implementation.python script="nuvem/param.py"/>
   <service name="param"/>
   <property>x</property>
   <property name="query" visible="false"/>
  </component>
- <component x="90" y="60" name="params" title="?params" color="green1">
+ <component x="230" y="10" name="params" title="?params" color="green1">
   <implementation.python script="nuvem/params.py"/>
   <service name="params"/>
   <property name="query" visible="false"/>
+ </component>
+ <component x="170" y="240" name="patch" title="patch" color="green1">
+  <implementation.cpp path="lib/http" library="libhttppatch"/>
+  <service name="patch"/>
+  <reference name="url"/>
+  <reference name="content"/>
  </component>
  <component x="160" y="10" name="path" title="path" color="green1">
   <implementation.python script="nuvem/path.py"/>
   <service name="path"/>
   <property name="path" visible="false"/>
  </component>
- <component x="90" y="230" name="post" title="post **" color="green1">
+ <component x="230" y="170" name="post" title="post" color="green1">
   <implementation.cpp path="lib/http" library="libhttppost"/>
   <service name="post"/>
   <reference name="url"/>
   <reference name="content"/>
  </component>
- <component x="220" y="160" name="put" title="put **" color="green1">
+ <component x="160" y="170" name="put" title="put" color="green1">
   <implementation.cpp path="lib/http" library="libhttpput"/>
   <service name="put"/>
   <reference name="url"/>
   <reference name="content"/>
  </component>
- <component x="90" y="160" name="url" title="url" color="green1">
+ <component x="190" y="110" name="url" title="url" color="green1">
   <implementation.python script="nuvem/url.py"/>
   <service name="url"/>
   <reference name="address"/>
   <reference name="args"/>
  </component>
- <component x="90" y="110" name="user" title="user" color="green1">
+ <component x="180" y="60" name="user" title="user" color="green1">
   <implementation.python script="nuvem/user.py"/>
   <service name="user"/>
   <property name="user" visible="false"/>

@@ -389,12 +389,22 @@ public:
             debug(uri, "modeval::implProxy::wiredByImpl::uri");
             debug(aparams, "modeval::implProxy::wiredByImpl::input");
 
-            // Use an HTTP proxy if the target is an absolute http:// target
-            if (httpd::isAbsolute(uri)) {
+            // Use an HTTP proxy if the target is an absolute :// target
+            if (http::isAbsolute(uri)) {
                 gc_pool p(currentRequest->pool);
+
+                // Interpret a uri in the form app://appname, convert it using the scheme,
+                // top level domain and port number from the current request
+                if (http::scheme(uri, p) == "app") {
+                    ostringstream appuri;
+                    appuri << httpd::scheme(currentRequest) << "://" << substr(uri, 6) << "." << http::topDomain(httpd::hostName(currentRequest)) << ":" << httpd::port(currentRequest) << "/";
+                    debug(str(appuri), "modeval::implProxy::httpproxy::appuri");
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(str(appuri), sc.ca, sc.cert, sc.key, httpd::cookie(currentRequest), p));
+                    return px(aparams);
+                }
                 
                 // Pass our certificate and the cookie from the current request
-                // if the target is in the same domain
+                // only if the target is in the same top level domain
                 if (http::topDomain(http::hostName(uri, p)) == http::topDomain(httpd::hostName(currentRequest))) {
                     debug(uri, "modeval::implProxy::httpproxy::samedomain");
                     const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, httpd::cookie(currentRequest), p));
@@ -474,7 +484,7 @@ const value mkrefProxy(const ServerConf& sc, const value& ref, unused const stri
         return mkimplProxy(sc, value());
     if (isNil(target))
         return mkunwiredProxy(scdl::name(ref));
-    if (httpd::isAbsolute(target))
+    if (http::isAbsolute(target))
         return mkhttpProxy(sc, target);
     return mkimplProxy(sc, car(pathValues(target)));
 }

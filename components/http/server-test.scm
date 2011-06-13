@@ -15,9 +15,30 @@
 ;  specific language governing permissions and limitations
 ;  under the License.
 
-; URL test case
+; JSON-RPC test case
+
+(define (echo x) x)
+
+; ATOMPub test case
 
 (define (get id)
-    "http://localhost:8090/test"
+  (if (nul id)
+    '((feed (title "Sample Feed") (id "123456789") (entry
+       (((title "Item") (id "111") (content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
+        ((title "Item") (id "222") (content (item (name "Orange") (currencyCode "USD") (currencySymbol "$") (price 3.55))))
+        ((title "Item") (id "333") (content (item (name "Pear") (currencyCode "USD") (currencySymbol "$") (price 1.55))))))))
+    
+    (list (list 'entry '(title "Item") (list 'id (car id)) '(content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))))
 )
 
+(define (post collection item)
+  '("123456789")
+)
+
+(define (put id item)
+  true
+)
+
+(define (delete id)
+  true
+)
