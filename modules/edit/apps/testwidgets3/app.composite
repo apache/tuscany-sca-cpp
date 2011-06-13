@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+ <service name="start" promote="start"/>
+ <component x="260" y="220" name="htattrs1" title="html attrs:" color="magenta1">
+  <implementation.python script="nuvem/htattrs.py"/>
+  <service name="htattrs"/>
+  <reference target="list1" name="value"/>
+ </component>
+ <component x="190" y="80" name="htbutton1" title="html button" color="magenta1">
+  <implementation.python script="nuvem/htbutton.py"/>
+  <service name="htbutton"/>
+  <reference target="text8" name="value"/>
+ </component>
+ <component x="210" y="180" name="htcheck1" title="html checkbox" color="magenta1">
+  <implementation.python script="nuvem/htcheck.py"/>
+  <service name="htcheck"/>
+  <reference target="text9" name="value"/>
+ </component>
+ <component x="180" y="10" name="htimg1" title="html img" color="magenta1">
+  <implementation.python script="nuvem/htimg.py"/>
+  <service name="htimg"/>
+  <reference target="text1" name="value"/>
+ </component>
+ <component x="190" y="230" name="htimg2" title="html img" color="magenta1">
+  <implementation.python script="nuvem/htimg.py"/>
+  <service name="htimg"/>
+  <reference target="htattrs1" name="value"/>
+ </component>
+ <component x="180" y="50" name="htlink1" title="html link" color="magenta1">
+  <implementation.python script="nuvem/htlink.py"/>
+  <service name="htlink"/>
+  <reference target="pair1" name="value"/>
+ </component>
+ <component x="400" y="330" name="htstyle1" title="html style" color="magenta1">
+  <implementation.python script="nuvem/htstyle.py"/>
+  <service name="htstyle"/>
+  <reference target="list2" name="value"/>
+ </component>
+ <component x="100" y="10" name="item1" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htimg1" name="value"/>
+  <property>testdynimg</property>
+ </component>
+ <component x="100" y="170" name="item10" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htcheck1" name="value"/>
+  <property>testdyncheckbox</property>
+ </component>
+ <component x="110" y="230" name="item2" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htimg2" name="value"/>
+  <property>teststyledimg</property>
+ </component>
+ <component x="400" y="300" name="item3" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text3" name="value"/>
+  <property>onclick</property>
+ </component>
+ <component x="510" y="290" name="item4" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text4" name="value"/>
+  <property>width</property>
+ </component>
+ <component x="510" y="320" name="item5" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text5" name="value"/>
+  <property>height</property>
+ </component>
+ <component x="400" y="220" name="item6" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text10" name="value"/>
+  <property>id</property>
+ </component>
+ <component x="400" y="260" name="item7" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text2" name="value"/>
+  <property>src</property>
+ </component>
+ <component x="90" y="50" name="item8" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htlink1" name="value"/>
+  <property>testdynlink</property>
+ </component>
+ <component x="90" y="120" name="item9" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htbutton1" name="value"/>
+  <property>testdynbutton</property>
+ </component>
+ <component name="list" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item1" name="item" clonable="true"/>
+  <reference target="item8" name="item" clonable="true"/>
+  <reference target="item9" name="item" clonable="true"/>
+  <reference target="item10" name="item" clonable="true"/>
+  <reference target="item2" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list1" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item6" name="item" clonable="true"/>
+  <reference target="item7" name="item" clonable="true"/>
+  <reference target="item3" name="item" clonable="true"/>
+  <reference target="htstyle1" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list2" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item4" name="item" clonable="true"/>
+  <reference target="item5" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component x="240" y="50" name="pair1" title="pair" color="yellow1">
+  <implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
+  <reference target="text6" name="name"/>
+  <reference target="text7" name="value"/>
+ </component>
+ <component x="20" y="10" name="start" title="start" color="green1">
+  <implementation.python script="nuvem/start.py"/>
+  <service name="start" visible="false">
+   <binding.http uri="start"/>
+  </service>
+  <reference target="list" name="content"/>
+ </component>
+ <component x="240" y="10" name="text1" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://tuscany.apache.org/images/TuscanyLogo.jpg</property>
+ </component>
+ <component x="430" y="220" name="text10" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testimg</property>
+ </component>
+ <component x="440" y="260" name="text2" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://tuscany.apache.org/images/TuscanyLogo.jpg</property>
+ </component>
+ <component x="430" y="250" name="text3" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>alert('hey')</property>
+ </component>
+ <component x="560" y="280" name="text4" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>320px</property>
+ </component>
+ <component x="560" y="320" name="text5" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>60px</property>
+ </component>
+ <component x="280" y="50" name="text6" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://www.apache.org/</property>
+ </component>
+ <component x="280" y="80" name="text7" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>Apache</property>
+ </component>
+ <component x="270" y="80" name="text8" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>dynamic button</property>
+ </component>
+ <component x="300" y="180" name="text9" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>dynamic checkbox</property>
+ </component>
+</composite>

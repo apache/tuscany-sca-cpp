@@ -37,19 +37,42 @@
   <implementation.python script="nuvem/map_.py"/>
   <service name="foreach"/>
   <reference target="name5" name="item"/>
-  <reference target="format" name="transform"/>
+  <reference target="htimg1" name="transform"/>
   <reference target="shuffle" name="list"/>
  </component>
- <component name="format" title="format" color="magenta1">
-  <implementation.python script="nuvem/format_.py"/>
-  <service name="format"/>
-  <reference target="text2" name="pattern"/>
-  <reference target="list" name="values"/>
+ <component x="180" y="50" name="htimg1" title="html img" color="magenta1">
+  <implementation.python script="nuvem/htimg.py"/>
+  <service name="htimg"/>
+  <reference target="list" name="value"/>
+ </component>
+ <component x="280" y="80" name="htstyle1" title="html style" color="magenta1">
+  <implementation.python script="nuvem/htstyle.py"/>
+  <service name="htstyle"/>
+  <reference target="list1" name="value"/>
+ </component>
+ <component name="item" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="foreach2" name="value"/>
+  <property>images</property>
+ </component>
+ <component x="390" y="80" name="item1" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text1" name="value"/>
+  <property>width</property>
  </component>
  <component name="list" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="valueof2" name="item" clonable="true"/>
+  <reference target="htstyle1" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list1" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item1" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
  </component>
  <component name="name3" title="" color="orange1">
@@ -75,12 +98,6 @@
    <binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
   </reference>
  </component>
- <component name="item" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="foreach2" name="value"/>
-  <property>images</property>
- </component>
  <component name="select" title="select" color="yellow1">
   <implementation.python script="nuvem/select.py"/>
   <service name="select"/>
@@ -93,22 +110,22 @@
   <reference target="name4" name="path"/>
   <reference target="flkalbum" name="list"/>
  </component>
- <component name="shuffle" title="shuffle" color="yellow1">
+ <component x="180" y="180" name="shuffle" title="shuffle" color="yellow1">
   <implementation.python script="nuvem/shuffle_.py"/>
   <service name="shuffle"/>
   <reference target="append" name="list"/>
  </component>
- <component x="14" y="19" name="start" title="start" color="green1">
+ <component x="20" y="10" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>
   <service name="start" visible="false">
    <binding.http uri="start"/>
   </service>
   <reference target="item" name="content"/>
  </component>
- <component name="text2" title=" '{propval}'" color="orange1">
+ <component x="440" y="80" name="text1" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
-  <property>&lt;img src=&quot;{0}&quot; width=&quot;320&quot;/&gt;</property>
+  <property>320px</property>
  </component>
  <component name="text5" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>

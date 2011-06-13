@@ -60,6 +60,21 @@
 <br/>
 <table style="width: 100%;">
 <tr>
+<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Calendar</th>
+</tr>
+</table>
+
+<table>
+<tr><td style="padding-right: 2px;"><input type="text" id="sched1" size="10" placeholder="Schedule" style="width: 80px;"/></td><td><input type="text" id="service1" size="2048" placeholder="Service URL" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="sched2" size="10" placeholder="Schedule" style="width: 80px;"/></td><td><input type="text" id="service2" size="2048" placeholder="Service URL" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="sched3" size="10" placeholder="Schedule" style="width: 80px;"/></td><td><input type="text" id="service3" size="2048" placeholder="Service URL" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="sched4" size="10" placeholder="Schedule" style="width: 80px;"/></td><td><input type="text" id="service4" size="2048" placeholder="Service URL" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="sched5" size="10" placeholder="Schedule" style="width: 80px;"/></td><td><input type="text" id="service5" size="2048" placeholder="Service URL" style="width: 200px;"/></td></tr>
+</table>
+<br/>
+
+<table style="width: 100%;">
+<tr>
 <th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Key chain</th>
 </tr>
 </table>
@@ -70,6 +85,11 @@
 <tr><td style="padding-right: 2px;"><input type="text" id="name3" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value3" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
 <tr><td style="padding-right: 2px;"><input type="text" id="name4" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value4" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
 <tr><td style="padding-right: 2px;"><input type="text" id="name5" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value5" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name6" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value6" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name7" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value7" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name8" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value8" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name9" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value9" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name10" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value10" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
 </table>
 </form>
 
@@ -115,6 +135,15 @@ function getaccount(name) {
         var desc = assoc("'description", acct);
         $('userDescription').innerHTML = isNil(desc) || isNil(cdr(desc))? '' : cadr(desc);
 
+        var cal = assoc("'calendar", acct);
+        reduce(function(i, evt) {
+                var sched = assoc("'@schedule", evt);
+                var svc = assoc("'@service", evt);
+                $('sched' + i).value = isNil(sched)? '' : cadr(sched);
+                $('service' + i).value = isNil(svc)? '' : cadr(svc);
+                return i + 1;
+            }, 1, isNil(cal)? mklist() : cadr(cadr(cal)));
+
         var keys = assoc("'keys", acct);
         reduce(function(i, key) {
                 var kn = assoc("'@name", key);
@@ -146,14 +175,19 @@ function save(entryxml) {
 function onaccountchange() {
     var title = $('userTitle').value;
     var desc = $('userDescription').value;
+    var cal = map(function(i) {
+        var sched = $('sched' + i).value;
+        var svc = $('service' + i).value;
+        return mklist("'event", mklist("'@schedule", sched), mklist("'@service", svc));
+    }, range(1, 6));
     var keys = map(function(i) {
         var kn = $('name' + i).value;
         var kv = $('value' + i).value;
         return mklist("'key", mklist("'@name", kn), mklist("'@value", kv));
-    }, range(1, 6));
+    }, range(1, 11));
 
     var accountentry = mklist("'entry", mklist("'title", title != ''? title : username), mklist("'id", username),
-                        mklist("'content", mklist("'account", mklist("'description", desc), cons("'keys", keys))));
+                        mklist("'content", mklist("'account", mklist("'description", desc), cons("'keys", keys), cons("'calendar", cal))));
     var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(accountentry))));
     if (savedaccountentryxml == entryxml)
         return false;
@@ -165,10 +199,15 @@ function onaccountchange() {
 $('userTitle').onchange = onaccountchange;
 $('userDescription').onchange = onaccountchange;
 map(function(i) {
+    $('sched' + i).onchange = onaccountchange;
+    $('service' + i).onchange = onaccountchange;
+    return true;
+}, range(1, 6));
+map(function(i) {
     $('name' + i).onchange = onaccountchange;
     $('value' + i).onchange = onaccountchange;
     return true;
-}, range(1, 6));
+}, range(1, 11));
 
 /**
  * Handle a form submit event.

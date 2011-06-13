@@ -50,17 +50,19 @@ document.title = window.location.hostname.split('.')[0];
 var appdiv = $('app');
 
 /**
- * Start, stop, timer and location components.
+ * Start, stop, timer, animation and location components.
  */
 var startcomp = sca.httpclient('start', '/start');
 var stopcomp = sca.httpclient('stop', '/stop');
 var timercomp = sca.httpclient('timer', '/timer');
+var animationcomp = sca.httpclient('animation', '/animation');
 var locationcomp = sca.httpclient('location', '/location');
 
 /**
- * Find a named value in a tree of elements.
+ * Find a named value in a tree of elements. The value name is given
+ * as a list of ids.
  */
-function datavalue(l, id) {
+function namedvalue(l, id) {
     if (isNil(l))
         return null;
     var e = car(l);
@@ -74,7 +76,7 @@ function datavalue(l, id) {
 
         // Search for next id segments in child elements
         if (!elementHasValue(e)) {
-            var v = datavalue(elementChildren(e), cdr(id));
+            var v = namedvalue(elementChildren(e), cdr(id));
             if (v != null)
                 return v;
         }
@@ -82,11 +84,11 @@ function datavalue(l, id) {
 
     // Search for id through the whole element tree
     if (!elementHasValue(e)) {
-        var v = datavalue(elementChildren(e), id);
+        var v = namedvalue(elementChildren(e), id);
         if (v != null)
             return v;
     }
-    return datavalue(cdr(l), id);
+    return namedvalue(cdr(l), id);
 }
 
 /**
@@ -111,84 +113,101 @@ function inputvalue(e) {
 };
 
 /**
- * Set a data value into a widget.
+ * Set a value into a widget.
  */
 function setwidgetvalue(e, dv) {
-
-    function datatext(dv) {
-        if (!elementHasValue(dv))
-            return '';
-        var t = elementValue(dv);
-        return t == null? '' : t;
-    }
+    var htattrs = namedElementChild("'htattrs", dv);
+    var attrs = append(isNil(htattrs)? mklist() :
+                        map(function(ce) { return mklist(elementName(ce).substring(1), elementHasValue(ce)? elementValue(ce) : elementChildren(ce)); }, elementChildren(htattrs)),
+                        elementHasValue(dv)? mklist(mklist('value', isNil(elementValue(dv))? '' : elementValue(dv))) : mklist());
 
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
-        var t = datatext(dv);
-        car(childElements(e)).innerHTML = t;
-        return t;
+        var ce = car(childElements(e));
+        return map(function(a) { car(a) == 'value'? ce.innerHTML = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
+
     if (e.className == 'entry' || e.className == 'password') {
-        var t = datatext(dv);
-        car(childElements(e)).defaultValue = t;
-        return t;
+        var ce = car(childElements(e));
+        return map(function(a) { car(a) == 'value'? ce.defaultValue = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
+
     if (e.className == 'button') {
-        var t = datatext(dv);
-        car(childElements(e)).value = t;
-        return t;
+        var ce = car(childElements(e));
+        return map(function(a) { car(a) == 'value'? ce.value = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
+
     if (e.className == 'checkbox') {
-        var t = datatext(dv);
-        car(childElements(e)).value = t;
-        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
-        return t;
+        var ce = car(childElements(e));
+
+        function setcheckvalue(ce, v) {
+            ce.value = v;
+            map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = v; return n; }, nodeList(e.childNodes));
+            return true;
+        }
+
+        var r = map(function(a) { car(a) == 'value'? setcheckvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return r;
     }
+
     if (e.className == 'select') {
-        var t = datatext(dv);
         var ce = car(childElements(car(childElements(e))));
-        ce.value = t;
-        ce.innerHTML = t;
-        return t;
+
+        function setselectvalue(ce, v) {
+            ce.value = v;
+            ce.innerHTML = v;
+            return true;
+        }
+
+        var r = map(function(a) { car(a) == 'value'? setselectvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return r;
     }
     if (e.className == 'list') {
-        var t = ui.datalist(isNil(dv)? mklist() : mklist(dv));
-        e.innerHTML = t;
-        return t;
+        var dl = ui.datalist(isNil(dv)? mklist() : mklist(dv));
+        e.innerHTML = dl;
+        return dl;
     }
     if (e.className == 'table') {
-        var t = ui.datatable(isNil(dv)? mklist() : mklist(dv));
-        e.innerHTML = t;
-        return t;
+        var dl = ui.datatable(isNil(dv)? mklist() : mklist(dv));
+        e.innerHTML = dl;
+        return dl;
     }
     if (e.className == 'link') {
-        var t = datatext(dv);
         var ce = car(childElements(e));
-        ce.href = isList(t)? car(t) : t;
-        car(childElements(ce)).innerHTML = isList(t)? cadr(t) : t;
-        return t;
+
+        function setlinkvalue(ce, v) {
+            if (isList(v)) {
+                ce.href = car(v);
+                ce.innerHTML = cadr(v);
+                return true;
+            }
+            ce.href = v;
+            ce.innerHTML = v;
+            return true;
+        }
+
+        return map(function(a) { car(a) == 'value'? setlinkvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
     if (e.className == 'img') {
-        var t = datatext(dv);
-        var img = car(childElements(e));
-        img.setAttribute('src', t);
-        return t;
+        var ce = car(childElements(e));
+        return map(function(a) { car(a) == 'value'? ce.setAttribute('src', cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
     if (e.className == 'iframe') {
-        var t = datatext(dv);
-        car(childElements(e)).src = t;
-        return t;
+        var ce = car(childElements(e));
+        return map(function(a) { car(a) == 'value'? ce.setAttribute('src', cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
     }
     return '';
 };
 
 /**
- * Display data on the app page.
+ * Update the app page with the given app data.
  */
-function displaydata(l) {
+function updatepage(l) {
+    if (isNil(l))
+        return true;
 
     // Update the widgets values
     function updatewidget(e) {
-        var dv = datavalue(l, map(function(t) { return "'" + t; }, e.id.split('.')));
+        var dv = namedvalue(l, map(function(t) { return "'" + t; }, e.id.split('.')));
         if (dv == null || isNil(dv))
             return e;
         setwidgetvalue(e, dv);
@@ -200,22 +219,22 @@ function displaydata(l) {
 }
 
 /**
- * Display data from a document on the app page.
+ * Convert a document to application data.
  */
-function displaydoc(doc) {
+function docdata(doc) {
     if (isNil(doc))
-        return true;
+        return null;
 
     if (json.isJSON(mklist(doc)))
-        return displaydata(json.readJSON(mklist(doc)));
+        return json.readJSON(mklist(doc));
 
     if (atom.isATOMEntry(mklist(doc)))
-        return displaydata(atom.readATOMEntry(mklist(doc)));
+        return atom.readATOMEntry(mklist(doc));
 
     if (atom.isATOMFeed(mklist(doc)))
-        return displaydata(atom.readATOMFeed(mklist(doc)));
+        return atom.readATOMFeed(mklist(doc));
 
-    return displaydata(doc);
+    return doc;
 }
 
 /**
@@ -278,6 +297,18 @@ function initwidget(e) {
 }
 
 /**
+ * Get document from a component.
+ */
+function getdoc(comp, name, uri) {
+    try {
+        return comp.get(uri);
+    } catch(e) {
+        log('exception on get(' + name + ', ' + uri + ')', e);
+        return null;
+    }
+}
+
+/**
  * Get app data from the main app page component.
  */
 function getpagedata() {
@@ -285,8 +316,7 @@ function getpagedata() {
 
         // Display component data on the page
         function displaypage(doc) {
-            if (!isNil(doc))
-                displaydoc(doc);
+            updatepage(docdata(doc));
 
             // Reveal the page
             ui.showbody();
@@ -312,42 +342,35 @@ function getpagedata() {
         }
 
         // Get the component app data
-        var doc = startcomp.get(window.location.search);
-        try {
-            var appFrame = $('appFrame');
-            if (!isNil(appFrame.contentDocument.body)) {
-                appdiv.innerHTML = appFrame.contentDocument.body.innerHTML;
-            } else {
-                $('appebuffer').appendChild(appFrame.contentDocument.documentElement);
-                appdiv.innerHTML = appebuffer.innerHTML;
-                appebuffer.innerHTML = '';
-            }
+        var doc = getdoc(startcomp, 'start', window.location.search);
 
-            // Initial setup of the widgets
-            map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
-
-            // Display data on the page
-            displaypage(doc);
-
-            // Get and eval the optional timer and location watch setup scripts
-            evalcompinit(timercomp.get('setup'));
-            evalcompinit(locationcomp.get('setup'));
-            return true;
-
-        } catch(e) {
-            log('exception on startcomp.get()', e);
+        // Prepare app HTML page
+        var appFrame = $('appFrame');
+        if (!isNil(appFrame.contentDocument.body)) {
+            appdiv.innerHTML = appFrame.contentDocument.body.innerHTML;
+        } else {
+            $('appebuffer').appendChild(appFrame.contentDocument.documentElement);
+            appdiv.innerHTML = appebuffer.innerHTML;
+            appebuffer.innerHTML = '';
         }
+
+        // Setup the widgets
+        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
+
+        // Display data on the page
+        displaypage(doc);
+
+        // Get and eval the optional timer, animation and location watch setup scripts
+        evalcompinit(getdoc(timercomp, 'timer', 'setup'));
+        evalcompinit(getdoc(animationcomp, 'animation', 'setup'));
+        evalcompinit(getdoc(locationcomp, 'location', 'setup'));
+
+        return true;
+
     } catch(e) {
         log('exception in getpagedata()', e);
+        return true;
     }
-    return true;
-}
-
-/**
- * Get app data from a component.
- */
-function getcompdata(comp, qs) {
-    return displaydoc(comp.get(qs));
 }
 
 /**
@@ -380,9 +403,10 @@ function compquery() {
  */
 function buttonClickHandler(id) {
     try {
-        return getcompdata(sca.component(id), compquery());
+        return updatepage(docdata(getdoc(sca.component(id), 'button', compquery())));
     } catch(e) {
         log('exception in buttonClickHandler()', e);
+        return true;
     }
 }
 
@@ -391,9 +415,10 @@ function buttonClickHandler(id) {
  */
 function intervalHandler() {
     try {
-        return getcompdata(timercomp, compquery());
+        return updatepage(docdata(getdoc(timercomp, 'timer', compquery())));
     } catch(e) {
         log('exception in intervalHandler()', e);
+        return true;
     }
 }
 
@@ -406,6 +431,76 @@ function setupIntervalHandler(msec) {
         return setInterval(intervalHandler, msec);
     } catch(e) {
         log('exception in setupIntervalHandler()', e);
+        return true;
+    }
+}
+
+/**
+ * Handle an animation event.
+ */
+var animationData = null;
+var currentAnimationData = null;
+var animationLoop = 0;
+var currentAnimationLoop = 0;
+
+function animationHandler() {
+    try {
+        // Get animation data if necessary
+        if (isNil(animationData)) {
+            animationData = docdata(getdoc(animationcomp, 'animation', compquery()));
+            if (isNil(animationData)) {
+                // Retry later
+                return true;
+            }
+            currentAnimationData = animationData;
+            currentAnimationLoop = animationLoop;
+        }
+
+        // Update page with animation data
+        updatepage(car(currentAnimationData));
+
+        // End of animation?
+        if (isNil(cdr(currentAnimationData))) {
+            if (currentAnimationLoop == -1) {
+                // Repeat current animation forever
+                currentAnimationData = animationData;
+                return true;
+            }
+
+            currentAnimationLoop = currentAnimationLoop - 1;
+            if (currentAnimationLoop <= 0) {
+                // Get next animation data
+                currentAnimationData = null;
+                animationData = null;
+                return true;
+            }
+
+            // Repeat animation
+            currentAnimationData = animationData;
+            return true;
+        }
+
+        // Move to the next animation frame
+        currentAnimationData = cdr(currentAnimationData);
+        return true;
+
+    } catch(e) {
+        log('exception in animationHandler()', e);
+        return true;
+    }
+}
+
+/**
+ * Setup an animation.
+ */
+function setupAnimationHandler(msec, loop) {
+    animationLoop = loop;
+    animationHandler();
+    try {
+        return setInterval(animationHandler, msec);
+    } catch(e) {
+        log('exception in setupAnimationHandler()', e);
+        return true;
     }
 }
 
@@ -418,7 +513,7 @@ var geoposition = null;
 function locationHandler(pos) {
     try {
         geoposition = pos;
-        return getcompdata(locationcomp, compquery());
+        return updatepage(docdata(getdoc(locationcomp, 'location', compquery())));
     } catch(e) {
         locationErrorHandler(e);
     }

@@ -53,12 +53,6 @@
   <reference target="bzprofile" name="value"/>
   <property>buzzprofile</property>
  </component>
- <component name="list" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text5" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
  <component name="list2" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
@@ -83,11 +77,6 @@
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
- </component>
- <component name="text3" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>https://www.googleapis.com/buzz/v1/people/{0}/@self?alt=json</property>
  </component>
  <component name="text4" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>

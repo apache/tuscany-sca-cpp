@@ -7,6 +7,7 @@
  <service name="max" promote="max"/>
  <service name="min" promote="min"/>
  <service name="multiply" promote="multiply"/>
+ <service name="pi" promote="pi"/>
  <service name="random" promote="random"/>
  <service name="round" promote="round"/>
  <service name="sin" promote="sin"/>
@@ -56,6 +57,10 @@
   </service>
   <reference name="value1"/>
   <reference name="value2"/>
+ </component>
+ <component x="240" y="130" name="pi" title="pi" color="magenta1">
+  <implementation.python script="nuvem/pi_.py"/>
+  <service name="pi"/>
  </component>
  <component x="170" y="130" name="random" title="rand" color="magenta1">
   <implementation.python script="nuvem/random_.py"/>

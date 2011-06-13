@@ -2,7 +2,7 @@
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="sendemail" promote="sendemail"/>
  <service name="sendgtalk" promote="sendgtalk"/>
- <service name="sendsms" promote="sendsms"/>
+ <service name="twsms" promote="twsms"/>
  <service name="voicecall" promote="voicecall"/>
  <component x="170" y="10" name="sendemail" title="email **" color="blue1">
   <implementation.python script="nuvem/sendemail.py"/>
@@ -19,12 +19,15 @@
   <reference name="to"/>
   <reference name="msg"/>
  </component>
- <component x="90" y="120" name="sendsms" title="sms **" color="blue1">
-  <implementation.python script="nuvem/sendsms.py"/>
-  <service name="sendsms"/>
-  <reference name="user"/>
+ <component x="90" y="120" name="twsms" title="sms" color="blue1">
+  <implementation.python script="nuvem/twsms.py"/>
+  <service name="twsms"/>
+  <reference name="sid"/>
+  <reference name="token"/>
+  <reference name="from"/>
   <reference name="to"/>
   <reference name="msg"/>
+  <reference name="s" wiredByImpl="true" visible="false"/>
  </component>
  <component x="170" y="120" name="voicecall" title="voice **" color="blue1">
   <implementation.python script="nuvem/voicecall.py"/>

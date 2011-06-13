@@ -428,9 +428,8 @@ page.widgetselect = function(n, s, wvalue, wdelete) {
         // Clear the widget outline
         if (!isNil(n))
             n.cover.style.borderWidth = '0px';
-    }
-    if (isNil(n))
         return true;
+    }
 
     // Update the widget value field
     wvalue.value = page.text(n);
@@ -438,7 +437,7 @@ page.widgetselect = function(n, s, wvalue, wdelete) {
     wdelete.disabled = false;
 
     // Outline the widget
-    n.cover.style.borderWidth = s? '2px' : '0px';
+    n.cover.style.borderWidth = '2px';
     return true;
 };
 

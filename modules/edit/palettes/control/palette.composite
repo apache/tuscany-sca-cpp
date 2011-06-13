@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
+ <service name="animation" promote="animation"/>
  <service name="call" promote="call"/>
  <service name="location" promote="location"/>
+ <service name="schedule" promote="schedule"/>
  <service name="service" promote="service"/>
  <service name="start" promote="start"/>
  <service name="stop" promote="stop"/>
  <service name="timer" promote="timer"/>
+ <component x="90" y="170" name="animation" title="animation" color="green1">
+  <implementation.python script="nuvem/animation.py"/>
+  <service name="animation" visible="false">
+   <binding.http uri="animation"/>
+  </service>
+  <reference name="n"/>
+  <reference name="loop"/>
+  <reference name="content"/>
+ </component>
  <component x="90" y="70" name="call" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
@@ -19,7 +30,15 @@
   </service>
   <reference name="content"/>
  </component>
- <component x="160" y="70" name="service" title="{compname}" color="green1">
+ <component x="170" y="120" name="schedule" title="schedule" color="green1">
+  <implementation.python script="nuvem/schedule.py"/>
+  <service name="schedule" visible="false">
+   <binding.http uri="schedule"/>
+  </service>
+  <reference name="n"/>
+  <reference name="content"/>
+ </component>
+ <component x="150" y="70" name="service" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference name="content"/>

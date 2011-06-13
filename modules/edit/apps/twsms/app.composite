@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+ <service name="item" promote="property"/>
+ <service name="send" promote="send"/>
+ <component x="750" y="320" name="format1" title="format" color="magenta1">
+  <implementation.python script="nuvem/format_.py"/>
+  <service name="format"/>
+  <reference target="text12" name="pattern"/>
+  <reference target="list2" name="values"/>
+ </component>
+ <component x="120" y="10" name="format2" title="format" color="magenta1">
+  <implementation.python script="nuvem/format_.py"/>
+  <service name="format"/>
+  <reference target="text1" name="pattern"/>
+  <reference target="list1" name="values"/>
+ </component>
+ <component x="530" y="90" name="format3" title="format" color="magenta1">
+  <implementation.python script="nuvem/format_.py"/>
+  <service name="format"/>
+  <reference target="text2" name="pattern"/>
+  <reference target="list5" name="values"/>
+ </component>
+ <component x="630" y="190" name="host1" title="host" color="green1">
+  <implementation.python script="nuvem/host.py"/>
+  <service name="host"/>
+  <property name="host" visible="false"/>
+ </component>
+ <component x="520" y="80" name="item1" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="format3" name="value"/>
+  <property>sampleurl1</property>
+ </component>
+ <component x="520" y="180" name="item2" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text3" name="value"/>
+  <property>sampleurl2</property>
+ </component>
+ <component name="list1" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="param1" name="item" clonable="true"/>
+  <reference target="param3" name="item" clonable="true"/>
+  <reference target="param2" name="item" clonable="true"/>
+  <reference target="text10" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list2" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="param4" name="item" clonable="true"/>
+  <reference target="param5" name="item" clonable="true"/>
+  <reference target="param6" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list3" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text15" name="item" clonable="true"/>
+  <reference target="list4" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list4" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="format1" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list5" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="host1" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component x="160" y="60" name="param1" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>sid</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="530" y="100" name="param2" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>sid</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="530" y="70" name="param3" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>token</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="250" y="240" name="param4" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>from</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="260" y="270" name="param5" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>to</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="260" y="300" name="param6" title="?param" color="green1">
+  <implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>msg</property>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="80" y="10" name="post1" title="post" color="green1">
+  <implementation.cpp path="lib/http" library="libhttppost"/>
+  <service name="post"/>
+  <reference target="format2" name="url"/>
+  <reference target="list3" name="content"/>
+ </component>
+ <component x="30" y="10" name="send" title="{compname}" color="green1">
+  <implementation.python script="nuvem/service.py"/>
+  <service name="service" visible="false"/>
+  <reference target="post1" name="content"/>
+ </component>
+ <component x="450" y="300" name="text1" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>https://{0}:{1}@api.twilio.com/2010-04-01/Accounts/{2}/SMS/Messages</property>
+ </component>
+ <component x="540" y="130" name="text10" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>SMS/Messages</property>
+ </component>
+ <component x="550" y="450" name="text12" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>From={0}&amp;To={1}&amp;Body={2}</property>
+ </component>
+ <component x="710" y="290" name="text15" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>application/x-www-form-urlencoded</property>
+ </component>
+ <component x="590" y="100" name="text2" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://{0}/c/send?sid=...&amp;</property>
+ </component>
+ <component x="600" y="180" name="text3" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>token=...&amp;from=...&amp;to=...&amp;msg=...</property>
+ </component>
+</composite>

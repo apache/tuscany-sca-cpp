@@ -50,7 +50,7 @@
   <reference name="separator"/>
   <reference name="string"/>
  </component>
- <component x="170" y="230" name="uppercase" title="upper" color="magenta1">
+ <component x="160" y="230" name="uppercase" title="upper" color="magenta1">
   <implementation.python script="nuvem/uppercase.py"/>
   <service name="uppercase"/>
   <reference name="string"/>

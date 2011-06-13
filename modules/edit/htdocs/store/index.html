@@ -139,7 +139,8 @@ function getapps(category) {
     function display(doc) {
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
-        var entries = cadr(assoc("'entry", cdr(feed)));
+        var aentries = assoc("'entry", cdr(feed));
+        var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
         for (var i = 0; i < length(entries); i++) {
             var entry = entries[i];
             var title = cadr(assoc("'title", entry))

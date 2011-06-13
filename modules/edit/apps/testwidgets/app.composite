@@ -19,19 +19,10 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
  <service name="start" promote="start"/>
- <component name="list" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item10" name="item" clonable="true"/>
-  <reference target="item9" name="item" clonable="true"/>
-  <reference target="item8" name="item" clonable="true"/>
-  <reference target="item7" name="item" clonable="true"/>
-  <reference target="item6" name="item" clonable="true"/>
-  <reference target="item5" name="item" clonable="true"/>
-  <reference target="item4" name="item" clonable="true"/>
-  <reference target="item3" name="item" clonable="true"/>
-  <reference target="item2" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
+ <component x="170" y="330" name="htattrs1" title="html attrs:" color="magenta1">
+  <implementation.python script="nuvem/htattrs.py"/>
+  <service name="htattrs"/>
+  <reference target="list2" name="value"/>
  </component>
  <component name="item" title="{propval} :" color="orange1">
   <implementation.python script="nuvem/item.py"/>
@@ -39,11 +30,29 @@
   <reference target="text9" name="value"/>
   <property>testpath2</property>
  </component>
+ <component x="100" y="340" name="item1" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="htattrs1" name="value"/>
+  <property>testattrs</property>
+ </component>
  <component name="item10" title="{propval} :" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="text" name="value"/>
   <property>testh1</property>
+ </component>
+ <component x="270" y="370" name="item11" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text10" name="value"/>
+  <property>onclick</property>
+ </component>
+ <component x="280" y="330" name="item12" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text1" name="value"/>
+  <property>value</property>
  </component>
  <component name="item2" title="{propval} :" color="orange1">
   <implementation.python script="nuvem/item.py"/>
@@ -93,6 +102,28 @@
   <reference target="text7" name="value"/>
   <property>testsection</property>
  </component>
+ <component name="list" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item10" name="item" clonable="true"/>
+  <reference target="item9" name="item" clonable="true"/>
+  <reference target="item8" name="item" clonable="true"/>
+  <reference target="item7" name="item" clonable="true"/>
+  <reference target="item6" name="item" clonable="true"/>
+  <reference target="item5" name="item" clonable="true"/>
+  <reference target="item4" name="item" clonable="true"/>
+  <reference target="item3" name="item" clonable="true"/>
+  <reference target="item2" name="item" clonable="true"/>
+  <reference target="item1" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list2" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item12" name="item" clonable="true"/>
+  <reference target="item11" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
  <component x="17" y="3" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>
   <service name="start" visible="false">
@@ -104,6 +135,16 @@
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>test header 1</property>
+ </component>
+ <component x="320" y="340" name="text1" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test html attrs</property>
+ </component>
+ <component x="370" y="370" name="text10" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>alert('hey')</property>
  </component>
  <component name="text2" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>

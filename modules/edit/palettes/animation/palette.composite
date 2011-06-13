@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
+ <service name="htattrs" promote="htattrs"/>
+ <service name="htbutton" promote="htbutton"/>
+ <service name="htcheck" promote="htcheck"/>
+ <service name="htimg" promote="htimg"/>
+ <service name="htlink" promote="htlink"/>
+ <service name="htstyle" promote="htstyle"/>
+ <service name="pixels" promote="pixels"/>
+ <component x="90" y="110" name="htattrs" title="html attrs:" color="magenta1">
+  <implementation.python script="nuvem/htattrs.py"/>
+  <service name="htattrs"/>
+  <reference name="value"/>
+ </component>
+ <component x="180" y="10" name="htbutton" title="html button" color="magenta1">
+  <implementation.python script="nuvem/htbutton.py"/>
+  <service name="htbutton"/>
+  <reference name="value"/>
+ </component>
+ <component x="180" y="60" name="htcheck" title="html checkbox" color="magenta1">
+  <implementation.python script="nuvem/htcheck.py"/>
+  <service name="htcheck"/>
+  <reference name="value"/>
+ </component>
+ <component x="90" y="10" name="htimg" title="html img" color="magenta1">
+  <implementation.python script="nuvem/htimg.py"/>
+  <service name="htimg"/>
+  <reference name="value"/>
+ </component>
+ <component x="90" y="60" name="htlink" title="html link" color="magenta1">
+  <implementation.python script="nuvem/htlink.py"/>
+  <service name="htlink"/>
+  <reference name="value"/>
+ </component>
+ <component x="190" y="110" name="htstyle" title="html style" color="magenta1">
+  <implementation.python script="nuvem/htstyle.py"/>
+  <service name="htstyle"/>
+  <reference name="value"/>
+ </component>
+ <component x="90" y="160" name="pixels" title="pixels" color="magenta1">
+  <implementation.python script="nuvem/pixels.py"/>
+  <service name="pixels"/>
+  <reference name="value"/>
+ </component>
+</composite>
