@@ -21,7 +21,7 @@ incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
 dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf
-moddir=$(prefix)/modules/http
+moddir = $(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp
 curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
@@ -58,6 +58,17 @@ httpd-modules.prefix: $(top_builddir)/config.status
 	echo ${HTTPD_MODULES_PREFIX} >httpd-modules.prefix
 curl.prefix: $(top_builddir)/config.status
 	echo ${CURL_PREFIX} >curl.prefix
+
+if WANT_MODSECURITY
+
+modsecurity.prefix: $(top_builddir)/config.status
+	echo ${MODSECURITY_PREFIX} >modsecurity.prefix
+
+dist_modsecurity_SCRIPTS = mod-security-conf
+modsecurity_DATA = modsecurity.prefix
+modsecuritydir = $(prefix)/modules/http
+
+endif
 
 dist_noinst_SCRIPTS = httpd-test http-test proxy-test
 noinst_PROGRAMS = curl-test curl-get curl-connect

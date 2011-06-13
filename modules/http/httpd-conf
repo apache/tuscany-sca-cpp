@@ -61,6 +61,7 @@ Group $group
 ServerSignature Off
 ServerTokens Prod
 Timeout 45
+RequestReadTimeout header=20-40,MinRate=500 body=20,MinRate=500
 LimitRequestBody 1048576
 HostNameLookups Off
 
@@ -132,6 +133,12 @@ SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
 Header append Vary User-Agent env=!dont-vary
 </Location>
 
+# Enable per client bandwidth rate limt
+<Location />
+SetOutputFilter RATE_LIMIT
+SetEnv rate-limit 400 
+</Location>
+
 # Listen on HTTP port
 Listen $listen
 
@@ -200,10 +207,12 @@ LoadModule socache_shmcb_module ${modules_prefix}/modules/mod_socache_shmcb.so
 LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
 LoadModule mime_module ${modules_prefix}/modules/mod_mime.so
 LoadModule status_module ${modules_prefix}/modules/mod_status.so
+LoadModule info_module ${modules_prefix}/modules/mod_info.so
 LoadModule asis_module ${modules_prefix}/modules/mod_asis.so
 LoadModule negotiation_module ${modules_prefix}/modules/mod_negotiation.so
 LoadModule dir_module ${modules_prefix}/modules/mod_dir.so
 LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
+LoadModule env_module ${modules_prefix}/modules/mod_env.so
 <IfModule !log_config_module>
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>

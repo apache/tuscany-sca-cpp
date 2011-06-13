@@ -53,28 +53,13 @@ sudo apt-get -y install autoconf2.13 zip
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Apache Qpid/C++
-sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-# Required by Apache Vysper
-sudo apt-get -y install openjdk-6-jdk
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 # Required by HTML Tidy
 sudo apt-get -y install cvs
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by PostgreSQL
-sudo apt-get -y install libreadline-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 # Required by Apache Thrift
-sudo apt-get -y install bison flex python-dev
+sudo apt-get -y install bison flex python-dev libboost-dev libboost-filesystem-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -85,6 +70,6 @@ if [ "$?" != "0" ]; then
 fi
 
 # Download and install the Tuscany runtime
-wget http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-all-1.0.tar.gz
-tar xzf tuscany-sca-cpp-all-1.0.tar.gz
+wget http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.tar.gz
+tar xzf tuscany-sca-cpp-1.0.tar.gz
 

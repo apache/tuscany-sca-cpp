@@ -507,7 +507,7 @@ if test "${want_openid}" = "true"; then
 
   # Configure path to mod-auth-openid
   AC_MSG_CHECKING([for mod-auth-openid])
-  AC_ARG_WITH([mod-auth-openid], [AC_HELP_STRING([--with-mod-auth-openid=PATH], [path to installed mod-auth-openid [default=/usr]])], [
+  AC_ARG_WITH([mod-auth-openid], [AC_HELP_STRING([--with-mod-auth-openid=PATH], [path to installed mod-auth-openid [default=/usr/local]])], [
     MODAUTHOPENID_PREFIX="${withval}"
     AC_MSG_RESULT("${withval}")
   ], [
@@ -559,6 +559,39 @@ if test "${want_oauth}" = "true"; then
 
 else
   AM_CONDITIONAL([WANT_OAUTH], false)
+fi
+
+# Enable support for modsecurity.
+AC_MSG_CHECKING([whether to enable mod-security support])
+AC_ARG_ENABLE(mod-security, [AS_HELP_STRING([--enable-mod-security], [enable mod-security support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_modsecurity=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_modsecurity}" = "true"; then
+
+  # Configure path to mod-security
+  AC_MSG_CHECKING([for mod-security])
+  AC_ARG_WITH([mod-security], [AC_HELP_STRING([--with-mod-security=PATH], [path to installed mod-security [default=/usr/local]])], [
+    MODSECURITY_PREFIX="${withval}"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    MODSECURITY_PREFIX="/usr/local/"
+    AC_MSG_RESULT(/usr/local)
+  ])
+  AC_SUBST(MODSECURITY_PREFIX)
+
+  AM_CONDITIONAL([WANT_MODSECURITY], true)
+  AC_DEFINE([WANT_MODSECURITY], 1, [enable mod-security support])
+
+else
+  AM_CONDITIONAL([WANT_MODSECURITY], false)
 fi
 
 # Enable support for Google AppEngine.

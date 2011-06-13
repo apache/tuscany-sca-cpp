@@ -69,6 +69,11 @@ HostnameLookups on
 Require user admin
 </Location>
 
+<Location /server-info>
+SetHandler server-info
+HostnameLookups on
+Require user admin
+</Location>
 </VirtualHost>
 
 EOF

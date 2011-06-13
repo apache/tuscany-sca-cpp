@@ -38,6 +38,10 @@ jsprefix=`readlink -f $here/../js`
 ../../modules/http/open-auth-conf tmp
 ../../modules/http/passwd-auth-conf tmp john john
 ../../modules/http/passwd-auth-conf tmp jane jane
+../../modules/http/passwd-auth-conf tmp admin admin
+
+# Configure mod-security
+../../modules/http/mod-security-conf tmp
 
 # Configure Python component support
 ../../modules/server/server-conf tmp
