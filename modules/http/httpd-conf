@@ -123,19 +123,16 @@ AuthType None
 Require all granted
 </Location>
 
-# Enable compression
+# Configure output filters to enable compression and rate limiting
 <Location />
-SetOutputFilter DEFLATE
+SetOutputFilter RATE_LIMIT;DEFLATE
+
 BrowserMatch ^Mozilla/4 gzip-only-text/html
 BrowserMatch ^Mozilla/4\.0[678] no-gzip
 BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
 SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
 Header append Vary User-Agent env=!dont-vary
-</Location>
 
-# Enable per client bandwidth rate limt
-<Location />
-SetOutputFilter RATE_LIMIT
 SetEnv rate-limit 400 
 </Location>
 

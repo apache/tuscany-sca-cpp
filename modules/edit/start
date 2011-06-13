@@ -78,13 +78,15 @@ cat >>tmp/conf/dvhost.conf <<EOF
 Alias /cache-manifest.cmf $here/htdocs/app/cache-manifest.cmf
 Alias /data $here/htdocs/data
 Alias /favicon.ico $here/htdocs/favicon.ico
+Alias /footconfig.js $here/htdocs/footconfig.js
+Alias /frame.html $here/htdocs/app/frame.html
+Alias /headconfig.js $here/htdocs/headconfig.js
+Alias /index.html $here/htdocs/app/index.html
 Alias /login $here/htdocs/login
 Alias /logout $here/htdocs/logout
+Alias /menu.js $here/htdocs/menu.js
 Alias /public $here/htdocs/public
 Alias /robots.txt $here/htdocs/robots.txt
-Alias /index.html $here/htdocs/app/index.html
-Alias /menu.js $here/htdocs/menu.js
-Alias /config.js $here/htdocs/config.js
 
 EOF
 

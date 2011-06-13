@@ -1,8 +1,9 @@
 CACHE MANIFEST
 
+# Version 2
+
 # Common resources
 /all-min.js
-/config.js
 /ui-min.css
 
 # App resources
@@ -12,10 +13,11 @@ CACHE MANIFEST
 /clone/
 /data/
 /create/
-/data/
 /favicon.ico
+/footconfig.js
 /graph/graph.js
 /graph/
+/headconfig.js
 /home.png
 /menu.js
 /page/

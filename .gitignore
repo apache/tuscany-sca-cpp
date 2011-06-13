@@ -55,7 +55,7 @@ m4/
 config.guess
 config.sub
 config.status
-config.js
+*config.js
 all.js
 intro*.png
 depcomp

@@ -27,7 +27,7 @@
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onorientationchange="ui.reload();">
+<body class="delayed" onload="ui.onload();">
 <div id="bodydiv" class="devicewidth">
 
 <h1>Sign in</h1>
@@ -43,13 +43,7 @@
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
 
-</div>
-
 <script type="text/javascript">
-
-// Show the page
-ui.showbody();
-
 function queryParams() {
     qp = new Array();
     qs = window.location.search.substring(1).split('&');
@@ -80,8 +74,8 @@ function submitSignin() {
     document.formSignin.httpd_location.value = oauthReferrer();
     document.formSignin.submit();
 }
-
 </script>
 
+</div>
 </body>
 </html>

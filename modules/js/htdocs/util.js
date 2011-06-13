@@ -222,7 +222,7 @@ function isIE() {
  */
 var config;
 if (isNil(config))
-    config = {}
+    config = {};
 
 /**
  * Simple assert function.

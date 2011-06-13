@@ -25,13 +25,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 <script type="text/javascript" src="graph.js"></script>
 </head>
-<body class="delayed" onorientationchange="ui.reload();">
+<body class="delayed" onload="ui.onload();">
 <div id="bodydiv" class="devicewidth">
+
+<div id="headdiv" class="hsection">
+<script type="text/javascript" src="/headconfig.js"></script>
+</div>
 
 <div id="menu"></div>
 
@@ -58,13 +61,12 @@
 </tr>
 </table>
 
-<div id="playdiv" style="position:absolute; top: 95px; left: 0px; right: 0px; height: 5000px; visibility: hidden">
+<div id="contentdiv" style="margin-top: 4px; width: 100%;">
+<div id="playdiv" style="position:relative; top: 0x; left: 0px; right: 0px; height: 5000px; visibility: hidden">
 </div>
-
 </div>
 
 <script type="text/javascript">
-
 // Get the app name
 var appname = ui.queryParams()['app'];
 var ispalette = false;
@@ -118,9 +120,6 @@ function resizeFields() {
 resizeFields();
 window.onresize = resizeFields;
 
-// Show the page
-ui.showbody();
-
 // Init componnent references
 var editWidget = sca.component("EditWidget");
 var palettes = sca.reference(editWidget, "palettes");
@@ -143,7 +142,12 @@ var gdiv;
 var bg;
 var gvisible = true;
 var gcomp = null;
+var cdiv = $('contentdiv');
 var pdiv = $('playdiv');
+
+// Position play div inside the content div
+pdiv.style.position = 'absolute';
+pdiv.style.top = cdiv.offsetTop + 'px';
 
 /**
  * Track the palettes.
@@ -372,7 +376,7 @@ cplay.onclick = function() {
 }
 
 // Create editor graph area
-g = graph.mkgraph(graph.mkpath().move(-2500,95), cvalue, cadd, cdelete);
+g = graph.mkgraph(cdiv, graph.mkpath().move(-2500,0), cvalue, cadd, cdelete);
 gdiv = g.parentNode;
 bg = graph.mkgroup(graph.mkpath());
 
@@ -395,9 +399,13 @@ installpalette('python', pos.rmove(0, 35), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);
-
 </script>
 
+<div id="footdiv" class="fsection">
+<script type="text/javascript" src="/footconfig.js"></script>
+</div>
+
+</div>
 </body>
 </html>
 

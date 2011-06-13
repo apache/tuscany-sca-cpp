@@ -19,32 +19,13 @@
 -->
 <html>
 <head>
-<title>Sign out</title>
+<title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
-
-<h1>Sign out</h1>
-
-<form name="signout" onsubmit="submitSignout();" action="/" method="GET">
-<input type="submit" id="signOut" value="Sign out" class="greenbutton" style="font-weight: bold"/>
-</form>
-
-<script type="text/javascript">
-function submitSignout() {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
-    document.cookie = reset;
-    document.signout.submit();
-    return true;
-}
-</script>
-
-</div>
+<body>
 </body>
 </html>
+

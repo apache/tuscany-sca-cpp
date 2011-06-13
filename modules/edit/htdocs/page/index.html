@@ -25,13 +25,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 <script type="text/javascript" src="page.js"></script>
 </head>
-<body class="delayed" onorientationchange="ui.reload();">
+<body class="delayed" onload="ui.onload();">
 <div id="bodydiv" class="devicewidth">
+
+<div id="headdiv" class="hsection">
+<script type="text/javascript" src="/headconfig.js"></script>
+</div>
 
 <div id="menu"></div>
 
@@ -58,9 +61,10 @@
 </tr>
 </table>
 
-<div id="editdiv" style="position: absolute; top: 95px; left: -2500px; right: 0px; height: 5000px;">
+<div id="contentdiv" style="margin-top: 4px; width: 100%;">
+<div id="editdiv" style="visibility: visible; position: relative; top: 0px; left: -2500px; right: 0px; height: 5000px;">
 
-<div style="position: absolute; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
+<div style="position: relative; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 480px; height: 300px;"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 768px; height: 911px;"></div>
@@ -84,17 +88,15 @@
 <span class="text" id="palette:text" style="position: absolute; left: 0px; top: 370px;"><span>text</span></span>
 <span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 400px; width: 200px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
 <span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img src="/public/img.png"/></span>
-
 </div>
 
-<div id="playdiv" style="visibility: hidden; position: absolute; top: 95px; left: 0px; right: 0px; height: 5000px;"></div>
-
-<div id="buffer" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 0px; height: 0px"></div>
-
+<div id="playdiv" style="visibility: hidden; position: absolute; top: 0px; left: 0px; right: 0px; height: 5000px;">
 </div>
+</div>
+
+<div id="buffer" style="visibility: hidden; width: 0px; height: 0px"></div>
 
 <script type="text/javascript">
-
 // Get the app name
 var appname = ui.queryParams()['app'];
 if (isNil(appname))
@@ -124,6 +126,7 @@ displaymenu();
 /**
  * Page editor area, widget value field, add, delete and play page buttons.
  */
+var cdiv = $('contentdiv');
 var ediv = $('editdiv');
 var evisible = true;
 var pdiv = $('playdiv');
@@ -131,6 +134,12 @@ var wvalue = $('widgetValue');
 var wadd = $('addWidgetButton');
 var wdelete = $('deleteWidgetButton');
 var pplay = $('playPageButton');
+
+// Position edit and play divs inside the content div
+ediv.style.position = 'absolute';
+ediv.style.top = cdiv.offsetTop + 'px';
+pdiv.style.position = 'absolute';
+pdiv.style.top = cdiv.offsetTop + 'px';
 
 /**
  * Adjust fields sizes.
@@ -143,9 +152,6 @@ function resizeFields() {
 
 resizeFields();
 window.onresize = resizeFields;
-
-// Show the page
-ui.showbody();
 
 // Init component references
 var editWidget = sca.component("EditWidget");
@@ -364,7 +370,7 @@ function playpage() {
     ediv.style.visibility = 'hidden'
     evisible = false;
     pdiv.style.visibility = 'visible';
-    pdiv.innerHTML = '<iframe id="appFrame" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
+    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
                         applink(appname) + '"></iframe>';
     return true;
 }
@@ -399,8 +405,13 @@ page.edit(ediv, wvalue, wadd, wdelete, onpagechange, onwidgetselect);
 
 // Get and display the current app page
 getpage(appname, ediv);
-
 </script>
+
+<div id="footdiv" class="fsection">
+<script type="text/javascript" src="/footconfig.js"></script>
+</div>
+
+</div>
 </body>
 </html>
 

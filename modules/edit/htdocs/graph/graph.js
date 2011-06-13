@@ -112,16 +112,16 @@ graph.svgns='http://www.w3.org/2000/svg';
 /**
  * Make an SVG graph.
  */
-graph.mkgraph = function(pos, cvalue, cadd, cdelete) {
+graph.mkgraph = function(cdiv, pos, cvalue, cadd, cdelete) {
 
     // Create a div element to host the graph
     var div = document.createElement('div');
     div.id = 'svgdiv';
     div.style.position = 'absolute';
-    div.style.left = ui.pixpos(pos.xpos());
-    div.style.top = ui.pixpos(pos.ypos());
+    div.style.left = ui.pixpos(pos.xpos() + cdiv.offsetLeft);
+    div.style.top = ui.pixpos(pos.ypos() + cdiv.offsetTop);
     div.style.overflow = 'hidden';
-    document.body.appendChild(div);
+    cdiv.appendChild(div);
 
     // Create SVG element
     var svg = document.createElementNS(graph.svgns, 'svg');

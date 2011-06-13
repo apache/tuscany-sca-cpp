@@ -19,7 +19,7 @@
 -->
 <html>
 <head>
-<title>App</title>
+<title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
@@ -28,26 +28,29 @@ document.title = window.location.hostname.split('.')[0];
 </script>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onorientationchange="ui.reload();">
-
+<body class="delayed" onload="ui.onload();">
 <div id="bodydiv" class="devicewidth">
 
-<div id="app"></div>
+<div id="headdiv" class="hsection">
+<script type="text/javascript" src="/headconfig.js"></script>
+</div>
 
-<span id="appbuffer"></span>
-<span id="appebuffer"></span>
+<div id="app">
+<iframe id="appframe" style="position: relative; height: 5000px; width: 100%;" scrolling="no" frameborder="0" src="/frame.html"></iframe>
+</div>
 
+<div id="appbuffer" style="visibility: hidden">
 </div>
 
 <script type="text/javascript">
-
 /**
  * The main app div.
  */
 var appdiv = $('app');
+var appframe = $('appframe');
+var appbody;
 
 /**
  * Start, stop, timer, animation and location components.
@@ -214,7 +217,7 @@ function updatepage(l) {
         return e;
     }
 
-    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
+    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(appbody, 'page').childNodes)));
     return true;
 }
 
@@ -317,9 +320,6 @@ function getpagedata() {
         // Display component data on the page
         function displaypage(doc) {
             updatepage(docdata(doc));
-
-            // Reveal the page
-            ui.showbody();
             return true;
         }
 
@@ -345,17 +345,13 @@ function getpagedata() {
         var doc = getdoc(startcomp, 'start', window.location.search);
 
         // Prepare app HTML page
-        var appFrame = $('appFrame');
-        if (!isNil(appFrame.contentDocument.body)) {
-            appdiv.innerHTML = appFrame.contentDocument.body.innerHTML;
-        } else {
-            $('appebuffer').appendChild(appFrame.contentDocument.documentElement);
-            appdiv.innerHTML = appebuffer.innerHTML;
-            appebuffer.innerHTML = '';
-        }
+        appbody = appframe.contentDocument.body;
+        var appbufferbody = $('appbufferframe').contentDocument.body;
+        appbody.innerHTML = appbufferbody.innerHTML;
+        appbufferbody.innerHTML = '';
 
         // Setup the widgets
-        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
+        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appbody, 'page').childNodes)));
 
         // Display data on the page
         displaypage(doc);
@@ -385,7 +381,7 @@ function compquery() {
         return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(appdiv, 'page'))));
+    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(appbody, 'page'))));
 
     // Append current location properties if known
     if (!isNil(geoposition)) {
@@ -550,9 +546,14 @@ function setupLocationHandler() {
 }
 
 // Load the app frame
-$('appbuffer').innerHTML = '<iframe id="appFrame" class="widgetframe" src="app.html" onload="getpagedata()"></iframe>';
-
+$('appbuffer').innerHTML = '<iframe id="appbufferframe" style="position: relative; height: 5000px; width: 100%;" scrolling="no" frameborder="0" src="app.html" onload="getpagedata()"></iframe>';
 </script>
+
+<div id="footdiv" class="fsection">
+<script type="text/javascript" src="/footconfig.js"></script>
+</div>
+
+</div>
 </body>
 </html>
 

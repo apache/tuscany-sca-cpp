@@ -29,10 +29,9 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css">
-<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>  
-<body class="delayed" onorientationchange="ui.reload();">
+<body class="delayed" onload="ui.onload();">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 <div id="compLinkHeader" style="margin-top: 4px; margin-bottom: 4px;"></div>
@@ -40,7 +39,6 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 </div>
 
 <script type="text/javascript">
-
 // Get the component name
 var cname = ui.queryParams()['component'];
 
@@ -54,8 +52,6 @@ var comp = sca.component(cname);
  */
 function display(e) {
     $('datadiv').innerHTML = e;
-
-    ui.showbody();
     return true;
 }
 
@@ -93,7 +89,10 @@ function getdata() {
 }
 
 getdata();
-
 </script>
+
+<div id="footdiv" class="fsection">
+<script type="text/javascript" src="/footconfig.js"></script>
+</div>
 </body>
 </html>

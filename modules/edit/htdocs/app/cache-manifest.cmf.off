@@ -2,7 +2,6 @@ CACHE MANIFEST
 
 # Common resources
 /all-min.js
-/config.js
 /ui-min.css
 
 # App resources
@@ -10,6 +9,9 @@ CACHE MANIFEST
 /app.html
 /data/index.html
 /favicon.ico
+/footconfig.js
+/frame.html
+/headconfig.js
 /public/app.png
 /public/iframe.html
 /public/img.png

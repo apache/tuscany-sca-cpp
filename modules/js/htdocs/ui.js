@@ -228,66 +228,33 @@ ui.queryParams = function() {
             qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
     }
     return qp;
-}
-
-/**
- * Bind a widget iframe to an element.
- */
-ui.widgets = {};
-ui.onload = {};
-
-ui.loadwidget = function(el, doc, cb) {
-    var f = el + 'Frame';
-    window.ui.widgets[f] = el;
-    window.ui.onload[f] = cb;
-    var div = document.createElement('div');
-    div.id = f + 'Div';
-    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" scrolling="no" frameborder="0" src="' + doc + '" onload="window.ui.onload[this.id]()"></iframe>';
-    document.body.appendChild(div);
-    return f;
 };
 
 /**
- * Show the current document body.
+ * Return true if the client is a mobile device.
  */
-ui.showbody = function() {
-    document.body.style.visibility = 'visible';
-};
-
-/**
- * Reload the current page.
- */
-ui.reload = function() {
-    window.open(window.location, '_self');
-    return true;
-};
-
-/**
- * Install a widget into the element bound to its iframe.
- */
-ui.installwidget = function() {
-    if (isNil(window.parent) || isNil(window.parent.ui) || isNil(window.parent.ui.widgets))
+ui.isMobile = function() {
+    var ua = navigator.userAgent;
+    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
         return true;
-    var pdoc = ui.content(window.parent);
-    for (w in window.parent.ui.widgets) {
-        var ww = ui.elementByID(pdoc, w).contentWindow;
-        if (ww == window) {
-            document.widget = ui.elementByID(pdoc, window.parent.ui.widgets[w]);
-            document.widget.innerHTML = document.body.innerHTML;
-            return true;
-        }
-    }
-    return true;
+    return false;
 };
 
 /**
- * Load an iframe into an element.
+ * Initialize a document after it's loaded.
  */
-ui.loadiframe = function(el, doc) {
-    var f = el + 'Frame';
-    $(el).innerHTML =
-        '<iframe id="' + f + '" class="loadedframe" scrolling="no" frameborder="0" src="' + doc + '"></iframe>';
-    return f;
+ui.onload = function() {
+
+    // Make the document visible
+    document.body.style.visibility = 'visible';
+
+    // Install orientation handler
+    document.body.onorientationchange = function() {
+        window.open(window.location, '_self');
+        return true;
+    };
+
+    return true;
 };
 
 /**
