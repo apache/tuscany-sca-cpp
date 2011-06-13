@@ -226,7 +226,7 @@ sudo apt-get -y install bison flex python-dev libboost-dev libboost-filesystem-d
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
+wget http://archive.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
 tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
 ./bootstrap.sh
