@@ -40,4 +40,4 @@ sleep 1
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi
-return $rc
+exit $rc

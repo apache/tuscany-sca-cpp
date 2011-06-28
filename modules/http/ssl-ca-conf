@@ -18,15 +18,15 @@
 #  under the License.
 
 # Generate a test certification authority certificate
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 mkdir -p $1
-root=`readlink -f $1`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
 host=$2
 
 # Don't override existing certificate
 if [ -f $root/cert/ca.crt ]; then
-    return 0
+    exit 0
 fi
 
 # Generate openssl configuration
@@ -92,5 +92,5 @@ openssl req -new -x509 -config $root/cert/openssl-ca.conf -out $root/cert/ca.crt
 # Add to the hash directory and rehash
 mkdir -p $root/cert/hash
 cp $root/cert/ca.crt $root/cert/hash
-c_rehash $root/cert/hash
+perl /usr/bin/c_rehash $root/cert/hash
 

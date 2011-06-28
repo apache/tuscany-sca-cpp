@@ -26,25 +26,25 @@ moddir = $(prefix)/modules/server
 EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.html htdocs/test/*.xml htdocs/test/*.txt
 
 mod_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so
+noinst_DATA = libmod_tuscany_eval${libsuffix} libmod_tuscany_wiring${libsuffix}
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
 libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_eval.so:
-	ln -s .libs/libmod_tuscany_eval.so
+libmod_tuscany_eval${libsuffix}:
+	ln -s .libs/libmod_tuscany_eval${libsuffix}
 
 libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
 libmod_tuscany_wiring_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_wiring.so:
-	ln -s .libs/libmod_tuscany_wiring.so
+libmod_tuscany_wiring${libsuffix}:
+	ln -s .libs/libmod_tuscany_wiring${libsuffix}
 
 noinst_test_LTLIBRARIES = libimpl-test.la
 noinst_testdir = `pwd`/tmp
-noinst_DATA += libimpl-test.so
+noinst_DATA += libimpl-test${libsuffix}
 
 libimpl_test_la_SOURCES = impl-test.cpp
-libimpl-test.so:
-	ln -s .libs/libimpl-test.so
+libimpl-test${libsuffix}:
+	ln -s .libs/libimpl-test${libsuffix}
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

@@ -18,9 +18,9 @@
 #  under the License.
 
 # Configure a postgresql hot standby server
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 mkdir -p $1
-root=`readlink -f $1`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
 # Server address
 addr=$2

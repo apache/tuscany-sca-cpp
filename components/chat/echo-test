@@ -28,4 +28,4 @@ rc=$?
 # Cleanup
 ./vysper-stop
 sleep 1
-return $rc
+exit $rc

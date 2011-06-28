@@ -20,8 +20,8 @@
 # For this module to work, add the app domains to your /etc/hosts as follows:
 # 127.0.0.1 sca-store.com abc.sca-store.com xyz.sca-store.com ...
 
-here=`readlink -f $0`; here=`dirname $here`
-jsprefix=`readlink -f $here/../js`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 
 # Create SSL certificates
 ../../modules/http/ssl-ca-conf tmp sca-store.com

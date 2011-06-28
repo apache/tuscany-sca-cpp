@@ -37,9 +37,9 @@ EXTRA_DIST = domain-test.composite
 mod_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
 libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs ${JAVA_LDFLAGS}
-noinst_DATA = libmod_tuscany_java.so
-libmod_tuscany_java.so:
-	ln -s .libs/libmod_tuscany_java.so
+noinst_DATA = libmod_tuscany_java${libsuffix}
+libmod_tuscany_java${libsuffix}:
+	ln -s .libs/libmod_tuscany_java${libsuffix}
 
 jni_test_SOURCES = jni-test.cpp
 jni_test_LDFLAGS = ${JAVA_LDFLAGS}

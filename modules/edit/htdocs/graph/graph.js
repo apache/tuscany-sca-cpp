@@ -45,7 +45,8 @@ graph.colors.link = '#598edd';
 
 graph.colors.orange1 = '#ffbb00';
 graph.colors.green1 = '#96d333';
-graph.colors.blue1 = '#00c3c9';
+//graph.colors.blue1 = '#00c3c9';
+graph.colors.blue1 = '#0d7cc1';
 graph.colors.red1 = '#d03f41';
 graph.colors.yellow1 = '#fcee21';
 graph.colors.magenta1 = '#c0688a';

@@ -18,7 +18,7 @@
 #  under the License.
 
 # Stop tailing a file
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 category=""
 type=""
@@ -35,7 +35,7 @@ else
         file=$1
     fi
 fi
-file=`readlink -f $file`
+file=`echo "import os; print os.path.realpath('$file')" | python`
 
 cmd="tail -f -n 0 $file"
 kill `ps -ef | grep -v grep | grep "${cmd}" | awk '{ print $2 }'`

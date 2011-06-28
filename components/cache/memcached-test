@@ -31,4 +31,4 @@ rc=$?
 ./memcached-stop 11211
 ./memcached-stop 11212
 ./memcached-stop 11213
-return $rc
+exit $rc

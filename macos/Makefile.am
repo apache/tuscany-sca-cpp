@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,14 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Run Javascript util test cases
-here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+dist_macos_SCRIPTS = 
+macosdir=$(prefix)/macos
 
-echo "Testing..."
-cat htdocs/util.js htdocs/elemutil.js htdocs/jsonutil.js json-test.js | ./js-eval 2>/dev/null 1>&2
-rc=$?
-if [ "$rc" = "0" ]; then
-    echo "OK"
-fi
+dist_noinst_SCRIPTS = macos-install
 
-exit $rc

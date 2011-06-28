@@ -46,7 +46,7 @@ int cat(const string& category, const string& type) {
         const char* s = fgets(buf, 8192, stdin);
         if (s == NULL)
             return 0;
-        const int l = strlen(s);
+        const size_t l = strlen(s);
         if (l < 2)
             return 0;
         buf[l - 1] = '\0';

@@ -40,7 +40,7 @@ bool testCopies() {
     string y = string("abcd");
     assert(checkStringCopyCounters(1));
     resetStringCopyCounters();
-    string z = y;
+    unused string z = y;
     assert(checkStringCopyCounters(0));
     resetStringCopyCounters();
     const list<string> pl = list<string>() + "abcd" + "efgh";
@@ -119,7 +119,7 @@ string add(string& x, string& y) {
     return x + y;
 }
 
-char charBuffer[16384];
+char charBuffer[16385];
 
 struct addStrings{
     const size_t size;

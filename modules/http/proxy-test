@@ -34,4 +34,4 @@ rc=$?
 ./httpd-stop tmp/proxy
 ./httpd-stop tmp
 sleep 2
-return $rc
+exit $rc

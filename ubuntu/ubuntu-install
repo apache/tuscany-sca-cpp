@@ -268,7 +268,7 @@ cp src/lib/libscribe.so $build/scribe-2.2-bin/lib
 cd $build
 
 # Build Apache Libcloud
-wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
+wget http://archive.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
 tar xjf apache-libcloud-incubating-0.4.2.tar.bz2
 cd apache-libcloud-incubating-0.4.2
 python setup.py build

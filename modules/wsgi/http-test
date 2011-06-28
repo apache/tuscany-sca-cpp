@@ -23,7 +23,7 @@ mkdir -p tmp
 sleep 2
 
 # Test JSON-RPC
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 python_prefix=`cat $here/../python/python.prefix`
 $python_prefix/bin/python http-test.py
 rc=$?
@@ -31,4 +31,4 @@ rc=$?
 # Cleanup
 ./wsgi-stop target 8090
 sleep 2
-return $rc
+exit $rc

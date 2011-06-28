@@ -18,11 +18,11 @@
 #  under the License.
 
 # Generate a minimal HTTPD configuration
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 mkdir -p $1
-root=`readlink -f $1`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
-jsprefix=`readlink -f $here/../js`
+jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 
 host=$2
 port=`$here/httpd-addr port $3`
@@ -31,10 +31,17 @@ listen=`$here/httpd-addr listen $3`
 vhost=`$here/httpd-addr vhost $3`
 
 mkdir -p $4
-htdocs=`readlink -f $4`
+htdocs=`echo "import os; print os.path.realpath('$4')" | python`
 
 user=`id -un`
 group=`id -gn`
+
+uname=`uname -s`
+if [ $uname = "Darwin" ]; then
+    libsuffix=".dylib"
+else
+    libsuffix=".so"
+fi
 
 modules_prefix=`cat $here/httpd-modules.prefix`
 
@@ -225,8 +232,8 @@ LoadModule slotmem_shm_module ${modules_prefix}/modules/mod_slotmem_shm.so
 LoadModule ratelimit_module ${modules_prefix}/modules/mod_ratelimit.so
 LoadModule reqtimeout_module ${modules_prefix}/modules/mod_reqtimeout.so
 
-LoadModule mod_tuscany_ssltunnel $here/libmod_tuscany_ssltunnel.so
-LoadModule mod_tuscany_openauth $here/libmod_tuscany_openauth.so
+LoadModule mod_tuscany_ssltunnel $here/libmod_tuscany_ssltunnel$libsuffix
+LoadModule mod_tuscany_openauth $here/libmod_tuscany_openauth$libsuffix
 
 EOF
 

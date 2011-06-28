@@ -17,7 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
   
-for i in "libtoolize --force" aclocal autoconf autoheader
+libtoolize="$(type -P glibtoolize || type -P libtoolize)"
+for i in "$libtoolize --force" aclocal autoconf autoheader
 do
     echo -n "Running $i..."
     $i || exit 1

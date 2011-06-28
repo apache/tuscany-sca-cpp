@@ -18,7 +18,7 @@
 #  under the License.
 
 # Run Python util test cases
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 python_prefix=`cat $here/../python/python.prefix`
 
 $python_prefix/bin/python stream-test.py
@@ -40,4 +40,4 @@ if [ "$rc" = "0" ]; then
     rc=$?
 fi
 
-return $rc
+exit $rc

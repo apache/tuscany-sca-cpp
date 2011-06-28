@@ -49,7 +49,7 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
 # Initialize default GCC C++ and LD options.
-cxxflags=""
+cxxflags="${CXXFLAGS}"
 ldflags="${LDFLAGS}"
 defaultlibs="${LIBS}"
 
@@ -105,7 +105,7 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_maintainer_mode}" = "true"; then
-  cxxflags="${cxxflags} -D_DEBUG -O0 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -D_DEBUG -O2 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
   ldflags="${ldflags} -pg"
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
@@ -958,6 +958,7 @@ AC_CONFIG_FILES([Makefile
                  samples/relay-gae/Makefile
                  doc/Makefile
                  doc/Doxyfile
+                 macos/Makefile
                  ubuntu/Makefile
                  ])
 AC_OUTPUT

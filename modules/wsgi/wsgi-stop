@@ -18,8 +18,8 @@
 #  under the License.
 
 # Stop WSGI server
-here=`readlink -f $0`; here=`dirname $here`
-root=`readlink -f $1`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 port=$2
 
 python_prefix=`cat $here/../python/python.prefix`

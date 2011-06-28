@@ -46,4 +46,4 @@ rc=$?
 kill `ps -f | grep -v grep | grep "${axis2}" | awk '{ print $2 }'`
 ../../modules/http/httpd-stop tmp
 sleep 2
-return $rc
+exit $rc

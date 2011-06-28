@@ -32,12 +32,12 @@ pgsql.prefix: $(top_builddir)/config.status
 EXTRA_DIST = sqldb.composite sqldb.componentType
 
 comp_LTLIBRARIES = libsqldb.la
-noinst_DATA = libsqldb.so
+noinst_DATA = libsqldb${libsuffix}
 
 libsqldb_la_SOURCES = sqldb.cpp
 libsqldb_la_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
-libsqldb.so:
-	ln -s .libs/libsqldb.so
+libsqldb${libsuffix}:
+	ln -s .libs/libsqldb${libsuffix}
 
 pgsql_test_SOURCES = pgsql-test.cpp
 pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq

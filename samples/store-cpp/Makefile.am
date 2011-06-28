@@ -22,19 +22,19 @@ sampledir = $(prefix)/samples/store-cpp
 nobase_dist_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/*.html
 
 sample_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
-noinst_DATA = libcurrency-converter.so libfruits-catalog.so libshopping-cart.so
+noinst_DATA = libcurrency-converter${libsuffix} libfruits-catalog${libsuffix} libshopping-cart${libsuffix}
 
 libcurrency_converter_la_SOURCES = currency-converter.cpp
-libcurrency-converter.so:
-	ln -s .libs/libcurrency-converter.so
+libcurrency-converter${libsuffix}:
+	ln -s .libs/libcurrency-converter${libsuffix}
 
 libfruits_catalog_la_SOURCES = fruits-catalog.cpp
-libfruits-catalog.so:
-	ln -s .libs/libfruits-catalog.so
+libfruits-catalog${libsuffix}:
+	ln -s .libs/libfruits-catalog${libsuffix}
 
 libshopping_cart_la_SOURCES = shopping-cart.cpp
-libshopping-cart.so:
-	ln -s .libs/libshopping-cart.so
+libshopping-cart${libsuffix}:
+	ln -s .libs/libshopping-cart${libsuffix}
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

@@ -34,4 +34,4 @@ rc=$?
 # Cleanup
 kill `ps -f | grep -v grep | grep "$axis2" | awk '{ print $2 }'`
 sleep 1
-return $rc
+exit $rc

@@ -1,15 +1,20 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation on Ubuntu 10.10 64-bit
+Automated installation on Ubuntu Server 10.10
 =============================================
 
-Tuscany provides two automated install scripts for Ubuntu. You can start with
-a fresh Ubuntu Server 10.10 64-bit system and these scripts will take care of
-all the download, build and installation steps for you.
+Tuscany provides two automated install scripts for Ubuntu Server 10.10. You can
+start with a fresh Ubuntu Server 10.10 system and these scripts will take care
+of all the download, build and installation steps for you.
+
+ubuntu/ubuntu-install:
+Build and installation of the most commonly used Tuscany features with most
+dependencies built from source.
 
 ubuntu/ubuntu-install-all:
-Complete build and installation with most dependencies built from source.
+Build and installation of all the Tuscany features with most dependencies
+built from source.
 
 System dependencies are downloaded and installed using sudo apt-get. Source
 dependencies are downloaded and built in the current directory.
@@ -17,21 +22,60 @@ dependencies are downloaded and built in the current directory.
 To run the automated installation:
 mkdir tuscany
 cd tuscany
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install-all
-chmod +x ./ubuntu-install-all
-./ubuntu-install-all
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
+chmod +x ./ubuntu-install
+./ubuntu-install
 
 The installation script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
-Ubuntu 10.10 64-bit.
+Ubuntu Server 10.10.
 
-For manual build and install steps on other systems or if you need to customize
-your installation, read on...
+Automated installation on Max OS X 10.6.7
+=========================================
+
+Tuscany provides an automated install script for Mac OS X 10.6.7. You can start
+with a fresh Mac OS X 10.6.7 system and the script will take care of all the
+download, build and installation steps for you.
+
+macos/macos-install:
+Build and installation of the most commonly used Tuscany features with all
+dependencies built from source.
+
+The only required system dependency is the GCC C++ compiler 4.4.5+. All other
+dependencies are downloaded and built from source in the current directory.
+
+Before running the automated installation install GCC 4.6 from the HPC for Mac
+OS X project (http://hpc.sourceforge.net/) like this:
+curl -OL http://prdownloads.sourceforge.net/hpc/gcc-snwleo-intel-bin.tar.gz
+sudo tar -xf $build/gcc-snwleo-intel-bin.tar.gz -C /
+
+or if you prefer to use GCC from Macports (http://www.macports.org/), install
+GCC 4.4.5+ like this:
+sudo port install gcc44
+
+then adjust the following line in macos/macos-install:
+./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ ...
+to point to the GCC binaries you've installed.
+
+To run the automated installation:
+mkdir tuscany
+cd tuscany
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/macos/macos-install
+chmod +x ./macos-install
+./macos-install
+
+The installation script will display each command as it's executed.
+
+That's all you need to do to build and install the Tuscany SCA runtime on Mac
+OS X 10.6.7.
 
 
-Building
-========
+Step by step build and installation
+===================================
+
+For manual build and install steps on systems other than Ubuntu 10.10 and
+Mac OS X 10.6.7, or if you need to customize your installation, read on...
 
 The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
@@ -69,6 +113,10 @@ Key/value store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
 
 Optional dependencies:
+
+Web application firewall:
+Mod-security 2.6.0 (http://www.modsecurity.org/)
+with the Mod-security core rule set 2.2.0
 
 Web Services:
 Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
@@ -154,6 +202,9 @@ To build the support for OAuth authorization:
 To build the support for OpenID authentication:
 --enable-openid
 
+To build the support for Mod-security:
+--enable-mod-security
+
 To generate doxygen documentation, add:
 --enable-doxygen
 
@@ -162,7 +213,7 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration tested on Ubuntu 10.10 64-bit, with the system
+Here's an example configuration tested on Ubuntu 10.10, with the system
 dependencies installed in the standard system directories and some of the
 dependencies installed under $HOME:
 
@@ -189,6 +240,7 @@ dependencies installed under $HOME:
 --with-scribe=$HOME/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
 --enable-oauth --with-liboauth=$HOME/liboauth-0.9.1-bin \
+--enable-mod-security --with-mod-security=$HOME/modsecurity-apache-2.6.0-bin \
 --enable-maintainer-mode
 
 
@@ -207,10 +259,7 @@ make dist
 To build a binary distribution, do this:
 make bindist
 
-
-Installing
-==========
-
 To install the Tuscany SCA binaries, do this:
 make install
+
 

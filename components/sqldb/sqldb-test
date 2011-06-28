@@ -29,4 +29,4 @@ rc=$?
 
 # Cleanup
 ./pgsql-stop tmp
-return $rc
+exit $rc

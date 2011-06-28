@@ -26,4 +26,4 @@ mkdir -p tmp
 rc=$?
 
 # Cleanup
-return $rc
+exit $rc

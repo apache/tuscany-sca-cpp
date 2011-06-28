@@ -18,9 +18,9 @@
 #  under the License.
 
 # Generate a test certificate 
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 mkdir -p $1
-root=`readlink -f $1`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
 host=$2
 if [ "$3" != "" ]; then
@@ -31,7 +31,7 @@ fi
 
 # Don't regenerate the certificate if it already exists
 if [ -f $root/cert/$certname.crt ]; then
-    return 0
+    exit 0
 fi
 
 # Generate openssl configuration
@@ -72,5 +72,5 @@ cat $root/cert/$certname.key >> $root/cert/$certname.pem
 mkdir -p $root/cert/hash
 cp $root/cert/$certname.crt $root/cert/hash
 cp $root/cert/$certname.pem $root/cert/hash
-c_rehash $root/cert/hash
+perl /usr/bin/c_rehash $root/cert/hash
 

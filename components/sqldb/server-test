@@ -41,4 +41,4 @@ rc=$?
 # Cleanup
 ../../modules/http/httpd-stop tmp
 ./pgsql-stop tmp
-return $rc
+exit $rc

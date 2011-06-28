@@ -48,4 +48,4 @@ rc=$?
 ./memcached-stop 11412
 ./memcached-stop 11413
 sleep 2
-return $rc
+exit $rc

@@ -36,4 +36,4 @@ rc=$?
 ../../modules/http/httpd-stop tmp/master
 ./pgsql-stop tmp/standby
 ./pgsql-stop tmp/master
-return $rc
+exit $rc

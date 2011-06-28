@@ -51,4 +51,3 @@ fi
 if [ "$1" = "vhost" ]; then
     echo $vhost
 fi
-return 0

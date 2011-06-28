@@ -33,17 +33,17 @@ curl_connect_SOURCES = curl-connect.cpp
 curl_connect_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 mod_LTLIBRARIES = libmod_tuscany_ssltunnel.la libmod_tuscany_openauth.la
-noinst_DATA = libmod_tuscany_ssltunnel.so libmod_tuscany_openauth.so
+noinst_DATA = libmod_tuscany_ssltunnel${libsuffix} libmod_tuscany_openauth${libsuffix}
 
 libmod_tuscany_ssltunnel_la_SOURCES = mod-ssltunnel.cpp
 libmod_tuscany_ssltunnel_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_ssltunnel.so:
-	ln -s .libs/libmod_tuscany_ssltunnel.so
+libmod_tuscany_ssltunnel${libsuffix}:
+	ln -s .libs/libmod_tuscany_ssltunnel${libsuffix}
 
 libmod_tuscany_openauth_la_SOURCES = mod-openauth.cpp
 libmod_tuscany_openauth_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_openauth.so:
-	ln -s .libs/libmod_tuscany_openauth.so
+libmod_tuscany_openauth${libsuffix}:
+	ln -s .libs/libmod_tuscany_openauth${libsuffix}
 
 mod_DATA = httpd.prefix httpd-apachectl.prefix httpd-modules.prefix curl.prefix
 nobase_dist_mod_DATA = conf/*

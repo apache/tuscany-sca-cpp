@@ -28,4 +28,4 @@ rc=$?
 # Cleanup
 ./qpidd-stop
 sleep 1
-return $rc
+exit $rc

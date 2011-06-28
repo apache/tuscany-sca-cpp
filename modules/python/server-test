@@ -36,4 +36,4 @@ rc=$?
 # Cleanup
 ../http/httpd-stop tmp
 sleep 2
-return $rc
+exit $rc

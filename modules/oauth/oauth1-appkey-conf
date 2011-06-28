@@ -17,9 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 mkdir -p $1
-root=`readlink -f $1`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 name=$2
 id=$3
 secret=$4

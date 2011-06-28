@@ -27,4 +27,4 @@ rc=$?
 
 # Cleanup
 ./wsgi-stop target 8090
-return $rc
+exit $rc

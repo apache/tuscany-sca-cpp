@@ -28,4 +28,4 @@ mkdir -p tmp/jsondb
 rc=$?
 
 # Cleanup
-return $rc
+exit $rc

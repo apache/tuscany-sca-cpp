@@ -43,7 +43,7 @@ namespace tuscany {
  * Returns the current thread id.
  */
 long int threadId() {
-    return syscall(__NR_gettid);
+    return syscall(SYS_gettid);
 }
 
 /**

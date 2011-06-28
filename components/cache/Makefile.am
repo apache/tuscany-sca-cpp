@@ -28,19 +28,19 @@ memcached.prefix: $(top_builddir)/config.status
 EXTRA_DIST = cache.composite memcache.componentType datacache.componentType memocache.componentType *.scm
 
 comp_LTLIBRARIES = libmemcache.la libdatacache.la libmemocache.la
-noinst_DATA = libmemcache.so libdatacache.so libmemocache.so
+noinst_DATA = libmemcache${libsuffix} libdatacache${libsuffix} libmemocache${libsuffix}
 
 libmemcache_la_SOURCES = memcache.cpp
-libmemcache.so:
-	ln -s .libs/libmemcache.so
+libmemcache${libsuffix}:
+	ln -s .libs/libmemcache${libsuffix}
 
 libdatacache_la_SOURCES = datacache.cpp
-libdatacache.so:
-	ln -s .libs/libdatacache.so
+libdatacache${libsuffix}:
+	ln -s .libs/libdatacache${libsuffix}
 
 libmemocache_la_SOURCES = memocache.cpp
-libmemocache.so:
-	ln -s .libs/libmemocache.so
+libmemocache${libsuffix}:
+	ln -s .libs/libmemocache${libsuffix}
 
 memcache_test_SOURCES = memcache-test.cpp
 memcache_test_LDFLAGS = -lxml2
@@ -50,4 +50,5 @@ client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 dist_noinst_SCRIPTS = memcached-test memcached-ssl-test server-test
 noinst_PROGRAMS = memcache-test client-test
-TESTS = memcached-test memcached-ssl-test server-test
+#TESTS = memcached-test memcached-ssl-test server-test
+TESTS = memcached-test server-test

@@ -149,7 +149,7 @@ fi
 wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
 tar xzf axis2c-src-1.6.0.tar.gz
 cd axis2c-src-1.6.0
-./configure --enable-libxml2 LIBXML2_CFLAGS="-I$build/libxml2-2.7.7-bin/include/libxml2" LIBXML2_LIBS="-L$build/libxml2-2.7.7-bin/lib -lxml2" --enable-openssl --with-apache2=$build/httpd-2.3.10-bin/include --with-apr=$build/apr-1.4.x-bin/include/apr-2 --prefix=$build/axis2c-1.6.0-bin
+./configure --enable-openssl --with-apache2=$build/httpd-2.3.10-bin/include --with-apr=$build/apr-1.4.x-bin/include/apr-2 --prefix=$build/axis2c-1.6.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -338,7 +338,7 @@ cp src/lib/libscribe.so $build/scribe-2.2-bin/lib
 cd $build
 
 # Build Apache Libcloud
-wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
+wget http://archive.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
 tar xjf apache-libcloud-incubating-0.4.2.tar.bz2
 cd apache-libcloud-incubating-0.4.2
 python setup.py build

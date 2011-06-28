@@ -20,4 +20,4 @@
 # Validate test composite
 ../../kernel/xsd-test ../../xsd/tuscany-sca-1.1.xsd test.composite 2>/dev/null
 rc=$?
-return $rc
+exit $rc

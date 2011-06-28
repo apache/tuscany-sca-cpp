@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <apr_general.h>
 #include <apr_pools.h>
+#include <apr_strings.h>
 #include <assert.h>
 #include <new>
 #include "config.hpp"
@@ -296,6 +297,45 @@ char* gc_cnew(apr_pool_t* p, size_t n) {
 
 char* gc_cnew(size_t n) {
     return gc_cnew(gc_current_pool(), n);
+}
+
+/**
+ * Pool based equivalent of the standard malloc function.
+ */
+void* gc_malloc(size_t n) {
+    size_t* gc_malloc_ptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
+    assertOrFail(gc_malloc_ptr != NULL);
+    *gc_malloc_ptr = n;
+    return gc_malloc_ptr + 1;
+}
+
+/**
+ * Pool based equivalent of the standard realloc function.
+ */
+void* gc_realloc(void* ptr, size_t n) {
+    size_t size = *(static_cast<size_t*>(ptr) - 1);
+    size_t* gc_realloc_ptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
+    assertOrFail(gc_realloc_ptr != NULL);
+    *gc_realloc_ptr = n;
+    memcpy(gc_realloc_ptr + 1, ptr, size < n? size : n);
+    return gc_realloc_ptr + 1;
+}
+
+/**
+ * Pool based equivalent of the standard free function.
+ */
+void gc_free(unused void* ptr) {
+    // Memory allocated from a pool is freed when the pool is freed
+}
+
+/**
+ * Pool based equivalent of the standard strdup function.
+ */
+char* gc_strdup(const char* str) {
+    char* gc_strdup_ptr = static_cast<char*>(gc_malloc(strlen(str) + 1));
+    assertOrFail(gc_strdup_ptr != NULL);
+    strcpy(gc_strdup_ptr, str);
+    return gc_strdup_ptr;
 }
 
 }

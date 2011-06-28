@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 tinycdb_prefix=`cat $here/tinycdb.prefix`
 
 $tinycdb_prefix/bin/cdb $*

@@ -18,7 +18,7 @@
 #  under the License.
 
 # Tail a file and pipe into scribe-cat
-here=`readlink -f $0`; here=`dirname $here`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 category=""
 type=""
@@ -38,7 +38,7 @@ fi
 
 mkdir -p `dirname $file`
 touch $file
-file=`readlink -f $file`
+file=`echo "import os; print os.path.realpath('$file')" | python`
 
 tail -f -n 0 $file | $here/scribe-cat $category $type &
 

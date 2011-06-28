@@ -37,8 +37,9 @@ svn checkout http://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
 
 To checkout the source code with commit access, do this:
 git clone git://git.apache.org/tuscany-sca-cpp
-cd tuscany-sca-cpp
-wget -P .git http://git.apache.org/authors.txt
+cd tuscany-sca-cpp/.git
+curl -OL http://git.apache.org/authors.txt
+cd ..
 git config svn.authorsfile .git/authors.txt
 git config user.email <you>@apache.org
 git config svn.rmdir true
@@ -92,7 +93,8 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- store-sql        Online store using an SQL database
  |   |   |-- store-vhost      Online store on virtual hosts
  |   |
- |   |-- ubuntu               Automated install on Ubuntu 10.10 64-bit
+ |   |-- macos                Automated install on Mac OS X 10.1.7
+ |   |-- ubuntu               Automated install on Ubuntu 10.10
  |
  |-- branches                 Topic and release branches
  |

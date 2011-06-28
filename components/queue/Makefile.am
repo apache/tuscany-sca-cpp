@@ -32,17 +32,17 @@ qpidc.prefix: $(top_builddir)/config.status
 EXTRA_DIST = queue.composite queue-sender.componentType queue-listener.componentType *.scm
 
 comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
-noinst_DATA = libqueue-sender.so libqueue-listener.so
+noinst_DATA = libqueue-sender${libsuffix} libqueue-listener${libsuffix}
 
 libqueue_sender_la_SOURCES = queue-sender.cpp
 libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-libqueue-sender.so:
-	ln -s .libs/libqueue-sender.so
+libqueue-sender${libsuffix}:
+	ln -s .libs/libqueue-sender${libsuffix}
 
 libqueue_listener_la_SOURCES = queue-listener.cpp
 libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-libqueue-listener.so:
-	ln -s .libs/libqueue-listener.so
+libqueue-listener${libsuffix}:
+	ln -s .libs/libqueue-listener${libsuffix}
 
 qpid_test_SOURCES = qpid-test.cpp
 qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon

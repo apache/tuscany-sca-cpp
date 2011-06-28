@@ -40,4 +40,4 @@ rc=$?
 sleep 1
 ./qpidd-stop
 sleep 1
-return $rc
+exit $rc

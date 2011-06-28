@@ -34,22 +34,22 @@ vysper.prefix: $(top_builddir)/config.status
 EXTRA_DIST = chat.composite chat-sendreceiver.componentType chat-sender.componentType chat-sender2.componentType *.scm
 
 comp_LTLIBRARIES = libchat-sendreceiver.la libchat-sender.la libchat-sender2.la
-noinst_DATA = libchat-sendreceiver.so libchat-sender.so libchat-sender2.so
+noinst_DATA = libchat-sendreceiver${libsuffix} libchat-sender${libsuffix} libchat-sender2${libsuffix}
 
 libchat_sendreceiver_la_SOURCES = chat-sendreceiver.cpp
 libchat_sendreceiver_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
-libchat-sendreceiver.so:
-	ln -s .libs/libchat-sendreceiver.so
+libchat-sendreceiver${libsuffix}:
+	ln -s .libs/libchat-sendreceiver${libsuffix}
 
 libchat_sender_la_SOURCES = chat-sender.cpp
 libchat_sender_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
-libchat-sender.so:
-	ln -s .libs/libchat-sender.so
+libchat-sender${libsuffix}:
+	ln -s .libs/libchat-sender${libsuffix}
 
 libchat_sender2_la_SOURCES = chat-sender2.cpp
 libchat_sender2_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
-libchat-sender2.so:
-	ln -s .libs/libchat-sender2.so
+libchat-sender2${libsuffix}:
+	ln -s .libs/libchat-sender2${libsuffix}
 
 chat_send_SOURCES = chat-send.cpp
 chat_send_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv

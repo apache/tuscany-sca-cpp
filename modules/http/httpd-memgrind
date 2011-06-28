@@ -18,8 +18,8 @@
 #  under the License.
 
 # Start httpd server
-here=`readlink -f $0`; here=`dirname $here`
-root=`readlink -f $1`
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
 httpd=`cat $here/httpd.prefix`
 $here/../../etc/memgrind $httpd/bin/httpd -X -E $root/logs/error_log -d $root -f $root/conf/httpd.conf

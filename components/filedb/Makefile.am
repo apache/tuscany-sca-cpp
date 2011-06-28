@@ -23,12 +23,12 @@ compdir=$(prefix)/components/filedb
 EXTRA_DIST = filedb.composite filedb.componentType
 
 comp_LTLIBRARIES = libfiledb.la
-noinst_DATA = libfiledb.so
+noinst_DATA = libfiledb${libsuffix}
 
 libfiledb_la_SOURCES = filedb.cpp
 libfiledb_la_LDFLAGS = -lxml2 -lmozjs
-libfiledb.so:
-	ln -s .libs/libfiledb.so
+libfiledb${libsuffix}:
+	ln -s .libs/libfiledb${libsuffix}
 
 file_test_SOURCES = file-test.cpp
 file_test_LDFLAGS = -lxml2 -lmozjs

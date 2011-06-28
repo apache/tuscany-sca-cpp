@@ -40,12 +40,23 @@
 namespace tuscany {
 
 /**
+ * APR-based memory management functions.
+ */
+
+
+/**
  * Initializes the libxml2 library.
  */
 class XMLParser {
 public:
     XMLParser() {
+        debug("xml::XMLParser");
+        xmlMemSetup(gc_free, gc_malloc, gc_realloc, gc_strdup);
         xmlInitParser();
+    }
+
+    ~XMLParser() {
+        debug("xml::~XMLParser");
     }
 } xmlParser;
 
@@ -58,12 +69,20 @@ public:
         None = 0, Element = 1, Attribute = 2, Text = 3, EndElement = 15, Identifier = 100, End = 101
     };
 
-    XMLReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None), isEmptyElement(false), hasValue(false), hasAttributes(false) {
+    XMLReader(xmlTextReaderPtr xml) : xml(xml), owner(true), tokenType(None), isEmptyElement(false), hasValue(false), hasAttributes(false) {
+        debug("xml::XMLReader::xml");
         xmlTextReaderSetParserProp(xml, XML_PARSER_DEFAULTATTRS, 1);
         xmlTextReaderSetParserProp(xml, XML_PARSER_SUBST_ENTITIES, 1);
     }
 
+    XMLReader(const XMLReader& r) : xml(r.xml), owner(false), tokenType(r.tokenType), isEmptyElement(r.isEmptyElement), hasValue(r.hasValue), hasAttributes(r.hasAttributes) {
+        debug("xml::XMLReader::copy");
+    }
+
     ~XMLReader() {
+        debug("xml::~XMLReader");
+        if (!owner)
+            return;
         xmlTextReaderClose(xml);
         xmlFreeTextReader(xml);
     }
@@ -96,6 +115,7 @@ public:
 
 private:
     const xmlTextReaderPtr xml;
+    const bool owner;
     int tokenType;
     bool isEmptyElement;
     bool hasValue;
@@ -212,8 +232,9 @@ const bool isXML(const list<string>& ls) {
  * Read a list of values from a list of strings representing an XML document.
  */
 const list<value> readXML(const list<string>& ilist) {
+    debug(ilist, "xml::readXML");
     XMLReadContext cx(ilist);
-    xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &cx, NULL, NULL, XML_PARSE_NONET);
+    xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &cx, NULL, NULL, XML_PARSE_NONET | XML_PARSE_NODICT);
     if (xml == NULL)
         return list<value>();
     XMLReader reader(xml);
@@ -365,6 +386,7 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
  * Convert a list of values to a list of strings representing an XML document.
  */
 const failable<list<string> > writeXML(const list<value>& l, const bool xmlTag) {
+    debug(l, "xml::writeXML");
     const failable<list<string> > ls = writeXML<list<string> >(rcons<string>, list<string>(), l, xmlTag);
     if (!hasContent(ls))
         return ls;
