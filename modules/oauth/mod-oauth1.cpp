@@ -378,6 +378,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
+    debug(c_str(openauth::cookie(sid, httpd::hostName(sc.server))), "modoauth1::access_token::setcookie");
     apr_table_set(r->err_headers_out, "Set-Cookie", c_str(openauth::cookie(sid, httpd::hostName(sc.server))));
     return httpd::externalRedirect(httpd::url(r->uri, r), r);
 }

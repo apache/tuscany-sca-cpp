@@ -56,7 +56,8 @@ if (typeof(openauthReferrer()) == 'undefined') {
 }
 
 function submitOpenIDSignin(w) {
-    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    document.cookie = reset;
     document.openIDSignin.openid_identifier.value = w();
     document.openIDSignin.action = openauthReferrer();
     document.openIDSignin.submit();
@@ -104,7 +105,8 @@ function withXRDSEndpoint() {
 
 function submitOAuth2Signin(w) {
     parms = w();
-    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    document.cookie = reset;
     document.oauth2Signin.mod_oauth2_authorize.value = parms[0];
     document.oauth2Signin.mod_oauth2_access_token.value = parms[1];
     document.oauth2Signin.mod_oauth2_client_id.value = parms[2];
@@ -125,7 +127,8 @@ function withGithub() {
 
 function submitOAuth1Signin(w) {
     parms = w();
-    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    document.cookie = reset;
     document.oauth1Signin.mod_oauth1_request_token.value = parms[0];
     document.oauth1Signin.mod_oauth1_authorize.value = parms[1];
     document.oauth1Signin.mod_oauth1_access_token.value = parms[2];

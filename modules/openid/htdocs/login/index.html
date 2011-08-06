@@ -56,7 +56,8 @@ if (typeof(openidReferrer()) == 'undefined') {
 }
 
 function submitSignin(w) {
-    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    document.cookie = reset;
     document.signin.openid_identifier.value = w();
     document.signin.action = openidReferrer();
     document.signin.submit();

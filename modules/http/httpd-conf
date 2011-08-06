@@ -82,6 +82,8 @@ LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [access] %h %l %u \"%r\" %>s %b \"%{Refere
 CustomLog $root/logs/access_log combined
 CookieTracking on
 CookieName TuscanyVisitorId
+CookieStyle Cookie
+CookieExpires 31556926
 
 # Configure Mime types and default charsets
 TypesConfig $here/conf/mime.types
@@ -90,7 +92,7 @@ AddCharset utf-8 .js .css
 
 # Configure cache control
 SetEnvIf Request_URI "^/app.html$" must-revalidate
-Header onsuccess set Cache-Control "max-age=86400" env=!must-revalidate
+Header onsuccess set Cache-Control "max-age=604800" env=!must-revalidate
 Header set Cache-Control "must-revalidate, max-age=0" env=must-revalidate
 Header set Expires "Tue, 01 Jan 1980 00:00:00 GMT" env=must-revalidate
 

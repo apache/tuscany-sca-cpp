@@ -203,7 +203,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     if (!hasContent(tr))
         return mkfailure<int>(reason(tr));
     debug(tr, "modoauth2::access_token::response");
-    const list<value> tv = assoc<value>("access_token", httpd::queryArgs(join("", convertValues<string>(content(tr)))));
+    const list<value> tv = assoc<value>("access_token", httpd::queryArgs(join("", convertValues<string>(cadr<value>(content(tr))))));
     if (isNil(tv) || isNil(cdr(tv)))
         return mkfailure<int>("Couldn't retrieve access_token");
     debug(tv, "modoauth2::access_token::token");
@@ -230,6 +230,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
+    debug(c_str(openauth::cookie(sid, httpd::hostName(sc.server))), "modoauth2::access_token::setcookie");
     apr_table_set(r->err_headers_out, "Set-Cookie", c_str(openauth::cookie(sid, httpd::hostName(sc.server))));
     return httpd::externalRedirect(httpd::url(r->uri, r), r);
 }

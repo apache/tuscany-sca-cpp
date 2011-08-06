@@ -35,7 +35,7 @@ cat >>$root/conf/auth.conf <<EOF
 AuthType Open
 AuthName "$host"
 Session On
-SessionCookieName TuscanyOpenAuth domain=.$host;path=/;secure=TRUE
+SessionCookieName TuscanyOpenAuth domain=.$host; path=/; max-age=31556926
 SessionCryptoPassphrase $pw
 AuthOpenAuth On
 AuthOpenAuthLoginPage /login
@@ -51,6 +51,11 @@ AuthFormLoginRequiredLocation /login
 AuthFormLogoutLocation /
 Require valid-user
 SetHandler form-login-handler
+</Location>
+
+# Mark login page with a header
+<Location /login>
+Header set X-Login open-auth
 </Location>
 
 EOF
