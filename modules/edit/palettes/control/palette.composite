@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="animation" promote="animation"/>
  <service name="call" promote="call"/>
@@ -8,7 +26,7 @@
  <service name="start" promote="start"/>
  <service name="stop" promote="stop"/>
  <service name="timer" promote="timer"/>
- <component x="90" y="170" name="animation" title="animation" color="green1">
+ <component x="160" y="60" name="animation" title="animation" color="green1">
   <implementation.python script="nuvem/animation.py"/>
   <service name="animation" visible="false">
    <binding.http uri="animation"/>
@@ -17,20 +35,20 @@
   <reference name="loop"/>
   <reference name="content"/>
  </component>
- <component x="90" y="70" name="call" title="call" color="green1">
+ <component x="190" y="10" name="call" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
   <reference name="name"/>
   <reference name="proxy" wiredByImpl="true" visible="false"/>
  </component>
- <component x="90" y="120" name="location" title="location" color="green1">
+ <component x="80" y="60" name="location" title="location" color="green1">
   <implementation.python script="nuvem/location.py"/>
   <service name="location" visible="false">
    <binding.http uri="location"/>
   </service>
   <reference name="content"/>
  </component>
- <component x="170" y="120" name="schedule" title="schedule" color="green1">
+ <component x="240" y="60" name="schedule" title="schedule" color="green1">
   <implementation.python script="nuvem/schedule.py"/>
   <service name="schedule" visible="false">
    <binding.http uri="schedule"/>
@@ -38,26 +56,26 @@
   <reference name="n"/>
   <reference name="content"/>
  </component>
- <component x="150" y="70" name="service" title="{compname}" color="green1">
+ <component x="240" y="10" name="service" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference name="content"/>
  </component>
- <component x="90" y="10" name="start" title="start" color="green1">
+ <component x="80" y="10" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>
   <service name="start" visible="false">
    <binding.http uri="start"/>
   </service>
   <reference name="content"/>
  </component>
- <component x="150" y="10" name="stop" title="stop" color="green1">
+ <component x="130" y="10" name="stop" title="stop" color="green1">
   <implementation.python script="nuvem/stop.py"/>
   <service name="stop" visible="false">
    <binding.http uri="stop"/>
   </service>
   <reference name="content"/>
  </component>
- <component x="210" y="10" name="timer" title="timer" color="green1">
+ <component x="80" y="110" name="timer" title="timer" color="green1">
   <implementation.python script="nuvem/timer.py"/>
   <service name="timer" visible="false">
    <binding.http uri="timer"/>

@@ -25,13 +25,13 @@
   <service name="comment" visible="false"/>
   <property>Change this example to do what you want</property>
  </component>
- <component name="item1" title="{propval} :" color="orange1">
+ <component x="80" y="40" name="item1" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="user1" name="value"/>
   <property>me</property>
  </component>
- <component name="list2" title="list" color="yellow1">
+ <component name="list1" title="list.." color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="item1" name="item" clonable="true"/>
@@ -42,7 +42,7 @@
   <service name="start" visible="false">
    <binding.http uri="start"/>
   </service>
-  <reference target="list2" name="content"/>
+  <reference target="list1" name="content"/>
  </component>
  <component name="user1" title="user" color="green1">
   <implementation.python script="nuvem/user.py"/>

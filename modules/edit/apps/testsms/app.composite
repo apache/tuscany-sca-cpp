@@ -85,7 +85,7 @@
   <service name="text"/>
   <property>Hello there</property>
  </component>
- <component x="140" y="30" name="twsms1" title="sms" color="blue1">
+ <component x="20" y="10" name="twsms1" title="sms" color="blue1">
   <implementation.python script="nuvem/twsms.py"/>
   <service name="twsms"/>
   <reference target="keychain1" name="sid"/>

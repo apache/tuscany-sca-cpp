@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="add" promote="add"/>
+ <service name="ceil" promote="ceil"/>
  <service name="cos" promote="cos"/>
  <service name="distance" promote="distance"/>
  <service name="divide" promote="divide"/>
+ <service name="floor" promote="floor"/>
  <service name="max" promote="max"/>
  <service name="min" promote="min"/>
+ <service name="mod" promote="mod"/>
  <service name="multiply" promote="multiply"/>
  <service name="pi" promote="pi"/>
  <service name="random" promote="random"/>
+ <service name="randoms" promote="randoms"/>
  <service name="round" promote="round"/>
  <service name="sin" promote="sin"/>
  <service name="subtract" promote="subtract"/>
  <service name="sum" promote="sum"/>
- <component x="90" y="10" name="add" title="+" color="magenta1">
+ <component x="80" y="10" name="add" title="+" color="cyan1">
   <implementation.python script="nuvem/add.py"/>
   <service name="add">
    <documentation>+</documentation>
@@ -21,18 +43,23 @@
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="250" y="200" name="cos" title="cos" color="magenta1">
+ <component x="270" y="130" name="ceil" title="ceil" color="cyan1">
+  <implementation.python script="nuvem/ceil_.py"/>
+  <service name="ceil"/>
+  <reference name="x"/>
+ </component>
+ <component x="210" y="190" name="cos" title="cos" color="cyan1">
   <implementation.python script="nuvem/cos_.py"/>
   <service name="cos"/>
   <reference name="x"/>
  </component>
- <component x="90" y="200" name="distance" title="distance **" color="magenta1">
+ <component x="80" y="240" name="distance" title="distance **" color="cyan1">
   <implementation.python script="nuvem/distance.py"/>
   <service name="distance"/>
   <reference name="location1"/>
   <reference name="location2"/>
  </component>
- <component x="270" y="10" name="divide" title="/" color="magenta1">
+ <component x="270" y="10" name="divide" title="/" color="cyan1">
   <implementation.python script="nuvem/divide.py"/>
   <service name="divide">
    <documentation>/</documentation>
@@ -40,17 +67,28 @@
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="160" y="80" name="max" title="max" color="magenta1">
+ <component x="210" y="130" name="floor" title="floor" color="cyan1">
+  <implementation.python script="nuvem/floor_.py"/>
+  <service name="floor"/>
+  <reference name="x"/>
+ </component>
+ <component x="150" y="80" name="max" title="max" color="cyan1">
   <implementation.python script="nuvem/max_.py"/>
   <service name="max"/>
   <reference name="l"/>
  </component>
- <component x="230" y="80" name="min" title="min" color="magenta1">
+ <component x="210" y="80" name="min" title="min" color="cyan1">
   <implementation.python script="nuvem/min_.py"/>
   <service name="min"/>
   <reference name="l"/>
  </component>
- <component x="210" y="10" name="multiply" title="*" color="magenta1">
+ <component x="80" y="130" name="mod" title="mod" color="cyan1">
+  <implementation.python script="nuvem/mod.py"/>
+  <service name="mod"/>
+  <reference name="n"/>
+  <reference name="x"/>
+ </component>
+ <component x="210" y="10" name="multiply" title="*" color="cyan1">
   <implementation.python script="nuvem/multiply.py"/>
   <service name="multiply">
    <documentation>*</documentation>
@@ -58,26 +96,33 @@
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="240" y="130" name="pi" title="pi" color="magenta1">
+ <component x="80" y="190" name="pi" title="pi" color="cyan1">
   <implementation.python script="nuvem/pi_.py"/>
   <service name="pi"/>
  </component>
- <component x="170" y="130" name="random" title="rand" color="magenta1">
+ <component x="170" y="240" name="random" title="rand" color="cyan1">
   <implementation.python script="nuvem/random_.py"/>
   <service name="random"/>
+  <reference name="range"/>
  </component>
- <component x="90" y="130" name="round" title="round" color="magenta1">
+ <component x="230" y="240" name="randoms" title="rands" color="cyan1">
+  <implementation.python script="nuvem/randoms.py"/>
+  <service name="randoms"/>
+  <reference name="n"/>
+  <reference name="range"/>
+ </component>
+ <component x="150" y="130" name="round" title="round" color="cyan1">
   <implementation.python script="nuvem/round_.py"/>
   <service name="round"/>
   <reference name="n"/>
   <reference name="x"/>
  </component>
- <component x="190" y="200" name="sin" title="sin" color="magenta1">
+ <component x="150" y="190" name="sin" title="sin" color="cyan1">
   <implementation.python script="nuvem/sin_.py"/>
   <service name="sin"/>
   <reference name="x"/>
  </component>
- <component x="150" y="10" name="subtract" title="-" color="magenta1">
+ <component x="150" y="10" name="subtract" title="-" color="cyan1">
   <implementation.python script="nuvem/subtract.py"/>
   <service name="subtract">
    <documentation>-</documentation>
@@ -85,7 +130,7 @@
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="90" y="80" name="sum" title="sum" color="magenta1">
+ <component x="80" y="80" name="sum" title="sum" color="cyan1">
   <implementation.python script="nuvem/sum_.py"/>
   <service name="sum"/>
   <reference name="l"/>

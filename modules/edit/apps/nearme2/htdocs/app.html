@@ -17,19 +17,14 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
- <service name="eval" promote="eval"/>
- <service name="exec" promote="exec"/>
- <component x="80" y="10" name="eval" title="expr" color="green1">
-  <implementation.python script="nuvem/eval_.py"/>
-  <service name="eval"/>
-  <reference name="py"/>
-  <reference name="ref"/>
- </component>
- <component x="150" y="10" name="exec" title="script" color="green1">
-  <implementation.python script="nuvem/exec_.py"/>
-  <service name="exec"/>
-  <reference name="py"/>
-  <reference name="ref"/>
- </component>
-</composite>
+<DIV id="page">
+ <SPAN id="page:h1" class="h1" style="position: absolute; top: 0px; left: 2px; ">
+  <H1>Hello</H1>
+ </SPAN>
+ <SPAN id="me" class="h1" style="position: absolute; top: 0px; left: 56px; ">
+  <H1>=me</H1>
+ </SPAN>
+ <SPAN id="img" class="img" style="position: absolute; top: 36px; left: 2px; ">
+  <IMG src="/public/img.png"/>
+ </SPAN>
+</DIV>

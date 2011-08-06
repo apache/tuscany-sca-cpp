@@ -27,25 +27,37 @@
  <service name="replace" promote="replace"/>
  <service name="split" promote="split"/>
  <service name="uppercase" promote="uppercase"/>
- <component x="19" y="7" name="contains" title="contains" color="magenta1">
+ <component x="19" y="7" name="contains" title="contains" color="cyan1">
   <implementation.python script="nuvem/contains.py"/>
   <service name="contains"/>
   <reference target="text10" name="search"/>
   <reference target="text9" name="string"/>
  </component>
- <component x="176" y="115" name="format" title="format" color="magenta1">
+ <component x="150" y="110" name="format" title="format" color="cyan1">
   <implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text13" name="pattern"/>
   <reference target="list" name="values"/>
  </component>
- <component x="369" y="141" name="format2" title="format" color="magenta1">
+ <component x="310" y="130" name="format2" title="format" color="cyan1">
   <implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text14" name="pattern"/>
   <reference target="list3" name="values"/>
  </component>
- <component x="361" y="8" name="join" title="join" color="magenta1">
+ <component name="item" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text17" name="value"/>
+  <property>a</property>
+ </component>
+ <component name="item2" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text18" name="value"/>
+  <property>b</property>
+ </component>
+ <component x="300" y="10" name="join" title="join" color="cyan1">
   <implementation.python script="nuvem/join.py"/>
   <service name="join"/>
   <reference target="text6" name="separator"/>
@@ -72,37 +84,25 @@
   <reference target="item2" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
  </component>
- <component x="20" y="226" name="lowercase" title="lower" color="magenta1">
+ <component x="20" y="226" name="lowercase" title="lower" color="cyan1">
   <implementation.python script="nuvem/lowercase.py"/>
   <service name="lowercase"/>
   <reference target="text2" name="string"/>
  </component>
- <component x="142" y="252" name="parse" title="parse" color="magenta1">
+ <component x="150" y="230" name="parse" title="parse" color="cyan1">
   <implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text19" name="regexp"/>
   <reference target="text20" name="string"/>
  </component>
- <component name="item" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text17" name="value"/>
-  <property>a</property>
- </component>
- <component name="item2" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text18" name="value"/>
-  <property>b</property>
- </component>
- <component x="175" y="6" name="replace" title="replace" color="magenta1">
+ <component x="150" y="10" name="replace" title="replace" color="cyan1">
   <implementation.python script="nuvem/replace.py"/>
   <service name="replace"/>
   <reference target="text4" name="from"/>
   <reference target="text5" name="to"/>
   <reference target="text3" name="string"/>
  </component>
- <component x="23" y="89" name="split" title="split" color="magenta1">
+ <component x="23" y="89" name="split" title="split" color="cyan1">
   <implementation.python script="nuvem/split.py"/>
   <service name="split"/>
   <reference target="text11" name="separator"/>
@@ -208,7 +208,7 @@
   <service name="text"/>
   <property>abcdef</property>
  </component>
- <component x="20" y="172" name="uppercase" title="upper" color="magenta1">
+ <component x="20" y="172" name="uppercase" title="upper" color="cyan1">
   <implementation.python script="nuvem/uppercase.py"/>
   <service name="uppercase"/>
   <reference target="text" name="string"/>

@@ -28,12 +28,12 @@
  <service name="location" promote="location"/>
  <service name="start" promote="start"/>
  <service name="timer3" promote="timer3"/>
- <component name="Cancel" x="223" y="16" title="{compname}" color="green1">
+ <component x="190" y="10" name="Cancel" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference target="prop2" name="content"/>
  </component>
- <component name="OK" x="228" y="78" title="{compname}" color="green1">
+ <component x="190" y="60" name="OK" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference target="list" name="content"/>
@@ -43,40 +43,63 @@
   <service name="text"/>
   <property>abc</property>
  </component>
- <component x="223" y="216" name="call" title="call" color="green1">
+ <component x="190" y="150" name="call" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
   <reference target="name2" name="name"/>
   <reference name="proxy" wiredByImpl="true" visible="false"/>
  </component>
- <component x="16" y="208" name="call2" title="call" color="green1">
+ <component x="20" y="180" name="call2" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
   <reference target="name" name="name"/>
   <reference name="proxy" wiredByImpl="true" visible="false"/>
  </component>
- <component x="222" y="273" name="call3" title="call" color="green1">
+ <component x="190" y="190" name="call3" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
   <reference target="text5" name="name"/>
   <reference name="proxy" wiredByImpl="true" visible="false"/>
  </component>
- <component x="14" y="265" name="compabc" title="{compname}" color="green1">
+ <component x="10" y="230" name="compabc" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference target="abc" name="content"/>
  </component>
- <component x="15" y="316" name="compxyz" title="{compname}" color="green1">
+ <component x="20" y="270" name="compxyz" title="{compname}" color="green1">
   <implementation.python script="nuvem/service.py"/>
   <service name="service" visible="false"/>
   <reference target="text12" name="content"/>
  </component>
- <component x="12" y="146" name="location" title="location" color="green1">
-  <implementation.python script="nuvem/location.py"/>
-  <service name="location" visible="false">
-   <binding.http uri="location"/>
-  </service>
-  <reference target="item6" name="content"/>
+ <component name="item2" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text4" name="value"/>
+  <property>status</property>
+ </component>
+ <component name="item3" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text" name="value"/>
+  <property>status</property>
+ </component>
+ <component name="item4" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text2" name="value"/>
+  <property>status</property>
+ </component>
+ <component name="item5" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="param" name="value"/>
+  <property>testtext</property>
+ </component>
+ <component name="item6" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="params2" name="value"/>
+  <property>location</property>
  </component>
  <component name="list" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
@@ -84,6 +107,13 @@
   <reference target="item5" name="item" clonable="true"/>
   <reference target="item4" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
+ </component>
+ <component x="10" y="130" name="location" title="location" color="green1">
+  <implementation.python script="nuvem/location.py"/>
+  <service name="location" visible="false">
+   <binding.http uri="location"/>
+  </service>
+  <reference target="item6" name="content"/>
  </component>
  <component name="name" title="" color="orange1">
   <implementation.python script="nuvem/name.py"/>
@@ -111,41 +141,11 @@
   <service name="params"/>
   <property name="query" visible="false"/>
  </component>
- <component name="prop2" title="{propval} :" color="orange1">
+ <component name="prop2" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="text3" name="value"/>
   <property>status</property>
- </component>
- <component name="item2" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text4" name="value"/>
-  <property>status</property>
- </component>
- <component name="item3" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text" name="value"/>
-  <property>status</property>
- </component>
- <component name="item4" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text2" name="value"/>
-  <property>status</property>
- </component>
- <component name="item5" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="param" name="value"/>
-  <property>testtext</property>
- </component>
- <component name="item6" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="params2" name="value"/>
-  <property>location</property>
  </component>
  <component x="15" y="3" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>

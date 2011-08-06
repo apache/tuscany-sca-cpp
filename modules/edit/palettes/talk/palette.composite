@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="sendemail" promote="sendemail"/>
  <service name="sendgtalk" promote="sendgtalk"/>
  <service name="twsms" promote="twsms"/>
  <service name="voicecall" promote="voicecall"/>
- <component x="170" y="10" name="sendemail" title="email **" color="blue1">
+ <component x="150" y="10" name="sendemail" title="email **" color="blue1">
   <implementation.python script="nuvem/sendemail.py"/>
   <service name="sendemail"/>
   <reference name="from"/>
   <reference name="to"/>
   <reference name="msg"/>
  </component>
- <component x="90" y="10" name="sendgtalk" title="gtalk" color="blue1">
+ <component x="80" y="10" name="sendgtalk" title="gtalk" color="blue1">
   <implementation.cpp path="lib/chat" library="libchat-sender2"/>
   <service name="sendgtalk"/>
   <reference name="jid"/>
@@ -19,7 +37,7 @@
   <reference name="to"/>
   <reference name="msg"/>
  </component>
- <component x="90" y="120" name="twsms" title="sms" color="blue1">
+ <component x="230" y="10" name="twsms" title="sms" color="blue1">
   <implementation.python script="nuvem/twsms.py"/>
   <service name="twsms"/>
   <reference name="sid"/>
@@ -29,7 +47,7 @@
   <reference name="msg"/>
   <reference name="s" wiredByImpl="true" visible="false"/>
  </component>
- <component x="170" y="120" name="voicecall" title="voice **" color="blue1">
+ <component x="80" y="120" name="voicecall" title="voice **" color="blue1">
   <implementation.python script="nuvem/voicecall.py"/>
   <service name="voicecall"/>
   <reference name="to"/>

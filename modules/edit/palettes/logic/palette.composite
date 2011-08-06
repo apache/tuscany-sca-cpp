@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="and" promote="and"/>
  <service name="equals" promote="equals"/>
@@ -7,43 +25,43 @@
  <service name="lesser" promote="lesser"/>
  <service name="not" promote="not"/>
  <service name="or" promote="or"/>
- <component x="140" y="10" name="and" title="and" color="magenta1">
+ <component x="140" y="10" name="and" title="and" color="green1">
   <implementation.python script="nuvem/and_.py"/>
   <service name="and"/>
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="90" y="100" name="equals" title="=" color="magenta1">
+ <component x="80" y="100" name="equals" title="=" color="green1">
   <implementation.python script="nuvem/equals.py"/>
   <service name="equals"/>
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="210" y="100" name="greater" title="gt" color="magenta1">
+ <component x="200" y="100" name="greater" title="gt" color="green1">
   <implementation.python script="nuvem/greater.py"/>
   <service name="greater"/>
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="90" y="10" name="if" title="if" color="magenta1">
+ <component x="80" y="10" name="if" title="if" color="green1">
   <implementation.python script="nuvem/if_.py"/>
   <service name="if"/>
   <reference name="condition"/>
   <reference name="then"/>
   <reference name="else"/>
  </component>
- <component x="150" y="100" name="lesser" title="lt" color="magenta1">
+ <component x="140" y="100" name="lesser" title="lt" color="green1">
   <implementation.python script="nuvem/lesser.py"/>
   <service name="lesser"/>
   <reference name="value1"/>
   <reference name="value2"/>
  </component>
- <component x="260" y="10" name="not" title="not" color="magenta1">
+ <component x="260" y="10" name="not" title="not" color="green1">
   <implementation.python script="nuvem/not_.py"/>
   <service name="not"/>
   <reference name="value"/>
  </component>
- <component x="200" y="10" name="or" title="or" color="magenta1">
+ <component x="200" y="10" name="or" title="or" color="green1">
   <implementation.python script="nuvem/or_.py"/>
   <service name="or"/>
   <reference name="value1"/>

@@ -27,7 +27,7 @@
  <service name="get6" promote="get6"/>
  <service name="item" promote="property"/>
  <service name="parse" promote="parse"/>
- <component x="20" y="300" name="call" title="call" color="green1">
+ <component x="20" y="180" name="call" title="call" color="green1">
   <implementation.python script="nuvem/call.py"/>
   <service name="call"/>
   <reference target="name" name="name"/>
@@ -38,38 +38,38 @@
   <service name="first"/>
   <reference target="rest" name="list"/>
  </component>
- <component x="750" y="320" name="format1" title="format" color="magenta1">
+ <component x="750" y="320" name="format1" title="format" color="cyan1">
   <implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text12" name="pattern"/>
   <reference target="list2" name="values"/>
  </component>
- <component x="20" y="0" name="get" title="get" color="green1">
+ <component x="20" y="10" name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text" name="url"/>
  </component>
- <component x="20" y="70" name="get2" title="get" color="green1">
+ <component x="20" y="60" name="get2" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text2" name="url"/>
  </component>
- <component x="20" y="150" name="get3" title="get" color="green1">
+ <component x="20" y="100" name="get3" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text3" name="url"/>
  </component>
- <component x="370" y="0" name="get4" title="get" color="green1">
+ <component x="310" y="10" name="get4" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text4" name="url"/>
  </component>
- <component x="230" y="0" name="get5" title="get" color="green1">
+ <component x="200" y="10" name="get5" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text5" name="url"/>
  </component>
- <component x="20" y="220" name="get6" title="get" color="green1">
+ <component x="20" y="140" name="get6" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text6" name="url"/>
@@ -79,19 +79,19 @@
   <service name="get"/>
   <reference target="text7" name="url"/>
  </component>
- <component name="item2" title="{propval} :" color="orange1">
+ <component name="item2" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="user" name="value"/>
   <property>user</property>
  </component>
- <component name="item3" title="{propval} :" color="orange1">
+ <component name="item3" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="params" name="value"/>
   <property>name</property>
  </component>
- <component name="join" title="join" color="magenta1">
+ <component name="join" title="join" color="cyan1">
   <implementation.python script="nuvem/join.py"/>
   <service name="join"/>
   <reference target="text9" name="separator"/>
@@ -168,13 +168,13 @@
   <service name="params"/>
   <property name="query" visible="false"/>
  </component>
- <component x="410" y="290" name="parse" title="parse" color="magenta1">
+ <component x="340" y="180" name="parse" title="parse" color="cyan1">
   <implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text8" name="regexp"/>
   <reference target="join" name="string"/>
  </component>
- <component x="20" y="370" name="property" title="{propval} :" color="orange1">
+ <component x="20" y="220" name="property" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="list" name="value"/>

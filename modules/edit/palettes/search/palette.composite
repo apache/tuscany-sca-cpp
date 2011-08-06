@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="bsearch" promote="bsearch"/>
  <service name="gaddress" promote="gaddress"/>
@@ -9,7 +27,7 @@
  <service name="gweather" promote="gweather"/>
  <service name="traffic" promote="traffic"/>
  <service name="ysearch" promote="ysearch"/>
- <component x="250" y="10" name="bsearch" title="bing" color="red1">
+ <component x="240" y="10" name="bsearch" title="bing" color="blue1">
   <implementation.python script="nuvem/bsearch.py"/>
   <service name="bsearch"/>
   <reference name="query"/>
@@ -17,7 +35,7 @@
    <binding.http uri="http://www.bing.com/search"/>
   </reference>
  </component>
- <component x="90" y="110" name="gaddress" title="address" color="red1">
+ <component x="140" y="60" name="gaddress" title="address" color="blue1">
   <implementation.python script="nuvem/gaddress.py"/>
   <service name="gaddress"/>
   <reference name="address"/>
@@ -25,7 +43,7 @@
    <binding.http uri="http://maps.googleapis.com/maps/api/geocode/json"/>
   </reference>
  </component>
- <component x="180" y="110" name="ggeopos" title="geo position" color="red1">
+ <component x="220" y="60" name="ggeopos" title="geo position" color="blue1">
   <implementation.python script="nuvem/ggeopos.py"/>
   <service name="ggeopos"/>
   <reference name="latitude"/>
@@ -34,7 +52,7 @@
    <binding.http uri="http://maps.googleapis.com/maps/api/geocode/json"/>
   </reference>
  </component>
- <component x="90" y="60" name="gimages" title="google images" color="red1">
+ <component x="80" y="120" name="gimages" title="images" color="blue1">
   <implementation.python script="nuvem/gimages.py"/>
   <service name="gimages"/>
   <reference name="query"/>
@@ -42,7 +60,7 @@
    <binding.http uri="https://ajax.googleapis.com/ajax/services/search/images"/>
   </reference>
  </component>
- <component x="210" y="60" name="gmap" title="google map" color="red1">
+ <component x="80" y="60" name="gmap" title="map" color="blue1">
   <implementation.python script="nuvem/gmap.py"/>
   <service name="gmap"/>
   <reference name="locations"/>
@@ -50,7 +68,7 @@
    <binding.http uri="http://maps.google.com/maps/api/staticmap"/>
   </reference>
  </component>
- <component x="90" y="10" name="gsearch" title="google" color="red1">
+ <component x="80" y="10" name="gsearch" title="google" color="blue1">
   <implementation.python script="nuvem/gsearch.py"/>
   <service name="gsearch"/>
   <reference name="query"/>
@@ -58,7 +76,7 @@
    <binding.http uri="http://ajax.googleapis.com/ajax/services/search/web"/>
   </reference>
  </component>
- <component x="90" y="180" name="gweather" title="weather" color="red1">
+ <component x="150" y="120" name="gweather" title="weather" color="blue1">
   <implementation.python script="nuvem/gweather.py"/>
   <service name="gweather"/>
   <reference name="zip"/>
@@ -66,12 +84,12 @@
    <binding.http uri="http://www.google.com/ig/api"/>
   </reference>
  </component>
- <component x="180" y="180" name="traffic" title="traffic **" color="red1">
+ <component x="230" y="120" name="traffic" title="traffic **" color="blue1">
   <implementation.python script="nuvem/traffic.py"/>
   <service name="traffic"/>
   <reference name="location"/>
  </component>
- <component x="170" y="10" name="ysearch" title="yahoo" color="red1">
+ <component x="160" y="10" name="ysearch" title="yahoo" color="blue1">
   <implementation.python script="nuvem/ysearch.py"/>
   <service name="ysearch"/>
   <reference name="query"/>

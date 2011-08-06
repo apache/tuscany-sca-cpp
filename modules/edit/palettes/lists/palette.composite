@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="append" promote="append"/>
  <service name="empty" promote="empty"/>
@@ -7,91 +25,105 @@
  <service name="itemnb" promote="itemnb"/>
  <service name="last" promote="last"/>
  <service name="list" promote="list"/>
+ <service name="list1" promote="list1"/>
+ <service name="list2" promote="list2"/>
+ <service name="list3" promote="list3"/>
  <service name="lookup" promote="lookup"/>
  <service name="names" promote="names"/>
- <service name="pair" promote="pair"/>
  <service name="range" promote="range"/>
  <service name="rest" promote="rest"/>
  <service name="second" promote="second"/>
  <service name="select" promote="select"/>
  <service name="values" promote="values"/>
- <component x="170" y="70" name="append" title="+" color="yellow1">
+ <component x="140" y="70" name="append" title="+" color="yellow1">
   <implementation.python script="nuvem/append.py"/>
   <service name="append"/>
   <reference name="first"/>
   <reference name="second"/>
  </component>
- <component x="230" y="10" name="empty" title="empty" color="yellow1">
+ <component x="80" y="70" name="empty" title="empty" color="yellow1">
   <implementation.python script="nuvem/empty.py"/>
   <service name="empty"/>
  </component>
- <component x="90" y="140" name="first" title="first" color="yellow1">
+ <component x="80" y="130" name="first" title="first" color="yellow1">
   <implementation.python script="nuvem/first.py"/>
   <service name="first"/>
   <reference name="list"/>
  </component>
- <component x="90" y="70" name="insert" title="insert" color="yellow1">
+ <component x="200" y="70" name="insert" title="insert" color="yellow1">
   <implementation.python script="nuvem/insert.py"/>
   <service name="insert"/>
   <reference name="value"/>
   <reference name="list"/>
  </component>
- <component x="230" y="140" name="itemnb" title="item #" color="yellow1">
+ <component x="80" y="180" name="itemnb" title="item #" color="yellow1">
   <implementation.python script="nuvem/itemnb.py"/>
   <service name="itemnb"/>
   <reference name="index"/>
   <reference name="list"/>
  </component>
- <component x="160" y="190" name="last" title="last" color="yellow1">
+ <component x="200" y="130" name="last" title="last" color="yellow1">
   <implementation.python script="nuvem/last.py"/>
   <service name="last"/>
   <reference name="list"/>
  </component>
- <component x="90" y="13" name="list" title="list" color="yellow1">
+ <component x="80" y="10" name="list" title="list.." color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference name="item" clonable="true"/>
  </component>
- <component x="90" y="240" name="lookup" title="lookup" color="yellow1">
+ <component x="140" y="10" name="list1" title="list" color="yellow1">
+  <implementation.python script="nuvem/single.py"/>
+  <service name="list1"/>
+  <reference name="value"/>
+ </component>
+ <component x="200" y="10" name="list2" title="list" color="yellow1">
+  <implementation.python script="nuvem/pair.py"/>
+  <service name="list2"/>
+  <reference name="first"/>
+  <reference name="second"/>
+ </component>
+ <component x="260" y="10" name="list3" title="list" color="yellow1">
+  <implementation.python script="nuvem/triple.py"/>
+  <service name="list3"/>
+  <reference name="first"/>
+  <reference name="second"/>
+  <reference name="third"/>
+ </component>
+ <component x="160" y="180" name="lookup" title="lookup" color="yellow1">
   <implementation.python script="nuvem/lookup.py"/>
   <service name="lookup"/>
   <reference name="name"/>
   <reference name="list"/>
  </component>
- <component x="90" y="310" name="names" title="names" color="yellow1">
+ <component x="80" y="250" name="names" title="names" color="yellow1">
   <implementation.python script="nuvem/names.py"/>
   <service name="names"/>
   <reference name="list"/>
  </component>
- <component x="160" y="10" name="pair" title="pair" color="yellow1">
-  <implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference name="name"/>
-  <reference name="value"/>
- </component>
- <component x="230" y="70" name="range" title="range" color="yellow1">
+ <component x="240" y="250" name="range" title="range" color="yellow1">
   <implementation.python script="nuvem/range_.py"/>
   <service name="range"/>
   <reference name="first"/>
   <reference name="last"/>
  </component>
- <component x="90" y="190" name="rest" title="rest" color="yellow1">
+ <component x="140" y="130" name="rest" title="rest" color="yellow1">
   <implementation.python script="nuvem/rest.py"/>
   <service name="rest"/>
   <reference name="list"/>
  </component>
- <component x="150" y="140" name="second" title="second" color="yellow1">
+ <component x="250" y="130" name="second" title="second" color="yellow1">
   <implementation.python script="nuvem/second.py"/>
   <service name="second"/>
   <reference name="list"/>
  </component>
- <component x="170" y="240" name="select" title="select" color="yellow1">
+ <component x="240" y="180" name="select" title="select" color="yellow1">
   <implementation.python script="nuvem/select.py"/>
   <service name="select"/>
   <reference name="path"/>
   <reference name="list"/>
  </component>
- <component x="170" y="310" name="values" title="values" color="yellow1">
+ <component x="160" y="250" name="values" title="values" color="yellow1">
   <implementation.python script="nuvem/values.py"/>
   <service name="values"/>
   <reference name="list"/>

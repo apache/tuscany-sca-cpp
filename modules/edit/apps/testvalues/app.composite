@@ -34,7 +34,7 @@
  <service name="true" promote="true"/>
  <service name="values" promote="values"/>
  <service name="values2" promote="values2"/>
- <component name="add" title="+" color="magenta1">
+ <component name="add" title="+" color="cyan1">
   <implementation.python script="nuvem/add.py"/>
   <service name="add">
    <documentation>+</documentation>
@@ -50,23 +50,106 @@
   <implementation.python script="nuvem/false_.py"/>
   <service name="false"/>
  </component>
- <component x="121" y="26" name="first" title="first" color="yellow1">
+ <component x="110" y="10" name="first" title="first" color="yellow1">
   <implementation.python script="nuvem/first.py"/>
   <service name="first"/>
   <reference target="list7" name="list"/>
  </component>
- <component name="foreach" title="foreach" color="yellow1">
-  <implementation.python script="nuvem/map_.py"/>
-  <service name="foreach"/>
-  <reference target="name2" name="item"/>
-  <reference target="multiply" name="transform"/>
-  <reference target="reverse" name="list"/>
+ <component name="item" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text3" name="value"/>
+  <property>a</property>
  </component>
- <component x="123" y="147" name="itemnb" title="item #" color="yellow1">
+ <component name="item10" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="list6" name="value"/>
+  <property>a</property>
+ </component>
+ <component name="item11" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text7" name="value"/>
+  <property>entry</property>
+ </component>
+ <component name="item12" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="list10" name="value"/>
+  <property>entry</property>
+ </component>
+ <component name="item13" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text9" name="value"/>
+  <property>test</property>
+ </component>
+ <component name="item14" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text10" name="value"/>
+  <property>d</property>
+ </component>
+ <component name="item15" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text11" name="value"/>
+  <property>x</property>
+ </component>
+ <component name="item2" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text4" name="value"/>
+  <property>d</property>
+ </component>
+ <component name="item3" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text5" name="value"/>
+  <property>ccc</property>
+ </component>
+ <component name="item4" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text2" name="value"/>
+  <property>b</property>
+ </component>
+ <component name="item5" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text8" name="value"/>
+  <property>c</property>
+ </component>
+ <component name="item6" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="number11" name="value"/>
+  <property>c</property>
+ </component>
+ <component name="item7" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="text6" name="value"/>
+  <property>b</property>
+ </component>
+ <component name="item8" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="list4" name="value"/>
+  <property>a</property>
+ </component>
+ <component name="item9" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="list5" name="value"/>
+  <property>x</property>
+ </component>
+ <component x="110" y="100" name="itemnb" title="item #" color="yellow1">
   <implementation.python script="nuvem/itemnb.py"/>
   <service name="itemnb"/>
   <reference target="number8" name="index"/>
-  <reference target="foreach" name="list"/>
+  <reference target="map" name="list"/>
  </component>
  <component name="list" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
@@ -124,13 +207,13 @@
   <reference target="number3" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
  </component>
- <component x="430" y="269" name="list8" title="list" color="yellow1">
+ <component x="357" y="208" name="list8" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="item11" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
  </component>
- <component x="407" y="354" name="list9" title="list" color="yellow1">
+ <component x="268" y="279" name="list9" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="item12" name="item" clonable="true"/>
@@ -142,7 +225,14 @@
   <reference target="name3" name="name"/>
   <reference target="list2" name="list"/>
  </component>
- <component name="multiply" title="*" color="magenta1">
+ <component name="map" title="map" color="yellow1">
+  <implementation.python script="nuvem/map_.py"/>
+  <service name="map"/>
+  <reference target="name2" name="item"/>
+  <reference target="multiply" name="transform"/>
+  <reference target="reverse" name="list"/>
+ </component>
+ <component name="multiply" title="*" color="cyan1">
   <implementation.python script="nuvem/multiply.py"/>
   <service name="multiply">
    <documentation>*</documentation>
@@ -254,96 +344,6 @@
   <service name="number"/>
   <property>0</property>
  </component>
- <component name="item" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text3" name="value"/>
-  <property>a</property>
- </component>
- <component name="item10" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="list6" name="value"/>
-  <property>a</property>
- </component>
- <component name="item11" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text7" name="value"/>
-  <property>entry</property>
- </component>
- <component name="item12" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="list10" name="value"/>
-  <property>entry</property>
- </component>
- <component name="item13" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text9" name="value"/>
-  <property>test</property>
- </component>
- <component name="item14" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text10" name="value"/>
-  <property>d</property>
- </component>
- <component name="item15" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text11" name="value"/>
-  <property>x</property>
- </component>
- <component name="item2" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text4" name="value"/>
-  <property>d</property>
- </component>
- <component name="item3" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text5" name="value"/>
-  <property>ccc</property>
- </component>
- <component name="item4" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text2" name="value"/>
-  <property>b</property>
- </component>
- <component name="item5" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text8" name="value"/>
-  <property>c</property>
- </component>
- <component name="item6" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="number11" name="value"/>
-  <property>c</property>
- </component>
- <component name="item7" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text6" name="value"/>
-  <property>b</property>
- </component>
- <component name="item8" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="list4" name="value"/>
-  <property>a</property>
- </component>
- <component name="item9" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="list5" name="value"/>
-  <property>x</property>
- </component>
  <component name="range" title="range" color="yellow1">
   <implementation.python script="nuvem/range_.py"/>
   <service name="range"/>
@@ -362,7 +362,7 @@
   <reference target="number12" name="first"/>
   <reference target="number13" name="last"/>
  </component>
- <component x="437" y="24" name="reduce2" title="reduce" color="yellow1">
+ <component x="360" y="10" name="reduce2" title="reduce" color="yellow1">
   <implementation.python script="nuvem/reduce_.py"/>
   <service name="reduce"/>
   <reference target="name6" name="item"/>
@@ -371,7 +371,7 @@
   <reference target="number14" name="init"/>
   <reference target="range2" name="list"/>
  </component>
- <component x="290" y="18" name="rest" title="rest" color="yellow1">
+ <component x="240" y="10" name="rest" title="rest" color="yellow1">
   <implementation.python script="nuvem/rest.py"/>
   <service name="rest"/>
   <reference target="list" name="list"/>
@@ -381,18 +381,18 @@
   <service name="reverse"/>
   <reference target="range" name="list"/>
  </component>
+ <component x="830" y="170" name="second" title="second" color="yellow1">
+  <implementation.python script="nuvem/second.py"/>
+  <service name="second"/>
+  <reference target="item15" name="list"/>
+ </component>
  <component name="select" title="select" color="yellow1">
   <implementation.python script="nuvem/select.py"/>
   <service name="select"/>
   <reference target="name8" name="path"/>
   <reference target="list3" name="list"/>
  </component>
- <component x="1026" y="233" name="second" title="second" color="yellow1">
-  <implementation.python script="nuvem/second.py"/>
-  <service name="second"/>
-  <reference target="item15" name="list"/>
- </component>
- <component x="223" y="368" name="shuffle" title="shuffle" color="yellow1">
+ <component x="110" y="290" name="shuffle" title="shuffle" color="yellow1">
   <implementation.python script="nuvem/shuffle_.py"/>
   <service name="shuffle"/>
   <reference target="range3" name="list"/>
@@ -478,12 +478,12 @@
   <service name="valueof"/>
   <property>i</property>
  </component>
- <component x="1020" y="31" name="values" title="values" color="yellow1">
+ <component x="830" y="10" name="values" title="values" color="yellow1">
   <implementation.python script="nuvem/values.py"/>
   <service name="values"/>
   <reference target="lookup" name="list"/>
  </component>
- <component x="639" y="12" name="values2" title="values" color="yellow1">
+ <component x="530" y="10" name="values2" title="values" color="yellow1">
   <implementation.python script="nuvem/values.py"/>
   <service name="values"/>
   <reference target="select" name="list"/>

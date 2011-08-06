@@ -27,7 +27,7 @@
    <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
   </reference>
  </component>
- <component name="fbprofile" title="facebook profile" color="blue1">
+ <component x="130" y="30" name="fbprofile" title="facebook profile" color="blue1">
   <implementation.python script="nuvem/fbprofile.py"/>
   <service name="fbprofile"/>
   <reference target="text" name="id"/>
@@ -35,55 +35,49 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component name="item" title="{propval} :" color="orange1">
+ <component x="90" y="170" name="item" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="fbprofile" name="value"/>
   <property>fbprofile</property>
  </component>
- <component name="item2" title="{propval} :" color="orange1">
+ <component x="90" y="190" name="item2" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="twprofile" name="value"/>
   <property>twitprofile</property>
  </component>
- <component name="item3" title="{propval} :" color="orange1">
+ <component x="90" y="210" name="item3" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="bzprofile" name="value"/>
   <property>buzzprofile</property>
  </component>
- <component name="list2" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item" name="item" clonable="true"/>
-  <reference target="item2" name="item" clonable="true"/>
-  <reference target="item3" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
+ <component x="60" y="30" name="list31" title="list" color="yellow1">
+  <implementation.python script="nuvem/triple.py"/>
+  <service name="list3"/>
+  <reference target="item" name="first"/>
+  <reference target="item2" name="second"/>
+  <reference target="item3" name="third"/>
  </component>
- <component x="15" y="32" name="start" title="start" color="green1">
+ <component x="10" y="10" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>
   <service name="start" visible="false">
    <binding.http uri="start"/>
   </service>
-  <reference target="list2" name="content"/>
+  <reference target="list31" name="content"/>
  </component>
- <component name="text" title=" '{propval}'" color="orange1">
+ <component x="220" y="170" name="text" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
  </component>
- <component name="text2" title=" '{propval}'" color="orange1">
+ <component x="220" y="200" name="text2" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
  </component>
- <component name="text4" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>jsdelfino</property>
- </component>
- <component name="text5" title=" '{propval}'" color="orange1">
+ <component x="220" y="230" name="text4" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>

@@ -28,11 +28,41 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component name="format" title="format" color="magenta1">
+ <component name="format" title="format" color="cyan1">
   <implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text7" name="pattern"/>
   <reference target="list" name="values"/>
+ </component>
+ <component name="item" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="twprofile" name="value"/>
+  <property>twitprofile</property>
+ </component>
+ <component name="item2" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="fbprofile" name="value"/>
+  <property>name</property>
+ </component>
+ <component name="item3" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="twtimeline" name="value"/>
+  <property>twittimeline</property>
+ </component>
+ <component name="item4" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="twfriends" name="value"/>
+  <property>twitfriends</property>
+ </component>
+ <component name="item5" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="twfollowers" name="value"/>
+  <property>twitfollowers</property>
  </component>
  <component name="list" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
@@ -54,37 +84,7 @@
   <implementation.python script="nuvem/now.py"/>
   <service name="now"/>
  </component>
- <component name="item" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="twprofile" name="value"/>
-  <property>twitprofile</property>
- </component>
- <component name="item2" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="fbprofile" name="value"/>
-  <property>name</property>
- </component>
- <component name="item3" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="twtimeline" name="value"/>
-  <property>twittimeline</property>
- </component>
- <component name="item4" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="twfriends" name="value"/>
-  <property>twitfriends</property>
- </component>
- <component name="item5" title="{propval} :" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="twfollowers" name="value"/>
-  <property>twitfollowers</property>
- </component>
- <component x="34" y="286" name="sendgtalk" title="gtalk" color="blue1">
+ <component x="20" y="210" name="sendgtalk" title="gtalk" color="blue1">
   <implementation.cpp path="lib/chat" library="libchat-sender2"/>
   <service name="sendgtalk"/>
   <reference target="text8" name="jid"/>
@@ -92,7 +92,7 @@
   <reference target="text6" name="to"/>
   <reference target="format" name="msg"/>
  </component>
- <component x="33" y="12" name="start" title="start" color="green1">
+ <component x="10" y="10" name="start" title="start" color="green1">
   <implementation.python script="nuvem/start.py"/>
   <service name="start" visible="false">
    <binding.http uri="start"/>

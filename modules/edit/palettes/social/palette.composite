@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
  <service name="bzprofile" promote="bzprofile"/>
  <service name="fbalbums" promote="fbalbums"/>
@@ -11,7 +29,7 @@
  <service name="twfriends" promote="twfriends"/>
  <service name="twprofile" promote="twprofile"/>
  <service name="twtimeline" promote="twtimeline"/>
- <component x="90" y="320" name="bzprofile" title="buzz profile" color="blue1">
+ <component x="80" y="260" name="bzprofile" title="buzz profile" color="blue1">
   <implementation.python script="nuvem/bzprofile.py"/>
   <service name="bzprofile"/>
   <reference name="id"/>
@@ -19,7 +37,7 @@
    <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
   </reference>
  </component>
- <component x="90" y="230" name="fbalbums" title="facebook albums" color="blue1">
+ <component x="190" y="60" name="fbalbums" title="facebook albums" color="blue1">
   <implementation.python script="nuvem/fbalbums.py"/>
   <service name="fbalbums"/>
   <reference name="id"/>
@@ -27,7 +45,7 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component x="90" y="50" name="fbfriends" title="facebook friends" color="blue1">
+ <component x="190" y="10" name="fbfriends" title="facebook friends" color="blue1">
   <implementation.python script="nuvem/fbfriends.py"/>
   <service name="fbfriends"/>
   <reference name="id"/>
@@ -35,7 +53,7 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component x="90" y="90" name="fbgroups" title="facebook groups" color="blue1">
+ <component x="80" y="60" name="fbgroups" title="facebook groups" color="blue1">
   <implementation.python script="nuvem/fbgroups.py"/>
   <service name="fbgroups"/>
   <reference name="id"/>
@@ -43,7 +61,7 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component x="90" y="10" name="fbprofile" title="facebook profile" color="blue1">
+ <component x="80" y="10" name="fbprofile" title="facebook profile" color="blue1">
   <implementation.python script="nuvem/fbprofile.py"/>
   <service name="fbprofile"/>
   <reference name="id"/>
@@ -51,7 +69,7 @@
    <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component x="90" y="270" name="flkalbum" title="flicker album" color="blue1">
+ <component x="80" y="210" name="flkalbum" title="flicker album" color="blue1">
   <implementation.python script="nuvem/flkalbum.py"/>
   <service name="flkalbum"/>
   <reference name="id"/>
@@ -59,7 +77,7 @@
    <binding.http uri="http://api.flickr.com/services/feeds/photos_public.gne"/>
   </reference>
  </component>
- <component x="220" y="230" name="picalbum" title="picasa album" color="blue1">
+ <component x="190" y="210" name="picalbum" title="picasa album" color="blue1">
   <implementation.python script="nuvem/picalbum.py"/>
   <service name="picalbum"/>
   <reference name="id"/>
@@ -67,7 +85,7 @@
    <binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
   </reference>
  </component>
- <component x="90" y="180" name="twfollowers" title="twitter followers" color="blue1">
+ <component x="80" y="160" name="twfollowers" title="twitter followers" color="blue1">
   <implementation.python script="nuvem/twfollowers.py"/>
   <service name="twfollowers"/>
   <reference name="id"/>
@@ -75,7 +93,7 @@
    <binding.http uri="http://api.twitter.com/1/statuses/followers.json"/>
   </reference>
  </component>
- <component x="210" y="180" name="twfriends" title="twitter friends" color="blue1">
+ <component x="190" y="160" name="twfriends" title="twitter friends" color="blue1">
   <implementation.python script="nuvem/twfriends.py"/>
   <service name="twfriends"/>
   <reference name="id"/>
@@ -83,7 +101,7 @@
    <binding.http uri="http://api.twitter.com/1/statuses/friends.json"/>
   </reference>
  </component>
- <component x="90" y="140" name="twprofile" title="twitter profile" color="blue1">
+ <component x="80" y="110" name="twprofile" title="twitter profile" color="blue1">
   <implementation.python script="nuvem/twprofile.py"/>
   <service name="twprofile"/>
   <reference name="id"/>
@@ -91,7 +109,7 @@
    <binding.http uri="http://api.twitter.com/1/users/show.json"/>
   </reference>
  </component>
- <component x="200" y="140" name="twtimeline" title="twitter timeline" color="blue1">
+ <component x="190" y="110" name="twtimeline" title="twitter timeline" color="blue1">
   <implementation.python script="nuvem/twtimeline.py"/>
   <service name="twtimeline"/>
   <reference name="id"/>

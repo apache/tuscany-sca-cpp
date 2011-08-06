@@ -28,7 +28,7 @@
  <service name="weather" promote="weather"/>
  <service name="weather2" promote="weather2"/>
  <service name="yahoosearch" promote="yahoosearch"/>
- <component x="336" y="48" name="bingsearch" title="bing" color="red1">
+ <component x="330" y="10" name="bingsearch" title="bing" color="pink1">
   <implementation.python script="nuvem/bsearch.py"/>
   <service name="bingsearch"/>
   <reference target="text10" name="query"/>
@@ -36,7 +36,7 @@
    <binding.http uri="http://www.bing.com/search"/>
   </reference>
  </component>
- <component x="650" y="20" name="gaddress1" title="address" color="red1">
+ <component x="330" y="50" name="gaddress1" title="address" color="pink1">
   <implementation.python script="nuvem/gaddress.py"/>
   <service name="gaddress"/>
   <reference target="text1" name="address"/>
@@ -44,12 +44,12 @@
    <binding.http uri="http://maps.googleapis.com/maps/api/geocode/json"/>
   </reference>
  </component>
- <component x="20" y="300" name="get" title="get" color="green1">
+ <component x="20" y="250" name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text3" name="url"/>
  </component>
- <component x="650" y="80" name="ggeopos1" title="geo position" color="red1">
+ <component x="490" y="10" name="ggeopos1" title="geo position" color="pink1">
   <implementation.python script="nuvem/ggeopos.py"/>
   <service name="ggeopos"/>
   <reference target="number1" name="latitude"/>
@@ -58,7 +58,7 @@
    <binding.http uri="http://maps.googleapis.com/maps/api/geocode/json"/>
   </reference>
  </component>
- <component x="347" y="106" name="googlemap" title="google map" color="red1">
+ <component x="310" y="100" name="googlemap" title="google map" color="pink1">
   <implementation.python script="nuvem/gmap.py"/>
   <service name="googlemap"/>
   <reference target="list2" name="locations"/>
@@ -66,7 +66,7 @@
    <binding.http uri="http://maps.google.com/maps/api/staticmap"/>
   </reference>
  </component>
- <component x="15" y="96" name="googlemap2" title="google map" color="red1">
+ <component x="15" y="96" name="googlemap2" title="google map" color="pink1">
   <implementation.python script="nuvem/gmap.py"/>
   <service name="googlemap"/>
   <reference target="list3" name="locations"/>
@@ -74,7 +74,7 @@
    <binding.http uri="http://maps.google.com/maps/api/staticmap"/>
   </reference>
  </component>
- <component x="18" y="0" name="googlesearch" title="google" color="red1">
+ <component x="20" y="10" name="googlesearch" title="google" color="pink1">
   <implementation.python script="nuvem/gsearch.py"/>
   <service name="googlesearch"/>
   <reference target="text" name="query"/>
@@ -82,22 +82,22 @@
    <binding.http uri="http://ajax.googleapis.com/ajax/services/search/web"/>
   </reference>
  </component>
- <component name="item" title="{propval} :" color="orange1">
+ <component name="item" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="list" name="value"/>
   <property>A</property>
  </component>
- <component name="item2" title="{propval} :" color="orange1">
+ <component name="item2" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
-  <reference target="pair4" name="value"/>
+  <reference target="list24" name="value"/>
   <property>A</property>
  </component>
- <component name="item3" title="{propval} :" color="orange1">
+ <component name="item3" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
-  <reference target="pair5" name="value"/>
+  <reference target="list25" name="value"/>
   <property>B</property>
  </component>
  <component name="list" title="list" color="yellow1">
@@ -113,6 +113,18 @@
   <service name="list"/>
   <reference target="item" name="item" clonable="true"/>
   <reference name="item" clonable="true"/>
+ </component>
+ <component name="list24" title="list2" color="yellow1">
+  <implementation.python script="nuvem/pair.py"/>
+  <service name="list2"/>
+  <reference target="text7" name="name"/>
+  <reference target="text5" name="value"/>
+ </component>
+ <component name="list25" title="list2" color="yellow1">
+  <implementation.python script="nuvem/pair.py"/>
+  <service name="list2"/>
+  <reference target="text8" name="name"/>
+  <reference target="text6" name="value"/>
  </component>
  <component name="list3" title="list" color="yellow1">
   <implementation.python script="nuvem/list_.py"/>
@@ -145,18 +157,6 @@
   <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>-122.260526</property>
- </component>
- <component name="pair4" title="pair" color="yellow1">
-  <implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="text7" name="name"/>
-  <reference target="text5" name="value"/>
- </component>
- <component name="pair5" title="pair" color="yellow1">
-  <implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="text8" name="name"/>
-  <reference target="text6" name="value"/>
  </component>
  <component name="text" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
@@ -213,7 +213,7 @@
   <service name="text"/>
   <property>apache tuscany</property>
  </component>
- <component x="18" y="49" name="weather" title="weather" color="red1">
+ <component x="18" y="49" name="weather" title="weather" color="pink1">
   <implementation.python script="nuvem/gweather.py"/>
   <service name="weather"/>
   <reference target="number" name="zip"/>
@@ -221,7 +221,7 @@
    <binding.http uri="http://www.google.com/ig/api"/>
   </reference>
  </component>
- <component x="190" y="51" name="weather2" title="weather" color="red1">
+ <component x="190" y="51" name="weather2" title="weather" color="pink1">
   <implementation.python script="nuvem/gweather.py"/>
   <service name="weather"/>
   <reference target="text2" name="zip"/>
@@ -229,7 +229,7 @@
    <binding.http uri="http://www.google.com/ig/api"/>
   </reference>
  </component>
- <component x="204" y="5" name="yahoosearch" title="yahoo" color="red1">
+ <component x="180" y="10" name="yahoosearch" title="yahoo" color="pink1">
   <implementation.python script="nuvem/ysearch.py"/>
   <service name="yahoosearch"/>
   <reference target="text9" name="query"/>

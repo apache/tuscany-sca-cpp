@@ -32,36 +32,36 @@
   <service name="email"/>
   <property name="email"/>
  </component>
- <component x="14" y="1" name="host" title="host" color="green1">
+ <component x="20" y="10" name="host" title="host" color="green1">
   <implementation.python script="nuvem/host.py"/>
   <service name="host"/>
   <property name="host"/>
  </component>
- <component name="item" title="{propval} :" color="orange1">
+ <component name="item" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="text4" name="value"/>
   <property>parmx</property>
  </component>
- <component name="item2" title="{propval} :" color="orange1">
+ <component name="item2" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="text5" name="value"/>
   <property>parmy</property>
  </component>
- <component name="item3" title="{propval} :" color="orange1">
+ <component name="item3" title="{propval}:" color="orange1">
   <implementation.python script="nuvem/item.py"/>
   <service name="item"/>
   <reference target="number" name="value"/>
   <property>parmn</property>
  </component>
- <component x="330" y="60" name="keychain1" title="keychain" color="green1">
+ <component x="260" y="50" name="keychain1" title="keychain" color="green1">
   <implementation.python script="nuvem/keychain.py"/>
   <service name="keychain"/>
   <reference target="text1" name="name"/>
   <reference name="account" target="Accounts" visible="false"/>
  </component>
- <component x="330" y="10" name="keychain2" title="keychain" color="green1">
+ <component x="260" y="10" name="keychain2" title="keychain" color="green1">
   <implementation.python script="nuvem/keychain.py"/>
   <service name="keychain"/>
   <reference target="name1" name="name"/>
@@ -132,7 +132,7 @@
   <service name="text"/>
   <property>yy</property>
  </component>
- <component x="120" y="10" name="url" title="url" color="green1">
+ <component x="90" y="10" name="url" title="url" color="green1">
   <implementation.python script="nuvem/url.py"/>
   <service name="url"/>
   <reference target="text" name="address"/>
