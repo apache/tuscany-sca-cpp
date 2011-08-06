@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -62,15 +62,17 @@
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
 <tr><td><textarea id="appDescription" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
 <tr><td>
-<input id="cloneAppOKButton" type="submit" class="greenbutton" style="font-weight: bold;" value="Clone" title="Clone the app"/>
-<input id="cloneAppCancelButton" type="button" class="redbutton" value="Cancel"/>
+<input id="cloneAppOKButton" type="submit" class="graybutton" style="font-weight: bold;" value="Clone" title="Clone the app"/>
+<input id="cloneAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Get the app name
-var appname = ui.queryParams()['app'];
+var appname = ui.fragmentParams()['app'];
 if (isNil(appname))
     window.open('/', '_self');
 
@@ -90,8 +92,7 @@ function applink(appname) {
 // Set page titles
 var tclone = isNil(config.clone)? 'Clone' : config.clone;
 document.title = windowtitle(window.location.hostname) + ' - ' + tclone + ' - ' + appname;
-//$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 $('th').innerHTML = tclone + ' this App';
 $('cloneAppOKButton').value = tclone;
 $('cloneAppOKButton').title = tclone + ' this app';
@@ -120,6 +121,11 @@ function getapp(name) {
     if (isNil(name))
         return false;
     return apps.get(name, function(doc) {
+
+        // Stop now if we didn't get the app
+        if (doc == null)
+            return false;
+
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(appentry)));
         $('appTitle').value = title;
@@ -141,10 +147,14 @@ $('cloneAppForm').onsubmit = function() {
     var title = $('appTitle').value;
     var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname)));
     var entry = atom.writeATOMEntry(valuesToElements(app));
-    dashboards.put(name, car(entry));
+    dashboards.put(name, car(entry), function(e) {
+        if (e)
+            return false;
 
-    // Open it in the page editor
-    window.open('/page/?app=' + name, '_self');
+        // Open it in the page editor
+        ui.navigate('/page/#app=' + name, '_self');
+        return false;
+    });
     return false;
 };
 
@@ -152,7 +162,7 @@ $('cloneAppForm').onsubmit = function() {
  * Cancel cloning an app.
  */
 $('cloneAppCancelButton').onclick = function() {
-    window.open('/stats/?app=' + appname, '_self');
+    ui.navigate('/stats/#app=' + appname, '_self');
 };
 
 // Get the current app

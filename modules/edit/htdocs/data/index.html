@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>View</title>
 <script type="text/javascript">
@@ -31,7 +31,7 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 <link rel="stylesheet" type="text/css" href="/ui-min.css">
 <script type="text/javascript" src="/all-min.js"></script>
 </head>  
-<body class="delayed" onload="ui.onload();">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 <div id="compLinkHeader" style="margin-top: 4px; margin-bottom: 4px;"></div>
@@ -39,8 +39,10 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 </div>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Get the component name
-var cname = ui.queryParams()['component'];
+var cname = ui.fragmentParams()['component'];
 
 /**
  * The current component.
@@ -74,7 +76,12 @@ function mkdoctable(doc) {
  * Get and display the contents of the current component.
  */
 function getdata() {
-    return comp.get('', function(doc) {
+    return comp.getnocache('', function(doc) {
+
+        // Stop now if we didn't the doc
+        if (doc == null)
+            return false;
+
         if (json.isJSON(mklist(doc)))
             return display(datatable(json.readJSON(mklist(doc))));
 

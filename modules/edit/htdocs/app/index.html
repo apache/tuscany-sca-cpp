@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -30,8 +30,8 @@ document.title = window.location.hostname.split('.')[0];
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -45,6 +45,8 @@ document.title = window.location.hostname.split('.')[0];
 </div>
 
 <script type="text/javascript">
+ui.initbody();
+
 /**
  * The main app div.
  */
@@ -120,49 +122,123 @@ function inputvalue(e) {
  */
 function setwidgetvalue(e, dv) {
     var htattrs = namedElementChild("'htattrs", dv);
-    var attrs = append(isNil(htattrs)? mklist() :
-                        map(function(ce) { return mklist(elementName(ce).substring(1), elementHasValue(ce)? elementValue(ce) : elementChildren(ce)); }, elementChildren(htattrs)),
-                        elementHasValue(dv)? mklist(mklist('value', isNil(elementValue(dv))? '' : elementValue(dv))) : mklist());
+
+    function attr(ce) {
+        return mklist(elementName(ce) == "'htstyle"? 'style' : elementName(ce).substring(1), elementHasValue(ce)? elementValue(ce) : elementChildren(ce));
+    }
+
+    function vattr(dv) {
+        return (elementHasValue(dv) && !isNil(elementValue(dv)))? mklist(mklist('value', isNil(elementValue(dv))? '' : elementValue(dv))) : mklist();
+    }
+
+    function sattr(dv) {
+        var s = namedElementChild("'htstyle", dv);
+        return isNil(s)? mklist() : mklist(mklist('style', elementHasValue(s)? elementValue(s) : elementChildren(s)))
+    }
+
+    var attrs = append(append(isNil(htattrs)?  mklist() : map(attr, elementChildren(htattrs)), vattr(dv)), sattr(dv));
+
+    // Set the attributes of the widget
+    function setattrs(vsetter, attrs, ce) {
+        return map(function(a) {
+            if (car(a) == 'value')
+                return vsetter(a, ce);
+
+            if (car(a) == 'style') {
+                // Split a style property between a style attribute
+                // and a stylesheet definition in the document's head
+
+                function prop(s) {
+                    if (s == ';')
+                        return '';
+                    var i = s.indexOf('<style>');
+                    if (i == -1)
+                        return s;
+                    var j = s.indexOf('</style>');
+                    return s.substring(0, i) + prop(s.substring(j + 8));
+                }
+
+                function sheet(s) {
+                    var i = s.indexOf('<style>');
+                    if (i == -1)
+                        return '';
+                    var j = s.indexOf('</style>');
+                    return s.substring(i + 7, j) + sheet(s.substring(j + 8));
+                }
+
+                var st = cadr(a).replace(new RegExp('{id}', 'g'), e.id);
+                var p = prop(st);
+                var s = sheet(st);
+
+                // Define the stylesheet
+                if (s != '') {
+                    var esheet = appframe.contentDocument.getElementById('style_' + e.id);
+                    if (isNil(esheet)) {
+                        var nesheet = document.createElement('style');
+                        nesheet.id = 'style_' + e.id;
+                        nesheet.type = 'text/css';
+                        appframe.contentDocument.getElementsByTagName('head')[0].appendChild(nesheet);
+                        nesheet.innerHTML = s;
+                    } else {
+                        esheet.innerHTML = s;
+                    }
+                }
+
+                var aname = ce.style.webkitAnimationName;
+
+                // Set the style attribute
+                ce.setAttribute('style', p);
+
+                // Restart current animation if necessary
+                if (!isNil(aname) && ce.style.webkitAnimationName == aname) {
+                    ce.style.webkitAnimationName = '';
+                    setTimeout(function() {
+                        ce.style.webkitAnimationName = aname;
+                    }, 0);
+                }
+                return a;
+            }
+
+            ce.setAttribute(car(a), cadr(a));
+            return a;
+        }, attrs);
+    }
 
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
         var ce = car(childElements(e));
-        return map(function(a) { car(a) == 'value'? ce.innerHTML = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(function(a, ce) { ce.innerHTML = cadr(a); }, attrs, ce);
     }
-
     if (e.className == 'entry' || e.className == 'password') {
         var ce = car(childElements(e));
-        return map(function(a) { car(a) == 'value'? ce.defaultValue = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(function(a, ce) { ce.defaultValue = cadr(a); }, attrs, ce);
     }
-
     if (e.className == 'button') {
         var ce = car(childElements(e));
-        return map(function(a) { car(a) == 'value'? ce.value = cadr(a) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(function(a, ce) { ce.value = cadr(a); }, attrs, ce);
     }
-
     if (e.className == 'checkbox') {
         var ce = car(childElements(e));
 
-        function setcheckvalue(ce, v) {
+        function setcheckvalue(a, ce) {
+            var v = cadr(a);
             ce.value = v;
             map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = v; return n; }, nodeList(e.childNodes));
             return true;
         }
 
-        var r = map(function(a) { car(a) == 'value'? setcheckvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
-        return r;
+        return setattrs(setcheckvalue, attrs, ce);
     }
-
     if (e.className == 'select') {
         var ce = car(childElements(car(childElements(e))));
 
-        function setselectvalue(ce, v) {
+        function setselectvalue(a, ce) {
+            var v = cadr(a);
             ce.value = v;
             ce.innerHTML = v;
             return true;
         }
 
-        var r = map(function(a) { car(a) == 'value'? setselectvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
-        return r;
+        return setattrs(setselectvalue, attrs, ce);
     }
     if (e.className == 'list') {
         var dl = ui.datalist(isNil(dv)? mklist() : mklist(dv));
@@ -177,7 +253,8 @@ function setwidgetvalue(e, dv) {
     if (e.className == 'link') {
         var ce = car(childElements(e));
 
-        function setlinkvalue(ce, v) {
+        function setlinkvalue(a, ce) {
+            var v = cadr(a);
             if (isList(v)) {
                 ce.href = car(v);
                 ce.innerHTML = cadr(v);
@@ -188,15 +265,15 @@ function setwidgetvalue(e, dv) {
             return true;
         }
 
-        return map(function(a) { car(a) == 'value'? setlinkvalue(ce, cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(setlinkvalue, attrs, ce);
     }
     if (e.className == 'img') {
         var ce = car(childElements(e));
-        return map(function(a) { car(a) == 'value'? ce.setAttribute('src', cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(function(a, ce) { ce.setAttribute('src', cadr(a)); }, attrs, ce);
     }
     if (e.className == 'iframe') {
         var ce = car(childElements(e));
-        return map(function(a) { car(a) == 'value'? ce.setAttribute('src', cadr(a)) : ce.setAttribute(car(a), cadr(a)); }, attrs);
+        return setattrs(function(a, ce) { ce.setAttribute('src', cadr(a)); }, attrs, ce);
     }
     return '';
 };
@@ -250,6 +327,19 @@ function bindwidgethandler(e) {
         b.onclick = function() { return buttonClickHandler(b.value); };
         return e;
     }
+    if (e.className == 'link') {
+        var l = car(childElements(e));
+        var hr = l.href;
+        if (hr.substring(0, 5) == 'link:' && hr.indexOf('://') == -1) {
+            var f = function(e) {
+                e.preventDefault();
+                return buttonClickHandler(hr.substring(5));
+            };
+            l.ontouchstart = l.onclick = f;
+            l.href = 'javascript:void()';
+        }
+        return e;
+    }
     if (e.className == 'entry' || e.className == 'password' || e.className == 'checkbox') {
         car(childElements(e)).name = e.id;
         return e;
@@ -266,13 +356,40 @@ function bindwidgethandler(e) {
  * Initial fixup of a widget.
  */
 function fixupwidget(e) {
-    if (e.className == 'iframe') {
-        var f = car(childElements(e));
-        e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+        if (e.className == 'section')
+            e.style.width = '100%';
+        var ce = car(childElements(e));
+        if (ce.innerHTML == '=' + e.id)
+            ce.innerHTML = '';
         return e;
     }
-    if (e.className == 'section') {
-        e.style.width = '100%';
+    if (e.className == 'entry' || e.className == 'password') {
+        var ce = car(childElements(e));
+        if (ce.defaultValue == '=' + e.id)
+            ce.defaultValue = '';
+        return e;
+    }
+    if (e.className == 'button') {
+        var ce = car(childElements(e));
+        if (ce.value == '=' + e.id)
+            ce.value = '';
+        return e;
+    }
+    if (e.className == 'checkbox') {
+        var ce = car(childElements(e));
+        if (ce.value == '=' + e.id) {
+            ce.value = '';
+            map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = ''; return n; }, nodeList(e.childNodes));
+        }
+        return e;
+    }
+    if (e.className == 'select') {
+        var ce = car(childElements(car(childElements(e))));
+        if (ce.value == '=' + e.id) {
+            ce.value = '';
+            ce.innerHTML = '';
+        }
         return e;
     }
     if (e.className == 'list') {
@@ -285,6 +402,21 @@ function fixupwidget(e) {
         car(childElements(e)).innerHTML = '';
         e.style.width = '100%';
         car(childElements(e)).style.width = '100%';
+        return e;
+    }
+    if (e.className == 'link') {
+        var ce = car(childElements(e));
+        if (ce.innerHTML == '=' + e.id)
+            ce.innerHTML = '';
+        return e;
+    }
+    if (e.className == 'img') {
+        var ce = car(childElements(e));
+        return e;
+    }
+    if (e.className == 'iframe') {
+        var ce = car(childElements(e));
+        e.innerHTML = '<iframe src="' + ce.href + '" frameborder="no" scrolling="no"></iframe>';
         return e;
     }
     return e;
@@ -304,7 +436,7 @@ function initwidget(e) {
  */
 function getdoc(comp, name, uri) {
     try {
-        return comp.get(uri);
+        return comp.getnocache(uri);
     } catch(e) {
         log('exception on get(' + name + ', ' + uri + ')', e);
         return null;

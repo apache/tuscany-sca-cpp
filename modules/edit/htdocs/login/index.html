@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Sign in</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -27,8 +27,8 @@
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <h1>Sign in</h1>
 
@@ -38,12 +38,14 @@
 <tr><td><input type="text" id="httpd_username" name="httpd_username" value="" size="15" autocapitalize="off" placeholder="Enter your user name" style="width: 300px;"/></td></tr>
 <tr><td><b>Password:</b></td></tr>
 <tr><td><input type="password" name="httpd_password" value="" size="15" placeholder="Enter your password" style="width: 300px;"/></td></tr>
-<tr><td><input type="submit" value="Sign in" class="greenbutton" style="font-weight: bold;"/></td><td></td></tr>
+<tr><td><input type="submit" value="Sign in" class="graybutton" style="font-weight: bold;"/></td><td></td></tr>
 </table>
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
 
 <script type="text/javascript">
+ui.initbody();
+
 function queryParams() {
     qp = new Array();
     qs = window.location.search.substring(1).split('&');

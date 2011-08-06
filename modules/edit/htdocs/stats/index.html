@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Stats</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -49,7 +49,7 @@
 <th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Stats</th>
 
 <th class="thl thr" style="width: 100%; text-align: right; padding-right: 2px; padding-top: 0px; padding-bottom: 0px;">
-<input type="button" class="greenbutton" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" id="cloneApp" value="Clone" title="Clone this app"/>
+<input type="button" class="graybutton" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" id="cloneApp" value="Clone" title="Clone this app"/>
 </th>
 </tr>
 </table>
@@ -70,8 +70,10 @@
 </form>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Get the app name
-var appname = ui.queryParams()['app'];
+var appname = ui.fragmentParams()['app'];
 if (isNil(appname))
     window.open('/', '_self');
 
@@ -90,8 +92,7 @@ function applink(appname) {
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Stats - ' + appname;
-//$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 var tclone = isNil(config.clone)? 'Clone' : config.clone;
 $('cloneApp').value = tclone;
 $('cloneApp').title = tclone + ' this app';
@@ -102,6 +103,7 @@ displaymenu();
 // Init service references
 var editWidget = sca.component("EditWidget");
 var dashboards = sca.reference(editWidget, "dashboards");
+var apps = sca.reference(editWidget, "apps");
 
 /**
  * The current app entry and corresponding saved XML content.
@@ -115,7 +117,12 @@ var savedappentryxml = '';
 function getapp(name) {
     if (isNil(name))
         return false;
-    return dashboards.get(name, function(doc) {
+    return apps.get(name, function(doc) {
+
+        // Stop now if we didn't get the app
+        if (doc == null)
+            return false;
+
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(appentry)));
         $('appTitle').value = title;
@@ -132,8 +139,12 @@ function getapp(name) {
 function save(entryxml) {
     $('saveStatus').innerHTML = 'Saving';
     savedappentryxml = entryxml;
-    dashboards.put(appname, savedappentryxml);
-    $('saveStatus').innerHTML = 'Saved';
+    dashboards.put(appname, savedappentryxml, function(e) {
+        if (e)
+            return false;
+        $('saveStatus').innerHTML = 'Saved';
+        return false;
+    });
     return true;
 }
 
@@ -165,7 +176,7 @@ $('appForm').onsubmit = function() {
  * Handle Clone button event.
  */
 $('cloneApp').onclick = function() {
-    return window.open('/clone/?app=' + appname, '_self');
+    return ui.navigate('/clone/#app=' + appname, '_self');
 }
 
 // Get the current app

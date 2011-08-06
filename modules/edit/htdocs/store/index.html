@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Store</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -46,6 +46,8 @@
 <div id="apps"></div>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Store';
 $('h1').innerHTML = hometitle(window.location.hostname);
@@ -54,7 +56,7 @@ $('h1').innerHTML = hometitle(window.location.hostname);
 displaymenu();
 
 // Get the store category
-var category = ui.queryParams()['category'];
+var category = ui.fragmentParams()['category'];
 if (isNil(category))
     category = 'myapps';
 
@@ -65,10 +67,10 @@ function catmenu() {
     function catmenuitem(name, cat) {
         var c = cat == category? 'smenu' : 'amenu';
         return '<th class="thl thr" style="width: 10px; padding-top: 4px; padding-bottom: 4px; padding-right: 6px;">'
-                + ui.ahref('/store/?category=' + cat, '_self', '<span class="' + c + '">' + name + '</span>') + '</th>';
+                + ui.ahref('/store/#category=' + cat, '_reload', '<span class="' + c + '">' + name + '</span>') + '</th>';
     }
 
-    var m = '<table style="width: 100%;"><tr>';
+    var m = '<table style="width: 100%; margin-bottom: 2px;"><tr>';
     m += catmenuitem('My Apps', 'myapps');
     m += catmenuitem('New', 'new');
     m += catmenuitem('Top', 'top');
@@ -76,7 +78,7 @@ function catmenu() {
     m += catmenuitem('All', 'all');
     if (category == 'myapps') {
         m += '<th class="thl thr" style="width: 100%; padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">';
-        m += '<input type="button" class="greenbutton" id="createApp" title="Create a new app" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" Value="New App"/>';
+        m += '<input type="button" class="graybutton" id="createApp" title="Create a new app" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" Value="New App"/>';
         m += '</th></tr></table>';
         return m;
     }
@@ -111,14 +113,14 @@ function applink(appname) {
  * Edit an app.
  */
 function editApp(appname) {
-    return window.open('/page/?app=' + appname, '_self');
+    return ui.navigate('/page/#app=' + appname, '_self');
 }
 
 /**
  * View an app.
  */
 function viewApp(appname) {
-    return window.open('/stats/?app=' + appname, '_self');
+    return ui.navigate('/stats/#app=' + appname, '_self');
 }
 
 /**
@@ -126,7 +128,7 @@ function viewApp(appname) {
  */
 if (category == 'myapps') {
     $('createApp').onclick = function() {
-        return window.open('/create/', '_self');
+        return ui.navigate('/create/', '_self');
     }
 }
 
@@ -135,21 +137,29 @@ if (category == 'myapps') {
  */
 function getapps(category) {
     function display(doc) {
+
+        // Stop now if we didn't get the apps
+        if (doc == null)
+            return false;
+
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var aentries = assoc("'entry", cdr(feed));
         var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
-        for (var i = 0; i < length(entries); i++) {
-            var entry = entries[i];
+
+        function displayentries(entries) {
+            if (isNil(entries))
+                return apps;
+            var entry = car(entries);
             var title = cadr(assoc("'title", entry))
             var name = cadr(assoc("'id", entry))
             var author = 'joe';
             var clone = isNil(config.clone)? 'Clone' : config.clone;
 
-            apps += '<div class="box" style="width: 285px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
+            apps += '<div class="box" style="width: 150px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 2px; padding: 2px; vertical-align: top;">'
             apps += '<table><tr>';
             apps += '<td>';
-            apps += '<div>' + ui.ahref('/stats/?app=' + name, '_self', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>') + '</div>';
+            apps += '<div>' + ui.ahref('/stats/#app=' + name, '_self', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin: 0px; padding: 0px;"></img>') + '</div>';
             apps += '</td>';
             apps += '<td class="tdw">';
             apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
@@ -157,13 +167,14 @@ function getapps(category) {
                 apps += '<div style="color: #808080;">Shared</div>';
             else
                 apps += '<div>' + 'by&nbsp;' + '<span style="font-weight: bold;">' + author + '</span></div>';
-            apps += '<div>Feb 4, 2011</div>';
-            apps += '<br/>';
-            apps += '<div>' + title + '</div>';
             apps += '</td>';
             apps += '</tr></table>';
             apps += '</div>';
+            return displayentries(cdr(entries));
         }
+
+        displayentries(entries);
+
         apps += '</div>';
         $('apps').innerHTML = apps;
     }

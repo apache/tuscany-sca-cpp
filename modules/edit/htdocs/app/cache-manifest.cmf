@@ -6,7 +6,6 @@ CACHE MANIFEST
 
 # App resources
 /
-/app.html
 /data/index.html
 /favicon.ico
 /footconfig.js

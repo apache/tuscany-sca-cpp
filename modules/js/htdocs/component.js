@@ -161,7 +161,7 @@ HTTPBindingClient.jsonResult = function(http) {
     // Get the charset
     function httpCharset(http) {
         try {
-            var contentType = http.getResponseHeader("Content-type");
+            var contentType = http.getResponseHeader("Content-Type");
             var parts = contentType.split(/\s*;\s*/);
             for (var i = 0; i < parts.length; i++) {
                 if (parts[i].substring(0, 8) == "charset=")
@@ -190,7 +190,7 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = req.cb? true : false;
     http.open("POST", this.uri, hascb);
-    http.setRequestHeader("Content-type", "application/json-rpc");
+    http.setRequestHeader("Content-Type", "application/json-rpc");
 
     // Construct call back if we have one
     if(hascb) {
@@ -201,12 +201,18 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
                     var res = null;
                     try {
                         res = HTTPBindingClient.jsonResult(http);
+                        try {
+                            req.cb(res);
+                        } catch(cbe) {}
                     } catch(e) {
-                        req.cb(null, e);
+                        try {
+                            req.cb(null, e);
+                        } catch(cbe) {}
                     }
-                    req.cb(res);
                 } else
-                    req.cb(null, HTTPBindingClient.Exception(http.status, http.statusText));
+                    try {
+                        req.cb(null, HTTPBindingClient.Exception(http.status, http.statusText));
+                    } catch(cbe) {}
             }
         };
 
@@ -222,24 +228,72 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
     throw new HTTPBindingClient.Exception(http.status, http.statusText);
 };
 
+
 /**
  * REST ATOMPub GET method.
  */
 HTTPBindingClient.prototype.get = function(id, cb) {
+    var u = this.uri + '/' + id;
+    var hascb = cb? true : false;
+
+    // Get from local storage first
+    var item = localStorage.getItem(u);
+    //log('localStorage.getItem', u, item);
+    if (item != null && item != '') {
+        if (!hascb)
+            return item;
+
+        // Pass local result to callback
+        try {
+            cb(item);
+        } catch (cbe) {}
+    }
+
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
-    var hascb = cb? true : false;
-    http.open("GET", this.uri + '/' + id, hascb);
+    http.open("GET", u, hascb);
 
     // Construct call back if we have one
     if (hascb) {
         http.onreadystatechange = function() {
+            //log('readystate', http.readyState, 'status', http.status, 'headers', http.getAllResponseHeaders());
             if (http.readyState == 4) {
-                // Pass the result or exception
-                if (http.status == 200)
-                    cb(http.responseText);
-                else
-                    cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                // Pass result if different from local result
+                if (http.status == 200) {
+
+                    if (http.getResponseHeader("X-Login") != null) { 
+                        // Detect redirect to a login page
+                        try {
+                            cb(null, new HTTPBindingClient.Exception(403, 'X-Login'));
+                        } catch(cbe) {}
+
+                    } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+                        // Report empty response
+                        try {
+                            cb(null, new HTTPBindingClient.Exception(403, 'No-Content'));
+                        } catch(cbe) {}
+
+                    } else {
+                        if (item == null || http.responseText != item) {
+                            // Store retrieved entry in local storage
+                            if (http.responseText != null) {
+                                //log('localStorage.setItem', u, http.responseText);
+                                localStorage.setItem(u, http.responseText);
+                            }
+                            try {
+                                cb(http.responseText);
+                            } catch(cbe) {}
+                        }
+                    }
+                }
+                else {
+                    // Pass exception if we didn't have a local result
+                    if (item == null) {
+                        try {
+                            cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                        } catch(cbe) {}
+                    }
+                }
             }
         };
 
@@ -250,8 +304,84 @@ HTTPBindingClient.prototype.get = function(id, cb) {
 
     // Send the request and return the result or exception
     http.send(null);
-    if (http.status == 200)
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+
+            // Detect redirect to a login page
+            throw new HTTPBindingClient.Exception(403, 'X-Login');
+
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+
+            // Report empty response
+            throw new HTTPBindingClient.Exception(403, 'No-Content');
+        }
         return http.responseText;
+    }
+    throw new HTTPBindingClient.Exception(http.status, http.statusText);
+};
+
+/**
+ * REST ATOMPub GET method, does not use the local cache.
+ */
+HTTPBindingClient.prototype.getnocache = function(id, cb) {
+    var u = this.uri + '/' + id;
+    var hascb = cb? true : false;
+
+    // Connect to the service
+    var http = HTTPBindingClient.getHTTPRequest();
+    http.open("GET", u, hascb);
+
+    // Construct call back if we have one
+    if (hascb) {
+        http.onreadystatechange = function() {
+            if (http.readyState == 4) {
+                if (http.status == 200) {
+
+                    if (http.getResponseHeader("X-Login") != null) {
+                        // Detect redirect to a login page
+                        try {
+                            return cb(null, new HTTPBindingClient.Exception(403, 'X-Login'));
+                        } catch(cbe) {}
+
+                    } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+                        // Report empty response
+                        try {
+                            return cb(null, new HTTPBindingClient.Exception(403, 'No-Content'));
+                        } catch(cbe) {}
+
+                    } else {
+                        try {
+                            cb(http.responseText);
+                        } catch(cbe) {}
+                    }
+                } else {
+                    try {
+                        cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                    } catch(cbe) {}
+                }
+            }
+        };
+
+        // Send the request
+        http.send(null);
+        return true;
+    }
+
+    // Send the request and return the result or exception
+    http.send(null);
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+
+            // Detect redirect to a login page
+            throw new HTTPBindingClient.Exception(403, 'X-Login');
+
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+
+            // Report empty response
+            throw new HTTPBindingClient.Exception(403, 'No-Content');
+        }
+        return http.responseText;
+    }
     throw new HTTPBindingClient.Exception(http.status, http.statusText);
 };
 
@@ -259,6 +389,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
  * REST ATOMPub POST method.
  */
 HTTPBindingClient.prototype.post = function (entry, cb) {
+
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
@@ -270,10 +401,16 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
         http.onreadystatechange = function() {
             // Pass the result or exception
             if (http.readyState == 4) {
-                if (http.status == 201)
-                    cb(http.responseText);
-                else
-                    cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                if (http.status == 201) {
+                    try {
+                        cb(http.responseText);
+                    } catch(cbe) {}
+                }
+                else {
+                    try {
+                        cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                    } catch(cbe) {}
+                }
             }
         };
         // Send the request
@@ -292,10 +429,16 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
  * REST ATOMPub PUT method.
  */
 HTTPBindingClient.prototype.put = function (id, entry, cb) {
+    var u = this.uri + '/' + id;
+
+    // Update local storage
+    localStorage.setItem(u, entry);
+    //log('localStorage.setItem', u, entry);
+
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
-    http.open("PUT", this.uri + '/' + id, hascb);
+    http.open("PUT", u, hascb);
     http.setRequestHeader("Content-Type", "application/atom+xml");
 
     // Construct call back if we have one
@@ -303,10 +446,15 @@ HTTPBindingClient.prototype.put = function (id, entry, cb) {
         http.onreadystatechange = function() {
             if (http.readyState == 4) {
                 // Pass any exception
-                if (http.status == 200)
-                    cb();
-                else
-                    cb(new HTTPBindingClient.Exception(http.status, http.statusText));
+                if (http.status == 200) {
+                    try {
+                        cb();
+                    } catch(cbe) {}
+                } else {
+                    try {
+                        cb(new HTTPBindingClient.Exception(http.status, http.statusText));
+                    } catch(cbe) {}
+                }
             }
         };
         // Send the request
@@ -325,20 +473,32 @@ HTTPBindingClient.prototype.put = function (id, entry, cb) {
  * REST ATOMPub DELETE method.
  */
 HTTPBindingClient.prototype.del = function (id, cb) {       
+    var u = this.uri + '/' + id;
+
+    // Update local storage
+    localStorage.removeItem(u);
+    //log('localStorage.removeItem', u);
+
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
-    http.open("DELETE", this.uri + '/' + id, hascb);        
+    http.open("DELETE", u, hascb);        
 
     // Construct call back if we have one
     if (cb) {
         http.onreadystatechange = function() {
             if (http.readyState == 4) {
                 // Pass any exception
-                if (http.status == 200)
-                    cb();
-                else
-                    cb(new HTTPBindingClient.Exception(http.status, http.statusText));
+                if (http.status == 200) {
+                    try {
+                        cb();
+                    } catch(cbe) {}
+                }
+                else {
+                    try {
+                        cb(new HTTPBindingClient.Exception(http.status, http.statusText));
+                    } catch(cbe) {}
+                }
             }
         };
         // Send the request

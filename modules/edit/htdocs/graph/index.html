@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -29,49 +29,65 @@
 <script type="text/javascript" src="/menu.js"></script>
 <script type="text/javascript" src="graph.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv" style="overflow: visible;">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
+</div>
+
+<div id="menubackground" style="position: absolute; top: 0px; left: 0px; z-index: -1; width: 2500px;">
+<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr><td class="dtbar">
+<table border="0" cellspacing="0" cellpadding="0"><tr><td class="ltbar"><span class="tbarsmenu">>&nbsp</span></td></tr></table>
+</td></tr></table>
 </div>
 
 <div id="menu"></div>
 
 <table style="width: 100%;">
 <tr>
-<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right; padding-right: 2px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td><h2><span id="appNameHeader"></span></h2></td>
+<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
 </tr>
 </table>
 
-<table style="width: 100%;">
+<table id="compValueBackground" style="width: 2500px; position: absolute; top: 59px; left: 0px; z-index: -1;">
 <tr>
-<th class="thr thl" style="padding-left: 2px; padding-right: 2px; width: 100%">
-<input id="compValue" type="text" value="" title="Component value" autocapitalize="off" placeholder="Value" style="position: relative; width: 100%;"/>
-</th>
-
-<th class="thl thr" style="text-align: right; padding-right: 2px;">
-<span id="deleteCompButton" title="Delete a component" class="redbutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
-
-<span id="addCompButton" title="Add a component" class="greenbutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
-
-<span id="playCompButton" title="View component value" class="bluebutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
-</th>
+<th class="thr thl"><span style="display: inline-block; padding-top: 0px; padding-bottom: 0px; height: 24px;"></span></th>
 </tr>
 </table>
 
-<div id="contentdiv" style="margin-top: 4px; width: 100%;">
-<div id="playdiv" style="position:relative; top: 0x; left: 0px; right: 0px; height: 5000px; visibility: hidden">
+<table id="compValueTable" style="width: 100%;">
+<tr>
+<td class="thr thl" style="padding-left: 2px; padding-right: 2px; vertical-align: top; width: 100%">
+<input id="compValue" type="text" value="" title="Component value" autocapitalize="off" placeholder="Value" style="position: relative; width: 100%;"/>
+</td>
+
+<td class="thl thr" style="text-align: right; padding-right: 2px; vertical-align: top;">
+<span id="deleteCompButton" title="Delete a component" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
+
+<span id="copyCompButton" title="Copy a component" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">c</span>
+
+<span id="addCompButton" title="Add a component" class="graybutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
+
+<span id="playCompButton" title="View component value" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
+</td>
+</tr>
+</table>
+
+<div id="contentdiv" style="margin-top: 4px; width: 2500px;">
+<div id="playdiv" style="position:relative; top: 0x; left: 0px; right: 0px; width: 2500px; height: 5000px; visibility: hidden">
 </div>
 </div>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Get the app name
-var appname = ui.queryParams()['app'];
+var appname = ui.fragmentParams()['app'];
 var ispalette = false;
 if (isNil(appname)) {
-    appname = ui.queryParams()['palette'];
+    appname = ui.fragmentParams()['palette'];
     if (isNil(appname))
         window.open('/', '_self');
 
@@ -94,8 +110,7 @@ function applink(appname) {
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - ' + (isNil(config.compose)? 'Composition' : config.compose) + ' - ' + appname;
-//$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 // Load the menu bar
 displaymenu();
@@ -106,10 +121,20 @@ displaymenu();
 var cvalue = $('compValue');
 var cadd = $('addCompButton');
 var cdelete = $('deleteCompButton');
+var ccopy = $('copyCompButton');
 var cplay = $('playCompButton');
 
+// Position background divs
+var mbackground = $('menubackground');
+var menudiv = $('menu');
+mbackground.style.top = ui.pixpos(menudiv.offsetTop);
+
+var cvbackground = $('compValueBackground');
+var cvtable = $('compValueTable');
+cvbackground.style.top = ui.pixpos(cvtable.offsetTop);
+
 /**
- * Adjust field size.
+ * Adjust component value field size.
  */
 function resizeFields() {
     cvalue.style.width = '0px';
@@ -176,6 +201,11 @@ function getapp(name, g) {
     if (isNil(name))
         return false;
     return composites.get(name, function(doc) {
+
+        // Stop now if we didn't get a composite
+        if (doc == null)
+            return false;
+
         composite = atomcomposite(doc);
         if (isNil(composite)) {
 
@@ -197,16 +227,19 @@ function getapp(name, g) {
 /**
  * Display a palette. Get it from the server if needed.
  */
-function displaypalette(name, g, palette, gpalettes) {
+function displaypalette(name, g, svg, palette, gpalettes) {
     if (isNil(name))
         return;
     if (isNil(gpalettes[name])) {
 
         // Get the palette from the server
-        var doc = palettes.get(name);
-        gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(2580,0), true, g);
+        palettes.get(name, function(doc) {
+            gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(2580,0), true, g);
+            graph.display(gpalettes[name], g, svg);
+        });
+        return true;
     }
-    graph.display(gpalettes[name], g);
+    graph.display(gpalettes[name], g, svg);
     return true;
 }
 
@@ -216,16 +249,16 @@ function displaypalette(name, g, palette, gpalettes) {
  */
 function installpalette(name, pos, g, bg, palette, gpalettes) {
     var b = graph.mkbutton(name, pos);
-    graph.display(mklist(b), g);
+    graph.display(mklist(b), g, g);
     b.onclick = function(e) {
 
         // Swap the selected palette
-        graph.compselect(bpalette, false);
-        displaypalette(spalette, bg, palette, gpalettes);
+        graph.paletteselect(bpalette, false);
+        displaypalette(spalette, bg, g, palette, gpalettes);
         bpalette = b;
-        graph.compselect(b, true, null, null);
+        graph.paletteselect(b, true);
         spalette = name;
-        return displaypalette(spalette, g, palette, gpalettes);
+        return displaypalette(spalette, g, g, palette, gpalettes);
     };
 
     if (name != spalette) {
@@ -236,8 +269,8 @@ function installpalette(name, pos, g, bg, palette, gpalettes) {
     }
 
     // Display the selected palette
-    graph.compselect(b, true, null, null);
-    displaypalette(name, g, palette, gpalettes);
+    graph.paletteselect(b, true);
+    displaypalette(name, g, g, palette, gpalettes);
 
     return b;
 }
@@ -251,8 +284,11 @@ function save(savexml) {
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
         '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
         savedcomposxml + '</content></entry>';
-    composites.put(appname, entry, function(r) {
+    composites.put(appname, entry, function(e) {
+        if (e)
+            return false;
         $('saveStatus').innerHTML = 'Saved';
+        return false;
     });
     return true;
 }
@@ -293,7 +329,7 @@ function compdatalink(appname, cname) {
     var port = ':' + window.location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/data/?component=' + cname;
+    var link = protocol + '//' + appname + '.' + host + port + '/data/#component=' + cname;
     return link;
 }
 
@@ -327,6 +363,7 @@ function oncompselect(gsel) {
     }
 
     updateButton(cdelete, link != '');
+    updateButton(ccopy, link != '');
     updateButton(cplay, link != '');
     return true;
 }
@@ -344,7 +381,8 @@ function showdata(gcomp) {
     gdiv.style.visibility = 'hidden'
     gvisible = false;
     pdiv.style.visibility = 'visible';
-    pdiv.innerHTML = '<iframe id="dataFrame" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
+    pdiv.innerHTML = '';
+    pdiv.innerHTML = '<iframe id="dataFrame" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="' +
                         compdatalink(appname, gcomp.id) + '"></iframe>';
     return true;
 }
@@ -360,7 +398,7 @@ function showgraph(gcomp) {
     pdiv.innerHTML = '';
     gdiv.style.visibility = 'visible'
     gvisible = true;
-    graph.compselect(gcomp, true, cvalue, cdelete);
+    graph.compselect(gcomp, true, cvalue, ccopy, cdelete);
     return true;
 }
 
@@ -376,26 +414,26 @@ cplay.onclick = function() {
 }
 
 // Create editor graph area
-g = graph.mkgraph(cdiv, graph.mkpath().move(-2500,0), cvalue, cadd, cdelete);
+g = graph.mkgraph(cdiv, graph.mkpath().move(-2500,0), cvalue, cadd, ccopy, cdelete);
 gdiv = g.parentNode;
 bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes
 var pos = graph.mkpath().move(0, 0);
-bpalette = installpalette('control', pos.rmove(5,0), g, bg, spalette, gpalettes);
-installpalette('values', pos.rmove(0,35), g, bg, spalette, gpalettes);
-installpalette('lists', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('transform', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('text', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('http', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('animation', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('talk', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('social', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('search', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('database', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('logic', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('math', pos.rmove(0, 35), g, bg, spalette, gpalettes);
-installpalette('python', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+bpalette = installpalette('control', pos.rmove(5,2), g, bg, spalette, gpalettes);
+installpalette('values', pos.rmove(0,28), g, bg, spalette, gpalettes);
+installpalette('lists', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('transform', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('text', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('http', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('animation', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('talk', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('social', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('search', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('database', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('logic', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('math', pos.rmove(0, 28), g, bg, spalette, gpalettes);
+installpalette('python', pos.rmove(0, 28), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);

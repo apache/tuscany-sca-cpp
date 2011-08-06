@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -46,7 +46,6 @@
 <div id="maintitle" style="font-size: 150%;"></div>
 
 <div id="maindiagram"><div id="diagram" style="width: 320px; height: 280px; background: url(home.png); padding: 0px; margin: 0px auto;"></div></div>
-<br/>
 
 <input type="button" class="greenbutton" style="font-size: 150%; font-weight: bold; font-style: italic; padding: 10px;" id="getstarted" title="Get Started" value="Get Started"/>
 
@@ -56,6 +55,17 @@
 </div>
 
 <script type="text/javascript">
+
+// On mobile devices, redirect to the last visited page
+if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
+    var last = ui.lastvisited();
+    if (!isNil(last) && last != document.location)
+        window.open(last, '_self');
+}
+
+// Init and display this page
+ui.initbody();
+
 // Set page titles
 document.title = windowtitle(window.location.hostname);
 $('h1').innerHTML = hometitle(window.location.hostname);
@@ -65,7 +75,7 @@ displaymenu();
 
 $('maintitle').innerHTML = isNil(config.maintitle)? 'Simple App Builder' : config.maintitle;
 $('getstarted').onclick = function() {
-    return window.open('/store/', '_self');
+    return ui.navigate('/store/', '_self');
 };
 
 // Display the main diagram

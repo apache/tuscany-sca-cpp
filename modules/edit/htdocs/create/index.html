@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Create App</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -60,13 +60,15 @@
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
 <tr><td><textarea id="appDescription" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
 <tr><td>
-<input id="createAppOKButton" type="submit" class="greenbutton" style="font-weight: bold;" value="Create" title="Create the app"/>
-<input id="createAppCancelButton" type="button" class="redbutton" value="Cancel"/>
+<input id="createAppOKButton" type="submit" class="graybutton" style="font-weight: bold;" value="Create" title="Create the app"/>
+<input id="createAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Create App';
 $('h1').innerHTML = hometitle(window.location.hostname);
@@ -94,10 +96,14 @@ $('createAppForm').onsubmit = function() {
     var title = $('appTitle').value;
     var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", 'new')));
     var entry = atom.writeATOMEntry(valuesToElements(app));
-    dashboards.put(name, car(entry));
+    dashboards.put(name, car(entry), function(e) {
+        if (e)
+            return false;
 
-    // Open it in the page editor
-    window.open('/page/?app=' + name, '_self');
+        // Open it in the page editor
+        ui.navigate('/page/#app=' + name, '_self');
+        return false;
+    });
     return false;
 };
 
@@ -105,7 +111,7 @@ $('createAppForm').onsubmit = function() {
  * Cancel creating an app.
  */
 $('createAppCancelButton').onclick = function() {
-    return window.open('/store/', '_self');
+    return ui.navigate('/store/', '_self');
 };
 </script>
 

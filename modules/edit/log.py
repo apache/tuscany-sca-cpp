@@ -20,5 +20,5 @@ from sys import stderr
 
 # Log a message
 def log(msg):
-    print >> stderr, msg
+    print >> stderr, '[rconsole]', msg
 

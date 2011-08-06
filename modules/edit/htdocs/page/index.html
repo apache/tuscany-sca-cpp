@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Page</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -29,40 +29,54 @@
 <script type="text/javascript" src="/menu.js"></script>
 <script type="text/javascript" src="page.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv" style="overflow: visible;">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
+</div>
+
+<div id="menubackground" style="position: absolute; top: 0px; left: 0px; z-index: -1; width: 2500px;">
+<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr><td class="dtbar">
+<table border="0" cellspacing="0" cellpadding="0"><tr><td class="ltbar"><span class="tbarsmenu">&nbsp</span></td></tr></table>
+</td></tr></table>
 </div>
 
 <div id="menu"></div>
 
 <table style="width: 100%;">
 <tr>
-<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right; padding-right: 2px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td><h2><span id="appNameHeader"></span></h2></td>
+<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
 </tr>
 </table>
 
-<table style="width: 100%;">
+<table id="widgetValueBackground" style="width: 2500px; position: absolute; top: 59px; left: 0px; z-index: -1;">
 <tr>
-<th class="thr thl" style="padding-left: 2px; padding-right: 2px; width: 100%;">
-<input id="widgetValue" type="text" value="" title="Widget value" autocapitalize="off" placeholder="Value" style="position: relative; width: 100%;"/>
-</th>
-
-<th class="thl thr" style="text-align: right; padding-right: 2px;">
-<span id="deleteWidgetButton" title="Delete a Widget" class="redbutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
-
-<span id="addWidgetButton" title="Add a Widget" class="greenbutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
-
-<span id="playPageButton" title="View page" class="bluebutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
-</th>
+<th class="thr thl"><span style="display: inline-block; padding-top: 0px; padding-bottom: 0px; height: 24px;"></span></th>
 </tr>
 </table>
 
-<div id="contentdiv" style="margin-top: 4px; width: 100%;">
-<div id="editdiv" style="visibility: visible; position: relative; top: 0px; left: -2500px; right: 0px; height: 5000px;">
+<table id="widgetValueTable" style="width: 100%;">
+<tr>
+<td class="thr thl" style="padding-left: 2px; padding-right: 2px; vertical-align: top; width: 100%;">
+<input id="widgetValue" type="text" value="" title="Widget value" autocapitalize="off" placeholder="Value" style="position: relative; width: 100%;"/>
+</td>
+
+<td class="thl thr" style="text-align: right; padding-right: 2px; vertical-align: top;">
+<span id="deleteWidgetButton" title="Delete a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
+
+<span id="copyWidgetButton" title="Copy a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">c</span>
+
+<span id="addWidgetButton" title="Add a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
+
+<span id="playPageButton" title="View page" class="graybutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
+</td>
+</tr>
+</table>
+
+<div id="contentdiv" style="margin-top: 4px; width: 2500px">
+<div id="editdiv" style="visibility: visible; position: relative; top: 0px; left: -2500px; width: 2500px; height: 5000px;">
 
 <div style="position: relative; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
@@ -90,15 +104,18 @@
 <span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img src="/public/img.png"/></span>
 </div>
 
-<div id="playdiv" style="visibility: hidden; position: absolute; top: 0px; left: 0px; right: 0px; height: 5000px;">
+<div id="playdiv" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 2500px; height: 5000px;">
 </div>
+
 </div>
 
 <div id="buffer" style="visibility: hidden; width: 0px; height: 0px"></div>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Get the app name
-var appname = ui.queryParams()['app'];
+var appname = ui.fragmentParams()['app'];
 if (isNil(appname))
     window.open('/', '_self');
 
@@ -117,8 +134,7 @@ function applink(appname) {
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Page - ' + appname;
-//$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 // Load the menu bar
 displaymenu();
@@ -133,6 +149,7 @@ var pdiv = $('playdiv');
 var wvalue = $('widgetValue');
 var wadd = $('addWidgetButton');
 var wdelete = $('deleteWidgetButton');
+var wcopy = $('copyWidgetButton');
 var pplay = $('playPageButton');
 
 // Position edit and play divs inside the content div
@@ -141,8 +158,17 @@ ediv.style.top = cdiv.offsetTop + 'px';
 pdiv.style.position = 'absolute';
 pdiv.style.top = cdiv.offsetTop + 'px';
 
+// Position background divs
+var mbackground = $('menubackground');
+var menudiv = $('menu');
+mbackground.style.top = ui.pixpos(menudiv.offsetTop);
+
+var wvbackground = $('widgetValueBackground');
+var wvtable = $('widgetValueTable');
+wvbackground.style.top = ui.pixpos(wvtable.offsetTop);
+
 /**
- * Adjust fields sizes.
+ * Adjust widget value field size.
  */
 function resizeFields() {
     wvalue.style.width = '0px';
@@ -188,6 +214,10 @@ function getpage(name, ediv) {
         return false;
     return pages.get(name, function(doc) {
 
+        // Stop now if we didn't get a page
+        if (doc == null)
+            return false;
+
         // Convert the page to XHTML and place it in a hidden buffer
         var buffer = $('buffer');
         var el = atompage(doc);
@@ -198,7 +228,21 @@ function getpage(name, ediv) {
         else
             buffer.innerHTML = writeStrings(writeXML(atompage(doc), false));
 
-        // Append page nodes to editor
+        // Remove any existing page nodes from the editor div
+        var fnodes = filter(function(e) {
+            if (isNil(e.id) || e.id == '' || e.id.substr(0, 8) == 'palette:')
+                return false;
+            var x = ui.numpos(e.style.left) - 2500;
+            if (x < 0 || ui.numpos(e.style.top) < 0)
+                return false;
+            return true;
+        }, nodeList(ediv.childNodes));
+
+        map(function(e) {
+            ediv.removeChild(e);
+        }, fnodes);
+
+        // Append new page nodes to editor
         map(function(e) {
                 ediv.appendChild(e);
                 if (!isNil(e.style))
@@ -295,8 +339,11 @@ function save(newxml) {
         '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
         newxml + '</content></entry>';
 
-    pages.put(appname, entry, function(r) {
+    pages.put(appname, entry, function(e) {
+        if (e)
+            return false;
         $('saveStatus').innerHTML = 'Saved';
+        return false;
     });
     return true;
 };
@@ -336,7 +383,7 @@ function compvaluelink(appname, cname) {
     var port = ':' + window.location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/data/?component=' + cname;
+    var link = protocol + '//' + appname + '.' + host + port + '/data/#component=' + cname;
     return link;
 }
 
@@ -354,6 +401,7 @@ function onwidgetselect(w) {
     }
 
     updateButton(wdelete, link != '');
+    updateButton(wcopy, link != '');
     return true;
 }
 
@@ -363,14 +411,15 @@ function onwidgetselect(w) {
 function playpage() {
     if (!evisible)
         return true;
-    page.widgetselect(widget, false, wvalue, wdelete);
+    page.widgetselect(widget, false, wvalue, wcopy, wdelete);
     page.selected = null;
     wvalue.value = applink(appname);
     pplay.innerHTML = '&lt;';
     ediv.style.visibility = 'hidden'
     evisible = false;
     pdiv.style.visibility = 'visible';
-    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
+    pdiv.innerHTML = '';
+    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="' +
                         applink(appname) + '"></iframe>';
     return true;
 }
@@ -386,7 +435,7 @@ function showedit() {
     pdiv.innerHTML = '';
     ediv.style.visibility = 'visible'
     evisible = true;
-    page.widgetselect(widget, true, wvalue, wdelete);
+    page.widgetselect(widget, true, wvalue, wcopy, wdelete);
     page.selected = widget;
     return true;
 }
@@ -401,7 +450,7 @@ pplay.onclick = function() {
 }
 
 // Initialize the page editor
-page.edit(ediv, wvalue, wadd, wdelete, onpagechange, onwidgetselect);
+page.edit(ediv, wvalue, wadd, wcopy, wdelete, onpagechange, onwidgetselect);
 
 // Get and display the current app page
 getpage(appname, ediv);

@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Page not found</title>
 <meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/>
@@ -27,8 +27,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -45,6 +45,8 @@
 </div>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Set page title
 $('h1').innerHTML = hometitle(window.location.hostname);
 

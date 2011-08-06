@@ -35,7 +35,7 @@ function car(l) {
 }
 
 function first(l) {
-    return car(l);
+    return l[0];
 }
 
 function cdr(l) {
@@ -43,27 +43,27 @@ function cdr(l) {
 }
 
 function rest(l) {
-    return cdr(l);
+    return l.slice(1);
 }
 
 function cadr(l) {
-    return car(cdr(l));
+    return l[1];
 }
 
 function cddr(l) {
-    return cdr(cdr(l));
+    return l.slice(2);
 }
 
 function caddr(l) {
-    return car(cddr(l));
+    return l[2];
 }
 
 function cdddr(l) {
-    return cdr(cdr(cdr(l)));
+    return l.slice(3);
 }
 
 function cadddr(l) {
-    return car(cdddr(l));
+    return l[3];
 }
 
 function append(a, b) {
@@ -82,33 +82,23 @@ function range(a, b) {
 }
 
 function isNil(v) {
-    if (v == null || typeof v == 'undefined' || (v.constructor == Array && v.length == 0))
-        return true;
-    return false;
+    return (v == null || typeof v == 'undefined' || (v.constructor == Array && v.length == 0));
 }
 
 function isSymbol(v) {
-    if (typeof v == 'string' && v.slice(0, 1) == "'")
-        return true;
-    return false;
+    return (typeof v == 'string' && v.slice(0, 1) == "'");
 }
 
 function isString(v) {
-    if (typeof v == 'string' && v.slice(0, 1) != "'")
-        return true;
-    return false;
+    return (typeof v == 'string' && v.slice(0, 1) != "'");
 }
 
 function isList(v) {
-    if (v != null && typeof v != 'undefined' && v.constructor == Array)
-        return true;
-    return false;
+    return (v != null && typeof v != 'undefined' && v.constructor == Array);
 }
 
 function isTaggedList(v, t) {
-    if (isList(v) && !isNil(v) && car(v) == t)
-        return true;
-    return false;
+    return (isList(v) && !isNil(v) && car(v) == t);
 }
 
 var emptylist = new Array();
@@ -131,10 +121,13 @@ function length(l) {
  */
 function assoc(k, l) {
     if (isNil(l))
-        return mklist();
-    if (k == car(car(l)))
-        return car(l);
-    return assoc(k, cdr(l));
+        return emptylist;
+    var n = l.length;
+    for(var i = 0; i < n; i++) {
+        if (k == car(l[i]))
+            return l[i];
+    }
+    return emptylist;
 }
 
 /**
@@ -143,15 +136,24 @@ function assoc(k, l) {
 function map(f, l) {
     if (isNil(l))
         return l;
-    return cons(f(car(l)), map(f, cdr(l)));
+    var n = l.length;
+    var a = new Array();
+    for(var i = 0; i < n; i++) {
+        a.push(f(l[i]));
+    }
+    return a;
 }
 
 function filter(f, l) {
     if (isNil(l))
         return l;
-    if (f(car(l)))
-        return cons(car(l), filter(f, cdr(l)));
-    return filter(f, cdr(l));
+    var n = l.length;
+    var a = new Array();
+    for(var i = 0; i < n; i++) {
+        if (f(l[i]))
+            a.push(l[i]);
+    }
+    return a;
 }
 
 function reduce(f, i, l) {
@@ -245,7 +247,12 @@ function assert(exp) {
 function writeStrings(l) {
     if (isNil(l))
         return '';
-    return car(l) + writeStrings(cdr(l));
+    var s = '';
+    var n = l.length;
+    for(var i = 0; i < n; i++) {
+        s = s + l[i];
+    }
+    return s;
 }
 
 /**

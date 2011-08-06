@@ -29,7 +29,7 @@ var ui = {};
 ui.ahref = function(loc, target, html) {
     if (target == '_blank')
         return '<a href="' + loc + '" target="_blank">' + html + '</a>';
-    return '<a href="javascript:void(0)" onclick="window.open(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
+    return '<a href="javascript:void(0)" onclick="ui.navigate(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
 };
 
 /**
@@ -43,6 +43,9 @@ ui.menu = function(name, href, target) {
 
         this.content = function() {
             function complete(uri) {
+                var h = uri.indexOf('#');
+                if (h != -1)
+                    return complete(uri.substr(0, h));
                 var q = uri.indexOf('?');
                 if (q != -1)
                     return complete(uri.substr(0, q));
@@ -54,8 +57,8 @@ ui.menu = function(name, href, target) {
             }
 
             if (complete(this.href) != complete(window.top.location.pathname))
-                return ui.ahref(this.href, this.target, '<span class="amenu">' + this.name + '</span>');
-            return ui.ahref(this.href, this.target, '<span class="smenu">' + this.name + '</span>');
+                return ui.ahref(this.href, this.target, '<span class="tbaramenu">' + this.name + '</span>');
+            return ui.ahref(this.href, this.target, '<span class="tbarsmenu">' + this.name + '</span>');
         };
     }
     return new Menu(name, href, target);
@@ -179,17 +182,6 @@ ui.suggest = function(input, suggestFunction) {
 };
 
 /**
- * Return the content document of a window.
- */
-ui.content = function(win) {
-    if (!isNil(win.document))
-        return win.document;
-    if (!isNil(win.contentDocument))
-        return win.contentDocument;
-    return null;
-};
-
-/**
  * Return a child element of a node with the given id.
  */
 ui.elementByID = function(node, id) {
@@ -231,39 +223,165 @@ ui.queryParams = function() {
 };
 
 /**
- * Return true if the client is a mobile device.
+ * Return a dictionary of the fragment parameters.
  */
-ui.isMobile = function() {
-    var ua = navigator.userAgent;
-    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
-        return true;
-    return false;
+ui.fragmentParams = function() {
+    var qp = new Array();
+    var qs = window.location.hash.substring(1).split('&');
+    for (var i = 0; i < qs.length; i++) {
+        var e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
 };
 
 /**
- * Initialize a document after it's loaded.
+ * Return true if the client is a mobile device.
+ */
+ui.mobiledetected = false;
+ui.mobile = false;
+ui.isMobile = function() {
+    if (ui.mobiledetected)
+        return ui.mobile;
+    var ua = navigator.userAgent;
+    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
+        ui.mobile = true;
+    ui.mobiledetected = true;
+    return ui.mobile;
+};
+
+/**
+ * Initialize a document's body.
+ */
+ui.pagetransitions = false;
+
+ui.initbody = function() {
+    if (ui.isMobile()) {
+        //log('init', window.location);
+
+        // Position the main body div off screen
+        if (ui.pagetransitions) {
+            var bdiv = $('bodydiv');
+            if (!isNil(bdiv)) {
+                bdiv.className = 'bodydivloading';
+            }
+        }
+
+        // Install orientation handler
+        document.body.onorientationchange = ui.onorientationchange;
+    }
+    return true;
+}
+
+/**
+ * Reload the current document when orientation changes.
+ */
+ui.onorientationchange = function() {
+    window.open(window.location, '_self');
+    return true;
+}
+
+/**
+ * Post process a document after it's loaded.
  */
 ui.onload = function() {
 
-    // Make the document visible
+    // Save the current page location in local storage
+    // (except for login and logout pages)
+    var path = document.location.pathname;
+    if (path.indexOf('/login/') != 0 && path.indexOf('/logout/') != 0)
+        localStorage.setItem('ui.lastvisited', '' + document.location);
+
+    // Make the document body visible
+    //log('visible', $('bodydiv').className);
     document.body.style.visibility = 'visible';
 
-    // Install orientation handler
-    document.body.onorientationchange = function() {
-        window.open(window.location, '_self');
-        return true;
-    };
-
+    if (ui.pagetransitions && ui.isMobile()) {
+        //log('onload', window.location);
+        
+        // Slide the main body div in
+        setTimeout(function() {
+            var bdiv = $('bodydiv');
+            if (!isNil(bdiv)) { 
+                function transitionend(e) {
+                    bdiv.removeEventListener('webkitTransitionEnd', transitionend, false);
+                    bdiv.removeEventListener('transitionend', transitionend, false);
+                    bdiv.className = 'bodydiv';
+                    //log('loadtransitionend', window.location);
+                };
+                bdiv.addEventListener('webkitTransitionEnd', transitionend, false);
+                bdiv.addEventListener('transitionend', transitionend, false);
+                //log('loadtransitionstart', window.location);
+                bdiv.className = 'bodydivloaded';
+            }
+        }, 0);
+    }
     return true;
 };
+
+/**
+ * Navigate to a new document.
+ */
+ui.navigate = function(url, win) {
+
+    function opendoc(url, win) {
+        if (win == '_reload') {
+            window.location = url;
+            return window.location.reload();
+        }
+        return window.open(url, win);
+    }
+
+    if (ui.pagetransitions && ui.isMobile() && win != '_blank') {
+
+        // Slide the main body div out, then open the new document
+        var bdiv = $('bodydiv');
+        if (!isNil(bdiv)) {
+            function transitionend(e) {
+                bdiv.removeEventListener('webkitTransitionEnd', transitionend, false);
+                bdiv.removeEventListener('transitionend', transitionend, false);
+                //log('navigatetransitionend', window.location);
+                return opendoc(url, win);
+            };
+            bdiv.addEventListener('webkitTransitionEnd', transitionend, false);
+            bdiv.addEventListener('transitionend', transitionend, false);
+            //log('navigatetransitionstart', window.location);
+            bdiv.className = 'bodydivunloaded';
+            return true;
+        }
+    }
+
+    return opendoc(url, win); 
+}
+
+/**
+ * Pre process a document just before it's unloaded.
+ */
+ui.onbeforeunload = function() {
+
+    if (ui.pagetransitions && ui.isMobile()) {
+        
+        // Slide the main body div out
+        var bdiv = $('bodydiv');
+        if (!isNil(bdiv))
+            bdiv.className = 'bodydivunloaded';
+    }
+};
+
+
+/**
+ * Return the last visited page.
+ */
+ui.lastvisited = function() {
+    return localStorage.getItem('ui.lastvisited');
+}
 
 /**
  * Convert a CSS position to a numeric position.
  */
 ui.numpos = function(p) {
-    if (p == '')
-        return 0;
-    return Number(p.substr(0, p.length - 2));
+    return p == ''? 0 : Number(p.substr(0, p.length - 2));
 };
 
 /**

@@ -30,12 +30,13 @@ var palcx = 2500;
 /**
  * Init a page editor. Works with all browsers except IE.
  */
-page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
+page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
 
     // Track element dragging and selection
     page.dragging = null;
     page.selected = null;
     wvalue.disabled = true;
+    wcopy.disabled = true;
     wdelete.disabled = true;
 
     // Trigger widget select and page change events
@@ -59,7 +60,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
         page.dragging = dragging;
 
         // Remember mouse position
-        var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
+        var pos = typeof e.touches != "undefined"? e.touches[0] : e;
         page.dragX = pos.screenX;
         page.dragY = pos.screenY;
 
@@ -110,7 +111,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
             return true;
 
         // Get the mouse position
-        var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
+        var pos = typeof e.touches != "undefined"? e.touches[0] : e;
         if (pos.screenX == page.dragX && pos.screenY == page.dragY)
             return true;
 
@@ -150,7 +151,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
             if (page.selected != null) {
 
                 // Reset current selection
-                page.widgetselect(page.selected, false, wvalue, wdelete);
+                page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
                 page.selected = null;
 
                 // Trigger widget select event
@@ -165,7 +166,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
         }
 
         // Deselect the previously selected element
-        page.widgetselect(page.selected, false, wvalue, wdelete);
+        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
 
         // Clone element dragged from palette
         if (selected.id.substring(0, 8) == 'palette:') {
@@ -190,7 +191,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
         }
 
         // Select the element
-        page.widgetselect(page.selected, true, wvalue, wdelete);
+        page.widgetselect(page.selected, true, wvalue, wcopy, wdelete);
 
         // Trigger widget select event
         page.onwidgetselect(page.selected);
@@ -227,7 +228,7 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
             return false;
 
         // Reset current selection
-        page.widgetselect(page.selected, false, wvalue, wdelete);
+        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
 
         // Remove selected widget
         page.selected.parentNode.removeChild(page.selected);
@@ -236,6 +237,39 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
 
         // Trigger widget select event
         page.onwidgetselect(null);
+
+        // Trigger page change event
+        page.onpagechange(true);
+        return false;
+    };
+
+    // Handle copy event.
+    wcopy.onclick = function() {
+        if (page.selected == null)
+            return false;
+        if (page.selected.id.substring(0, 8) == 'palette:')
+            return false;
+
+        // Reset current selection
+        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
+
+        // Clone selected widget
+        page.selected = page.clone(page.selected);
+
+        // Move 10 pixels down right
+        page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + 10);
+        page.selected.style.top = ui.pixpos(ui.numpos(page.selected.style.top) + 10);
+        page.selected.cover.style.left = ui.pixpos(ui.numpos(page.selected.cover.style.left) + 10);
+        page.selected.cover.style.top = ui.pixpos(ui.numpos(page.selected.cover.style.top) + 10);
+    
+        // Bring it to the top
+        page.bringtotop(page.selected);
+
+        // Select the element
+        page.widgetselect(page.selected, true, wvalue, wcopy, wdelete);
+
+        // Trigger widget select event
+        page.onwidgetselect(page.selected);
 
         // Trigger page change event
         page.onpagechange(true);
@@ -253,35 +287,54 @@ page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
  * Return the text of a widget.
  */
 page.text = function(e) {
-    var formula = e.id;
-    if (formula.substring(0, 5) != 'page:') {
-        return '=' + formula;
+    function formula(e) {
+        var f = e.id;
+        if (f.substring(0, 5) != 'page:')
+            return '=' + f;
+        return '';
     }
 
-    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
-        return car(childElements(e)).innerHTML;
-    if (e.className == 'button' || e.className == 'checkbox')
-        return car(childElements(e)).value;
-    if (e.className == 'entry' || e.className == 'password')
-        return car(childElements(e)).defaultValue;
-    if (e.className == 'select')
-        return car(childElements(car(childElements(e)))).value;
-    if (e.className == 'link') {
-        var hr = car(childElements(e)).href;
-        var t = car(childElements(car(childElements(e)))).innerHTML;
-        return hr == t? hr : hr + ',' + t;
-    }
-    if (e.className == 'img') {
-        var src = car(childElements(e)).src;
-        return src == window.location.href? '' : src;
-    }
-    if (e.className == 'iframe')
-        return car(childElements(e)).href;
-    if (e.className == 'list')
+    function constant(e, f) {
+        if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+            var t = car(childElements(e)).innerHTML;
+            return t == f? '' : t;
+        }
+        if (e.className == 'button' || e.className == 'checkbox') {
+            var t = car(childElements(e)).value;
+            return t == f? '' : t;
+        }
+        if (e.className == 'entry' || e.className == 'password') {
+            var t = car(childElements(e)).defaultValue;
+            return t == f? '' : t;
+        }
+        if (e.className == 'select') {
+            var t = car(childElements(car(childElements(e)))).value;
+            return t == f? '' : t;
+        }
+        if (e.className == 'link') {
+            var lhr = car(childElements(e)).href;
+            var hr = lhr.substring(0, 5) == 'link:'? lhr.substring(5) : '';
+            var t = car(childElements(car(childElements(e)))).innerHTML;
+            return t == f? hr : (t == hr? hr : (t == ''? hr : hr + ',' + t));
+        }
+        if (e.className == 'img') {
+            var src = car(childElements(e)).src;
+            return src == window.location.href? '' : src;
+        }
+        if (e.className == 'iframe') {
+            var hr = car(childElements(e)).href;
+            return hr == window.location.href? '' : hr;
+        }
+        if (e.className == 'list')
+            return '';
+        if (e.className == 'table')
+            return '';
         return '';
-    if (e.className == 'table')
-        return '';
-    return '';
+    }
+
+    var f = formula(e);
+    var c = constant(e, f);
+    return f == ''? c : (c == ''? f : f + ',' + c);
 };
 
 /**
@@ -313,49 +366,60 @@ page.hastext = function(e) {
  * Set the text of a widget.
  */
 page.settext = function(e, t) {
-    var formula = t.length > 1 && t.substring(0, 1) == '=';
-    e.id = formula? t.substring(1) : 'page:' + e.className;
+    function formula(t) {
+        if (t.length > 1 && t.substring(0, 1) == '=')
+            return car(t.split(','));
+        return '';
+    }
+
+    function constant(t) {
+        return t.length > 1 && t.substring(0, 1) == '='? cdr(t.split(',')) : t.split(',');
+    }
+
+    var f = formula(t);
+    var c = constant(t);
+
+    e.id = f != ''? f.substring(1) : ('page:' + e.className);
 
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
-        car(childElements(e)).innerHTML = t;
+        car(childElements(e)).innerHTML = isNil(c)? f : car(c);
         return t;
     }
     if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
-        car(childElements(e)).defaultValue = t;
+        car(childElements(e)).defaultValue = isNil(c)? f : car(c);
         return t;
     }
     if (e.className == 'checkbox') {
-        car(childElements(e)).value = t;
-        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
+        car(childElements(e)).value = isNil(c)? f : car(c);
+        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = isNil(c)? f : car(c); return n; }, nodeList(e.childNodes));
         return t;
     }
     if (e.className == 'select') {
         var ce = car(childElements(car(childElements(e))));
-        ce.value = t;
-        ce.innerHTML = t;
+        ce.value = isNil(c)? f : car(c);
+        ce.innerHTML = isNil(c)? f : car(c);
         return t;
     }
     if (e.className == 'list') {
-        e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + t + '</td></tr><tr><td class="datatd">...</td></tr></table>';
-        return '';
+        e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + (isNil(c)? f : car(c)) + '</td></tr><tr><td class="datatd">...</td></tr></table>';
+        return t;
     }
     if (e.className == 'table') {
-        e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + t + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
+        e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + (isNil(c)? f : car(c)) + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
         return t;
     }
     if (e.className == 'link') {
-        var l = t.split(',');
         var ce = car(childElements(e));
-        ce.href = car(l);
-        car(childElements(ce)).innerHTML = isNil(cdr(l))? car(l) : cadr(l);
+        ce.href = isNil(c)? 'link:/index.html' : ('link:' + car(c));
+        car(childElements(ce)).innerHTML = isNil(c)? (f != ''? f : '/index.html') : isNil(cdr(c))? (f != ''? f : car(c)) : cadr(c);
         return t;
     }
     if (e.className == 'img') {
-        car(childElements(e)).src = formula? '/public/img.png' : t;
+        car(childElements(e)).src = isNil(c)? '/public/img.png' : car(c);
         return t;
     }
     if (e.className == 'iframe') {
-        car(childElements(e)).href = formula? '/public/iframe.html' : t;
+        car(childElements(e)).href = isNil(c)? '/public/iframe.html' : car(c);
         return t;
     }
     return '';
@@ -418,11 +482,12 @@ page.bringtotop = function(n) {
 /**
  * Draw widget selection.
  */
-page.widgetselect = function(n, s, wvalue, wdelete) {
+page.widgetselect = function(n, s, wvalue, wcopy, wdelete) {
     if (isNil(n) || !s) {
         // Clear the widget value field
         wvalue.value = '';
         wvalue.disabled = true;
+        wcopy.disabled = true;
         wdelete.disabled = true;
 
         // Clear the widget outline
@@ -434,6 +499,7 @@ page.widgetselect = function(n, s, wvalue, wdelete) {
     // Update the widget value field
     wvalue.value = page.text(n);
     wvalue.disabled = false;
+    wcopy.disabled = false;
     wdelete.disabled = false;
 
     // Outline the widget

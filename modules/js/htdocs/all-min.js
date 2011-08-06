@@ -1,39 +1,37 @@
 function cons(car,cdr){var a=new Array();a.push(car);return a.concat(cdr);}
 function car(l){return l[0];}
-function first(l){return car(l);}
+function first(l){return l[0];}
 function cdr(l){return l.slice(1);}
-function rest(l){return cdr(l);}
-function cadr(l){return car(cdr(l));}
-function cddr(l){return cdr(cdr(l));}
-function caddr(l){return car(cddr(l));}
-function cdddr(l){return cdr(cdr(cdr(l)));}
-function cadddr(l){return car(cdddr(l));}
+function rest(l){return l.slice(1);}
+function cadr(l){return l[1];}
+function cddr(l){return l.slice(2);}
+function caddr(l){return l[2];}
+function cdddr(l){return l.slice(3);}
+function cadddr(l){return l[3];}
 function append(a,b){return a.concat(b);}
 function reverse(l){return l.slice(0).reverse();}
 function range(a,b){var l=new Array();for(var x=a;x<b;x++)
 l.push(x);return l;}
-function isNil(v){if(v==null||typeof v=='undefined'||(v.constructor==Array&&v.length==0))
-return true;return false;}
-function isSymbol(v){if(typeof v=='string'&&v.slice(0,1)=="'")
-return true;return false;}
-function isString(v){if(typeof v=='string'&&v.slice(0,1)!="'")
-return true;return false;}
-function isList(v){if(v!=null&&typeof v!='undefined'&&v.constructor==Array)
-return true;return false;}
-function isTaggedList(v,t){if(isList(v)&&!isNil(v)&&car(v)==t)
-return true;return false;}
+function isNil(v){return(v==null||typeof v=='undefined'||(v.constructor==Array&&v.length==0));}
+function isSymbol(v){return(typeof v=='string'&&v.slice(0,1)=="'");}
+function isString(v){return(typeof v=='string'&&v.slice(0,1)!="'");}
+function isList(v){return(v!=null&&typeof v!='undefined'&&v.constructor==Array);}
+function isTaggedList(v,t){return(isList(v)&&!isNil(v)&&car(v)==t);}
 var emptylist=new Array();function mklist(){if(arguments.length==0)
 return emptylist;var a=new Array();for(i=0;i<arguments.length;i++)
 a[i]=arguments[i];return a;}
 function length(l){return l.length;}
 function assoc(k,l){if(isNil(l))
-return mklist();if(k==car(car(l)))
-return car(l);return assoc(k,cdr(l));}
+return emptylist;var n=l.length;for(var i=0;i<n;i++){if(k==car(l[i]))
+return l[i];}
+return emptylist;}
 function map(f,l){if(isNil(l))
-return l;return cons(f(car(l)),map(f,cdr(l)));}
+return l;var n=l.length;var a=new Array();for(var i=0;i<n;i++){a.push(f(l[i]));}
+return a;}
 function filter(f,l){if(isNil(l))
-return l;if(f(car(l)))
-return cons(car(l),filter(f,cdr(l)));return filter(f,cdr(l));}
+return l;var n=l.length;var a=new Array();for(var i=0;i<n;i++){if(f(l[i]))
+a.push(l[i]);}
+return a;}
 function reduce(f,i,l){if(isNil(l))
 return i;return reduce(f,f(i,car(l)),cdr(l));}
 function tokens(path){return filter(function(s){return length(s)!=0;},path.split("/"));}
@@ -50,7 +48,8 @@ config={};function AssertException(){}
 AssertException.prototype.toString=function(){return'AssertException';};function assert(exp){if(!exp)
 throw new AssertException();}
 function writeStrings(l){if(isNil(l))
-return'';return car(l)+writeStrings(cdr(l));}
+return'';var s='';var n=l.length;for(var i=0;i<n;i++){s=s+l[i];}
+return s;}
 function writeValue(v){function writePrimitive(p){if(isSymbol(p))
 return''+p.substring(1);if(isString(p))
 return'"'+p+'"';return''+p;}
@@ -84,18 +83,11 @@ return b;a.length=0;return setappend(a,b);}
 var element="'element"
 var attribute="'attribute"
 var atsign="'@"
-function isElement(v){if(!isList(v)||isNil(v)||car(v)!=element)
-return false;return true;}
-function isAttribute(v){if(!isList(v)||isNil(v)||car(v)!=attribute)
-return false;return true;}
-function attributeName(l){return cadr(l);}
-function attributeValue(l){return caddr(l);}
-function elementName(l){return cadr(l);}
-function elementHasChildren(l){return!isNil(cddr(l));}
-function elementChildren(l){return cddr(l);}
-function elementHasValue(l){r=reverse(l);if(isSymbol(car(r)))
-return false;if(isList(car(r))&&!isNil(car(r))&&isSymbol(car(car(r))))
-return false;return true;}
+function isElement(v){return(!(!isList(v)||isNil(v)||car(v)!=element));}
+function isAttribute(v){return(!(!isList(v)||isNil(v)||car(v)!=attribute));}
+attributeName=cadr;attributeValue=caddr;elementName=cadr;function elementHasChildren(l){return!isNil(cddr(l));}
+elementChildren=cddr;function elementHasValue(l){var r=reverse(l);if(isSymbol(car(r)))
+return false;return(!(isList(car(r))&&!isNil(car(r))&&isSymbol(car(car(r)))))}
 function elementValue(l){return car(reverse(l));}
 function elementToValueIsList(v){if(!isList(v))
 return false;return isNil(v)||!isSymbol(car(v));}
@@ -105,10 +97,7 @@ return mklist(elementName(t),elementValue(t));return cons(elementName(t),mklist(
 return cons(elementName(t),elementsToValues(elementChildren(t)));}
 if(!isList(t))
 return t;return elementsToValues(t);}
-function elementToValueIsSymbol(v){if(!isList(v))
-return false;if(isNil(v))
-return false;if(!isSymbol(car(v)))
-return false;return true;}
+function elementToValueIsSymbol(v){return(!(!isList(v))||isNil(v)||!isSymbol(car(v)));}
 function elementToValueGroupValues(v,l){if(isNil(l)||!elementToValueIsSymbol(v)||!elementToValueIsSymbol(car(l)))
 return cons(v,l);if(car(car(l))!=car(v))
 return cons(v,l);if(!elementToValueIsList(cadr(car(l)))){var g=mklist(car(v),mklist(cdr(v),cdr(car(l))));return elementToValueGroupValues(g,cdr(l));}
@@ -243,12 +232,13 @@ var turi=targetURI();if(isNil(turi))
 return turi;return car(tokens(turi));};scdl.properties=function(l){return namedElementChildren("'property",l);};scdl.propertyValue=function(l){if(!elementHasValue(l))
 return'';return elementValue(l);};scdl.nameToElementAssoc=function(l){if(isNil(l))
 return l;return cons(mklist(scdl.name(car(l)),car(l)),scdl.nameToElementAssoc(cdr(l)));};var ui={};ui.ahref=function(loc,target,html){if(target=='_blank')
-return'<a href="'+loc+'" target="_blank">'+html+'</a>';return'<a href="javascript:void(0)" onclick="window.open(\''+loc+'\', \''+target+'\');">'+html+'</a>';};ui.menu=function(name,href,target){function Menu(n,h,t){this.name=n;this.href=h;this.target=isNil(t)?'_parent':t;this.content=function(){function complete(uri){var q=uri.indexOf('?');if(q!=-1)
+return'<a href="'+loc+'" target="_blank">'+html+'</a>';return'<a href="javascript:void(0)" onclick="ui.navigate(\''+loc+'\', \''+target+'\');">'+html+'</a>';};ui.menu=function(name,href,target){function Menu(n,h,t){this.name=n;this.href=h;this.target=isNil(t)?'_parent':t;this.content=function(){function complete(uri){var h=uri.indexOf('#');if(h!=-1)
+return complete(uri.substr(0,h));var q=uri.indexOf('?');if(q!=-1)
 return complete(uri.substr(0,q));if(uri.match('.*\.html$'))
 return uri;if(uri.match('.*/$'))
 return uri+'index.html';return uri+'/index.html';}
 if(complete(this.href)!=complete(window.top.location.pathname))
-return ui.ahref(this.href,this.target,'<span class="amenu">'+this.name+'</span>');return ui.ahref(this.href,this.target,'<span class="smenu">'+this.name+'</span>');};}
+return ui.ahref(this.href,this.target,'<span class="tbaramenu">'+this.name+'</span>');return ui.ahref(this.href,this.target,'<span class="tbarsmenu">'+this.name+'</span>');};}
 return new Menu(name,href,target);};ui.menubar=function(left,right){var bar='<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr>'+'<td class="dtbar"><table border="0" cellspacing="0" cellpadding="0"><tr>';for(i in left)
 bar=bar+'<td class="ltbar">'+left[i].content()+'</td>'
 bar=bar+'</tr></table></td>'+'<td class="dtbar"><table border="0" cellpadding="0" cellspacing="0" align="right"><tr>';for(i in right)
@@ -267,18 +257,30 @@ items+='</table>';this.suggestDiv.innerHTML=items;if(items.length!=0){var node=i
 break;}
 this.suggestDiv.style.left=left;this.suggestDiv.style.top=top+input.offsetHeight;this.suggestDiv.style.visibility='visible';}else
 this.suggestDiv.style.visibility='hidden';}
-input.onkeydown=function(event){this.showSuggestDiv();};input.onkeyup=function(event){this.showSuggestDiv();};input.onmousedown=function(event){this.showSuggestDiv();};input.onblur=function(event){setTimeout(function(){input.hideSuggestDiv();},50);};};ui.content=function(win){if(!isNil(win.document))
-return win.document;if(!isNil(win.contentDocument))
-return win.contentDocument;return null;};ui.elementByID=function(node,id){for(var i in node.childNodes){var child=node.childNodes[i];if(child.id==id)
+input.onkeydown=function(event){this.showSuggestDiv();};input.onkeyup=function(event){this.showSuggestDiv();};input.onmousedown=function(event){this.showSuggestDiv();};input.onblur=function(event){setTimeout(function(){input.hideSuggestDiv();},50);};};ui.elementByID=function(node,id){for(var i in node.childNodes){var child=node.childNodes[i];if(child.id==id)
 return child;var gchild=ui.elementByID(child,id);if(gchild!=null)
 return gchild;}
 return null;};function $(id){if(id==document){if(!isNil(document.widget))
 return document.widget;return document;}
 return ui.elementByID($(document),id);};ui.queryParams=function(){var qp=new Array();var qs=window.location.search.substring(1).split('&');for(var i=0;i<qs.length;i++){var e=qs[i].indexOf('=');if(e>0)
 qp[qs[i].substring(0,e)]=unescape(qs[i].substring(e+1));}
-return qp;};ui.isMobile=function(){var ua=navigator.userAgent;if(ua.match(/iPhone/i)||ua.match(/iPad/i)||ua.match(/Android/i)||ua.match(/Blackberry/i)||ua.match(/WebOs/i))
-return true;return false;};ui.onload=function(){document.body.style.visibility='visible';document.body.onorientationchange=function(){window.open(window.location,'_self');return true;};return true;};ui.numpos=function(p){if(p=='')
-return 0;return Number(p.substr(0,p.length-2));};ui.pixpos=function(p){return p+'px';};ui.datatable=function(l){function indent(i){if(i==0)
+return qp;};ui.fragmentParams=function(){var qp=new Array();var qs=window.location.hash.substring(1).split('&');for(var i=0;i<qs.length;i++){var e=qs[i].indexOf('=');if(e>0)
+qp[qs[i].substring(0,e)]=unescape(qs[i].substring(e+1));}
+return qp;};ui.mobiledetected=false;ui.mobile=false;ui.isMobile=function(){if(ui.mobiledetected)
+return ui.mobile;var ua=navigator.userAgent;if(ua.match(/iPhone/i)||ua.match(/iPad/i)||ua.match(/Android/i)||ua.match(/Blackberry/i)||ua.match(/WebOs/i))
+ui.mobile=true;ui.mobiledetected=true;return ui.mobile;};ui.pagetransitions=false;ui.initbody=function(){if(ui.isMobile()){if(ui.pagetransitions){var bdiv=$('bodydiv');if(!isNil(bdiv)){bdiv.className='bodydivloading';}}
+document.body.onorientationchange=ui.onorientationchange;}
+return true;}
+ui.onorientationchange=function(){window.open(window.location,'_self');return true;}
+ui.onload=function(){var path=document.location.pathname;if(path.indexOf('/login/')!=0&&path.indexOf('/logout/')!=0)
+localStorage.setItem('ui.lastvisited',''+document.location);document.body.style.visibility='visible';if(ui.pagetransitions&&ui.isMobile()){setTimeout(function(){var bdiv=$('bodydiv');if(!isNil(bdiv)){function transitionend(e){bdiv.removeEventListener('webkitTransitionEnd',transitionend,false);bdiv.removeEventListener('transitionend',transitionend,false);bdiv.className='bodydiv';};bdiv.addEventListener('webkitTransitionEnd',transitionend,false);bdiv.addEventListener('transitionend',transitionend,false);bdiv.className='bodydivloaded';}},0);}
+return true;};ui.navigate=function(url,win){function opendoc(url,win){if(win=='_reload'){window.location=url;return window.location.reload();}
+return window.open(url,win);}
+if(ui.pagetransitions&&ui.isMobile()&&win!='_blank'){var bdiv=$('bodydiv');if(!isNil(bdiv)){function transitionend(e){bdiv.removeEventListener('webkitTransitionEnd',transitionend,false);bdiv.removeEventListener('transitionend',transitionend,false);return opendoc(url,win);};bdiv.addEventListener('webkitTransitionEnd',transitionend,false);bdiv.addEventListener('transitionend',transitionend,false);bdiv.className='bodydivunloaded';return true;}}
+return opendoc(url,win);}
+ui.onbeforeunload=function(){if(ui.pagetransitions&&ui.isMobile()){var bdiv=$('bodydiv');if(!isNil(bdiv))
+bdiv.className='bodydivunloaded';}};ui.lastvisited=function(){return localStorage.getItem('ui.lastvisited');}
+ui.numpos=function(p){return p==''?0:Number(p.substr(0,p.length-2));};ui.pixpos=function(p){return p+'px';};ui.datatable=function(l){function indent(i){if(i==0)
 return'';return'&nbsp;&nbsp;'+indent(i-1);}
 function rows(l,i){if(isNil(l))
 return'';var e=car(l);if(!isList(e))
@@ -310,30 +312,31 @@ return"{"+v.join(", ")+"}";};function HTTPBindingClient(name,uri){this.name=name
 HTTPBindingClient.jsonrpcID=1;HTTPBindingClient.prototype.createApplyMethod=function(){var fn=function(){var methodName=arguments[0];var args=[];for(var i=1;i<arguments.length;i++)
 args.push(arguments[i]);var cb=null;if(typeof args[args.length-1]=="function")
 cb=args.pop();var req=HTTPBindingClient.makeJSONRequest(methodName,args,cb);return fn.client.jsonApply(req);};fn.client=this;return fn;};HTTPBindingClient.makeJSONRequest=function(methodName,args,cb){var req={};req.id=HTTPBindingClient.jsonrpcID++;if(cb)
-req.cb=cb;var obj={};obj.id=req.id;obj.method=methodName;obj.params=args;req.data=JSONClient.toJSON(obj);return req;};HTTPBindingClient.jsonResult=function(http){function httpCharset(http){try{var contentType=http.getResponseHeader("Content-type");var parts=contentType.split(/\s*;\s*/);for(var i=0;i<parts.length;i++){if(parts[i].substring(0,8)=="charset=")
+req.cb=cb;var obj={};obj.id=req.id;obj.method=methodName;obj.params=args;req.data=JSONClient.toJSON(obj);return req;};HTTPBindingClient.jsonResult=function(http){function httpCharset(http){try{var contentType=http.getResponseHeader("Content-Type");var parts=contentType.split(/\s*;\s*/);for(var i=0;i<parts.length;i++){if(parts[i].substring(0,8)=="charset=")
 return parts[i].substring(8,parts[i].length);}}catch(e){}
 return"UTF-8";}
 if(!HTTPBindingClient.charset)
 HTTPBindingClient.charset=httpCharset(http);var obj;eval("obj = "+http.responseText);if(obj.error)
-throw new HTTPBindingClient.Exception(obj.error.code,obj.error.msg);var res=obj.result;return res;};HTTPBindingClient.prototype.jsonApply=function(req){var http=HTTPBindingClient.getHTTPRequest();var hascb=req.cb?true:false;http.open("POST",this.uri,hascb);http.setRequestHeader("Content-type","application/json-rpc");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){var res=null;try{res=HTTPBindingClient.jsonResult(http);}catch(e){req.cb(null,e);}
-req.cb(res);}else
-req.cb(null,HTTPBindingClient.Exception(http.status,http.statusText));}};http.send(req.data);return req.id;}
+throw new HTTPBindingClient.Exception(obj.error.code,obj.error.msg);var res=obj.result;return res;};HTTPBindingClient.prototype.jsonApply=function(req){var http=HTTPBindingClient.getHTTPRequest();var hascb=req.cb?true:false;http.open("POST",this.uri,hascb);http.setRequestHeader("Content-Type","application/json-rpc");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){var res=null;try{res=HTTPBindingClient.jsonResult(http);try{req.cb(res);}catch(cbe){}}catch(e){try{req.cb(null,e);}catch(cbe){}}}else
+try{req.cb(null,HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}};http.send(req.data);return req.id;}
 http.send(req.data);if(http.status==200)
-return HTTPBindingClient.jsonResult(http);throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.get=function(id,cb){var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("GET",this.uri+'/'+id,hascb);if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200)
-cb(http.responseText);else
-cb(null,new HTTPBindingClient.Exception(http.status,http.statusText));}};http.send(null);return true;}
-http.send(null);if(http.status==200)
-return http.responseText;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.post=function(entry,cb){var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("POST",this.uri,hascb);http.setRequestHeader("Content-Type","application/atom+xml");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==201)
-cb(http.responseText);else
-cb(null,new HTTPBindingClient.Exception(http.status,http.statusText));}};http.send(entry);return true;}
+return HTTPBindingClient.jsonResult(http);throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.get=function(id,cb){var u=this.uri+'/'+id;var hascb=cb?true:false;var item=localStorage.getItem(u);if(item!=null&&item!=''){if(!hascb)
+return item;try{cb(item);}catch(cbe){}}
+var http=HTTPBindingClient.getHTTPRequest();http.open("GET",u,hascb);if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){if(http.getResponseHeader("X-Login")!=null){try{cb(null,new HTTPBindingClient.Exception(403,'X-Login'));}catch(cbe){}}else if(http.responseText==''||http.getResponseHeader("Content-Type")==null){try{cb(null,new HTTPBindingClient.Exception(403,'No-Content'));}catch(cbe){}}else{if(item==null||http.responseText!=item){if(http.responseText!=null){localStorage.setItem(u,http.responseText);}
+try{cb(http.responseText);}catch(cbe){}}}}
+else{if(item==null){try{cb(null,new HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}}}};http.send(null);return true;}
+http.send(null);if(http.status==200){if(http.getResponseHeader("X-Login")!=null){throw new HTTPBindingClient.Exception(403,'X-Login');}else if(http.responseText==''||http.getResponseHeader("Content-Type")==null){throw new HTTPBindingClient.Exception(403,'No-Content');}
+return http.responseText;}
+throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.getnocache=function(id,cb){var u=this.uri+'/'+id;var hascb=cb?true:false;var http=HTTPBindingClient.getHTTPRequest();http.open("GET",u,hascb);if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){if(http.getResponseHeader("X-Login")!=null){try{return cb(null,new HTTPBindingClient.Exception(403,'X-Login'));}catch(cbe){}}else if(http.responseText==''||http.getResponseHeader("Content-Type")==null){try{return cb(null,new HTTPBindingClient.Exception(403,'No-Content'));}catch(cbe){}}else{try{cb(http.responseText);}catch(cbe){}}}else{try{cb(null,new HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}}};http.send(null);return true;}
+http.send(null);if(http.status==200){if(http.getResponseHeader("X-Login")!=null){throw new HTTPBindingClient.Exception(403,'X-Login');}else if(http.responseText==''||http.getResponseHeader("Content-Type")==null){throw new HTTPBindingClient.Exception(403,'No-Content');}
+return http.responseText;}
+throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.post=function(entry,cb){var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("POST",this.uri,hascb);http.setRequestHeader("Content-Type","application/atom+xml");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==201){try{cb(http.responseText);}catch(cbe){}}
+else{try{cb(null,new HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}}};http.send(entry);return true;}
 http.send(entry);if(http.status==201)
-return http.responseText;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.put=function(id,entry,cb){var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("PUT",this.uri+'/'+id,hascb);http.setRequestHeader("Content-Type","application/atom+xml");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200)
-cb();else
-cb(new HTTPBindingClient.Exception(http.status,http.statusText));}};http.send(entry);return true;}
+return http.responseText;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.put=function(id,entry,cb){var u=this.uri+'/'+id;localStorage.setItem(u,entry);var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("PUT",u,hascb);http.setRequestHeader("Content-Type","application/atom+xml");if(hascb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){try{cb();}catch(cbe){}}else{try{cb(new HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}}};http.send(entry);return true;}
 http.send(entry);if(http.status==200)
-return true;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.del=function(id,cb){var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("DELETE",this.uri+'/'+id,hascb);if(cb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200)
-cb();else
-cb(new HTTPBindingClient.Exception(http.status,http.statusText));}};http.send(null);return true;}
+return true;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.prototype.del=function(id,cb){var u=this.uri+'/'+id;localStorage.removeItem(u);var http=HTTPBindingClient.getHTTPRequest();var hascb=cb?true:false;http.open("DELETE",u,hascb);if(cb){http.onreadystatechange=function(){if(http.readyState==4){if(http.status==200){try{cb();}catch(cbe){}}
+else{try{cb(new HTTPBindingClient.Exception(http.status,http.statusText));}catch(cbe){}}}};http.send(null);return true;}
 http.send(null);if(http.status==200)
 return true;throw new HTTPBindingClient.Exception(http.status,http.statusText);};HTTPBindingClient.Exception=function(code,message){this.name="HTTPBindingClientException";this.code=code;this.message=message;};HTTPBindingClient.Exception.prototype=new Error();HTTPBindingClient.Exception.prototype.toString=function(){return this.name+": "+this.message;};HTTPBindingClient.msxmlNames=["MSXML2.XMLHTTP.5.0","MSXML2.XMLHTTP.4.0","MSXML2.XMLHTTP.3.0","MSXML2.XMLHTTP","Microsoft.XMLHTTP"];HTTPBindingClient.getHTTPRequest=function(){if(HTTPBindingClient.httpFactory)
 return HTTPBindingClient.httpFactory();try{HTTPBindingClient.httpFactory=function(){return new XMLHttpRequest();};return HTTPBindingClient.httpFactory();}catch(e){}

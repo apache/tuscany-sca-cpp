@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html>
+<html manifest="/cache-manifest.cmf">
 <head>
 <title>Account</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -28,8 +28,8 @@
 <script type="text/javascript" src="/all-min.js"></script>
 <script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();">
-<div id="bodydiv" class="devicewidth">
+<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<div id="bodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript" src="/headconfig.js"></script>
@@ -97,13 +97,18 @@
 </form>
 
 <script type="text/javascript">
+ui.initbody();
+
 // Init service references
 var editWidget = sca.component("EditWidget");
 var user= sca.defun(sca.reference(editWidget, "user"), "id");
 var accounts = sca.reference(editWidget, "accounts");
 
 // Get the user name
-var username = user.id()
+var username = '';
+try {
+    username = user.id()
+} catch(e) {}
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Account - ' + username;
@@ -123,6 +128,11 @@ var savedaccountentryxml = '';
  */
 function getaccount(name) {
     return accounts.get(name, function(doc) {
+
+        // Stop now if we didn't get an account
+        if (doc == null)
+            return false;
+
         accountentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(accountentry)));
         $('userTitle').value = title;
@@ -162,8 +172,10 @@ function getaccount(name) {
 function save(entryxml) {
     $('saveStatus').innerHTML = 'Saving';
     savedaccountentryxml = entryxml;
-    accounts.put(username, savedaccountentryxml);
-    $('saveStatus').innerHTML = 'Saved';
+    accounts.put(username, savedaccountentryxml, function(e) {
+        if (!e)
+            $('saveStatus').innerHTML = 'Saved';
+    });
     return true;
 }
 

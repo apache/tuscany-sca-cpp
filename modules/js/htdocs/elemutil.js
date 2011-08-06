@@ -29,40 +29,30 @@ var atsign = "'@"
  * Return true if a value is an element.
  */
 function isElement(v) {
-    if (!isList(v) || isNil(v) || car(v) != element)
-        return false;
-    return true;
+    return (!(!isList(v) || isNil(v) || car(v) != element));
 }
 
 /**
  * Return true if a value is an attribute.
  */
 function isAttribute(v) {
-    if (!isList(v) || isNil(v) || car(v) != attribute)
-        return false;
-    return true;
+    return (!(!isList(v) || isNil(v) || car(v) != attribute));
 }
 
 /**
  * Return the name of an attribute.
  */
-function attributeName(l) {
-    return cadr(l);
-}
+attributeName = cadr;
 
 /**
  * Return the value of an attribute.
  */
-function attributeValue(l) {
-    return caddr(l);
-}
+attributeValue = caddr;
 
 /**
  * Return the name of an element.
  */
-function elementName(l) {
-    return cadr(l);
-}
+elementName = cadr;
 
 /**
  * Return true if an element has children.
@@ -74,21 +64,16 @@ function elementHasChildren(l) {
 /**
  * Return the children of an element.
  */
-function elementChildren(l) {
-    return cddr(l);
-}
-
+elementChildren = cddr;
 
 /**
  * Return true if an element has a value.
  */
 function elementHasValue(l) {
-    r = reverse(l);
+    var r = reverse(l);
     if (isSymbol(car(r)))
         return false;
-    if (isList(car(r)) && !isNil(car(r)) && isSymbol(car(car(r))))
-        return false;
-    return true;
+    return (!(isList(car(r)) && !isNil(car(r)) && isSymbol(car(car(r)))))
 }
 
 /**
@@ -127,13 +112,7 @@ function elementToValue(t) {
  * Convert a list of elements to a list of values.
  */
 function elementToValueIsSymbol(v) {
-    if (!isList(v))
-        return false;
-    if (isNil(v))
-        return false;
-    if (!isSymbol(car(v)))
-        return false;
-    return true;
+    return (!(!isList(v)) || isNil(v) || !isSymbol(car(v)));
 }
 
 function elementToValueGroupValues(v, l) {

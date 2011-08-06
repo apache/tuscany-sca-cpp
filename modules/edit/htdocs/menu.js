@@ -38,16 +38,16 @@ function userMenu() {
  */
 function displaymenu() {
     var mdiv = $('menu'); 
-    var name = ui.queryParams()['app'];
+    var name = ui.fragmentParams()['app'];
 
     mdiv.innerHTML = ui.menubar(
         append(mklist(ui.menu('Home', '/'), ui.menu('Store', '/store/')),
                 (isNil(name) || name == 'undefined')?
                     mklist() :
                     mklist(
-                        ui.menu('Stats', '/stats/?app=' + name),
-                        ui.menu('Page', '/page/?app=' + name),
-                        ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/graph/?app=' + name))),
+                        ui.menu('Stats', '/stats/#app=' + name),
+                        ui.menu('Page', '/page/#app=' + name),
+                        ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/graph/#app=' + name))),
         mklist(ui.menu('Account', '/account/'), ui.menu('Sign out', '/logout/')));
 }
 
