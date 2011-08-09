@@ -309,7 +309,7 @@ const bool testPostForkPerf() {
     const list<value> i = list<value>() + "content" + (list<value>() + "item"
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99")));
-    const list<value> val = list<value>() + (list<value>() + "entry" 
+    const value val = list<value>() + (list<value>() + "entry" 
             + (list<value>() + "title" + string("item"))
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
