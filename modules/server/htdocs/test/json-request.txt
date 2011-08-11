@@ -1,1 +1,7 @@
-{"id":1,"method":"echo","params":["Hello"]}
+{
+ "id": 1,
+ "method": "echo",
+ "params": [
+  "Hello"
+ ]
+}

@@ -106,8 +106,8 @@ curl-7-19-5
 libcurl4-openssl-7.19.5
 
 JSON:
-Mozilla TraceMonkey libmozjs (https://wiki.mozilla.org/JavaScript:TraceMonkey)
-also included in xulrunner-1.9.2
+Mozilla SpiderMonkey libmozjs 1.8.5
+(https://developer.mozilla.org/en/SpiderMonkey)
 
 Key/value store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
@@ -222,8 +222,8 @@ dependencies installed under $HOME:
 --with-memcached=$HOME/memcached-1.4.5-bin \
 --with-tinycdb=$HOME/tinycdb-0.77-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
---with-js-include=/usr/include/xulrunner-1.9.2 \
---with-js-lib=/usr/lib/xulrunner-1.9.2 \
+--with-js-include=$HOME/js-1.8.5-bin/include \
+--with-js-lib=$HOME/js-1.8.5-bin/lib \
 --enable-libcloud \
 --with-libcloud=$HOME/libcloud-0.3.1-bin \
 --enable-threads \

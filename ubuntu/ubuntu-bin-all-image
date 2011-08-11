@@ -48,11 +48,6 @@ sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by TraceMonkey
-sudo apt-get -y install autoconf2.13 zip
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 # Required by Apache Qpid/C++
 sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
 if [ "$?" != "0" ]; then

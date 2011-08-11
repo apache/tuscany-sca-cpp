@@ -1,13 +1,14 @@
 {
- "id":"1",
- "result":{
-  "host":"localhost",
-  "path":["components",
+ "id": "1",
+ "result": {
+  "host": "localhost",
+  "path": [
+   "components",
    "property-test"
   ],
-  "query":{
-   "id":"1",
-   "method":"print"
+  "query": {
+   "id": "1",
+   "method": "print"
   }
  }
 }

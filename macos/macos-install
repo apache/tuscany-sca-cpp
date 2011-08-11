@@ -43,18 +43,6 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Install autoconf-2.13
-curl -OL http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
-tar xzf autoconf-2.13.tar.gz
-cd autoconf-2.13
-./configure --prefix=$build/autoconf-2.13-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
 # Build Libexpat
 curl -OL http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
 mv download expat-2.0.1.tar.gz
@@ -161,16 +149,14 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build TraceMonkey
-curl -OL http://hg.mozilla.org/tracemonkey/archive/e4364736e170.tar.gz
-mv e4364736e170.tar.gz tracemonkey-e4364736e170.tar.gz
-tar xzf tracemonkey-e4364736e170.tar.gz
-cd tracemonkey-e4364736e170/js/src
-$build/autoconf-2.13-bin/bin/autoconf
-./configure --prefix=$build/tracemonkey-bin
+# Build SpiderMonkey
+curl -OL http://ftp.mozilla.org/pub/mozilla.org/js/js-1.8.5.tar.gz
+tar xzf js185-1.0.0.tar.gz
+cd js-1.8.5/js/src
+./configure --prefix=$build/js-1.8.5-bin
 make
 make install
-install_name_tool -id $build/tracemonkey-bin/lib/libmozjs.dylib $build/tracemonkey-bin/lib/libmozjs.dylib
+ln -s $build/js-1.8.5-bin/lib/libmozjs185.dylib $build/js-1.8.5-bin/lib/libmozjs.dylib
 if [ "$?" != "0" ]; then
     exit $?
 fi

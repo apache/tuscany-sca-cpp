@@ -1,1 +1,6 @@
-{"id": 1, "method": "items", "params": []}
+{
+ "id": 1,
+ "method": "items",
+ "params": [
+ ]
+}

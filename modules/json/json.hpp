@@ -53,7 +53,7 @@ failable<bool> consume(JSONParser* parser, const list<string>& ilist, const js::
     if (isNil(ilist))
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, c_str(car(ilist)));
-    if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), (uint32)JS_GetStringLength(jstr)))
+    if(!JS_ConsumeJSONText(cx, parser, JS_GetStringCharsZ(cx, jstr), (uint32)JS_GetStringLength(jstr)))
         return mkfailure<bool>("JS_ConsumeJSONText failed");
     return consume(parser, cdr(ilist), cx);
 }
@@ -95,7 +95,10 @@ public:
 template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *data) {
     WriteContext<R>& wcx = *(static_cast<WriteContext<R>*> (data));
     JSString* jstr = JS_NewUCStringCopyN(wcx.cx, buf, len);
-    wcx.accum = wcx.reduce(string(JS_GetStringBytes(jstr), JS_GetStringLength(jstr)), wcx.accum);
+    char* cstr = JS_EncodeString(wcx.cx, jstr);
+    const string str(cstr, JS_GetStringLength(jstr));
+    JS_free(wcx.cx, cstr);
+    wcx.accum = wcx.reduce(str, wcx.accum);
     return JS_TRUE;
 }
 

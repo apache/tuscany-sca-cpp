@@ -27,7 +27,17 @@
  */
 
 #define XP_UNIX
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#endif
 #include <jsapi.h>
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic warning "-Wunused-parameter"
+#pragma GCC diagnostic warning "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#endif
 #include "string.hpp"
 #include "list.hpp"
 #include "value.hpp"
@@ -85,8 +95,12 @@ private:
     ::JSRuntime* rt;
 } jsRuntime;
 
-JSClass jsGlobalClass = { "global", JSCLASS_GLOBAL_FLAGS, JS_PropertyStub, JS_PropertyStub, JS_PropertyStub,
-        JS_PropertyStub, JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub, JSCLASS_NO_OPTIONAL_MEMBERS};
+JSClass jsGlobalClass = { "global", JSCLASS_GLOBAL_FLAGS,
+    JS_PropertyStub, JS_PropertyStub,
+    JS_PropertyStub, JS_StrictPropertyStub,
+    JS_EnumerateStub, JS_ResolveStub,
+    JS_ConvertStub, JS_FinalizeStub,
+    JSCLASS_NO_OPTIONAL_MEMBERS };
 
 /**
  * Represents a JavaScript context. Create one per thread.
@@ -99,12 +113,12 @@ public:
         cx = JS_NewContext(jsRuntime, 8192);
         if(cx == NULL)
             return;
-        JS_SetOptions(cx, JSOPTION_VAROBJFIX);
-        JS_SetVersion(cx, JSVERSION_DEFAULT);
+        JS_SetOptions(cx, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
+        JS_SetVersion(cx, JSVERSION_LATEST);
         JS_SetErrorReporter(cx, reportError);
 
         // Create global JS object
-        global = JS_NewObject(cx, &jsGlobalClass, NULL, NULL);
+        global = JS_NewCompartmentAndGlobalObject(cx, &jsGlobalClass, NULL);
         if(global == NULL) {
             cleanup();
             return;
@@ -167,17 +181,22 @@ const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObj
     const value jsValToValue(const jsval& jsv, const js::JSContext& cx);
 
     jsid id;
-    if(!JS_NextProperty(cx, i, &id) || id == JSVAL_VOID)
+    if(!JS_NextProperty(cx, i, &id))
         return propertiesSoFar;
+    jsval idv;
+    JS_IdToValue(cx, id, &idv);
+    if (idv == JSVAL_VOID)
+        return propertiesSoFar;
+
     jsval jsv;
     if(!JS_GetPropertyById(cx, o, id, &jsv))
         return propertiesSoFar;
     const value val = jsValToValue(jsv, cx);
 
-    jsval idv;
-    JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
-        const string name = JS_GetStringBytes(JSVAL_TO_STRING(idv));
+        char* cname = JS_EncodeString(cx, JSVAL_TO_STRING(idv));
+        const string name = cname;
+        JS_free(cx, cname);
         if (isNil(val) && !isList(val))
             return jsPropertiesToValues(cons<value> (mklist<value> (element, c_str(name), val), propertiesSoFar), o, i, cx);
             //return jsPropertiesToValues(propertiesSoFar, o, i, cx);
@@ -196,7 +215,10 @@ const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObj
 const value jsValToValue(const jsval& jsv, const js::JSContext& cx) {
     switch(JS_TypeOfValue(cx, jsv)) {
     case JSTYPE_STRING: {
-        return value(string(JS_GetStringBytes(JSVAL_TO_STRING(jsv))));
+        char* cvalue = JS_EncodeString(cx, JSVAL_TO_STRING(jsv));
+        const string svalue = string(cvalue);
+        JS_free(cx, cvalue);
+        return value(svalue);
     }
     case JSTYPE_BOOLEAN: {
         return value((bool)JSVAL_TO_BOOLEAN(jsv));
@@ -251,7 +273,10 @@ const jsval valueToJSVal(const value& val, const js::JSContext& cx) {
         return BOOLEAN_TO_JSVAL((bool)val);
     }
     case value::Number: {
-        return DOUBLE_TO_JSVAL(JS_NewDouble(cx, (double)val));
+        jsval jsv;
+        if (!JS_NewNumberValue(cx, (jsdouble)val, &jsv))
+            return DOUBLE_TO_JSVAL(0);
+        return jsv;
     }
     case value::List: {
         if (isJSArray(val))

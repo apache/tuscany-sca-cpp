@@ -1,22 +1,23 @@
 {
- "id":1,
- "result":[{
-   "name":"Apple",
-   "currencyCode":"USD",
-   "currencySymbol":"$",
-   "price":2.99
+ "id": 1,
+ "result": [
+  {
+   "name": "Apple",
+   "currencyCode": "USD",
+   "currencySymbol": "$",
+   "price": 2.99
   },
   {
-   "name":"Orange",
-   "currencyCode":"USD",
-   "currencySymbol":"$",
-   "price":3.55
+   "name": "Orange",
+   "currencyCode": "USD",
+   "currencySymbol": "$",
+   "price": 3.55
   },
   {
-   "name":"Pear",
-   "currencyCode":"USD",
-   "currencySymbol":"$",
-   "price":1.55
+   "name": "Pear",
+   "currencyCode": "USD",
+   "currencySymbol": "$",
+   "price": 1.55
   }
  ]
 }

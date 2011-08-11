@@ -48,11 +48,6 @@ sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by TraceMonkey
-sudo apt-get -y install autoconf2.13 zip
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 # Required by HTML Tidy
 sudo apt-get -y install cvs
 if [ "$?" != "0" ]; then
