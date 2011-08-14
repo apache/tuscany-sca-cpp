@@ -44,16 +44,16 @@ namespace filedb {
  */
 class FileDB {
 public:
-    FileDB() : owner(false), jscx(*jscontext("")) {
+    FileDB() : owner(false) {
         debug("filedb::filedb");
     }
 
-    FileDB(const string& name, const string& format) : owner(true), name(name), format(format), jscx(*jscontext(format)) {
+    FileDB(const string& name, const string& format) : owner(true), name(name), format(format) {
         debug(name, "filedb::filedb::name");
         debug(format, "filedb::filedb::format");
     }
 
-    FileDB(const FileDB& c) : owner(false), name(c.name), format(c.format), jscx(c.jscx) {
+    FileDB(const FileDB& c) : owner(false), name(c.name), format(c.format) {
         debug("filedb::filedb::copy");
     }
 
@@ -65,16 +65,9 @@ private:
     bool owner;
     string name;
     string format;
-    js::JSContext& jscx;
 
-    js::JSContext* jscontext(const string& format) {
-        if (format != "json")
-            return NULL;
-        return new (gc_new<js::JSContext>()) js::JSContext();
-    }
-
-    friend const failable<bool> write(const value& v, ostream& os, const string& format, FileDB& db);
-    friend const failable<value> read(istream& is, const string& format, FileDB& db);
+    friend const failable<bool> write(const value& v, ostream& os, const string& format);
+    friend const failable<value> read(istream& is, const string& format);
     friend const failable<bool> post(const value& key, const value& val, FileDB& db);
     friend const failable<bool> put(const value& key, const value& val, FileDB& db);
     friend const failable<value> get(const value& key, FileDB& db);
@@ -111,7 +104,7 @@ const failable<bool> mkdirs(const list<value>& path, const string& root) {
 /**
  * Write a value to a database file.
  */
-const failable<bool> write(const value& v, ostream& os, const string& format, FileDB& db) {
+const failable<bool> write(const value& v, ostream& os, const string& format) {
     if (format == "scheme") {
         const string vs(scheme::writeValue(v));
         os << vs;
@@ -125,7 +118,8 @@ const failable<bool> write(const value& v, ostream& os, const string& format, Fi
         return true;
     }
     if (format == "json") {
-        failable<list<string> > s = json::writeJSON(valuesToElements(v), db.jscx);
+        js::JSContext jscx;
+        failable<list<string> > s = json::writeJSON(valuesToElements(v), jscx);
         if (!hasContent(s))
             return mkfailure<bool>(reason(s));
         write(content(s), os);
@@ -137,7 +131,7 @@ const failable<bool> write(const value& v, ostream& os, const string& format, Fi
 /**
  * Read a value from a database file.
  */
-const failable<value> read(istream& is, const string& format, FileDB& db) {
+const failable<value> read(istream& is, const string& format) {
     if (format == "scheme") {
         return scheme::readValue(is);
     }
@@ -146,7 +140,8 @@ const failable<value> read(istream& is, const string& format, FileDB& db) {
         return v;
     }
     if (format == "json") {
-        const failable<list<value> > fv = json::readJSON(streamList(is), db.jscx);
+        js::JSContext jscx;
+        const failable<list<value> > fv = json::readJSON(streamList(is), jscx);
         if (!hasContent(fv))
             return mkfailure<value>(reason(fv));
         const value v = elementsToValues(content(fv));
@@ -170,7 +165,7 @@ const failable<bool> post(const value& key, const value& val, FileDB& db) {
     ofstream os(fn);
     if (os.fail())
         return mkfailure<bool>("Couldn't post file database entry.");
-    const failable<bool> r = write(val, os, db.format, db);
+    const failable<bool> r = write(val, os, db.format);
 
     debug(r, "filedb::post::result");
     return r;
@@ -191,7 +186,7 @@ const failable<bool> put(const value& key, const value& val, FileDB& db) {
     ofstream os(fn);
     if (os.fail())
         return mkfailure<bool>("Couldn't put file database entry.");
-    const failable<bool> r = write(val, os, db.format, db);
+    const failable<bool> r = write(val, os, db.format);
 
     debug(r, "filedb::put::result");
     return r;
@@ -209,7 +204,7 @@ const failable<value> get(const value& key, FileDB& db) {
     ifstream is(fn);
     if (is.fail())
         return mkfailure<value>("Couldn't get file database entry.");
-    const failable<value> val = read(is, db.format, db);
+    const failable<value> val = read(is, db.format);
 
     debug(val, "filedb::get::result");
     return val;

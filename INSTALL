@@ -106,8 +106,9 @@ curl-7-19-5
 libcurl4-openssl-7.19.5
 
 JSON:
-Mozilla SpiderMonkey libmozjs 1.8.5
+Mozilla SpiderMonkey libmozjs 1.8.5 and
 (https://developer.mozilla.org/en/SpiderMonkey)
+built with Mozilla nspr-4.8.8
 
 Key/value store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)

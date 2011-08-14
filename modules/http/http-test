@@ -19,6 +19,7 @@
 
 # Setup
 ./httpd-conf tmp localhost 8090 htdocs
+./httpd-event-conf tmp
 ./httpd-start tmp
 sleep 2
 

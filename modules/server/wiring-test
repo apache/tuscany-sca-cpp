@@ -23,6 +23,7 @@ curl_prefix=`cat $here/../http/curl.prefix`
 
 # Setup
 ../http/httpd-conf tmp localhost 8090 htdocs
+../http/httpd-event-conf tmp
 ./server-conf tmp
 ./scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

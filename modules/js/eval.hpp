@@ -103,14 +103,23 @@ JSClass jsGlobalClass = { "global", JSCLASS_GLOBAL_FLAGS,
     JSCLASS_NO_OPTIONAL_MEMBERS };
 
 /**
- * Represents a JavaScript context. Create one per thread.
+ * Represents a JavaScript context. Maintains one context per thread.
  */
+#ifdef WANT_THREADS
+__thread
+#endif
+::JSContext* jsContext = NULL;
+
 class JSContext {
 public:
     JSContext() {
-        // Create JS context
+        // Create JS context if necessary
         debug("js::jscontext");
-        cx = JS_NewContext(jsRuntime, 8192);
+        if (jsContext != NULL) {
+            cx = jsContext;
+            return;
+        }
+        cx = JS_NewContext(jsRuntime, 32768);
         if(cx == NULL)
             return;
         JS_SetOptions(cx, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
@@ -129,10 +138,13 @@ public:
             cleanup();
             return;
         }
+        jsContext = cx;
     }
 
     ~JSContext() {
         debug("js::~jscontext");
+        if (cx != NULL)
+            JS_GC(cx);
         cleanup();
     }
 
@@ -147,7 +159,8 @@ public:
 private:
     bool cleanup() {
         if(cx != NULL) {
-            JS_DestroyContext(cx);
+            if (cx != jsContext)
+                JS_DestroyContext(cx);
             cx = NULL;
         }
         return true;

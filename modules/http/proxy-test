@@ -19,8 +19,10 @@
 
 # Setup
 ./httpd-conf tmp localhost 8091/8090 htdocs
+./httpd-event-conf tmp
 ./httpd-start tmp
 ./httpd-conf tmp/proxy localhost 8090 tmp/proxy/htdocs
+./httpd-event-conf tmp/proxy
 ./proxy-conf tmp/proxy
 ./proxy-member-conf tmp/proxy localhost 8091
 ./httpd-start tmp/proxy

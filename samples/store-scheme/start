@@ -18,6 +18,7 @@
 #  under the License.
 
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-event-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

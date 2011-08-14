@@ -35,6 +35,7 @@ tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/tunnel
 ../../modules/http/httpd-start tmp/tunnel
 
 ../../modules/http/httpd-conf tmp/server localhost 8090 htdocs
+../../modules/http/httpd-event-conf tmp/server
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/server -x
 ../../modules/http/httpd-ssl-conf tmp/server 8453
 ../../modules/http/cert-auth-conf tmp/server
