@@ -33,6 +33,9 @@
 #include <assert.h>
 #include <new>
 #include "config.hpp"
+#ifdef WANT_THREADS
+#include <pthread.h>
+#endif
 
 namespace tuscany
 {
@@ -81,8 +84,16 @@ public:
         return ptr == r.ptr;
     }
 
+    const bool operator==(T* p) const throw() {
+        return ptr == p;
+    }
+
     const bool operator!=(const gc_ptr& r) const throw() {
         return !this->operator==(r);
+    }
+
+    const bool operator!=(T* p) const throw() {
+        return !this->operator==(p);
     }
 
     T& operator*() const throw() {
@@ -168,9 +179,29 @@ public:
  * Maintain a stack of memory pools.
  */
 #ifdef WANT_THREADS
-__thread
-#endif
+
+class gc_pool_stack_t {
+public:
+    gc_pool_stack_t() {
+        pthread_key_create(&key, NULL);
+    }
+
+    operator apr_pool_t*() const {
+        return static_cast<apr_pool_t*>(pthread_getspecific(key));
+    }
+
+    const gc_pool_stack_t& operator=(apr_pool_t* p) {
+        pthread_setspecific(key, p);
+        return *this;
+    }
+
+private:
+    pthread_key_t key;
+} gc_pool_stack;
+
+#else
 apr_pool_t* gc_pool_stack = NULL;
+#endif
 
 /**
  * Return the current memory pool.

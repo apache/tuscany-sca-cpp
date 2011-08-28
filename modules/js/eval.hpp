@@ -43,6 +43,7 @@
 #include "value.hpp"
 #include "element.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 
 namespace tuscany {
 namespace js {
@@ -106,9 +107,10 @@ JSClass jsGlobalClass = { "global", JSCLASS_GLOBAL_FLAGS,
  * Represents a JavaScript context. Maintains one context per thread.
  */
 #ifdef WANT_THREADS
-__thread
-#endif
+perthread_ptr<JSContext> jsContext;
+#else
 ::JSContext* jsContext = NULL;
+#endif
 
 class JSContext {
 public:

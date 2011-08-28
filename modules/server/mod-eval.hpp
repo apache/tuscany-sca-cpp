@@ -100,9 +100,10 @@ const failable<value> failableResult(const list<value>& v) {
  * Store current HTTP request for access from property and proxy lambda functions.
  */
 #ifdef WANT_THREADS
-__thread
-#endif
+perthread_ptr<request_rec> currentRequest;
+#else
 request_rec* currentRequest = NULL;
+#endif
 
 class ScopedRequest {
 public:

@@ -28,6 +28,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 #include "../../modules/http/http.hpp"
 
 namespace tuscany {
@@ -50,29 +51,36 @@ const failable<value> get(const lambda<value(const list<value>&)> url, const lam
  */
 class applyhttp {
 public:
-    applyhttp(const lambda<value(const list<value>&)> url, const lambda<value(const list<value>&)> val, http::CURLSession& ch) : url(url), val(val), ch(ch) {
+    applyhttp(const lambda<value(const list<value>&)> url, const lambda<value(const list<value>&)> val, const perthread_ptr<http::CURLSession>& ch) : url(url), val(val), ch(ch) {
     }
 
     const value operator()(const list<value>& params) const {
         debug(params, "httppatch::applyhttp::params");
         const value func(car(params));
         if (func == "get")
-            return get(url, val, ch);
+            return get(url, val, *ch);
         return tuscany::mkfailure<tuscany::value>();
     }
 
 private:
     const lambda<value(const list<value>&)> url;
     const lambda<value(const list<value>&)> val;
-    http::CURLSession& ch;
+    perthread_ptr<http::CURLSession> ch;
 };
+
+/**
+ * Create a new CURL session.
+ */
+const gc_ptr<http::CURLSession> newsession() {
+    return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "");
+}
 
 /**
  * Start the component.
  */
 const failable<value> start(const list<value>& params) {
     // Create a CURL session
-    http::CURLSession& ch = *(new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", ""));
+    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyhttp(car(params), cadr(params), ch)));

@@ -80,6 +80,8 @@ bool testString() {
 
     assert(find("abcd", "cd") == 2);
     assert(find("abcd", "xy") == length("abcd"));
+    assert(find_first_of("abcd", "cd") == 2);
+    assert(find_first_of("abcd", "xy") == length("abcd"));
     assert(substr("abcdef", 4) == "ef");
     assert(substr("abcdef", 4, 2) == "ef");
     assert(substr("abcdef", 4, 3) == "ef");

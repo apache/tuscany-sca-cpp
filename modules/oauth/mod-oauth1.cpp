@@ -36,6 +36,7 @@ extern "C" {
 #include "tree.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 #include "../json/json.hpp"
 #include "../http/httpd.hpp"
 #include "../http/http.hpp"
@@ -65,7 +66,7 @@ public:
     list<list<value> > appkeys;
     list<string> mcaddrs;
     memcache::MemCached mc;
-    http::CURLSession cs;
+    perthread_ptr<http::CURLSession> cs;
 };
 
 /**
@@ -476,6 +477,24 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 }
 
 /**
+ * Lambda function that creates a new CURL session.
+ */
+class newsession {
+public:
+    newsession(const string& ca, const string& cert, const string& key) : ca(ca), cert(cert), key(key) {
+    }
+
+    const gc_ptr<http::CURLSession> operator()() const {
+        return new (gc_new<http::CURLSession>()) http::CURLSession(ca, cert, key, "");
+    }
+
+private:
+    const string ca;
+    const string cert;
+    const string key;
+};
+
+/**
  * Child process initialization.
  */
 void childInit(apr_pool_t* p, server_rec* s) {
@@ -494,7 +513,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));
 
     // Setup a CURL session
-    sc.cs = *(new (gc_new<http::CURLSession>()) http::CURLSession(sc.ca, sc.cert, sc.key, ""));
+    sc.cs = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(sc.ca, sc.cert, sc.key)));
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);

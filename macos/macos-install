@@ -156,6 +156,11 @@ cd nspr-4.8.8/mozilla/nsprpub
 ./configure --prefix=$build/nspr-4.8.8-bin --enable-64bit
 make
 make install
+install_name_tool -id $build/nspr-4.8.8-bin/lib/libnspr4.dylib $build/nspr-4.8.8-bin/lib/libnspr4.dylib
+install_name_tool -id $build/nspr-4.8.8-bin/lib/libplc4.dylib $build/nspr-4.8.8-bin/lib/libplc4.dylib
+install_name_tool -id $build/nspr-4.8.8-bin/lib/libplds4.dylib $build/nspr-4.8.8-bin/lib/libplds4.dylib
+install_name_tool -change @executable_path/libnspr4.dylib $build/nspr-4.8.8-bin/lib/libnspr4.dylib $build/nspr-4.8.8-bin/lib/libplc4.dylib
+install_name_tool -change @executable_path/libnspr4.dylib $build/nspr-4.8.8-bin/lib/libnspr4.dylib $build/nspr-4.8.8-bin/lib/libplds4.dylib
 if [ "$?" != "0" ]; then
     exit $?
 fi

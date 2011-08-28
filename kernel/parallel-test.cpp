@@ -71,13 +71,18 @@ struct mutexPerf {
     }
 };
 
-__thread int tlsi = 0;
+const gc_ptr<int> tlsic() {
+    gc_ptr<int> i = new (gc_new<int>()) int();
+    *i = 0;
+    return i;
+}
+const perthread_ptr<int> tlsi(tlsic);
 
 struct tlsPerf {
     tlsPerf() {
     }
     const bool operator()() const {
-        tlsi = tlsi + 1;
+        *tlsi = *tlsi + 1;
         return true;
     }
 };
@@ -105,7 +110,7 @@ bool testAtomicPerf() {
     {
         const lambda<bool()> l = tlsPerf();
         cout << "Thread local inc test " << time(l, 1000, count) << " ms" << endl;
-        assert(tlsi == count + 1000);
+        assert(*tlsi == count + 1000);
     }
     return true;
 }
@@ -131,18 +136,23 @@ bool checkSquareResults(const list<future<int> > r, int i) {
     return true;
 }
 
-__thread long int tlsv = 0;
+const gc_ptr<long int> tlsvc() {
+    gc_ptr<long int> i = new (gc_new<long int>()) long int();
+    *i = 0l;
+    return i;
+}
+const perthread_ptr<long int> tlsv(tlsvc);
 
 const long int tlsset(gc_ptr<wqueue<bool>> wq, gc_ptr<wqueue<bool>> xq) {
-    const long int v = tlsv;
-    tlsv = threadId();
+    const long int v = *tlsv;
+    *tlsv = threadId();
     enqueue(*xq, true);
     dequeue(*wq);
     return v;
 }
 
 const bool tlscheck(gc_ptr<wqueue<bool>> wq, gc_ptr<wqueue<bool>> xq) {
-    const bool r = tlsv == threadId();
+    const bool r = *tlsv == threadId();
     enqueue(*xq, true);
     dequeue(*wq);
     return r;

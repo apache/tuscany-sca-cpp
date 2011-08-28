@@ -30,6 +30,7 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
+#include "parallel.hpp"
 
 namespace tuscany {
 namespace scheme {
@@ -39,14 +40,16 @@ const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
 #ifdef WANT_THREADS
-__thread
-#endif
+perthread_ptr<ostream> displayOutStream;
+#else
 ostream* displayOutStream = NULL;
+#endif
 
 #ifdef WANT_THREADS
-__thread
-#endif
+perthread_ptr<ostream> logOutStream;
+#else
 ostream* logOutStream = NULL;
+#endif
 
 const bool setupDisplay(ostream& out) {
     displayOutStream = &out;

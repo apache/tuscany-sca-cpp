@@ -28,6 +28,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 #include "pgsql.hpp"
 
 namespace tuscany {
@@ -76,24 +77,41 @@ const failable<value> del(const list<value>& params, pgsql::PGSql& pg) {
  */
 class applySqldb {
 public:
-    applySqldb(pgsql::PGSql& pg) : pg(pg) {
+    applySqldb(const perthread_ptr<pgsql::PGSql>& pg) : pg(pg) {
     }
 
     const value operator()(const list<value>& params) const {
         const value func(car(params));
         if (func == "get")
-            return get(cdr(params), pg);
+            return get(cdr(params), *pg);
         if (func == "post")
-            return post(cdr(params), pg);
+            return post(cdr(params), *pg);
         if (func == "put")
-            return put(cdr(params), pg);
+            return put(cdr(params), *pg);
         if (func == "delete")
-            return del(cdr(params), pg);
+            return del(cdr(params), *pg);
         return tuscany::mkfailure<tuscany::value>();
     }
 
 private:
-    pgsql::PGSql& pg;
+    const perthread_ptr<pgsql::PGSql> pg;
+};
+
+/**
+ * Lambda function that creates a new database connection.
+ */
+class newPGSql {
+public:
+    newPGSql(const string& conninfo, const string& table) : conninfo(conninfo), table(table) {
+    }
+
+    const gc_ptr<pgsql::PGSql> operator()() const {
+        return new (gc_new<pgsql::PGSql>()) pgsql::PGSql(conninfo, table);
+    }
+
+private:
+    const string conninfo;
+    const string table;
 };
 
 /**
@@ -103,7 +121,7 @@ const failable<value> start(unused const list<value>& params) {
     // Connect to the configured database and table
     const value conninfo = ((lambda<value(list<value>)>)car(params))(list<value>());
     const value table = ((lambda<value(list<value>)>)cadr(params))(list<value>());
-    pgsql::PGSql& pg = *(new (gc_new<pgsql::PGSql>()) pgsql::PGSql(conninfo, table));
+    const perthread_ptr<pgsql::PGSql> pg(lambda<gc_ptr<pgsql::PGSql>()>(newPGSql(conninfo, table)));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applySqldb(pg)));

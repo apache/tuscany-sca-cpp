@@ -43,7 +43,11 @@ namespace tuscany {
  * Returns the current thread id.
  */
 long int threadId() {
+#ifdef IS_DARWIN
+    return syscall(SYS_thread_selfid);
+#else
     return syscall(SYS_gettid);
+#endif
 }
 
 /**
@@ -314,6 +318,139 @@ const bool cancel(worker& w) {
 }
 
 #endif
+
+/**
+ * Represents a per-thread value.
+ */
+template<typename T> class perthread_ptr {
+public:
+    perthread_ptr() : key(createkey()), owner(true), cl(lambda<gc_ptr<T>()>()), managed(false) {
+    }
+
+    perthread_ptr(const lambda<gc_ptr<T>()>& cl) : key(createkey()), owner(true), cl(cl), managed(true) {
+    }
+
+    ~perthread_ptr() {
+        if (owner)
+            deletekey(key);
+    }
+
+    perthread_ptr(const perthread_ptr& c) : key(c.key), owner(false), cl(c.cl), managed(c.managed) {
+    }
+
+    perthread_ptr& operator=(const perthread_ptr& r) throw() {
+        if(this == &r)
+            return *this;
+        key = r.key;
+        owner = false;
+        cl = r.cl;
+        managed = r.managed;
+        return *this;
+    }
+
+    const perthread_ptr& operator=(const gc_ptr<T>& v) {
+        set(v);
+        return *this;
+    }
+
+    const perthread_ptr& operator=(T* v) {
+        set(v);
+        return *this;
+    }
+
+    const bool operator==(const gc_ptr<T>& r) const throw() {
+        return get() == r;
+    }
+
+    const bool operator==(T* p) const throw() {
+        return get() == p;
+    }
+
+    const bool operator!=(const gc_ptr<T>& r) const throw() {
+        return !this->operator==(r);
+    }
+
+    const bool operator!=(T* p) const throw() {
+        return !this->operator==(p);
+    }
+
+    T& operator*() const throw() {
+        return *get();
+    }
+
+    T* operator->() const throw() {
+        return get();
+    }
+
+    operator gc_ptr<T>() const {
+        return get();
+    }
+
+    operator T*() const {
+        return get();
+    }
+
+private:
+#ifdef WANT_THREADS
+    pthread_key_t createkey() {
+        pthread_key_t k;
+        pthread_key_create(&k, NULL);
+        return k;
+    }
+
+    bool deletekey(pthread_key_t k) {
+        pthread_key_delete(k);
+        return true;
+    }
+
+    bool set(const gc_ptr<T>& v) {
+        pthread_setspecific(key, (T*)v);
+        return true;
+    }
+
+    gc_ptr<T> get() const {
+        const gc_ptr<T> v = static_cast<T*>(pthread_getspecific(key));
+        if (v != NULL || !managed)
+            return v;
+        const gc_ptr<T> nv = cl();
+        pthread_setspecific(key, nv);
+        return nv;
+    }
+
+#else
+    int createkey() {
+        return 0;
+    }
+
+    bool deletekey(unused int k) {
+        return true;
+    }
+
+    bool set(const gc_ptr<T>& v) {
+        val = v;
+        return true;
+    }
+
+    gc_ptr<T> get() const {
+        if (val != NULL || !managed)
+            return val;
+        val = cl();
+        return val;
+    }
+
+#endif
+
+#ifdef WANT_THREADS
+    pthread_key_t key;
+#else
+    int key;
+    gc_ptr<T> val;
+#endif
+
+    bool owner;
+    lambda<const gc_ptr<T>()> cl;
+    bool managed;
+};
 
 }
 #endif /* tuscany_parallel_hpp */

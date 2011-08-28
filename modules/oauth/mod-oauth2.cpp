@@ -31,6 +31,7 @@
 #include "tree.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 #include "../http/httpd.hpp"
 #include "../http/http.hpp"
 #include "../http/openauth.hpp"
@@ -59,7 +60,7 @@ public:
     list<list<value> > appkeys;
     list<string> mcaddrs;
     memcache::MemCached mc;
-    http::CURLSession cs;
+    perthread_ptr<http::CURLSession> cs;
 };
 
 /**
@@ -199,7 +200,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code);
     const string turi = httpd::unescape(cadr(tok)) + string("?") + http::queryString(targs);
     debug(turi, "modoauth2::access_token::tokenuri");
-    const failable<value> tr = http::get(turi, sc.cs);
+    const failable<value> tr = http::get(turi, *(sc.cs));
     if (!hasContent(tr))
         return mkfailure<int>(reason(tr));
     debug(tr, "modoauth2::access_token::response");
@@ -213,7 +214,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + http::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
-    const failable<value> profres = http::get(iuri, sc.cs);
+    const failable<value> profres = http::get(iuri, *(sc.cs));
     if (!hasContent(profres))
         return mkfailure<int>("Couldn't retrieve user info");
     debug(content(profres), "modoauth2::access_token::info");
@@ -328,6 +329,24 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 }
 
 /**
+ * Lambda function that creates a new CURL session.
+ */
+class newsession {
+public:
+    newsession(const string& ca, const string& cert, const string& key) : ca(ca), cert(cert), key(key) {
+    }
+
+    const gc_ptr<http::CURLSession> operator()() const {
+        return new (gc_new<http::CURLSession>()) http::CURLSession(ca, cert, key, "");
+    }
+
+private:
+    const string ca;
+    const string cert;
+    const string key;
+};
+
+/**
  * Child process initialization.
  */
 void childInit(apr_pool_t* p, server_rec* s) {
@@ -346,7 +365,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));
 
     // Setup a CURL session
-    sc.cs = *(new (gc_new<http::CURLSession>()) http::CURLSession(sc.ca, sc.cert, sc.key, ""));
+    sc.cs = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(sc.ca, sc.cert, sc.key)));
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
