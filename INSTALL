@@ -131,6 +131,10 @@ Python:
 Python 2.6.6 (http://www.python.org/)
 Google AppEngine 1.4.0 (http://code.google.com/appengine/)
 
+OpenCL:
+an OpenCL SDK (http://software.intel.com/en-us/articles/opencl-sdk/,
+http://developer.nvidia.com/, http://developer.amd.com/sdks/amdappsdk)
+
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 
@@ -177,6 +181,9 @@ for running with the HTTPD worker or event multi-threaded MPMs):
 
 To enable support for Python component implementations:
 --enable-python
+
+To enable support for OpenCL component implementations:
+--enable-opencl
 
 To enable support for Java component implementations:
 --enable-java
@@ -229,6 +236,7 @@ dependencies installed under $HOME:
 --with-libcloud=$HOME/libcloud-0.3.1-bin \
 --enable-threads \
 --enable-python --with-python=/usr \
+--enable-opencl --with-opencl-include=/usr/include --with-opencl-lib=/usr/lib \
 --enable-gae --with-gae=$HOME/google_appengine \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \

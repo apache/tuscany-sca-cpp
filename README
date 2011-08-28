@@ -64,6 +64,7 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- java             Support for Java components
  |   |   |-- json             JSON data encoding
  |   |   |-- oauth            User signin using OAuth
+ |   |   |-- opencl           Support for OpenCL components
  |   |   |-- openid           User signin using OpenID
  |   |   |-- python           Support for Python components
  |   |   |-- rss              RSS data encoding

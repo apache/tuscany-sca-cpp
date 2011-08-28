@@ -141,4 +141,6 @@ value-element
 modules/edit/apps/*/nuvem
 modules/edit/apps/*/lib
 chat-send
+opencl-shell
+opencl-test
 

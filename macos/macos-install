@@ -285,7 +285,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.5-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
+./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.5-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
 make
 make install
 if [ "$?" != "0" ]; then

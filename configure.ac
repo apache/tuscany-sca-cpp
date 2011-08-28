@@ -388,6 +388,53 @@ else
   AM_CONDITIONAL([WANT_PYTHON], false)
 fi
 
+# Enable OpenCL support.
+AC_MSG_CHECKING([whether to enable OpenCL support])
+AC_ARG_ENABLE(opencl, [AS_HELP_STRING([--enable-opencl], [enable OpenCL support [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_opencl=true
+    ;;
+  esac ],
+[
+  AC_MSG_RESULT(yes)
+  want_opencl=true
+])
+if test "${want_opencl}" = "true"; then
+
+  # Configure path to OpenCL includes and lib.
+  AC_MSG_CHECKING([for opencl])
+  AC_ARG_WITH([opencl-include], [AC_HELP_STRING([--with-opencl-include=PATH], [path to installed OpenCL 1.1 include dir [default=/usr/include]])], [
+    OPENCL_INCLUDE="${withval}"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    OPENCL_INCLUDE="/usr/include"
+    AC_MSG_RESULT(/usr/include)
+  ])
+  AC_SUBST(OPENCL_INCLUDE)
+  AC_ARG_WITH([opencl-lib], [AC_HELP_STRING([--with-opencl-lib=PATH], [path to installed OpenCL 1.1 lib dir [default=/usr/lib]])], [
+    OPENCL_LIB="${withval}"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    OPENCL_LIB="/usr/lib"
+    AC_MSG_RESULT(/usr/lib)
+  ])
+  AC_SUBST(OPENCL_LIB)
+  if test "${UNAME}" != "Darwin"; then
+    LIBS="-L${OPENCL_LIB} ${defaultlibs}"
+    AC_CHECK_LIB([OpenCL], [clGetDeviceIDs], [], [AC_MSG_ERROR([couldn't find a suitable libOpenCL, use --with-opencl=PATH])])
+  fi
+  AM_CONDITIONAL([WANT_OPENCL], true)
+  AC_DEFINE([WANT_OPENCL], 1, [enable OpenCL support])
+
+else
+  AM_CONDITIONAL([WANT_OPENCL], false)
+fi
+
 # Enable Java support.
 AC_MSG_CHECKING([whether to enable Java support])
 AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [default=no]])],
@@ -929,6 +976,7 @@ AC_CONFIG_FILES([Makefile
                  modules/http/Makefile
                  modules/server/Makefile
                  modules/python/Makefile
+                 modules/opencl/Makefile
                  modules/java/Makefile
                  modules/openid/Makefile
                  modules/oauth/Makefile

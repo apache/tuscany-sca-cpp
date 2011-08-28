@@ -64,5 +64,17 @@ const double time(const lambda<bool()>& f, const long warmup, const long count) 
     return (double)t / (double)count;
 }
 
+const unsigned long timems() {
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return (unsigned long)(t.tv_sec * 1000 + t.tv_usec / 1000);
+}
+
+const unsigned long timens() {
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return (unsigned long)(t.tv_sec * 1000000000 + t.tv_usec * 1000);
+}
+
 }
 #endif /* tuscany_perf_hpp */
