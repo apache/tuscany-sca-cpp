@@ -83,10 +83,12 @@ UNAME=`uname -s`
 if test "${UNAME}" = "Darwin"; then
   AC_DEFINE([IS_DARWIN], 1, [running on Darwin])
   AC_MSG_RESULT(yes)
+  libsuffix=".dylib"
   AC_SUBST([libsuffix],[".dylib"])
   AM_CONDITIONAL([DARWIN], true)
 else
   AC_MSG_RESULT(no)
+  libsuffix=".so"
   AC_SUBST([libsuffix],[".so"])
   AM_CONDITIONAL([DARWIN], false)
 fi
@@ -225,31 +227,21 @@ AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitabl
 
 # Configure path to libmozjs includes and lib.
 AC_MSG_CHECKING([for js-include])
-xulrunner=`ls /usr/include | grep "xulrunner" | tail -1`
-if test "$xulrunner" = ""; then
-  xulrunner="xulrunner-1.9.1.8"
-fi
-xulunstable=`ls /usr/include/$xulrunner | grep "unstable"`
-if test "$xulunstable" = ""; then
-  xulinclude="$xulrunner"
-else
-  xulinclude="$xulrunner/unstable"
-fi
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
-             [default=/usr/include/$xulinclude]])], [
+             [default=/usr/include]])], [
   JS_INCLUDE="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_INCLUDE="/usr/include/$xulinclude"
-  AC_MSG_RESULT(/usr/include/$xulinclude)
+  JS_INCLUDE="/usr/include"
+  AC_MSG_RESULT(/usr/include)
 ])
 AC_MSG_CHECKING([for js-lib])
-AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/$xulrunner]])], [
+AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib]])], [
   JS_LIB="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_LIB="/usr/lib/$xulrunner"
-  AC_MSG_RESULT(/usr/lib/$xulrunner)
+  JS_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr/lib)
 ])
 AC_SUBST(JS_INCLUDE)
 AC_SUBST(JS_LIB)
@@ -344,7 +336,7 @@ cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE
 ldflags="${ldflags} -ldl -L${APR_LIB} -R${APR_LIB} -lapr-2"
 ldflags="${ldflags} -L${LIBCURL_LIB} -R${LIBCURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
 
-# Enable Python 2.6 support.
+# Enable Python support.
 AC_MSG_CHECKING([whether to enable Python support])
 AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python], [enable Python support [default=yes]])],
 [ case "${enableval}" in
@@ -362,9 +354,9 @@ AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python], [enable Python support 
 ])
 if test "${want_python}" = "true"; then
 
-  # Configure path to Python 2.6 includes and lib.
+  # Configure path to Python includes and lib.
   AC_MSG_CHECKING([for python])
-  AC_ARG_WITH([python], [AC_HELP_STRING([--with-python=PATH], [path to installed Python 2.6 [default=/usr]])], [
+  AC_ARG_WITH([python], [AC_HELP_STRING([--with-python=PATH], [path to installed Python [default=/usr]])], [
     PYTHON_PREFIX="${withval}"
     PYTHON_INCLUDE="${withval}/include"
     PYTHON_LIB="${withval}/lib"
@@ -379,8 +371,13 @@ if test "${want_python}" = "true"; then
   AC_SUBST(PYTHON_INCLUDE)
   AC_SUBST(PYTHON_LIB)
   LIBS="-L${PYTHON_LIB} ${defaultlibs}"
-  AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
-
+  if test -f "${PYTHON_LIB}/libpython2.7${libsuffix}"; then
+      PYTHON_VERSION="2.7"
+  else
+      PYTHON_VERSION="2.6"
+  fi
+  AC_SUBST(PYTHON_VERSION)
+  AC_CHECK_LIB([python${PYTHON_VERSION}], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython, use --with-python=PATH])])
   AM_CONDITIONAL([WANT_PYTHON], true)
   AC_DEFINE([WANT_PYTHON], 1, [enable Python support])
 
@@ -390,7 +387,7 @@ fi
 
 # Enable OpenCL support.
 AC_MSG_CHECKING([whether to enable OpenCL support])
-AC_ARG_ENABLE(opencl, [AS_HELP_STRING([--enable-opencl], [enable OpenCL support [default=yes]])],
+AC_ARG_ENABLE(opencl, [AS_HELP_STRING([--enable-opencl], [enable OpenCL support [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -400,10 +397,7 @@ AC_ARG_ENABLE(opencl, [AS_HELP_STRING([--enable-opencl], [enable OpenCL support 
     want_opencl=true
     ;;
   esac ],
-[
-  AC_MSG_RESULT(yes)
-  want_opencl=true
-])
+[ AC_MSG_RESULT(no)])
 if test "${want_opencl}" = "true"; then
 
   # Configure path to OpenCL includes and lib.
@@ -694,7 +688,7 @@ if test "${want_libcloud}" = "true"; then
     LIBCLOUD_LIB="${withval}/lib/python"
     AC_MSG_RESULT("${withval}")
   ], [
-    LIBCLOUD_LIB="/usr/local/lib/python2.6/site-packages"
+    LIBCLOUD_LIB="/usr/local/lib/python${PYTHON_VERSION}/site-packages"
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(LIBCLOUD_LIB)

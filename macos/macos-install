@@ -103,10 +103,10 @@ fi
 cd $build
 
 # Build Memcached
-curl -OL http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
-tar xzf memcached-1.4.5.tar.gz
-cd memcached-1.4.5
-./configure --with-libevent=$build/libevent-2.0.12-stable-bin --prefix=$build/memcached-1.4.5-bin
+curl -OL http://memcached.googlecode.com/files/memcached-1.4.7.tar.gz
+tar xzf memcached-1.4.7.tar.gz
+cd memcached-1.4.7
+./configure --with-libevent=$build/libevent-2.0.12-stable-bin --prefix=$build/memcached-1.4.7-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -285,7 +285,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.5-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
+./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -294,8 +294,8 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.12-stable libevent-2.0.12-stable-bin libevent-2.0.12-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.5 memcached-1.4.5-bin memcached-1.4.5.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.0 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.0 modsecurity-crs_2.2.0.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.12-stable libevent-2.0.12-stable-bin libevent-2.0.12-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.0 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.0 modsecurity-crs_2.2.0.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.19.5-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.10-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.12-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.5-bin mod-auth-openid-bin modsecurity-apache-2.6.0-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.19.5-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.10-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.12-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.0-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 

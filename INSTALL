@@ -95,7 +95,7 @@ built with OpenSSL libssl-0.9.8, libpcre3-8.02,
 and expat 2.0.1
 
 Memcached:
-memcached-1.4.5 (http://memcached.org/)
+memcached-1.4.7 (http://memcached.org/)
 built with libevent-1.4.13
 
 XML:
@@ -227,7 +227,7 @@ dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/apr-1.4.x-bin --with-httpd=$HOME/httpd-2.3.10-bin \
---with-memcached=$HOME/memcached-1.4.5-bin \
+--with-memcached=$HOME/memcached-1.4.7-bin \
 --with-tinycdb=$HOME/tinycdb-0.77-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=$HOME/js-1.8.5-bin/include \

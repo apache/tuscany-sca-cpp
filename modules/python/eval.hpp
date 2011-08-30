@@ -25,7 +25,11 @@
 /**
  * Python script evaluation logic.
  */
+#if PYTHON_VERSION == 27
+#include <python2.7/Python.h>
+#else
 #include <python2.6/Python.h>
+#endif
 
 #include "list.hpp"
 #include "value.hpp"

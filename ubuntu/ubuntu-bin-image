@@ -34,7 +34,7 @@ sudo chgrp $g /mnt/tuscany
 cd /mnt/tuscany
 
 # Install core dev tools
-sudo apt-get -y install wget git-core subversion autoconf pkg-config automake libtool g++
+sudo apt-get -y install wget git-core subversion autoconf pkg-config automake libtool g++ make
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -45,6 +45,11 @@ if [ "$?" != "0" ]; then
 fi
 # Required by Memcached
 sudo apt-get -y install libevent-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+# Required by SpiderMonkey
+sudo apt-get -y install zip unzip
 if [ "$?" != "0" ]; then
     exit $?
 fi
