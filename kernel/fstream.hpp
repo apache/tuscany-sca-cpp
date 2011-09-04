@@ -164,7 +164,7 @@ public:
     logfstream(FILE* file, const string& type) : file(file), type(type), owner(false), head(false) {
     }
 
-    logfstream(const logfstream& os) : file(os.file), type(type), owner(false), head(os.head) {
+    logfstream(const logfstream& os) : file(os.file), type(os.type), owner(false), head(os.head) {
     }
 
     ~logfstream() {

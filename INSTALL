@@ -1,11 +1,11 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation on Ubuntu Server 10.10
-=============================================
+Automated installation on Ubuntu Server 10.10 and 11.04
+=======================================================
 
-Tuscany provides two automated install scripts for Ubuntu Server 10.10. You can
-start with a fresh Ubuntu Server 10.10 system and these scripts will take care
+Tuscany provides automated install scripts for Ubuntu Server 10.10 and 11.04.
+You can start with a fresh Ubuntu Server system and these scripts will take care
 of all the download, build and installation steps for you.
 
 ubuntu/ubuntu-install:
@@ -29,34 +29,18 @@ chmod +x ./ubuntu-install
 The installation script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
-Ubuntu Server 10.10.
+Ubuntu Server.
 
 Automated installation on Max OS X 10.6.7
 =========================================
 
-Tuscany provides an automated install script for Mac OS X 10.6.7. You can start
-with a fresh Mac OS X 10.6.7 system and the script will take care of all the
-download, build and installation steps for you.
+Tuscany provides an automated install script for Mac OS X 10.6.7 and Xcode 4.1.
+You can start with a fresh Mac OS X 10.6.7 + Xcode 4.1 system and the script
+will take care of all the download, build and installation steps for you.
 
 macos/macos-install:
 Build and installation of the most commonly used Tuscany features with all
 dependencies built from source.
-
-The only required system dependency is the GCC C++ compiler 4.4.5+. All other
-dependencies are downloaded and built from source in the current directory.
-
-Before running the automated installation install GCC 4.6 from the HPC for Mac
-OS X project (http://hpc.sourceforge.net/) like this:
-curl -OL http://prdownloads.sourceforge.net/hpc/gcc-snwleo-intel-bin.tar.gz
-sudo tar -xf $build/gcc-snwleo-intel-bin.tar.gz -C /
-
-or if you prefer to use GCC from Macports (http://www.macports.org/), install
-GCC 4.4.5+ like this:
-sudo port install gcc44
-
-then adjust the following line in macos/macos-install:
-./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ ...
-to point to the GCC binaries you've installed.
 
 To run the automated installation:
 mkdir tuscany
@@ -67,15 +51,18 @@ chmod +x ./macos-install
 
 The installation script will display each command as it's executed.
 
+The dependencies will be built using the GCC compiler. The Tuscany SCA runtime
+will be built using the Apple Clang/LLVM compiler.
+
 That's all you need to do to build and install the Tuscany SCA runtime on Mac
-OS X 10.6.7.
+OS X.
 
 
 Step by step build and installation
 ===================================
 
-For manual build and install steps on systems other than Ubuntu 10.10 and
-Mac OS X 10.6.7, or if you need to customize your installation, read on...
+For manual build and install steps on other systems than Ubuntu Server and Mac
+OS X, or if you need to customize your installation, read on...
 
 The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
@@ -221,35 +208,35 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration tested on Ubuntu 10.10, with the system
+Here's an example configuration tested on Ubuntu Server, with the system
 dependencies installed in the standard system directories and some of the
-dependencies installed under $HOME:
+dependencies installed under $build:
 
-./configure --prefix=$HOME/tuscany-sca-cpp-bin \
---with-apr=$HOME/apr-1.4.x-bin --with-httpd=$HOME/httpd-2.3.10-bin \
---with-memcached=$HOME/memcached-1.4.7-bin \
---with-tinycdb=$HOME/tinycdb-0.77-bin \
---with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
---with-js-include=$HOME/js-1.8.5-bin/include \
---with-js-lib=$HOME/js-1.8.5-bin/lib \
+./configure --prefix=$build/tuscany-sca-cpp-bin \
+--with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin \
+--with-memcached=$build/memcached-1.4.7-bin \
+--with-tinycdb=$build/tinycdb-0.77-bin \
+--with-curl=$build/curl-7.19.5-bin --with-libxml2=/usr \
+--with-js-include=$build/js-1.8.5-bin/include \
+--with-js-lib=$build/js-1.8.5-bin/lib \
 --enable-libcloud \
---with-libcloud=$HOME/libcloud-0.3.1-bin \
+--with-libcloud=$build/libcloud-0.3.1-bin \
 --enable-threads \
 --enable-python --with-python=/usr \
 --enable-opencl --with-opencl-include=/usr/include --with-opencl-lib=/usr/lib \
---enable-gae --with-gae=$HOME/google_appengine \
+--enable-gae --with-gae=$build/google_appengine \
 --enable-java --with-java=/usr/lib/jvm/default-java \
---enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
---with-libxml2=$HOME/libxml2-2.7.7-bin \
---enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
---enable-chat --with-libstrophe=$HOME/libstrophe-bin \
---with-vysper=$HOME/vysper-0.5 \
---enable-sqldb --with-pgsql=$HOME/postgresql-9.0.3-bin \
---enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
---with-scribe=$HOME/scribe-2.2-bin \
---enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
---enable-oauth --with-liboauth=$HOME/liboauth-0.9.1-bin \
---enable-mod-security --with-mod-security=$HOME/modsecurity-apache-2.6.0-bin \
+--enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin \
+--with-libxml2=$build/libxml2-2.7.7-bin \
+--enable-queue --with-qpidc=$build/qpidc-0.6-bin \
+--enable-chat --with-libstrophe=$build/libstrophe-bin \
+--with-vysper=$build/vysper-0.5 \
+--enable-sqldb --with-pgsql=$build/postgresql-9.0.3-bin \
+--enable-log --with-thrift=$build/thrift-0.2.0-bin \
+--with-scribe=$build/scribe-2.2-bin \
+--enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin \
+--enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin \
+--enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin \
 --enable-maintainer-mode
 
 

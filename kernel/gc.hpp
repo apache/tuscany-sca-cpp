@@ -47,7 +47,7 @@ namespace tuscany
  */
 bool assertOrFail(const bool expr) {
     if (!expr)
-        *(char*)NULL = '\0';
+        abort();
     return true;
 }
 
@@ -183,7 +183,8 @@ public:
 class gc_pool_stack_t {
 public:
     gc_pool_stack_t() {
-        pthread_key_create(&key, NULL);
+        int rc = pthread_key_create(&key, NULL);
+        assertOrFail(rc == 0);
     }
 
     operator apr_pool_t*() const {
@@ -204,21 +205,6 @@ apr_pool_t* gc_pool_stack = NULL;
 #endif
 
 /**
- * Return the current memory pool.
- */
-apr_pool_t* gc_current_pool() {
-    apr_pool_t* apr_pool = gc_pool_stack;
-    if (apr_pool != NULL)
-        return apr_pool;
-
-    // Create a parent pool for the current thread
-    apr_pool_create(&apr_pool, NULL);
-    assertOrFail(apr_pool != NULL);
-    gc_pool_stack = apr_pool;
-    return apr_pool;
-}
-
-/**
  * Push a pool onto the stack.
  */
 apr_pool_t* gc_push_pool(apr_pool_t* pool) {
@@ -233,6 +219,21 @@ apr_pool_t* gc_push_pool(apr_pool_t* pool) {
 apr_pool_t* gc_pop_pool(apr_pool_t* pool) {
     apr_pool_t* p = gc_pool_stack;
     gc_pool_stack = pool;
+    return p;
+}
+
+/**
+ * Return the current memory pool.
+ */
+apr_pool_t* gc_current_pool() {
+    apr_pool_t* p = gc_pool_stack;
+    if (p != NULL)
+        return p;
+
+    // Create a parent pool for the current thread
+    apr_pool_create(&p, NULL);
+    assertOrFail(p != NULL);
+    gc_push_pool(p);
     return p;
 }
 
@@ -302,7 +303,7 @@ template<typename T> apr_status_t gc_pool_acleanup(void* v) {
 }
 
 template<typename T> T* gc_anew(apr_pool_t* p, size_t n) {
-    size_t* gc_anew_ptr = static_cast<size_t*>(apr_palloc(p, sizeof(size_t) + sizeof(T[n])));
+    size_t* gc_anew_ptr = static_cast<size_t*>(apr_palloc(p, sizeof(size_t) + sizeof(T) * n));
     assertOrFail(gc_anew_ptr != NULL);
     *gc_anew_ptr = n;
     apr_pool_cleanup_register(p, gc_anew_ptr, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;

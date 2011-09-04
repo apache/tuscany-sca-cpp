@@ -34,10 +34,36 @@
 /**
  * Platform configuration and debug functions.
  */
-
 namespace tuscany
 {
 
+/**
+ * Attribute used to mark unused parameters.
+ */
+#ifndef unused
+#define unused __attribute__ ((unused))
+#endif
+
+/**
+ * Compiler feature detection.
+ */
+#ifdef __clang__
+
+#if __has_feature(cxx_lambdas)
+#define HAS_CXX0X_LAMBDAS 1
+#endif
+
+#else
+
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 4)
+#define HAS_CXX0X_LAMBDAS 1
+#endif
+
+#endif
+
+/**
+ * Debug utilities.
+ */
 #ifdef WANT_MAINTAINER_MODE
 
 /**
@@ -46,7 +72,7 @@ namespace tuscany
 //#define WANT_MAINTAINER_WATCH
 
 /**
- * Increment / decrement a debug counter.
+ * Increment/decrement a debug counter.
  */
 bool debug_inc(long int& c) {
     c++;
@@ -63,13 +89,6 @@ bool debug_dec(long int& c) {
 #define debug_inc(c)
 #define debug_dec(c)
 
-#endif
-
-/**
- * Attribute used to mark unused parameters.
- */
-#ifndef unused
-#define unused __attribute__ ((unused))
 #endif
 
 }

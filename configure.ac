@@ -27,17 +27,18 @@ AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
 # Check for required programs.
 AC_MSG_NOTICE([checking for programs])
-AC_MSG_CHECKING([for gcc-4.5])
-if test -x "/usr/bin/g++-4.5"; then
-    # Use GCC 4.5 if available
-    CXX=/usr/bin/g++-4.5
-    CPP=/usr/bin/cpp-4.5
-    CC=/usr/bin/gcc-4.5
-    AC_MSG_RESULT(/usr/bin/gcc-4.5)
-    AM_CONDITIONAL([WANT_GCC45], true)
-    AC_DEFINE([WANT_GCC45], 1, [compile with gcc-4.5])
-else
-    AM_CONDITIONAL([WANT_GCC45], false)
+if test "${CXX}" = ""; then
+  AC_MSG_CHECKING([for clang++])
+  if test -x "/usr/bin/clang++"; then
+    # Use CLang++/LLVM if available
+    CXX=/usr/bin/clang++
+    CC=/usr/bin/clang
+    AC_MSG_RESULT(/usr/bin/clang++)
+    AM_CONDITIONAL([WANT_LLVM], true)
+    AC_DEFINE([WANT_LLVM], 1, [compile with clang++/llvm])
+  else
+    AM_CONDITIONAL([WANT_LLVM], false)
+  fi
 fi
 AC_PROG_CXX
 AC_PROG_AWK
@@ -49,6 +50,12 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
 # Initialize default GCC C++ and LD options.
+cxxname=`basename ${CXX}`
+if test "${cxxname}" = "clang++"; then
+  cxxtype="clang"
+else
+  cxxtype="gcc"
+fi
 cxxflags="${CXXFLAGS}"
 ldflags="${LDFLAGS}"
 defaultlibs="${LIBS}"
@@ -107,12 +114,20 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_maintainer_mode}" = "true"; then
-  cxxflags="${cxxflags} -D_DEBUG -O2 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -D_DEBUG -O2 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Waddress -Wredundant-decls -std=c++0x -fmessage-length=0"
+  if test "${cxxtype}" = "clang"; then
+    cxxflags="${cxxflags} -stdlib=libc++"
+  else
+    cxxflags="${cxxflags} -Wlogical-op -Wconversion"
+  fi
   ldflags="${ldflags} -pg"
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
 else
   cxxflags="${cxxflags} -g -O2 -std=c++0x -fmessage-length=0"
+  if test "${cxxtype}" = "clang"; then
+    cxxflags="${cxxflags} -stdlib=libc++"
+  fi
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], false)
 fi
 

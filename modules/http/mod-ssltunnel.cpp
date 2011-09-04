@@ -34,6 +34,11 @@
 #include "httpd.hpp"
 #include "http.hpp"
 
+// Ignore cast align warnings in APR macros
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic ignored "-Wcast-align"
+#endif
+
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_ssltunnel;
 }
@@ -212,6 +217,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
                     if (rl == 0)
                         return close(conn, csock);
 
+
                     // Send bucket to client
                     debug(string(data, rl), "modssltunnel::tunnel::sendToClient");
                     APR_BRIGADE_INSERT_TAIL(ob, apr_bucket_transient_create(data, rl, conn->bucket_alloc));
@@ -364,3 +370,9 @@ module AP_MODULE_DECLARE_DATA mod_tuscany_ssltunnel = {
 };
 
 }
+
+// Reenable cast align warnings
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic warning "-Wcast-align"
+#endif
+

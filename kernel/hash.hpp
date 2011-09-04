@@ -122,7 +122,7 @@ const unsigned int murmurhash(const char* key, const size_t klen) {
     // Mix 4 bytes at a time into the hash
     const unsigned char* data = (const unsigned char*)key;
     while(len >= 4) {
-        unsigned int k = *(unsigned int*)data;
+        unsigned int k = *(unsigned int*)(void*)data;
         k *= m; 
         k ^= k >> r; 
         k *= m; 

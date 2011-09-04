@@ -25,12 +25,6 @@ set -x
 # Build and install in the current directory
 build=`pwd`
 
-# Install core dev tools missing on MacOS
-
-# Install and use GCC 4.6, required for c++0x
-#curl -OL http://prdownloads.sourceforge.net/hpc/gcc-snwleo-intel-bin.tar.gz
-#sudo tar -xf $build/gcc-snwleo-intel-bin.tar.gz -C /
-
 # Install pkg-config
 curl -OL http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz
 tar xzf pkg-config-0.25.tar.gz
@@ -285,7 +279,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure CC=/usr/local/bin/gcc CXX=/usr/local/bin/g++ --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
 make
 make install
 if [ "$?" != "0" ]; then

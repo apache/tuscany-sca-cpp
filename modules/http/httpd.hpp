@@ -34,6 +34,8 @@
 #include <apr_base64.h>
 
 #include <httpd.h>
+// Hack to workaround compile error with CLang/LLVM
+#undef strtoul
 // Hack to workaround compile error with HTTPD 2.3.8
 #define new new_
 #include <http_config.h>
@@ -427,10 +429,6 @@ const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
  * Create an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::internal_internal_redirect.
  */
-extern "C" {
-    AP_DECLARE(ap_conf_vector_t*) ap_create_request_config(apr_pool_t *p);
-}
-
 const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, request_rec* r) {
     if (ap_is_recursion_limit_exceeded(r))
         return mkfailure<request_rec*, int>(HTTP_INTERNAL_SERVER_ERROR);
@@ -498,10 +496,6 @@ const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, 
  * Process an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::ap_internal_redirect.
  */
-extern "C" {
-    AP_DECLARE(int) ap_invoke_handler(request_rec *r);
-}
-
 const int internalRedirect(request_rec* nr) {
     int status = ap_run_quick_handler(nr, 0);
     if (status == DECLINED) {

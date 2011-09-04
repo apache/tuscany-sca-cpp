@@ -31,7 +31,7 @@
 
 namespace tuscany {
 
-#ifdef WANT_GCC45
+#ifdef HAS_CXX0X_LAMBDAS
 
 const lambda<const int(const int)> inc(const int i) {
     return [=](const int x)->const int {
@@ -89,11 +89,11 @@ bool testCppPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-#ifdef WANT_GCC45
+#ifdef HAS_CXX0X_LAMBDAS
     tuscany::testLambda();
     tuscany::testCppPerf();
 #else
-    tuscany::cout << "Skipped GCC 4.5 tests" << tuscany::endl;
+    tuscany::cout << "Skipped C++0x lambda tests" << tuscany::endl;
 #endif
 
     tuscany::cout << "OK" << tuscany::endl;
