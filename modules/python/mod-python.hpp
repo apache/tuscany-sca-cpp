@@ -45,12 +45,13 @@ namespace modpython {
 struct applyImplementation {
     PyObject* impl;
     const list<value> px;
-    applyImplementation(PyObject* impl, const list<value>& px) : impl(impl), px(px) {
+    python::PythonRuntime& py;
+    applyImplementation(PyObject* impl, const list<value>& px, python::PythonRuntime& py) : impl(impl), px(px), py(py) {
     }
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::python::applyImplementation::input");
-        const failable<value> res = python::evalScript(expr, impl);
+        const failable<value> res = python::evalScript(expr, impl, py);
         const value val = !hasContent(res)? mklist<value>(value(), reason(res)) : mklist<value>(content(res));
         debug(val, "modeval::python::applyImplementation::result");
         return val;
@@ -61,16 +62,16 @@ struct applyImplementation {
  * Evaluate a Python component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, python::PythonRuntime& py) {
     const string spath(attributeValue("script", impl));
     const string fpath(path + spath);
     ifstream is(fpath);
     if (fail(is))
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
-    const failable<PyObject*> script = python::readScript(python::moduleName(spath), fpath, is);
+    const failable<PyObject*> script = python::readScript(python::moduleName(spath), fpath, is, py);
     if (!hasContent(script))
         return mkfailure<lambda<value(const list<value>&)> >(reason(script));
-    return lambda<value(const list<value>&)>(applyImplementation(content(script), px));
+    return lambda<value(const list<value>&)>(applyImplementation(content(script), px, py));
 }
 
 }

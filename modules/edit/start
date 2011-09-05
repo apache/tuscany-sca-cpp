@@ -25,6 +25,7 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 
 # Configure server with virtual hosting
 ../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/httpd-event-conf tmp
 ../../modules/http/vhost-conf tmp apps htdocs
 
 # Configure Python component support

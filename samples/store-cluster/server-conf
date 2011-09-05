@@ -24,6 +24,7 @@ set -x
 
 # Configure an app server
 ../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
+../../modules/http/httpd-event-conf $root
 ../../modules/http/vhost-conf $root domains htdocs
 ../../modules/server/server-conf $root
 ../../modules/python/python-conf $root

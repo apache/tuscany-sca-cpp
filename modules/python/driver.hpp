@@ -35,26 +35,26 @@
 namespace tuscany {
 namespace python {
 
-const value evalDriverLoop(PyObject* script, istream& in, ostream& out) {
+const value evalDriverLoop(PyObject* script, istream& in, ostream& out, PythonRuntime& py) {
     scheme::promptForInput(scheme::evalInputPrompt, out);
     value input = scheme::readValue(in);
     if (isNil(input))
         return input;
-    const failable<value> output = evalScript(input, script);
+    const failable<value> output = evalScript(input, script, py);
     scheme::announceOutput(scheme::evalOutputPrompt, out);
     scheme::userPrint(content(output), out);
-    return evalDriverLoop(script, in, out);
+    return evalDriverLoop(script, in, out, py);
 }
 
 const bool evalDriverRun(const char* path, istream& in, ostream& out) {
     PythonRuntime py;
     scheme::setupDisplay(out);
     ifstream is(path);
-    failable<PyObject*> script = readScript(moduleName(path), path, is);
+    failable<PyObject*> script = readScript(moduleName(path), path, is, py);
     if (!hasContent(script))
         return true;
-    evalDriverLoop(content(script), in, out);
-    Py_DECREF(content(script));
+    evalDriverLoop(content(script), in, out, py);
+    releaseScript(content(script), py);
     return true;
 }
 

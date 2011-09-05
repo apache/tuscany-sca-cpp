@@ -24,6 +24,7 @@
 ../../modules/http/ssl-cert-conf tmp sca-store.com server
 ../../modules/http/ssl-cert-conf tmp *.sca-store.com vhost
 ../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/httpd-event-conf tmp
 ../../modules/http/vhost-conf tmp domains htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
 ../../modules/http/vhost-ssl-conf tmp

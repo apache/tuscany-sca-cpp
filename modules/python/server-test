@@ -19,6 +19,7 @@
 
 # Setup
 ../http/httpd-conf tmp localhost 8090 ../server/htdocs
+../http/httpd-event-conf tmp
 ../server/server-conf tmp
 ./python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

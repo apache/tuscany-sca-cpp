@@ -39,23 +39,37 @@ namespace modeval {
 /**
  * Apply a lifecycle start or restart event.
  */
+struct pythonLifecycle {
+    python::PythonRuntime& py;
+    pythonLifecycle(python::PythonRuntime& py) : py(py) {
+    }
+    const value operator()(const list<value>& params) const {
+        const value func = car(params);
+        if (func == "pythonRuntime")
+            return (gc_ptr<value>)(value*)(void*)&py;
+        return lambda<value(const list<value>&)>();
+    }
+};
+
 const value applyLifecycle(unused const list<value>& params) {
 
     // Create a Python runtime
-    new (gc_new<python::PythonRuntime>()) python::PythonRuntime();
+    python::PythonRuntime& py = *(new (gc_new<python::PythonRuntime>()) python::PythonRuntime());
 
-    // Return a nil function as we don't need to handle the stop event
-    return failable<value>(lambda<value(const list<value>&)>());
+    // Return the function to invoke on subsequent events
+    return failable<value>(lambda<value(const list<value>&)>(pythonLifecycle(py)));
 }
 
 /**
  * Evaluate a Python component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused const lambda<value(const list<value>&)>& lifecycle) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle) {
     const string itype(elementName(impl));
-    if (contains(itype, ".python"))
-        return modpython::evalImplementation(path, impl, px);
+    if (contains(itype, ".python")) {
+        const void* p = (gc_ptr<value>)lifecycle(mklist<value>("pythonRuntime"));
+        return modpython::evalImplementation(path, impl, px, *(python::PythonRuntime*)p);
+    }
     if (contains(itype, ".cpp"))
         return modcpp::evalImplementation(path, impl, px);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
