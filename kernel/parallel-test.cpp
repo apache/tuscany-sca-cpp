@@ -136,15 +136,15 @@ bool checkSquareResults(const list<future<int> > r, int i) {
     return true;
 }
 
-const gc_ptr<long int> tlsvc() {
-    gc_ptr<long int> i = new (gc_new<long int>()) long int();
+const gc_ptr<unsigned long> tlsvc() {
+    gc_ptr<unsigned long> i = new (gc_new<unsigned long>()) unsigned long();
     *i = 0l;
     return i;
 }
-const perthread_ptr<long int> tlsv(tlsvc);
+const perthread_ptr<unsigned long> tlsv(tlsvc);
 
 const long int tlsset(gc_ptr<wqueue<bool>> wq, gc_ptr<wqueue<bool>> xq) {
-    const long int v = *tlsv;
+    const unsigned long v = *tlsv;
     *tlsv = threadId();
     enqueue(*xq, true);
     dequeue(*wq);
@@ -183,8 +183,7 @@ bool checkTLSSets(const list<future<long int> > s) {
     if (isNil(s))
         return true;
     assert(car(s) == 0);
-    checkTLSSets(cdr(s));
-    return true;
+    return checkTLSSets(cdr(s));
 }
 
 const list<future<bool> > submitTLSChecks(worker& w, wqueue<bool>& wq, wqueue<bool>& xq, const int max, const int i) {
@@ -198,23 +197,21 @@ bool checkTLSResults(const list<future<bool> > r) {
     if (isNil(r))
         return true;
     assert(car(r) == true);
-    checkTLSResults(cdr(r));
-    return true;
+    return checkTLSResults(cdr(r));
 }
 
 bool testWorker() {
-    worker w(20);
+    const int max = 100;
+    worker w(max);
     {
         const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), 2);
         assert(submit(w, func) == 4);
     }
     {
-        const int max = 20;
         const list<future<int> > r(submitSquares(w, max, 0));
         checkSquareResults(r, 0);
     }
     {
-        const int max = 20;
         wqueue<bool> wq(max);
         unblockWorkers(wq, max);
         waitForWorkers(wq, max);
@@ -222,7 +219,6 @@ bool testWorker() {
         waitForWorkers(wq, max);
     }
     {
-        const int max = 20;
         wqueue<bool> wq(max);
         wqueue<bool> xq(max);
         const list<future<long int> > s(submitTLSSets(w, wq, xq, max, 0));

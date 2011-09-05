@@ -26,10 +26,9 @@
  * Simple parallel work execution functions.
  */
 
+#include <unistd.h>
 #ifdef WANT_THREADS
 #include <pthread.h>
-#include <sys/syscall.h>
-#include <unistd.h>
 #endif
 
 #include "function.hpp"
@@ -37,17 +36,20 @@
 
 namespace tuscany {
 
+/**
+ * Returns the current process id.
+ */
+unsigned long processId() {
+    return (unsigned long)getpid();
+}
+
 #ifdef WANT_THREADS
 
 /**
  * Returns the current thread id.
  */
-long int threadId() {
-#ifdef IS_DARWIN
-    return syscall(SYS_thread_selfid);
-#else
-    return syscall(SYS_gettid);
-#endif
+unsigned long threadId() {
+    return (unsigned long)pthread_self();
 }
 
 /**
@@ -315,6 +317,15 @@ const bool cancel(const list<pthread_t>& threads) {
 const bool cancel(worker& w) {
     cancel(w.w.threads);
     return true;
+}
+
+#else
+
+/**
+ * Returns the current thread id.
+ */
+unsigned long threadId() {
+    return 0;
 }
 
 #endif

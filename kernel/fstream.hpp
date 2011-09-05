@@ -29,6 +29,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
+#ifdef WANT_THREADS
+#include <pthread.h>
+#endif
 #include "string.hpp"
 #include "stream.hpp"
 
@@ -149,10 +154,14 @@ ifstream cin(stdin);
  * Format the current time.
  */
 const string logTime() {
-    const time_t t = ::time(NULL);
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    const time_t t = tv.tv_sec;
     const tm* lt = localtime(&t);
     char ft[32];
-    strftime(ft, 31, "%a %b %d %H:%M:%S %Y", lt);
+    strftime(ft, 20, "%a %b %d %H:%M:%S", lt);
+    sprintf(ft + 19, ".%06lu ", (unsigned long)tv.tv_usec);
+    strftime(ft + 27, 5, "%Y", lt);
     return ft;
 }
 
@@ -203,11 +212,19 @@ private:
     bool owner;
     bool head;
 
+    const unsigned long tid() const {
+#ifdef WANT_THREADS
+        return (unsigned long)pthread_self();
+#else
+        return 0;
+#endif
+    }
+
     logfstream& whead() {
         if (head)
             return *this;
         head = true;
-        *this << "[" << logTime() << "] [" << type << "] ";
+        *this << "[" << logTime() << "] [" << type << "] [pid " << (unsigned long)getpid() << ":tid " << tid() << "] ";
         return *this;
     }
 };
