@@ -70,7 +70,7 @@ public:
     JSRuntime() {
         // Create JS runtime
         debug("js::jsruntime");
-        rt = JS_NewRuntime(8L * 1024L * 1024L);
+        rt = JS_NewRuntime(32L * 1024L * 1024L);
         if(rt == NULL)
             cleanup();
     }
@@ -121,7 +121,7 @@ public:
             cx = jsContext;
             return;
         }
-        cx = JS_NewContext(jsRuntime, 32768);
+        cx = JS_NewContext(jsRuntime, 8192);
         if(cx == NULL)
             return;
         JS_SetOptions(cx, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
@@ -146,7 +146,7 @@ public:
     ~JSContext() {
         debug("js::~jscontext");
         if (cx != NULL)
-            JS_GC(cx);
+            JS_MaybeGC(cx);
         cleanup();
     }
 
