@@ -49,26 +49,50 @@ class PythonRuntime {
 public:
     PythonRuntime() {
         debug("python::pythonruntime");
-        pthread_mutex_init(&modulemx, NULL);
+
+#ifdef WANT_THREADS
+        pthread_mutex_init(&mutex, NULL);
+
+#ifdef IS_DARWIN
+        // Save current process id
+        pthread_mutex_init(&pidmutex, NULL);
+        pid = processId();
+#endif
+#endif
 
         // Initialize the Python interpreter
+#ifdef IS_DARWIN
+        debug("python::pythonruntime::initialize");
+        Py_InitializeEx(0);
+#else
         if (!Py_IsInitialized()) {
             debug("python::pythonruntime::initialize");
             Py_InitializeEx(0);
-
-            // Set default interpreter args
-            const char* arg0 = "";
-            PySys_SetArgv(0, const_cast<char**>(&arg0));
+        }
+#endif
 
 #ifdef WANT_THREADS
-            // Initialize the Python thread support
+        // Initialize the Python thread support
+#ifdef IS_DARWIN
+        PyEval_InitThreads();
+        PyEval_ReleaseLock();
+#else
+        if (!PyEval_ThreadsInitialized()) {
             PyEval_InitThreads();
-
-            // Release Python lock
             PyEval_ReleaseLock();
-#endif
         }
+#endif
+#endif
 
+        // Set default interpreter args
+#ifdef WANT_THREADS
+        PyGILState_STATE gstate = PyGILState_Ensure();
+#endif
+        const char* arg0 = "";
+        PySys_SetArgv(0, const_cast<char**>(&arg0));
+#ifdef WANT_THREADS
+        PyGILState_Release(gstate);
+#endif
     }
 
     ~PythonRuntime() {
@@ -76,9 +100,12 @@ public:
     }
 
 private:
-
 #ifdef WANT_THREADS
-    pthread_mutex_t modulemx;
+    pthread_mutex_t mutex;
+#ifdef IS_DARWIN
+    pthread_mutex_t pidmutex;
+    unsigned long pid;
+#endif
 #endif
 
     friend class PythonThreadIn;
@@ -119,13 +146,13 @@ class PythonRuntimeLock {
 public:
     PythonRuntimeLock(PythonRuntime* py) : py(py) {
 #ifdef WANT_THREADS
-        pthread_mutex_lock(&py->modulemx);
+        pthread_mutex_lock(&py->mutex);
 #endif
     }
 
     ~PythonRuntimeLock() {
 #ifdef WANT_THREADS
-        pthread_mutex_unlock(&py->modulemx);
+        pthread_mutex_unlock(&py->mutex);
 #endif
     }
 
@@ -140,21 +167,44 @@ class PythonThreadIn {
 public:
     PythonThreadIn(PythonRuntime* py) : py(py) {
 #ifdef WANT_THREADS
+
+#ifdef IS_DARWIN
+        // Reinitialize Python thread support after a fork
+        const unsigned long pid = processId();
+        if (pid != py->pid) {
+            pthread_mutex_lock(&py->pidmutex);
+            if (pid != py->pid) {
+                debug("python::gil::afterfork");
+                PyOS_AfterFork();
+                PyEval_ReleaseLock();
+                debug("python::gil::afterforked");
+                py->pid = pid;
+            }
+            pthread_mutex_unlock(&py->pidmutex);
+        }
+#endif
+
+        // Acquire the Python GIL
         //debug("python::gil::ensure");
         gstate = PyGILState_Ensure();
+        //debug("python::gil::ensured");
 #endif
     }
 
     ~PythonThreadIn() {
 #ifdef WANT_THREADS
+        // Release the Python GIL
         //debug("python::gil::release");
         PyGILState_Release(gstate);
+        //debug("python::gil::released");
 #endif
     }
 
 private:
     PythonRuntime* py;
+#ifdef WANT_THREADS
     PyGILState_STATE gstate;
+#endif
 };
 
 /**
@@ -164,19 +214,25 @@ class PythonThreadOut {
 public:
     PythonThreadOut(PythonRuntime* py) : py(py) {
 #ifdef WANT_THREADS
-        //tstate = PyEval_SaveThread();
+        //debug("python::gil::save");
+        tstate = PyEval_SaveThread();
+        //debug("python::gil::saved");
 #endif
     }
 
     ~PythonThreadOut() {
 #ifdef WANT_THREADS
-        //PyEval_RestoreThread(tstate);
+        //debug("python::gil::restore");
+        PyEval_RestoreThread(tstate);
+        //debug("python::gil::restored");
 #endif
     }
 
 private:
     PythonRuntime* py;
+#ifdef WANT_THREADS
     PyThreadState* tstate;
+#endif
 };
 
 /**
