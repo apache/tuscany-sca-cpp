@@ -56,7 +56,8 @@ if test "${cxxname}" = "clang++"; then
 else
   cxxtype="gcc"
 fi
-cxxflags="${CXXFLAGS}"
+#cxxflags="${CXXFLAGS}"
+cxxflags=""
 ldflags="${LDFLAGS}"
 defaultlibs="${LIBS}"
 
@@ -114,19 +115,21 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_maintainer_mode}" = "true"; then
-  cxxflags="${cxxflags} -D_DEBUG -O2 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Waddress -Wredundant-decls -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -D_DEBUG -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Waddress -Wredundant-decls -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -stdlib=libc++"
+    cxxflags="${cxxflags} -O1 -stdlib=libc++"
   else
-    cxxflags="${cxxflags} -Wlogical-op -Wconversion"
+    cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion"
   fi
   ldflags="${ldflags} -pg"
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
 else
-  cxxflags="${cxxflags} -g -O2 -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -g -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -stdlib=libc++"
+    cxxflags="${cxxflags} -O1 -stdlib=libc++"
+  else
+    cxxflags="${cxxflags} -O2"
   fi
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], false)
 fi
