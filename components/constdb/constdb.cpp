@@ -31,7 +31,7 @@
 #include "tinycdb.hpp"
 
 namespace tuscany {
-namespace nosqldb {
+namespace constdb {
 
 /**
  * Get an item from the database.
@@ -74,9 +74,9 @@ const failable<value> del(const list<value>& params, tinycdb::TinyCDB& cdb) {
 /**
  * Component implementation lambda function.
  */
-class applyNoSqldb {
+class applyConstDb {
 public:
-    applyNoSqldb(tinycdb::TinyCDB& cdb) : cdb(cdb) {
+    applyConstDb(tinycdb::TinyCDB& cdb) : cdb(cdb) {
     }
 
     const value operator()(const list<value>& params) const {
@@ -105,7 +105,7 @@ const failable<value> start(unused const list<value>& params) {
     tinycdb::TinyCDB& cdb = *(new (gc_new<tinycdb::TinyCDB>()) tinycdb::TinyCDB(dbname));
 
     // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyNoSqldb(cdb)));
+    return value(lambda<value(const list<value>&)>(applyConstDb(cdb)));
 }
 
 }
@@ -116,7 +116,7 @@ extern "C" {
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "start")
-        return tuscany::nosqldb::start(cdr(params));
+        return tuscany::constdb::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

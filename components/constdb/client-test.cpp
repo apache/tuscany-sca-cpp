@@ -34,11 +34,11 @@
 #include "../../modules/http/http.hpp"
 
 namespace tuscany {
-namespace nosqldb {
+namespace constdb {
 
-const string uri("http://localhost:8090/nosqldb");
+const string uri("http://localhost:8090/constdb");
 
-bool testNoSqlDb() {
+bool testConstDb() {
     http::CURLSession cs("", "", "", "");
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item" 
@@ -119,7 +119,7 @@ bool testGetPerf() {
     const string p = path(content(id));
 
     const lambda<bool()> gl = getLoop(p, a, cs);
-    cout << "NoSqldb get test " << time(gl, 5, 200) << " ms" << endl;
+    cout << "ConstDb get test " << time(gl, 5, 200) << " ms" << endl;
 
     return true;
 }
@@ -130,8 +130,8 @@ bool testGetPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::nosqldb::testNoSqlDb();
-    tuscany::nosqldb::testGetPerf();
+    tuscany::constdb::testConstDb();
+    tuscany::constdb::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 

@@ -17,25 +17,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
 SCAContribution `pwd`/
-SCAComposite nosqldb.composite
+SCAComposite store.composite
+
 EOF
 
-./tinycdb -c -m tmp/test.cdb </dev/null
+../../components/constdb/tinycdb -c -m tmp/store.cdb </dev/null
 ../../modules/http/httpd-start tmp
-sleep 2
-
-# Test
-./client-test #2>/dev/null
-rc=$?
-
-# Cleanup
-../../modules/http/httpd-stop tmp
-sleep 2
-exit $rc

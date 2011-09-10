@@ -48,7 +48,7 @@
         <service name="Total">
             <binding.jsonrpc uri="total"/>
         </service>        
-        <reference name="cache" target="NoSqldb"/>
+        <reference name="cache" target="ConstDb"/>
     </component>
     
     <component name="CurrencyConverter">
@@ -58,11 +58,11 @@
         </service>        
     </component>     
 
-    <component name="NoSqldb">
-        <implementation.cpp path="../../components/nosqldb" library="libnosqldb"/>
+    <component name="ConstDb">
+        <implementation.cpp path="../../components/constdb" library="libconstdb"/>
         <property name="dbname">tmp/store.cdb</property>
-        <service name="NoSqldb">
-            <binding.atom uri="nosqldb"/>
+        <service name="ConstDb">
+            <binding.atom uri="constdb"/>
         </service>
     </component>     
 

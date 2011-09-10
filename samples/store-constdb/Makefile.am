@@ -16,7 +16,7 @@
 #  under the License.
 
 dist_sample_SCRIPTS = start stop ssl-start
-sampledir = $(prefix)/samples/store-nosql
+sampledir = $(prefix)/samples/store-constdb
 
 nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/*.html
 

@@ -17,8 +17,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
-../../modules/http/httpd-event-conf tmp
+../../modules/http/httpd-ssl-conf tmp 8453
+../../modules/http/basic-auth-conf tmp
+../../modules/http/passwd-auth-conf tmp foo foo
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
@@ -28,5 +32,5 @@ SCAComposite store.composite
 
 EOF
 
-../../components/nosqldb/tinycdb -c -m tmp/store.cdb </dev/null
+../../components/constdb/tinycdb -c -m tmp/store.cdb </dev/null
 ../../modules/http/httpd-start tmp

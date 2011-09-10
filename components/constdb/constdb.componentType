@@ -17,16 +17,12 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
-  name="nosqldb">
+<componentType xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
-    <component name="nosqldb">
-        <implementation.cpp path="." library="libnosqldb"/>
-        <property name="dbname">tmp/test.cdb</property>
-        <service name="nosqldb">
-            <binding.http uri="nosqldb"/>
-        </service>
-    </component>     
+    <service name="constdb"/>
+    <property name="dbname" type="xsd:string"/>
 
 </composite>

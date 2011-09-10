@@ -995,7 +995,7 @@ AC_CONFIG_FILES([Makefile
                  components/cache/Makefile
                  components/log/Makefile
                  components/chat/Makefile
-                 components/nosqldb/Makefile
+                 components/constdb/Makefile
                  components/filedb/Makefile
                  components/http/Makefile
                  components/queue/Makefile
@@ -1008,7 +1008,7 @@ AC_CONFIG_FILES([Makefile
                  samples/store-java/Makefile
                  samples/store-gae/Makefile
                  samples/store-sql/Makefile
-                 samples/store-nosql/Makefile
+                 samples/store-constdb/Makefile
                  samples/store-vhost/Makefile
                  samples/store-cluster/Makefile
                  samples/relay-python/Makefile

@@ -18,24 +18,24 @@
 INCLUDES = -I${TINYCDB_INCLUDE}
 
 incl_HEADERS = *.hpp
-incldir = $(prefix)/include/components/nosqldb
+incldir = $(prefix)/include/components/constdb
 
 dist_comp_SCRIPTS = tinycdb
-compdir=$(prefix)/components/nosqldb
+compdir=$(prefix)/components/constdb
 
 comp_DATA = tinycdb.prefix
 tinycdb.prefix: $(top_builddir)/config.status
 	echo ${TINYCDB_PREFIX} >tinycdb.prefix
 
-EXTRA_DIST = nosqldb.composite nosqldb.componentType
+EXTRA_DIST = constdb.composite constdb.componentType
 
-comp_LTLIBRARIES = libnosqldb.la
-noinst_DATA = libnosqldb${libsuffix}
+comp_LTLIBRARIES = libconstdb.la
+noinst_DATA = libconstdb${libsuffix}
 
-libnosqldb_la_SOURCES = nosqldb.cpp
-libnosqldb_la_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
-libnosqldb${libsuffix}:
-	ln -s .libs/libnosqldb${libsuffix}
+libconstdb_la_SOURCES = constdb.cpp
+libconstdb_la_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
+libconstdb${libsuffix}:
+	ln -s .libs/libconstdb${libsuffix}
 
 tinycdb_test_SOURCES = tinycdb-test.cpp
 tinycdb_test_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
@@ -43,7 +43,7 @@ tinycdb_test_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-dist_noinst_SCRIPTS = nosqldb-test server-test
+dist_noinst_SCRIPTS = constdb-test server-test
 noinst_PROGRAMS = tinycdb-test client-test
-TESTS = nosqldb-test server-test
+TESTS = constdb-test server-test
 

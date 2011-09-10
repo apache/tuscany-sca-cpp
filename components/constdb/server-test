@@ -17,20 +17,25 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/ssl-ca-conf tmp localhost
-../../modules/http/ssl-cert-conf tmp localhost
-../../modules/http/httpd-conf tmp localhost 8090 htdocs
-../../modules/http/httpd-ssl-conf tmp 8453
-../../modules/http/basic-auth-conf tmp
-../../modules/http/passwd-auth-conf tmp foo foo
+# Setup
+../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+../../modules/http/httpd-event-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite
 SCAContribution `pwd`/
-SCAComposite store.composite
-
+SCAComposite constdb.composite
 EOF
 
-../../components/nosqldb/tinycdb -c -m tmp/store.cdb </dev/null
+./tinycdb -c -m tmp/test.cdb </dev/null
 ../../modules/http/httpd-start tmp
+sleep 2
+
+# Test
+./client-test #2>/dev/null
+rc=$?
+
+# Cleanup
+../../modules/http/httpd-stop tmp
+sleep 2
+exit $rc
