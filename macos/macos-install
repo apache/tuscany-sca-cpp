@@ -119,6 +119,16 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
+# Build LevelDB
+git clone https://code.google.com/p/leveldb/
+cd leveldb
+make all 
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+
 # Build Libcurl
 curl -OL http://curl.haxx.se/download/curl-7.19.5.tar.gz
 tar xzf curl-7.19.5.tar.gz
