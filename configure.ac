@@ -39,6 +39,8 @@ if test "${CXX}" = ""; then
   else
     AM_CONDITIONAL([WANT_LLVM], false)
   fi
+else
+  AM_CONDITIONAL([WANT_LLVM], false)
 fi
 AC_PROG_CXX
 AC_PROG_AWK

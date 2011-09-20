@@ -43,6 +43,18 @@ void* stream_memcpy(void* t, const void* s, const size_t n) {
 }
 
 /**
+ * Write a list of strings into a buffer.
+ */
+const bool writeList(const list<string>& l, char* buf) {
+    if (isNil(l))
+        return true;
+    const string c = car(l);
+    char* b = buf - length(c);
+    memcpy(b, c_str(c), length(c));
+    return writeList(cdr(l), b);
+}
+
+/**
  * Output stream backed by a char buffer.
  */
 class ostringstream : public ostream {
@@ -83,22 +95,13 @@ public:
     }
 
 private:
-    static const bool strHelper(const list<string> l, char* buf) {
-        if (isNil(l))
-            return true;
-        const string c = car(l);
-        char* b = buf - length(c);
-        memcpy(b, c_str(c), length(c));
-        return strHelper(cdr(l), b);
-    }
-
     const string str() {
         if (isNil(buf))
             return string();
         string s;
         s.len = len;
         s.buf = gc_cnew(s.len + 1);
-        strHelper(buf, s.buf + len);
+        writeList(buf, s.buf + len);
         s.buf[s.len] = '\0';
         return s;
     }

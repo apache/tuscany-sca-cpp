@@ -448,15 +448,30 @@ const string watchValue(const value& v) {
 #endif
 
 /**
+ * Write an escape string to a buffer.
+ */
+const char* escapestr(const char* s, char* buf) {
+    if (*s == '\0') {
+        *buf = '\0';
+        return buf;
+    }
+    if (*s == '\\' || *s == '"') {
+        *buf = '\\';
+        *(buf + 1) = *s;
+        return escapestr(s + 1, buf + 2);
+    }
+    *buf = *s;
+    return escapestr(s + 1, buf + 1);
+}
+
+/**
  * Write an escaped string value to a stream.
  */
-ostream& escvwrite(const char* s, ostream& out) {
-    if (*s == '\0')
-        return out;
-    if (*s == '\\' || *s == '"')
-        out << '\\';
-    out << *s;
-    return escvwrite(s + 1, out);
+ostream& escvwrite(const string& str, ostream& out) {
+    char* buf = gc_cnew(length(str) * 2 + 1);
+    escapestr(c_str(str), buf);
+    out << buf;
+    return out;
 }
 
 /**
@@ -472,7 +487,7 @@ ostream& operator<<(ostream& out, const value& v) {
         return out << v.str()();
     case value::String:
         out << '\"';
-        escvwrite(c_str(v.str()()), out);
+        escvwrite(v.str()(), out);
         return out << '\"';
     case value::Number:
         return out << v.num()();
