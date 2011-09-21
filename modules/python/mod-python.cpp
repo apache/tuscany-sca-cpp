@@ -46,7 +46,7 @@ struct pythonLifecycle {
     const value operator()(const list<value>& params) const {
         const value func = car(params);
         if (func == "pythonRuntime")
-            return (gc_ptr<value>)(value*)(void*)&py;
+            return (gc_ptr<value>)(value*)&py;
         return lambda<value(const list<value>&)>();
     }
 };
@@ -67,7 +67,7 @@ const value applyLifecycle(unused const list<value>& params) {
 const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle) {
     const string itype(elementName(impl));
     if (contains(itype, ".python")) {
-        const void* p = (gc_ptr<value>)lifecycle(mklist<value>("pythonRuntime"));
+        const value* p = (gc_ptr<value>)lifecycle(mklist<value>("pythonRuntime"));
         return modpython::evalImplementation(path, impl, px, *(python::PythonRuntime*)p);
     }
     if (contains(itype, ".cpp"))

@@ -724,6 +724,7 @@ const failable<bool> startComponents(ServerConf& sc) {
 class VirtualHostConf {
 public:
     VirtualHostConf(const gc_pool& p, const ServerConf& sc) : sc(sc), vsc(pool(p), sc.server) {
+        vsc.lifecycle = sc.lifecycle;
         vsc.virtualHostContributionPath = sc.virtualHostContributionPath;
         vsc.virtualHostCompositeName = sc.virtualHostCompositeName;
         vsc.ca = sc.ca;
@@ -878,6 +879,7 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     if (sc.wiringServerName == "")
         sc.wiringServerName = mainsc.wiringServerName != ""? mainsc.wiringServerName : httpd::serverName(s);
     debug(sc.wiringServerName, "modeval::postConfigMerge::wiringServerName");
+    sc.lifecycle = mainsc.lifecycle;
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
     sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
@@ -922,6 +924,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
         const failable<value> r = failableResult(applyLifecycle(mklist<value>("start")));
         if (!hasContent(r))
             return -1;
+        debug("modeval::postConfig::setlifecycle");
         sc.lifecycle = content(r);
     }
     if (count > 1) {
@@ -929,6 +932,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
         const failable<value> r = failableResult(applyLifecycle(mklist<value>("restart")));
         if (!hasContent(r))
             return -1;
+        debug("modeval::postConfig::setlifecycle");
         sc.lifecycle = content(r);
     }
 
