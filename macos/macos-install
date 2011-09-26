@@ -24,6 +24,10 @@ set -x
 
 # Build and install in the current directory
 build=`pwd`
+build=$build/build
+rm -rf $build
+mkdir $build
+cd $build
 
 # Install pkg-config
 curl -OL http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz
@@ -85,10 +89,10 @@ fi
 cd $build
 
 # Build libevent
-curl -OL http://www.monkey.org/~provos/libevent-2.0.12-stable.tar.gz
-tar xzf libevent-2.0.12-stable.tar.gz
-cd libevent-2.0.12-stable
-./configure --prefix=$build/libevent-2.0.12-stable-bin
+curl -OL http://www.monkey.org/~provos/libevent-2.0.13-stable.tar.gz
+tar xzf libevent-2.0.13-stable.tar.gz
+cd libevent-2.0.13-stable
+./configure --prefix=$build/libevent-2.0.13-stable-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -100,7 +104,10 @@ cd $build
 curl -OL http://memcached.googlecode.com/files/memcached-1.4.7.tar.gz
 tar xzf memcached-1.4.7.tar.gz
 cd memcached-1.4.7
-./configure --with-libevent=$build/libevent-2.0.12-stable-bin --prefix=$build/memcached-1.4.7-bin
+# http://code.google.com/p/memcached/issues/detail?id=218
+patch -p0<$build/../memcached-1.4.7.patch
+autoreconf --install
+./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.7-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -171,7 +178,7 @@ fi
 cd $build
 
 # Build SpiderMonkey
-curl -OL http://ftp.mozilla.org/pub/mozilla.org/js/js-1.8.5.tar.gz
+curl -OL http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz 
 tar xzf js185-1.0.0.tar.gz
 cd js-1.8.5/js/src
 ./configure --prefix=$build/js-1.8.5-bin --enable-threadsafe --with-system-nspr --with-nspr-prefix=$build/nspr-4.8.8-bin
@@ -248,20 +255,20 @@ fi
 cd $build
 
 # Build mod_security
-curl -OL http://cdnetworks-us-1.dl.sourceforge.net/project/mod-security/modsecurity-apache/2.6.0/modsecurity-apache_2.6.0.tar.gz
-tar xzf modsecurity-apache_2.6.0.tar.gz
-cd modsecurity-apache_2.6.0
-./configure --prefix=$build/modsecurity-apache-2.6.0-bin --with-apxs=$build/httpd-2.3.10-bin/bin/apxs --with-apr=$build/apr-1.4.x-bin/bin/apr-2-config --with-apu=$build/apr-1.4.x-bin/bin/apr-2-config --with-libxml=$build/libxml2-2.7.7-bin --with-curl=$build/curl-7.19.5-bin --with-pcre=$build/pcre-8.12-bin LIBS="-L$build/expat-2.0.1-bin/lib -R$build/expat-2.0.1-bin/lib" CFLAGS="-I$build/pcre-8.12-bin/include"
+curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-apache/2.6.1/modsecurity-apache_2.6.1.tar.gz/download -o modsecurity-apache_2.6.1.tar.gz
+tar xzf modsecurity-apache_2.6.1.tar.gz
+cd modsecurity-apache_2.6.1
+./configure --prefix=$build/modsecurity-apache-2.6.1-bin --with-apxs=$build/httpd-2.3.10-bin/bin/apxs --with-apr=$build/apr-1.4.x-bin/bin/apr-2-config --with-apu=$build/apr-1.4.x-bin/bin/apr-2-config --with-libxml=$build/libxml2-2.7.7-bin --with-curl=$build/curl-7.19.5-bin --with-pcre=$build/pcre-8.12-bin LIBS="-L$build/expat-2.0.1-bin/lib -R$build/expat-2.0.1-bin/lib" CFLAGS="-I$build/pcre-8.12-bin/include"
 make
 make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-curl -OL http://cdnetworks-us-1.dl.sourceforge.net/project/mod-security/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.0.tar.gz
-tar xzf modsecurity-crs_2.2.0.tar.gz
-cp -R $build/modsecurity-crs_2.2.0/base_rules $build/modsecurity-apache-2.6.0-bin
-cp -R $build/modsecurity-crs_2.2.0/optional_rules $build/modsecurity-apache-2.6.0-bin
+curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.1.tar.gz/download -o modsecurity-crs_2.2.1.tar.gz 
+tar xzf modsecurity-crs_2.2.1.tar.gz
+cp -R $build/modsecurity-crs_2.2.1/base_rules $build/modsecurity-apache-2.6.1-bin
+cp -R $build/modsecurity-crs_2.2.1/optional_rules $build/modsecurity-apache-2.6.1-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -289,7 +296,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-leveldb=$build/leveldb --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.1-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -298,8 +305,8 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.12-stable libevent-2.0.12-stable-bin libevent-2.0.12-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.0 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.0 modsecurity-crs_2.2.0.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.13-stable libevent-2.0.13-stable-bin libevent-2.0.13-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.1 modsecurity-crs_2.2.1.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.19.5-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.10-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.12-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.0-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.19.5-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.10-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.13-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
 
