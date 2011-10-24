@@ -22,7 +22,7 @@ from util import *
 def accountid(user):
     return ("'" + user.id(), "'user.account")
 
-# Get the user's account
+# Get the current user's account
 def get(id, user, cache):
     account = cache.get(accountid(user))
     if isNil(account):

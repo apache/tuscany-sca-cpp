@@ -546,7 +546,7 @@ text/directory
 text/enriched
 text/html			html htm
 text/parityfec
-text/plain			asc txt
+text/plain			asc txt b64
 text/prs.lines.tag
 text/rfc822-headers
 text/richtext			rtx

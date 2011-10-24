@@ -284,6 +284,11 @@ cat >$root/conf/vhost.conf <<EOF
 # Virtual host configuration
 UseCanonicalName Off
 
+# Enable HTTP reverse proxy
+ProxyRequests Off
+ProxyPreserveHost Off
+ProxyStatus On
+
 EOF
 
 cat >$root/conf/svhost.conf <<EOF

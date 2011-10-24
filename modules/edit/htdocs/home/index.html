@@ -17,48 +17,47 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
-<head>
-<title>Page not found</title>
-<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 <div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-<div id="menu"></div>
 
 <table style="width: 100%;">
 <tr><td><h2><span id="h1"></span></h2></td></tr>
 </table>
 
 <div style="margin-left: auto; margin-right: auto; text-align: center;">
-<div class="hd2">Sorry, that page is still under construction.</div>
-<div>Please check back later.</div>
+
+<div id="maintitle" style="font-size: 150%;"></div>
+
+<div id="maindiagram"><div id="diagram" style="width: 320px; height: 280px; padding: 0px; margin: 0px auto;"></div></div>
+
+<input type="button" class="greenbutton" style="font-size: 150%; font-weight: bold; font-style: italic; padding: 10px;" id="getstarted" title="Get Started" value="Get Started"/>
+
+<br/><br/>
+<div>Requires Safari 5+, Chrome 11+, Firefox 4+, IE 9+</div>
+
 </div>
 
 <script type="text/javascript">
-ui.initbody();
 
-// Set page title
-$('h1').innerHTML = hometitle(window.location.hostname);
+// Set page titles
+document.title = ui.windowtitle(location.hostname);
+$('h1').innerHTML = ui.hometitle(location.hostname);
 
-// Load the menu bar
-if (!issubdomain(window.location.hostname))
-    displaymenu();
+$('maintitle').innerHTML = isNil(config.maintitle)? 'Simple App Builder' : config.maintitle;
+$('getstarted').onclick = function() {
+    return ui.navigate('/#view=store', '_view');
+};
+
+// Display the main diagram
+var diagram = $('diagram');
+diagram.style.background = 'url(\'' + ui.b64img(appcache.get('/home/home.b64')) + '\')';
+var bgpos = 0;
+setInterval(function() {
+    bgpos = bgpos -280;
+    if (bgpos == -2800)
+        bgpos = 0;
+    diagram.style.backgroundPosition = '0px ' + ui.pixpos(bgpos);
+}, 2000);
+
 </script>
 
-<div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
 </div>
-
-</div>
-</body>
-</html>

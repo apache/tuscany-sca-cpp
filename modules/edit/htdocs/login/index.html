@@ -17,17 +17,17 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
+<html>
 <head>
 <title>Sign in</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+<base href="/login/"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<body class="delayed" onload="onload();">
 <div id="bodydiv" class="bodydiv">
 
 <h1>Sign in</h1>
@@ -44,8 +44,6 @@
 </form>
 
 <script type="text/javascript">
-ui.initbody();
-
 function queryParams() {
     qp = new Array();
     qs = window.location.search.substring(1).split('&');
@@ -71,11 +69,22 @@ function oauthReferrer() {
 }
 
 function submitSignin() {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/';
     document.cookie = reset;
     document.formSignin.httpd_location.value = oauthReferrer();
     document.formSignin.submit();
 }
+
+function onload() {
+    // Show the page
+    document.body.style.visibility = 'visible';
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 1);
+    window.scrollTo(0, 0);
+    return true;
+}
+
 </script>
 
 </div>

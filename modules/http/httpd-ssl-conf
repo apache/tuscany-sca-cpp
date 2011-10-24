@@ -129,6 +129,18 @@ SSLRequire %{SSL_CIPHER_USEKEYSIZE} >= 128
 LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [sslaccess] %h %l %u %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%{SSL_CLIENT_I_DN}x\" \"%{SSL_CLIENT_S_DN}x\" \"%{cookie}n\" %A %V %D %I %O" sslcombined
 CustomLog $root/logs/ssl_access_log sslcombined
 
+# Enable HTTPS reverse proxy
+ProxyRequests Off
+ProxyPreserveHost Off
+ProxyStatus On
+SSLProxyEngine on
+SSLProxyCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+
+# Verify server certificates
+SSLProxyVerify require
+SSLProxyVerifyDepth 1
+SSLProxyCheckPeerCN Off
+
 EOF
 
 proxycert="server"
@@ -144,8 +156,12 @@ Include conf/vhost-ssl.conf
 # Declare SSL certificates used in this virtual host
 SSLCACertificateFile "$root/cert/ca.crt"
 SSLCertificateChainFile "$root/cert/ca.crt"
-SSLCertificateFile "$root/cert/server.crt"
-SSLCertificateKeyFile "$root/cert/server.key"
+SSLCertificateFile "$root/cert/vhost.crt"
+SSLCertificateKeyFile "$root/cert/vhost.key"
+
+# Declare proxy SSL client certificates
+SSLProxyCACertificateFile "$root/cert/ca.crt"
+SSLProxyMachineCertificateFile "$root/cert/$proxycert.pem"
 
 EOF
 

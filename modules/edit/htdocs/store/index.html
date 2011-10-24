@@ -17,25 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
-<head>
-<title>Store</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 <div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-
-<div id="menu"></div>
 
 <table style="width: 100%;">
 <tr><td><h2><span id="h1"></span></h2></td></tr>
@@ -46,17 +28,13 @@
 <div id="apps"></div>
 
 <script type="text/javascript">
-ui.initbody();
 
 // Set page titles
-document.title = windowtitle(window.location.hostname) + ' - Store';
-$('h1').innerHTML = hometitle(window.location.hostname);
-
-// Display the menu bar
-displaymenu();
+document.title = ui.windowtitle(location.hostname) + ' - Store';
+$('h1').innerHTML = ui.hometitle(location.hostname);
 
 // Get the store category
-var category = ui.fragmentParams()['category'];
+var category = ui.fragmentParams(location)['category'];
 if (isNil(category))
     category = 'myapps';
 
@@ -64,18 +42,18 @@ if (isNil(category))
  * Build store menu bar
  */
 function catmenu() {
-    function catmenuitem(name, cat) {
+    function catmenuitem(name, cat, idx) {
         var c = cat == category? 'smenu' : 'amenu';
         return '<th class="thl thr" style="width: 10px; padding-top: 4px; padding-bottom: 4px; padding-right: 6px;">'
-                + ui.ahref('/store/#category=' + cat, '_reload', '<span class="' + c + '">' + name + '</span>') + '</th>';
+                + ui.ahref('/#view=store&category=' + cat + '&idx=' + idx, '_view', '<span class="' + c + '">' + name + '</span>') + '</th>';
     }
 
     var m = '<table style="width: 100%; margin-bottom: 2px;"><tr>';
-    m += catmenuitem('My Apps', 'myapps');
-    m += catmenuitem('New', 'new');
-    m += catmenuitem('Top', 'top');
-    m += catmenuitem('Featured', 'featured');
-    m += catmenuitem('All', 'all');
+    m += catmenuitem('My Apps', 'myapps', '1');
+    m += catmenuitem('New', 'new', '2');
+    m += catmenuitem('Top', 'top', '3');
+    m += catmenuitem('Featured', 'featured', '4');
+    m += catmenuitem('All', 'all', '5');
     if (category == 'myapps') {
         m += '<th class="thl thr" style="width: 100%; padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">';
         m += '<input type="button" class="graybutton" id="createApp" title="Create a new app" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" Value="New App"/>';
@@ -100,9 +78,9 @@ var dashboards = sca.reference(editWidget, "dashboards");
  * Return the link to an app.
  */
 function applink(appname) {
-    var protocol = window.location.protocol;
-    var host = window.location.hostname;
-    var port = ':' + window.location.port;
+    var protocol = location.protocol;
+    var host = location.hostname;
+    var port = ':' + location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
     var link = protocol + '//' + appname + '.' + host + port + '/';
@@ -113,14 +91,14 @@ function applink(appname) {
  * Edit an app.
  */
 function editApp(appname) {
-    return ui.navigate('/page/#app=' + appname, '_self');
+    return ui.navigate('/#view=page&app=' + appname, '_view');
 }
 
 /**
  * View an app.
  */
 function viewApp(appname) {
-    return ui.navigate('/stats/#app=' + appname, '_self');
+    return ui.navigate('/#view=stats&app=' + appname, '_view');
 }
 
 /**
@@ -128,7 +106,7 @@ function viewApp(appname) {
  */
 if (category == 'myapps') {
     $('createApp').onclick = function() {
-        return ui.navigate('/create/', '_self');
+        return ui.navigate('/#view=create', '_view');
     }
 }
 
@@ -136,6 +114,7 @@ if (category == 'myapps') {
  * Get and display list of apps.
  */
 function getapps(category) {
+    //log('category', category);
     function display(doc) {
 
         // Stop now if we didn't get the apps
@@ -146,6 +125,8 @@ function getapps(category) {
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var aentries = assoc("'entry", cdr(feed));
         var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
+
+        var appimg = ui.b64img(appcache.get('/public/app.b64'));
 
         function displayentries(entries) {
             if (isNil(entries))
@@ -159,7 +140,7 @@ function getapps(category) {
             apps += '<div class="box" style="width: 150px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 2px; padding: 2px; vertical-align: top;">'
             apps += '<table><tr>';
             apps += '<td>';
-            apps += '<div>' + ui.ahref('/stats/#app=' + name, '_self', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin: 0px; padding: 0px;"></img>') + '</div>';
+            apps += '<div>' + ui.ahref('/#view=stats&app=' + name, '_view', '<img src="' + appimg + '" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin: 0px; padding: 0px;"></img>') + '</div>';
             apps += '</td>';
             apps += '<td class="tdw">';
             apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
@@ -186,13 +167,7 @@ function getapps(category) {
 
 // Get and display the list of apps
 getapps(category);
+
 </script>
 
-<div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
 </div>
-
-</div>
-</body>
-</html>
-

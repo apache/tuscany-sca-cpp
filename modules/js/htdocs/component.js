@@ -102,8 +102,9 @@ JSONClient.toJSON = function(o) {
 /**
  * Construct an HTTPBindingClient.
  */
-function HTTPBindingClient(name, uri) {
+function HTTPBindingClient(name, uri, domain) {
     this.name = name;
+    this.domain = domain;
     this.uri = uri;
     this.apply = this.createApplyMethod();
 }
@@ -230,10 +231,10 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
 
 
 /**
- * REST ATOMPub GET method.
+ * REST GET method.
  */
 HTTPBindingClient.prototype.get = function(id, cb) {
-    var u = this.uri + '/' + id;
+    var u = id? (this.uri? this.uri + '/' + id : id) : this.uri;
     var hascb = cb? true : false;
 
     // Get from local storage first
@@ -321,10 +322,10 @@ HTTPBindingClient.prototype.get = function(id, cb) {
 };
 
 /**
- * REST ATOMPub GET method, does not use the local cache.
+ * REST GET method, does not use the local cache.
  */
 HTTPBindingClient.prototype.getnocache = function(id, cb) {
-    var u = this.uri + '/' + id;
+    var u = id? (this.uri? this.uri + '/' + id : id) : this.uri;
     var hascb = cb? true : false;
 
     // Connect to the service
@@ -386,7 +387,7 @@ HTTPBindingClient.prototype.getnocache = function(id, cb) {
 };
 
 /**
- * REST ATOMPub POST method.
+ * REST POST method.
  */
 HTTPBindingClient.prototype.post = function (entry, cb) {
 
@@ -426,7 +427,7 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
 };
 
 /**
- * REST ATOMPub PUT method.
+ * REST PUT method.
  */
 HTTPBindingClient.prototype.put = function (id, entry, cb) {
     var u = this.uri + '/' + id;
@@ -470,7 +471,7 @@ HTTPBindingClient.prototype.put = function (id, entry, cb) {
 };
 
 /**
- * REST ATOMPub DELETE method.
+ * REST DELETE method.
  */
 HTTPBindingClient.prototype.del = function (id, cb) {       
     var u = this.uri + '/' + id;
@@ -569,22 +570,26 @@ var sca = {};
 /**
  * Return an HTTP client proxy.
  */
-sca.httpclient = function(name, uri) {
-    return new HTTPBindingClient(name, uri);
+sca.httpclient = function(name, uri, domain) {
+    return new HTTPBindingClient(name, uri, domain);
 };
 
 /**
  * Return a component proxy.
  */
-sca.component = function(name) {
-    return new HTTPBindingClient(name, '/components/' + name);
+sca.component = function(name, domain) {
+    if (!domain)
+        return new HTTPBindingClient(name, '/c/' + name, domain);
+    return new HTTPBindingClient(name, '/a/' + domain + '/c/' + name, domain);
 };
 
 /**
  * Return a reference proxy.
  */
 sca.reference = function(comp, rname) {
-    return new HTTPBindingClient(comp.name + '/' + rname, "/references/" + comp.name + "/" + rname);
+    if (!comp.domain)
+        return new HTTPBindingClient(comp.name + '/' + rname, '/r/' + comp.name + '/' + rname, comp.domain);
+    return new HTTPBindingClient(comp.name + '/' + rname, '/a/' + comp.domain + '/r/' + comp.name + '/' + rname, comp.domain);
 };
 
 /**

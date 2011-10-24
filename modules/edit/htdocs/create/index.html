@@ -17,25 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
-<head>
-<title>Create App</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 <div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-
-<div id="menu"></div>
 
 <table style="width: 100%;">
 <tr><td><h2><span id="h1"></span></h2></td></tr>
@@ -52,7 +34,7 @@
 <tr><td><b>App Name:</b></td></tr>
 <tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
-<tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
 <tr><td><input type="checkbox" value="shared"/><span>Shared</span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
@@ -67,17 +49,16 @@
 </form>
 
 <script type="text/javascript">
-ui.initbody();
 
 // Set page titles
-document.title = windowtitle(window.location.hostname) + ' - Create App';
-$('h1').innerHTML = hometitle(window.location.hostname);
+document.title = ui.windowtitle(location.hostname) + ' - Create App';
+$('h1').innerHTML = ui.hometitle(location.hostname);
 
-// Load the menu bar
-displaymenu();
+// Set images
+$('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
 // Init form
-$('appDomain').innerHTML = '.' + window.location.hostname;
+$('appDomain').innerHTML = '.' + location.hostname;
 
 // Init service references
 var editWidget = sca.component("EditWidget");
@@ -101,7 +82,7 @@ $('createAppForm').onsubmit = function() {
             return false;
 
         // Open it in the page editor
-        ui.navigate('/page/#app=' + name, '_self');
+        ui.navigate('/#view=page&app=' + name, '_view');
         return false;
     });
     return false;
@@ -111,15 +92,9 @@ $('createAppForm').onsubmit = function() {
  * Cancel creating an app.
  */
 $('createAppCancelButton').onclick = function() {
-    return ui.navigate('/store/', '_self');
+    history.back();
 };
+
 </script>
 
-<div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
 </div>
-
-</div>
-</body>
-</html>
-

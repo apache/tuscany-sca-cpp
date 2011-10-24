@@ -51,18 +51,18 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 # Configure error pages
 cat >>tmp/conf/svhost-ssl.conf <<EOF
 # Error pages
-ErrorDocument 404 /public/notfound.html
-ErrorDocument 401 /public/notauth.html
-ErrorDocument 500 /public/oops.html
+ErrorDocument 404 /notfound/
+ErrorDocument 401 /notauth/
+ErrorDocument 500 /oops/
 
 EOF
 
 # Configure app home pages
 cat >>tmp/conf/dvhost-ssl.conf <<EOF
 # App error pages
-ErrorDocument 404 /public/notfound.html
-ErrorDocument 401 /public/notauth.html
-ErrorDocument 500 /public/oops.html
+ErrorDocument 404 /notfound/
+ErrorDocument 401 /notauth/
+ErrorDocument 500 /oops/
 
 # Redirect www to main home page
 RewriteEngine on
@@ -101,7 +101,8 @@ EOF
 # Configure main aliases
 cat >>tmp/conf/httpd.conf <<EOF
 
-Alias /home.png $here/htdocs/home.png
+Alias /home/home.png $here/htdocs/home/home.png
+Alias /home/home.b64 $here/htdocs/home/home.b64
 
 EOF
 
@@ -120,7 +121,10 @@ Alias /headconfig.js $here/htdocs/headconfig.js
 Alias /index.html $here/htdocs/app/index.html
 Alias /login $here/htdocs/login
 Alias /logout $here/htdocs/logout
-Alias /menu.js $here/htdocs/menu.js
+Alias /notauth $here/htdocs/notauth
+Alias /notfound $here/htdocs/notfound
+Alias /notyet $here/htdocs/notyet
+Alias /oops $here/htdocs/oops
 Alias /public $here/htdocs/public
 Alias /robots.txt $here/htdocs/robots.txt
 

@@ -186,6 +186,38 @@ int translateService(const ServerConf& sc, request_rec *r) {
 }
 
 /**
+ * Route an /apps/app-name/... request to the target app domain.
+ */
+int translateDomain(request_rec *r) {
+    httpdDebugRequest(r, "modwiring::translateDomain::input");
+    debug(r->uri, "modwiring::translateDomain::uri");
+
+    // Extract the requested app name
+    const list<value> apath(pathValues(r->uri));
+    if (isNil(cdr(apath)))
+        return HTTP_NOT_FOUND;
+
+    // Compute the target uri in the target app domain
+    ostringstream turi;
+    turi << httpd::scheme(r) << "://" << string(cadr(apath)) << "." << httpd::hostName(r) << ":" << httpd::port(r) << string(path(cddr(apath))) << (r->args != NULL? string("?") + r->args : string(""));
+    debug(str(turi), "modwiring::translateDomain::appuri");
+    
+    // Route to an absolute target URI using mod_proxy or an HTTP client redirect
+    if (useModProxy) {
+        r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + str(turi)));
+        debug(r->filename, "modwiring::translateDomain::filename");
+        r->proxyreq = PROXYREQ_REVERSE;
+        r->handler = "proxy-server";
+        apr_table_setn(r->notes, "proxy-nocanon", "1");
+        return OK;
+    }
+
+    debug(str(turi), "modwiring::translateDomain::location");
+    r->handler = "mod_tuscany_wiring";
+    return httpd::externalRedirect(str(turi), r);
+}
+
+/**
  * Read the components declared in a composite.
  */
 const failable<list<value> > readComponents(const string& path) {
@@ -314,6 +346,10 @@ int translate(request_rec *r) {
 
     // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
+
+    // Translate an app domain request
+    if (!strncmp(r->uri, "/apps/", 6) || !strncmp(r->uri, "/a/", 3))
+        return translateDomain(r);
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);

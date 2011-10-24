@@ -22,6 +22,7 @@ margin-top: 0px; margin-bottom: 2px; margin-left: 2px; margin-right: 2px;
 font-family: "Helvetica Neue", Helvetica; font-style: normal; font-variant: normal; font-size: 13px;
 -webkit-text-size-adjust: none;
 -webkit-touch-callout: none;
+-webkit-tap-highlight-color: rgba(0,0,0,0);
 -webkit-user-select: none;
 }
 
@@ -33,40 +34,126 @@ visibility: hidden;
 position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
 }
 
+.mainbodydiv {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
+}
+
 .bodydiv {
 position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
 }
 
-.bodydivloading {
-position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
--webkit-transform: translate(100%, 0px); -webkit-backface-visibility: hidden;
+.viewcontainer3dm {
+-webkit-perspective: 1000;
+}
+
+.viewcontainer3d {
+}
+
+.leftviewloading3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transform: translate3d(100%, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
 -moz-transform: translate(100%, 0px);
 -ms-transform: translate(100%, 0px);
 transform: translate(100%, 0px);
 }
 
-.bodydivloaded {
--webkit-transition: -webkit-transform 0.4s linear;
--moz-transition: -moz-transform 0.4s linear;
--ms-transition: -ms-transform 0.4s linear;
-transition: transform 0.4s linear;
-position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
--webkit-transform: translate3d(0px, 0px, 0px); -webkit-backface-visibility: hidden;
+.rightviewloading3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transform: translate3d(-100%, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(-100%, 0px);
+-ms-transform: translate(-100%, 0px);
+transform: translate(-100%, 0px);
+}
+
+.flipviewloading3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transform: translate3d(0px, 0px, 0) rotateY(180deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(100%, 0px);
+-ms-transform: translate(100%, 0px);
+transform: translate(100%, 0px);
+}
+
+.viewloading3d {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+visibility: hidden;
+-webkit-transform: translate3d(100%, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(100%, 0px);
+-ms-transform: translate(100%, 0px);
+transform: translate(100%, 0px);
+}
+
+.viewloaded3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transition: -webkit-transform 0.5s ease-in-out;
+-moz-transition: -moz-transform 0.5s ease-in-out;
+-ms-transition: -ms-transform 0.5s ease-in-out;
+transition: transform 0.5s ease-in-out;
+-webkit-transform: translate3d(0px, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
 -moz-transform: translate(0px, 0px);
 -ms-transform: translate(0px, 0px);
 transform: translate(0px, 0px);
 }
 
-.bodydivunloaded {
--webkit-transition: -webkit-transform 0.4s linear;
--moz-transition: -moz-transform 0.4s linear;
--ms-transition: -ms-transform 0.4s linear;
-transition: transform 0.4s linear;
-position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: hidden;
--webkit-transform: translate3d(-100%, 0px, 0px); -webkit-backface-visibility: hidden;
+.viewloaded3d {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transform: translate3d(0px, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(0px, 0px);
+-ms-transform: translate(0px, 0px);
+transform: translate(0px, 0px);
+}
+
+.viewunloading3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transform: translate3d(0px, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(0px, 0px);
+-ms-transform: translate(0px, 0px);
+transform: translate(0px, 0px);
+}
+
+.leftviewunloaded3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transition: -webkit-transform 0.5s ease-in-out;
+-moz-transition: -moz-transform 0.5s ease-in-out;
+-ms-transition: -ms-transform 0.5s ease-in-out;
+transition: transform 0.5s ease-in-out;
+-webkit-transform: translate3d(-100%, 0px, 0px) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
 -moz-transform: translate(-100%, 0px);
 -ms-transform: translate(-100%, 0px);
 transform: translate(-100%, 0px);
+}
+
+.rightviewunloaded3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transition: -webkit-transform 0.5s ease-in-out;
+-moz-transition: -moz-transform 0.5s ease-in-out;
+-ms-transition: -ms-transform 0.5s ease-in-out;
+transition: transform 0.5s ease-in-out;
+-webkit-transform: translate3d(100%, 0px, 0) rotateY(0deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(100%, 0px);
+-ms-transform: translate(100%, 0px);
+transform: translate(100%, 0px);
+}
+
+.flipviewunloaded3dm {
+position: absolute; top: 0px; left: 0px; width: 100%; height: 5000px; overflow: visible;
+-webkit-transition: -webkit-transform 0.5s ease-in-out;
+-moz-transition: -moz-transform 0.5s ease-in-out;
+-ms-transition: -ms-transform 0.5s ease-in-out;
+transition: transform 0.5s ease-in-out;
+-webkit-transform: translate3d(0px, 0px, 0) rotateY(-180deg);
+-webkit-backface-visibility: hidden; background-color: #ffffff;
+-moz-transform: translate(0px, 0px);
+-ms-transform: translate(0px, 0px);
+transform: translate(0px, 0px);
 }
 
 table {
@@ -141,6 +228,10 @@ border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc;
 
 .datatdl {
 border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; width: 10px; vertical-align: middle;
+}
+
+.datatdltop {
+border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; width: 10px; vertical-align: top;
 }
 
 .datatdr {
@@ -335,11 +426,11 @@ padding-left: 6px; padding-right: 2px; padding-top: 3px; padding-bottom: 4px; wh
 }
 
 .tbaramenu {
-color: #cccccc; text-decoration: none; white-space: nowrap;
+color: #cccccc; text-decoration: none; white-space: nowrap; vertical-align: middle;
 }
 
 .tbarsmenu {
-font-weight: bold; color: #ffffff; text-decoration: none; white-space: nowrap;
+font-weight: bold; color: #ffffff; text-decoration: none; white-space: nowrap; vertical-align: middle;
 }
 
 .suggest {

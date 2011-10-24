@@ -17,25 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
-<head>
-<title>Account</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 <div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-
-<div id="menu"></div>
 
 <table style="width: 100%;">
 <tr>
@@ -53,7 +35,7 @@
 <form id="userForm">
 <table style="width: 100%;">
 <tr><tr><td><b>Photo:</b></td></tr>
-<tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><td><img id="userimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Name:</b></td></tr>
 <tr><td><input type="text" id="userTitle" size="30" placeholder="Enter your name" style="width: 300px;"/></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
@@ -97,29 +79,22 @@
 </form>
 
 <script type="text/javascript">
-ui.initbody();
 
 // Init service references
 var editWidget = sca.component("EditWidget");
 var user= sca.defun(sca.reference(editWidget, "user"), "id");
 var accounts = sca.reference(editWidget, "accounts");
 
-// Get the user name
-var username = '';
-try {
-    username = user.id()
-} catch(e) {}
-
 // Set page titles
-document.title = windowtitle(window.location.hostname) + ' - Account - ' + username;
-$('userNameHeader').innerHTML = username;
+document.title = ui.windowtitle(location.hostname) + ' - Account';
 
-// Load the menu bar
-displaymenu();
+// Set images
+$('userimg').src = ui.b64img(appcache.get('/public/user.b64'));
 
 /**
  * The current account entry and corresponding saved XML content.
  */
+var username;
 var accountentry;
 var savedaccountentryxml = '';
 
@@ -134,7 +109,9 @@ function getaccount(name) {
             return false;
 
         accountentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
+        username = cadr(assoc("'id", cdr(accountentry)));
         var title = cadr(assoc("'title", cdr(accountentry)));
+        $('userNameHeader').innerHTML = username;
         $('userTitle').value = title;
 
         var content = cadr(assoc("'content", cdr(accountentry)));
@@ -170,6 +147,8 @@ function getaccount(name) {
  * Save the user's account.
  */
 function save(entryxml) {
+    if (isNil(username))
+        return false;
     $('saveStatus').innerHTML = 'Saving';
     savedaccountentryxml = entryxml;
     accounts.put(username, savedaccountentryxml, function(e) {
@@ -228,14 +207,8 @@ $('userForm').onsubmit = function() {
 };
 
 // Get the user's account
-getaccount(username);
+getaccount();
+
 </script>
 
-<div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
 </div>
-
-</div>
-</body>
-</html>
-

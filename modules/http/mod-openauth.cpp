@@ -199,6 +199,7 @@ static int checkAuthn(request_rec *r) {
     if (!dc.enabled)
         return DECLINED;
     const char* atype = ap_auth_type(r);
+    debug(atype, "modopenauth::checkAuthn::auth_type");
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
 

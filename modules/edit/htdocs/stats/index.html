@@ -17,25 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
-<head>
-<title>Stats</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
 <div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-
-<div id="menu"></div>
 
 <table style="width: 100%;">
 <tr>
@@ -57,7 +39,7 @@
 <form id="appForm">
 <table style="width: 100%;">
 <tr><tr><td><b>App Icon:</b></td></tr>
-<tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
 <tr><td><input type="checkbox" value="shared"/><span>Shared</span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
@@ -70,20 +52,17 @@
 </form>
 
 <script type="text/javascript">
-ui.initbody();
 
 // Get the app name
-var appname = ui.fragmentParams()['app'];
-if (isNil(appname))
-    window.open('/', '_self');
+var appname = ui.fragmentParams(location)['app'];
 
 /**
  * Return the link to an app.
  */
 function applink(appname) {
-    var protocol = window.location.protocol;
-    var host = window.location.hostname;
-    var port = ':' + window.location.port;
+    var protocol = location.protocol;
+    var host = location.hostname;
+    var port = ':' + location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
     var link = protocol + '//' + appname + '.' + host + port + '/';
@@ -91,14 +70,14 @@ function applink(appname) {
 }
 
 // Set page titles
-document.title = windowtitle(window.location.hostname) + ' - Stats - ' + appname;
+document.title = ui.windowtitle(location.hostname) + ' - Stats - ' + appname;
 $('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 var tclone = isNil(config.clone)? 'Clone' : config.clone;
 $('cloneApp').value = tclone;
 $('cloneApp').title = tclone + ' this app';
 
-// Load the menu bar
-displaymenu();
+// Set images
+$('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
 // Init service references
 var editWidget = sca.component("EditWidget");
@@ -176,18 +155,12 @@ $('appForm').onsubmit = function() {
  * Handle Clone button event.
  */
 $('cloneApp').onclick = function() {
-    return ui.navigate('/clone/#app=' + appname, '_self');
+    return ui.navigate('/#view=clone&app=' + appname, '_view');
 }
 
 // Get the current app
 getapp(appname);
+
 </script>
 
-<div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
 </div>
-
-</div>
-</body>
-</html>
-

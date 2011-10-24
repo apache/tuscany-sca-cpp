@@ -23,36 +23,77 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<script type="text/javascript">
-document.title = window.location.hostname.split('.')[0];
-</script>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-</head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
-<div id="bodydiv" class="bodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
-</div>
-
-<div id="app">
-<iframe id="appframe" style="position: relative; height: 5000px; width: 100%;" scrolling="no" frameborder="0" src="/frame.html"></iframe>
-</div>
-
-<div id="appbuffer" style="visibility: hidden">
-</div>
-
+<base href="/"/>
 <script type="text/javascript">
-ui.initbody();
+
+window.appcache = {};
 
 /**
- * The main app div.
+ * Get and cache a resource.
  */
-var appdiv = $('app');
-var appframe = $('appframe');
-var appbody;
+appcache.get = function(uri) {
+    var h = uri.indexOf('#');
+    var u = h == -1? uri : uri.substring(0, h);
+
+    // Get resource from local storage first
+    var item = localStorage.getItem(u);
+    if (item != null && item != '')
+        return item;
+
+    // Get resource from network
+    var http = new XMLHttpRequest();
+    http.open("GET", u, false);
+    http.send(null);
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+            if (log) log('http err', u, 'X-Login');
+            return null;
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+            if (log) log('http err', u, 'No-Content');
+            return null;
+        }
+        localStorage.setItem(u, http.responseText);
+        return http.responseText;
+    }
+    if (log) log('http err', u, http.status, http.statusText);
+    return null;
+};
+
+// Load Javascript and CSS
+(function() {
+    var bootjs = document.createElement('script');
+    bootjs.type = 'text/javascript';
+    bootjs.text = appcache.get('/all-min.js');
+    document.head.appendChild(bootjs);
+    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+})();
+
+</script>
+</head>
+<body class="delayed" onload="onload();">
+<div id="mainbodydiv" class="mainbodydiv">
+
+<div id="headdiv" class="hsection">
+<script type="text/javascript">
+(function() {
+$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig.js')));
+})();
+</script>
+</div>
+
+<div id="content">
+</div>
+
+<script type="text/javascript">
+
+// Set the document title
+document.title = location.hostname.split('.')[0];
+
+/**
+ * The main page div.
+ */
+var contentdiv = $('content');
 
 /**
  * Start, stop, timer, animation and location components.
@@ -62,6 +103,59 @@ var stopcomp = sca.httpclient('stop', '/stop');
 var timercomp = sca.httpclient('timer', '/timer');
 var animationcomp = sca.httpclient('animation', '/animation');
 var locationcomp = sca.httpclient('location', '/location');
+
+/**
+ * Pre-fetch app resources.
+ */
+var appresources = [
+    ['/all-min.js'],
+    ['/app.html'],
+    ['/ui-min.css'],
+    ['/footconfig.js'],
+    ['/headconfig.js'],
+];
+
+/**
+ * Handle application cache events.
+ */
+applicationCache.addEventListener('checking', function(e) {
+    //log('appcache checking', e);
+}, false);
+applicationCache.addEventListener('error', function(e) {
+    //log('appcache error', e);
+}, false);
+applicationCache.addEventListener('noupdate', function(e) {
+    //log('appcache noupdate', e);
+}, false);
+applicationCache.addEventListener('downloading', function(e) {
+    //log('appcache downloading', e);
+}, false);
+applicationCache.addEventListener('progress', function(e) {
+    //log('appcache progress', e);
+}, false);
+applicationCache.addEventListener('updateready', function(e) {
+    //log('appcache updateready', e);
+    applicationCache.swapCache();
+    //log('appcache swapped', e);
+}, false);
+applicationCache.addEventListener('cached', function(e) {
+    //log('appcache cached', e);
+    map(function(res) {
+        appcache.get(res[0]);
+    }, appresources);
+}, false);
+
+/**
+ * Handle network offline/online events.
+ */
+window.addEventListener('offline', function(e) {
+      //log('going offline');
+}, false);
+window.addEventListener('online', function(e) {
+      //log('going online');
+}, false);
+
+//log(navigator.onLine? 'online' : 'offline');
 
 /**
  * Find a named value in a tree of elements. The value name is given
@@ -172,12 +266,12 @@ function setwidgetvalue(e, dv) {
 
                 // Define the stylesheet
                 if (s != '') {
-                    var esheet = appframe.contentDocument.getElementById('style_' + e.id);
+                    var esheet = contentdiv.getElementById('style_' + e.id);
                     if (isNil(esheet)) {
                         var nesheet = document.createElement('style');
                         nesheet.id = 'style_' + e.id;
                         nesheet.type = 'text/css';
-                        appframe.contentDocument.getElementsByTagName('head')[0].appendChild(nesheet);
+                        contentdiv.getElementsByTagName('head')[0].appendChild(nesheet);
                         nesheet.innerHTML = s;
                     } else {
                         esheet.innerHTML = s;
@@ -294,7 +388,7 @@ function updatepage(l) {
         return e;
     }
 
-    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(appbody, 'page').childNodes)));
+    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
     return true;
 }
 
@@ -474,16 +568,10 @@ function getpagedata() {
         }
 
         // Get the component app data
-        var doc = getdoc(startcomp, 'start', window.location.search);
-
-        // Prepare app HTML page
-        appbody = appframe.contentDocument.body;
-        var appbufferbody = $('appbufferframe').contentDocument.body;
-        appbody.innerHTML = appbufferbody.innerHTML;
-        appbufferbody.innerHTML = '';
+        var doc = getdoc(startcomp, 'start', location.search);
 
         // Setup the widgets
-        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appbody, 'page').childNodes)));
+        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
 
         // Display data on the page
         displaypage(doc);
@@ -513,7 +601,7 @@ function compquery() {
         return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(appbody, 'page'))));
+    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(contentdiv, 'page'))));
 
     // Append current location properties if known
     if (!isNil(geoposition)) {
@@ -677,12 +765,35 @@ function setupLocationHandler() {
     return true;
 }
 
-// Load the app frame
-$('appbuffer').innerHTML = '<iframe id="appbufferframe" style="position: relative; height: 5000px; width: 100%;" scrolling="no" frameborder="0" src="app.html" onload="getpagedata()"></iframe>';
+// Load the app page
+var appcontent = appcache.get('/app.html');
+contentdiv.innerHTML = appcontent;
+
+// Merge in the app data
+getpagedata();
+
+/**
+ * Document load post processing.
+ */
+function onload() {
+    //log('onload');
+
+    // Show the page
+    document.body.style.visibility = 'visible';
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+    return true;
+}
+
 </script>
 
 <div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
+<script type="text/javascript">
+(function() {
+$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig.js')));
+})();
+</script>
 </div>
 
 </div>

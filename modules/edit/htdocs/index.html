@@ -19,78 +19,417 @@
 -->
 <html manifest="/cache-manifest.cmf">
 <head>
-<title>Home</title>
+<title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
-<script type="text/javascript" src="/menu.js"></script>
+<base href="/"/>
+<script type="text/javascript">
+
+window.appcache = {};
+
+/**
+ * Get and cache a resource.
+ */
+appcache.get = function(uri) {
+    var h = uri.indexOf('#');
+    var u = h == -1? uri : uri.substring(0, h);
+
+    // Get resource from local storage first
+    var item = localStorage.getItem(u);
+    if (item != null && item != '')
+        return item;
+
+    // Get resource from network
+    var http = new XMLHttpRequest();
+    http.open("GET", u, false);
+    http.send(null);
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+            if (log) log('http err', u, 'X-Login');
+            return null;
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+            if (log) log('http err', u, 'No-Content');
+            return null;
+        }
+        localStorage.setItem(u, http.responseText);
+        return http.responseText;
+    }
+    if (log) log('http err', u, http.status, http.statusText);
+    return null;
+};
+
+// Load Javascript and CSS
+(function() {
+    var bootjs = document.createElement('script');
+    bootjs.type = 'text/javascript';
+    bootjs.text = appcache.get('/all-min.js');
+    document.head.appendChild(bootjs);
+    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+})();
+
+</script>
 </head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
-<div id="bodydiv" class="bodydiv">
+<body class="delayed" onload="onload();">
+<div id="mainbodydiv" class="mainbodydiv" style="overflow: visible;">
 
 <div id="headdiv" class="hsection">
-<script type="text/javascript" src="/headconfig.js"></script>
+<script type="text/javascript">
+(function() {
+$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig.js')));
+})();
+</script>
+</div>
+
+<div id="menubackground" style="position: absolute; top: 0px; left: 0px; z-index: -1; width: 100%; visibility: hidden;">
+<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr><td class="dtbar">
+<table border="0" cellspacing="0" cellpadding="0"><tr><td class="ltbar"><span class="tbarsmenu">>&nbsp</span></td></tr></table>
+</td></tr></table>
 </div>
 
 <div id="menu"></div>
 
-<table style="width: 100%;">
-<tr><td><h2><span id="h1"></span></h2></td></tr>
-</table>
-
-<div style="margin-left: auto; margin-right: auto; text-align: center;">
-
-<div id="maintitle" style="font-size: 150%;"></div>
-
-<div id="maindiagram"><div id="diagram" style="width: 320px; height: 280px; background: url(home.png); padding: 0px; margin: 0px auto;"></div></div>
-
-<input type="button" class="greenbutton" style="font-size: 150%; font-weight: bold; font-style: italic; padding: 10px;" id="getstarted" title="Get Started" value="Get Started"/>
-
-<br/><br/>
-<div>Requires Safari 5+, Chrome 11+, Firefox 4+, IE 9+</div>
-
+<div id="content" class="bodydiv" style="overflow: visible;">
+<div id="viewcontainer"></div>
 </div>
 
 <script type="text/javascript">
 
-// On mobile devices, redirect to the last visited page
-if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
-    var last = ui.lastvisited();
-    if (!isNil(last) && last != document.location)
-        window.open(last, '_self');
+// Set page titles
+document.title = ui.windowtitle(location.hostname);
+
+// Init div variables
+var bdiv = $('mainbodydiv');
+var mdiv = $('menu'); 
+var cdiv = $('content'); 
+var mbgdiv = $('menubackground'); 
+mbgdiv.style.top = ui.pixpos(mdiv.offsetTop);
+var vcontainer = $('viewcontainer');
+vcontainer.className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
+
+/**
+ * Pre-fetch app resources.
+ */
+var appresources = [
+    ['/all-min.js'],
+    ['/ui-min.css'],
+    ['/account/', 'flip'],
+    ['/clone/', 'flip'],
+    ['/create/', 'flip'],
+    ['/footconfig.js'],
+    ['/graph/', 'flip'],
+    ['/headconfig.js'],
+    ['/home/', 'right'],
+    ['/home/home.b64'],
+    ['/page/', 'flip'],
+    ['/public/app.b64'],
+    ['/public/grid72.b64'],
+    ['/public/iframe.html'],
+    ['/public/img.b64'],
+    ['/public/user.b64'],
+    ['/stats/', 'flip'],
+    ['/store/', 'left']
+];
+
+/**
+ * Handle application cache events.
+ */
+applicationCache.addEventListener('checking', function(e) {
+    //log('appcache checking', e);
+}, false);
+applicationCache.addEventListener('error', function(e) {
+    //log('appcache error', e);
+}, false);
+applicationCache.addEventListener('noupdate', function(e) {
+    //log('appcache noupdate', e);
+}, false);
+applicationCache.addEventListener('downloading', function(e) {
+    //log('appcache downloading', e);
+}, false);
+applicationCache.addEventListener('progress', function(e) {
+    //log('appcache progress', e);
+}, false);
+applicationCache.addEventListener('updateready', function(e) {
+    //log('appcache updateready', e);
+    applicationCache.swapCache();
+    //log('appcache swapped', e);
+}, false);
+applicationCache.addEventListener('cached', function(e) {
+    //log('appcache cached', e);
+    map(function(res) {
+        appcache.get(res[0]);
+    }, appresources);
+}, false);
+
+/**
+ * Handle network offline/online events.
+ */
+window.addEventListener('offline', function(e) {
+      //log('going offline');
+}, false);
+window.addEventListener('online', function(e) {
+      //log('going online');
+}, false);
+
+//log(navigator.onLine? 'online' : 'offline');
+
+/**
+ * Handle view transitions.
+ */
+
+// Keep track of the current view url and uri
+var viewurl = '';
+var viewuri = '';
+var viewidx = '';
+var viewdiv;
+
+/**
+ * Record which transitions should be applied to each resource.
+ */
+var apptransitions = {};
+map(function(res) {
+    if (res.length > 1)
+        apptransitions[res[0]] = res[1];
+}, appresources);
+
+/**
+ * Return the transition that should be applied to a resource.
+ */
+function viewtransition(uri) {
+    var t = apptransitions[uri];
+    return isNil(t)? 'left' : t;
 }
 
-// Init and display this page
-ui.initbody();
+/**
+ * Create a new view div.
+ */
+function mkviewdiv(cname) {
+    var vdiv = document.createElement('div');
+    vdiv.className = cname;
+    if (!ui.isMobile())
+        return vdiv;
 
-// Set page titles
-document.title = windowtitle(window.location.hostname);
-$('h1').innerHTML = hometitle(window.location.hostname);
+    // Handle view transition end
+    function viewdivtransitionend(e) {
+        if (e.target.className == 'leftviewunloaded3dm' || e.target.className == 'rightviewunloaded3dm' || e.target.className == 'flipviewunloaded3dm')
+            e.target.parentNode.removeChild(e.target);
+    }
+    vdiv.addEventListener('webkitTransitionEnd', viewdivtransitionend, false);
+    vdiv.addEventListener('transitionend', viewdivtransitionend, false);
+    return vdiv;
+}
 
-// Display the menu bar
-displaymenu();
+/**
+ * Return the last visited location.
+ */
+function lastvisited() {
+    var loc = localStorage.getItem('ui.lastvisited')
+    if (!isNil(loc))
+        return loc;
+    return '' + location;
+}
 
-$('maintitle').innerHTML = isNil(config.maintitle)? 'Simple App Builder' : config.maintitle;
-$('getstarted').onclick = function() {
-    return ui.navigate('/store/', '_self');
+/**
+ * Build and show the menu bar.
+ */
+function showmenu(mdiv, view, appname) {
+    mdiv.innerHTML = ui.menubar(
+        append(mklist(ui.menu('Home', '/', '_view', view == 'home'), ui.menu('Store', '/#view=store', '_view', view === 'store')),
+                (isNil(appname) || appname == 'undefined')?
+                    mklist() :
+                    mklist(
+                        ui.menu('Stats', '/#view=stats&app=' + appname, '_view', view == 'stats'),
+                        ui.menu('Page', '/#view=page&app=' + appname, '_view', view == 'page'),
+                        ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/#view=graph&app=' + appname, '_view', view == 'graph'))),
+        mklist(ui.menu('Account', '/#view=account', '_view', view == 'account'), ui.menu('Sign out', '/logout/', '_self', false)));
+}
+
+/**
+ * Show a view.
+ */
+function showview(url) {
+    //log('showview', url);
+
+    // Save last visited location
+    localStorage.setItem('ui.lastvisited', url);
+
+    // Determine the view to show
+    var params = ui.fragmentParams(url);
+    var view = isNil(params['view'])? 'home' : params['view'];;
+    var uri = '/' + view + '/';
+    var idx = isNil(params['idx'])? '1' : params['idx'];
+
+    // Determine the transition to use
+    var vt = viewtransition(uri);
+    var ovt = viewtransition(viewuri);
+    var vtransition;
+    if (ovt == 'flip')
+        vtransition = 'flip';
+    else if (uri == viewuri && (vt == 'left' || vt == 'right'))
+        vtransition = idx >= viewidx? 'left' : 'right';
+    else
+        vtransition = vt;
+
+    // Track current view url and uri
+    viewurl = url;
+    viewuri = uri;
+    viewidx = idx;
+
+    // Show the menu bar
+    var appname = params['app'];
+    showmenu(mdiv, view, appname);
+    cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    // Compute the viewport size
+    var iswide = view == 'graph' || view == 'page';
+    var vwidth = iswide? '2500px' : '100%';
+    mbgdiv.style.visibility = iswide? 'visible' : 'hidden';
+    mbgdiv.style.width = vwidth;
+
+    // Start to unload the front view and create a new view
+    if (ui.isMobile()) {
+        // Prepare current view for transition out
+        var ovdiv = viewdiv;
+        if (!isNil(ovdiv)) {
+            ovdiv.skipNode = true;
+            ovdiv.className = 'viewunloading3dm';
+        }
+
+        // Load the requested doc into a new view
+        var vdiv = mkviewdiv(vtransition + 'viewloading3dm');
+        vcontainer.appendChild(vdiv);
+        var vdoc = appcache.get(uri);
+        vdiv.innerHTML = vdoc;
+        map(ui.evalScript, ui.innerScripts(vdiv));
+
+        // Show the document
+        if (document.body.style.visibility != 'visible')
+            document.body.style.visibility = 'visible';
+
+        setTimeout(function() {
+            // Transition the old view out
+            if (!isNil(ovdiv))
+                ovdiv.className = vtransition + 'viewunloaded3dm';
+
+            // Transition the new view in
+            vdiv.className = 'viewloaded3dm';
+        }, 0);
+    } else {
+        // Prepare current view for transition out
+        var ovdiv = viewdiv;
+        if (!isNil(ovdiv))
+            ovdiv.skipNode = true;
+
+        // Load the requested doc into the view
+        var vdiv = mkviewdiv('viewloading3d');
+        vcontainer.appendChild(vdiv);
+        var vdoc = appcache.get(uri);
+        vdiv.innerHTML = vdoc;
+        map(ui.evalScript, ui.innerScripts(vdiv));
+
+        // Show the document
+        if (document.body.style.visibility != 'visible')
+            document.body.style.visibility = 'visible';
+
+        setTimeout(function() {
+            // Transition the new view in
+            vdiv.className = 'viewloaded3d';
+
+            // Transition the old view out
+            if (!isNil(ovdiv))
+                ovdiv.parentNode.removeChild(ovdiv);
+        }, 0);
+    }
+
+    // Track the current visible view
+    viewdiv = vdiv;
+
+    return true;
+}
+
+/**
+ * Handle navigations.
+ */
+window.onnavigate = function(url) {
+    //log('onnavigate', url);
+
+    // Add url to the history
+    if (url != ui.pathandparams(location)) {
+        history.pushState(null, null, url);
+        var f = ui.fragment(url);
+        if (f != '' && f != location.hash) {
+            location.hash = f;
+            //log('hash', f);
+        }
+        //log('pushstate', history.length);
+    }
+
+    // Show the specified view
+    if (url == viewurl)
+        return true;
+    return showview(url);
 };
 
-// Display the main diagram
-var diagram = $('diagram');
-var bgpos = 0;
-setInterval(function() {
-    bgpos = bgpos -280;
-    if (bgpos == -2800)
-        bgpos = 0;
-    diagram.style.backgroundPosition = '0px ' + ui.pixpos(bgpos);
-}, 2000);
+/**
+ * Handle history.
+ */
+window.addEventListener('popstate', function(e) {
+    //log('popstate', history.length);
+    var furl = ui.fragment(location);
+    var url = location.pathname + (furl == ''? '' : '#' + furl);
+
+    // Show the current view
+    if (url == viewurl)
+        return true;
+    return showview(url);
+
+}, false);
+
+window.addEventListener('hashchange', function(e) {
+    //log('onhashchange');
+    var furl = ui.fragment(location);
+    var url = location.pathname + (furl == ''? '' : '#' + furl);
+
+    // Show the current view
+    if (url == viewurl)
+        return true;
+    return showview(url);
+
+}, false);
+
+/**
+ * Document load post processing.
+ */
+function onload() {
+    //log('onload', history.length);
+    var furl = ui.fragment(location);
+    url = location.pathname + (furl == ''? '' : '#' + furl);
+
+    // Show the current view
+    if (url == viewurl)
+        return true;
+    return showview(url);
+}
+
+// Show the last visited view
+//if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
+    //log('show lastvisited');
+    //showview(lastvisited());
+//} else
+    //showview('/');
+
 </script>
 
 <div id="footdiv" class="fsection">
-<script type="text/javascript" src="/footconfig.js"></script>
+<script type="text/javascript">
+(function() {
+$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig.js')));
+})();
+</script>
 </div>
 
 </div>

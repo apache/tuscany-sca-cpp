@@ -1,25 +1,17 @@
 CACHE MANIFEST
 
-# Common resources
-/all-min.js
-/ui-min.css
+# Version 5
 
 # App resources
 /
-/data/index.html
 /favicon.ico
-/footconfig.js
-/frame.html
-/headconfig.js
-/public/app.png
+/notauth/
+/notfound/
+/notyet/
+/oops/
 /public/iframe.html
 /public/img.png
-/public/notauth.html
-/public/notfound.html
-/public/notyet.html
-/public/oops.html
 /public/touchicon.png
-/robots.txt
 
 NETWORK:
 *

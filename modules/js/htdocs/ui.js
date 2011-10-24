@@ -24,6 +24,227 @@
 var ui = {};
 
 /**
+ * Return a child element of a node with the given id.
+ */
+ui.elementByID = function(node, id) {
+    if (node.skipNode == true)
+        return null;
+    for (var i in node.childNodes) {
+        var child = node.childNodes[i];
+        if (child.id == id)
+            return child;
+        var gchild = ui.elementByID(child, id);
+        if (gchild != null)
+            return gchild;
+    }
+    return null;
+};
+
+/**
+ * Return the current document, or a child element with the given id.
+ */
+function $(id) {
+    if (id == document)
+        return document;
+    return ui.elementByID($(document), id);
+};
+
+/**
+ * Return the query string of a URL.
+ */
+ui.query = function(url) {
+    var u = '' + url;
+    var q = u.indexOf('?');
+    return q >= 0? u.substring(q + 1) : '';
+};
+
+/**
+ * Return the fragment part of a URL.
+ */
+ui.fragment = function(url) {
+    var u = '' + url;
+    var h = u.indexOf('#');
+    return h >= 0? u.substring(h + 1) : '';
+};
+
+/**
+ * Return the path and parameters of a URL.
+ */
+ui.pathandparams = function(url) {
+    var u = '' + url;
+    var ds = u.indexOf('//');
+    var u2 = ds > 0? u.substring(ds + 2) : u;
+    var s = u2.indexOf('/');
+    return s > 0? u2.substring(s) : '';
+};
+
+/**
+ * Return a dictionary of query parameters in a URL.
+ */
+ui.queryParams = function(url) {
+    var qp = new Array();
+    var qs = ui.query(url).split('&');
+    for (var i = 0; i < qs.length; i++) {
+        var e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+};
+
+/**
+ * Return a dictionary of fragment parameters in a URL.
+ */
+ui.fragmentParams = function(url) {
+    var qp = new Array();
+    var qs = ui.fragment(url).split('&');
+    for (var i = 0; i < qs.length; i++) {
+        var e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+};
+
+/**
+ * Convert a base64-encoded image to a data URL.
+ */
+ui.b64img = function(b64) {
+    return 'data:image/png;base64,' + b64;
+};
+
+/**
+ * Declare a CSS stylesheet.
+ */
+ui.declareCSS = function(s) {
+    var e = document.createElement('style');
+    e.type = 'text/css';
+    e.textContent = s;
+    return e;
+};
+
+/**
+ * Declare a script.
+ */
+ui.declareScript = function(s) {
+    var e = document.createElement('script');
+    e.type = 'text/javascript';
+    e.text = s;
+    return e;
+};
+
+/**
+ * Return the scripts elements under a given element.
+ */
+ui.innerScripts = function(e) {
+    return map(function(s) { return s.text; },  nodeList(e.getElementsByTagName('script')));
+};
+
+/**
+ * Evaluate a script.
+ */
+ui.evalScript = function(s) {
+    return eval('(function() {\n' + s + '\n})();');
+};
+
+/**
+ * Include a script.
+ */
+ui.includeScript = function(s) {
+    log('include', s);
+    return eval(s);
+};
+
+/**
+ * Return true if the client is a mobile device.
+ */
+ui.mobiledetected = false;
+ui.mobile = false;
+ui.isMobile = function() {
+    if (ui.mobiledetected)
+        return ui.mobile;
+    var ua = navigator.userAgent;
+    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
+        ui.mobile = true;
+    ui.mobiledetected = true;
+    return ui.mobile;
+};
+
+/**
+ * Convert a host name to a home page title.
+ */
+ui.hometitle = function(host) {
+    if (!isNil(window.top.config.hometitle))
+        return window.top.config.hometitle;
+    var h = reverse(host.split('.'));
+    var d = isNil(cdr(h))? car(h) : cadr(h);
+    return d.substr(0, 1).toUpperCase() + d.substr(1);
+};
+
+/**
+ * Convert a host name to a window title.
+ */
+ui.windowtitle = function(host) {
+    if (!isNil(window.top.config.windowtitle))
+        return window.top.config.windowtitle;
+    var h = reverse(host.split('.'));
+    var d = isNil(cdr(h))? car(h) : cadr(h);
+    return d.substr(0, 1).toUpperCase() + d.substr(1);
+};
+
+/**
+ * Convert a CSS position to a numeric position.
+ */
+ui.numpos = function(p) {
+    return p == ''? 0 : Number(p.substr(0, p.length - 2));
+};
+
+/**
+ * Convert a numeric position to a CSS pixel position.
+ */
+ui.pixpos = function(p) {
+    return p + 'px';
+};
+
+/**
+ * Reload the current document when orientation changes.
+ */
+ui.onorientationchange = function() {
+    window.location.reload();
+    return true;
+}
+
+/**
+ * Navigate to a new document.
+ */
+ui.navigate = function(url, win) {
+    log('navigate', url, win);
+
+    // Open a new window
+    if (win == '_blank')
+        return window.top.open(url, win);
+
+    // Open a new document in the current window
+    if (win == '_self')
+        return window.top.open(url, win);
+
+    // Reload the current window
+    if (win == '_reload') {
+        window.top.location = url;
+        return window.top.location.reload();
+    }
+
+    // Let the current top window handle the navigation
+    if (win == '_view') {
+        if (!window.top.onnavigate)
+            return window.top.open(url, '_self');
+        return window.top.onnavigate(url);
+    }
+
+    return window.top.open(url, win);
+}
+
+/**
  * Build a portable <a href> tag.
  */
 ui.ahref = function(loc, target, html) {
@@ -35,33 +256,15 @@ ui.ahref = function(loc, target, html) {
 /**
  * Build a menu bar.
  */ 
-ui.menu = function(name, href, target) {
-    function Menu(n, h, t) {
-        this.name = n;
-        this.href = h;
-        this.target = isNil(t)? '_parent' : t;
-
+ui.menu = function(name, href, target, hilight) {
+    function Menu() {
         this.content = function() {
-            function complete(uri) {
-                var h = uri.indexOf('#');
-                if (h != -1)
-                    return complete(uri.substr(0, h));
-                var q = uri.indexOf('?');
-                if (q != -1)
-                    return complete(uri.substr(0, q));
-                if (uri.match('.*\.html$'))
-                    return uri;
-                if (uri.match('.*/$'))
-                    return uri + 'index.html';
-                return uri + '/index.html';
-            }
-
-            if (complete(this.href) != complete(window.top.location.pathname))
-                return ui.ahref(this.href, this.target, '<span class="tbaramenu">' + this.name + '</span>');
-            return ui.ahref(this.href, this.target, '<span class="tbarsmenu">' + this.name + '</span>');
+            if (hilight)
+                return ui.ahref(href, target, '<span class="tbarsmenu">' + name + '</span>');
+            return ui.ahref(href, target, '<span class="tbaramenu">' + name + '</span>');
         };
     }
-    return new Menu(name, href, target);
+    return new Menu();
 };
 
 ui.menubar = function(left, right) {
@@ -79,6 +282,88 @@ ui.menubar = function(left, right) {
     return bar;
 };
  
+/**
+ * Convert a list of elements to an HTML table.
+ */
+ui.datatable = function(l) {
+
+    function indent(i) {
+        if (i == 0)
+            return '';
+        return '&nbsp;&nbsp;' + indent(i - 1);
+    }
+
+    function rows(l, i) {
+        if (isNil(l))
+            return '';
+        var e = car(l);
+
+        // Convert a list of simple values into a list of name value pairs
+        if (!isList(e))
+            return rows(expandElementValues("'value", l), i);
+
+        // Convert a list of complex values into a list of name value pairs
+        if (isList(car(e)))
+            return rows(expandElementValues("'value", l), i);
+
+        // Generate table row for a simple element value
+        if (elementHasValue(e)) {
+            var v = elementValue(e);
+            if (!isList(v)) {
+                return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
+                    '<td class="datatdr tdw">' + (v != null? v : '') + '</td></tr>' +
+                    rows(cdr(l), i);
+            }
+
+            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
+        }
+
+        // Generate table row for an element with children
+        return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
+            '<td class="datatdr tdw">' + '</td></tr>' +
+            rows(elementChildren(e), i + 1) +
+            rows(cdr(l), i);
+    }
+
+    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
+}
+
+/**
+ * Convert a list of elements to an HTML single column table.
+ */
+ui.datalist = function(l) {
+
+    function rows(l, i) {
+        if (isNil(l))
+            return '';
+        var e = car(l);
+
+        // Convert a list of simple values into a list of name value pairs
+        if (!isList(e))
+            return rows(expandElementValues("'value", l), i);
+
+        // Convert a list of complex values into a list of name value pairs
+        if (isList(car(e)))
+            return rows(expandElementValues("'value", l), i);
+
+        // Generate table row for a simple element value
+        if (elementHasValue(e)) {
+            var v = elementValue(e);
+            if (!isList(v)) {
+                return '<tr><td class="datatd tdw">' + (v != null? v : '') + '</td></tr>' +
+                    rows(cdr(l), i);
+            }
+
+            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
+        }
+
+        // Generate rows for an element's children
+        return rows(elementChildren(e), i + 1) + rows(cdr(l), i);
+    }
+
+    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
+}
+
 /**
  * Autocomplete / suggest support for input fields
  * To use it declare a 'suggest' function as follows:
@@ -180,296 +465,4 @@ ui.suggest = function(input, suggestFunction) {
         setTimeout(function() { input.hideSuggestDiv(); }, 50);
     };
 };
-
-/**
- * Return a child element of a node with the given id.
- */
-ui.elementByID = function(node, id) {
-    for (var i in node.childNodes) {
-        var child = node.childNodes[i];
-        if (child.id == id)
-            return child;
-        var gchild = ui.elementByID(child, id);
-        if (gchild != null)
-            return gchild;
-    }
-    return null;
-};
-
-/**
- * Return the current document, or a child element with the given id.
- */
-function $(id) {
-    if (id == document) {
-        if (!isNil(document.widget))
-            return document.widget;
-        return document;
-    }
-    return ui.elementByID($(document), id);
-};
-
-/**
- * Return a dictionary of the query parameters.
- */
-ui.queryParams = function() {
-    var qp = new Array();
-    var qs = window.location.search.substring(1).split('&');
-    for (var i = 0; i < qs.length; i++) {
-        var e = qs[i].indexOf('=');
-        if (e > 0)
-            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
-    }
-    return qp;
-};
-
-/**
- * Return a dictionary of the fragment parameters.
- */
-ui.fragmentParams = function() {
-    var qp = new Array();
-    var qs = window.location.hash.substring(1).split('&');
-    for (var i = 0; i < qs.length; i++) {
-        var e = qs[i].indexOf('=');
-        if (e > 0)
-            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
-    }
-    return qp;
-};
-
-/**
- * Return true if the client is a mobile device.
- */
-ui.mobiledetected = false;
-ui.mobile = false;
-ui.isMobile = function() {
-    if (ui.mobiledetected)
-        return ui.mobile;
-    var ua = navigator.userAgent;
-    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
-        ui.mobile = true;
-    ui.mobiledetected = true;
-    return ui.mobile;
-};
-
-/**
- * Initialize a document's body.
- */
-ui.pagetransitions = false;
-
-ui.initbody = function() {
-    if (ui.isMobile()) {
-        //log('init', window.location);
-
-        // Position the main body div off screen
-        if (ui.pagetransitions) {
-            var bdiv = $('bodydiv');
-            if (!isNil(bdiv)) {
-                bdiv.className = 'bodydivloading';
-            }
-        }
-
-        // Install orientation handler
-        document.body.onorientationchange = ui.onorientationchange;
-    }
-    return true;
-}
-
-/**
- * Reload the current document when orientation changes.
- */
-ui.onorientationchange = function() {
-    window.open(window.location, '_self');
-    return true;
-}
-
-/**
- * Post process a document after it's loaded.
- */
-ui.onload = function() {
-
-    // Save the current page location in local storage
-    // (except for login and logout pages)
-    var path = document.location.pathname;
-    if (path.indexOf('/login/') != 0 && path.indexOf('/logout/') != 0)
-        localStorage.setItem('ui.lastvisited', '' + document.location);
-
-    // Make the document body visible
-    //log('visible', $('bodydiv').className);
-    document.body.style.visibility = 'visible';
-
-    if (ui.pagetransitions && ui.isMobile()) {
-        //log('onload', window.location);
-        
-        // Slide the main body div in
-        setTimeout(function() {
-            var bdiv = $('bodydiv');
-            if (!isNil(bdiv)) { 
-                function transitionend(e) {
-                    bdiv.removeEventListener('webkitTransitionEnd', transitionend, false);
-                    bdiv.removeEventListener('transitionend', transitionend, false);
-                    bdiv.className = 'bodydiv';
-                    //log('loadtransitionend', window.location);
-                };
-                bdiv.addEventListener('webkitTransitionEnd', transitionend, false);
-                bdiv.addEventListener('transitionend', transitionend, false);
-                //log('loadtransitionstart', window.location);
-                bdiv.className = 'bodydivloaded';
-            }
-        }, 0);
-    }
-    return true;
-};
-
-/**
- * Navigate to a new document.
- */
-ui.navigate = function(url, win) {
-
-    function opendoc(url, win) {
-        if (win == '_reload') {
-            window.location = url;
-            return window.location.reload();
-        }
-        return window.open(url, win);
-    }
-
-    if (ui.pagetransitions && ui.isMobile() && win != '_blank') {
-
-        // Slide the main body div out, then open the new document
-        var bdiv = $('bodydiv');
-        if (!isNil(bdiv)) {
-            function transitionend(e) {
-                bdiv.removeEventListener('webkitTransitionEnd', transitionend, false);
-                bdiv.removeEventListener('transitionend', transitionend, false);
-                //log('navigatetransitionend', window.location);
-                return opendoc(url, win);
-            };
-            bdiv.addEventListener('webkitTransitionEnd', transitionend, false);
-            bdiv.addEventListener('transitionend', transitionend, false);
-            //log('navigatetransitionstart', window.location);
-            bdiv.className = 'bodydivunloaded';
-            return true;
-        }
-    }
-
-    return opendoc(url, win); 
-}
-
-/**
- * Pre process a document just before it's unloaded.
- */
-ui.onbeforeunload = function() {
-
-    if (ui.pagetransitions && ui.isMobile()) {
-        
-        // Slide the main body div out
-        var bdiv = $('bodydiv');
-        if (!isNil(bdiv))
-            bdiv.className = 'bodydivunloaded';
-    }
-};
-
-
-/**
- * Return the last visited page.
- */
-ui.lastvisited = function() {
-    return localStorage.getItem('ui.lastvisited');
-}
-
-/**
- * Convert a CSS position to a numeric position.
- */
-ui.numpos = function(p) {
-    return p == ''? 0 : Number(p.substr(0, p.length - 2));
-};
-
-/**
- * Convert a numeric position to a CSS pixel position.
- */
-ui.pixpos = function(p) {
-    return p + 'px';
-};
-
-/**
- * Convert a list of elements to an HTML table.
- */
-ui.datatable = function(l) {
-
-    function indent(i) {
-        if (i == 0)
-            return '';
-        return '&nbsp;&nbsp;' + indent(i - 1);
-    }
-
-    function rows(l, i) {
-        if (isNil(l))
-            return '';
-        var e = car(l);
-
-        // Convert a list of simple values into a list of name value pairs
-        if (!isList(e))
-            return rows(expandElementValues("'value", l), i);
-
-        // Convert a list of complex values into a list of name value pairs
-        if (isList(car(e)))
-            return rows(expandElementValues("'value", l), i);
-
-        // Generate table row for a simple element value
-        if (elementHasValue(e)) {
-            var v = elementValue(e);
-            if (!isList(v)) {
-                return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
-                    '<td class="datatdr tdw">' + (v != null? v : '') + '</td></tr>' +
-                    rows(cdr(l), i);
-            }
-
-            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
-        }
-
-        // Generate table row for an element with children
-        return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
-            '<td class="datatdr tdw">' + '</td></tr>' +
-            rows(elementChildren(e), i + 1) +
-            rows(cdr(l), i);
-    }
-
-    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
-}
-
-/**
- * Convert a list of elements to an HTML single column table.
- */
-ui.datalist = function(l) {
-
-    function rows(l, i) {
-        if (isNil(l))
-            return '';
-        var e = car(l);
-
-        // Convert a list of simple values into a list of name value pairs
-        if (!isList(e))
-            return rows(expandElementValues("'value", l), i);
-
-        // Convert a list of complex values into a list of name value pairs
-        if (isList(car(e)))
-            return rows(expandElementValues("'value", l), i);
-
-        // Generate table row for a simple element value
-        if (elementHasValue(e)) {
-            var v = elementValue(e);
-            if (!isList(v)) {
-                return '<tr><td class="datatd tdw">' + (v != null? v : '') + '</td></tr>' +
-                    rows(cdr(l), i);
-            }
-
-            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
-        }
-
-        // Generate rows for an element's children
-        return rows(elementChildren(e), i + 1) + rows(cdr(l), i);
-    }
-
-    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
-}
 

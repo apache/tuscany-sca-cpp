@@ -17,17 +17,17 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
+<html>
 <head>
 <title>Sign out</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+<base href="/logout/"/>
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body class="delayed" onload="ui.onload();" onbeforeunload="ui.onbeforeunload();">
+<body class="delayed" onload="onload();">
 <div id="bodydiv" class="bodydiv">
 
 <h1>Sign out</h1>
@@ -37,16 +37,25 @@
 </form>
 
 <script type="text/javascript">
-ui.initbody();
-
 function submitSignout() {
     // Clear session cookie and local storage
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/; secure; version=1';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
     document.cookie = reset;
     localStorage.clear();
     document.signout.submit();
     return true;
 }
+
+function onload() {
+    // Show the page
+    document.body.style.visibility = 'visible';
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 1);
+    window.scrollTo(0, 0);
+    return true;
+}
+
 </script>
 
 </div>
