@@ -20,7 +20,7 @@ INCLUDES = -I${HTTPD_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
-dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf
+dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf minify-html minify-js minify-css
 moddir = $(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp
@@ -45,7 +45,7 @@ libmod_tuscany_openauth_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 libmod_tuscany_openauth${libsuffix}:
 	ln -s .libs/libmod_tuscany_openauth${libsuffix}
 
-mod_DATA = httpd.prefix httpd-apachectl.prefix httpd-modules.prefix curl.prefix
+mod_DATA = httpd.prefix httpd-apachectl.prefix httpd-modules.prefix curl.prefix pagespeed.prefix
 nobase_dist_mod_DATA = conf/*
 
 EXTRA_DIST = htdocs/index.html htdocs/login/index.html htdocs/logout/index.html
@@ -58,6 +58,18 @@ httpd-modules.prefix: $(top_builddir)/config.status
 	echo ${HTTPD_MODULES_PREFIX} >httpd-modules.prefix
 curl.prefix: $(top_builddir)/config.status
 	echo ${CURL_PREFIX} >curl.prefix
+
+if WANT_PAGESPEED
+
+pagespeed.prefix: $(top_builddir)/config.status
+	echo ${PAGESPEED_PREFIX} >pagespeed.prefix
+
+else
+
+pagespeed.prefix: $(top_builddir)/config.status
+	echo "" >pagespeed.prefix
+
+endif
 
 if WANT_MODSECURITY
 

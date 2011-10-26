@@ -58,6 +58,9 @@ config.sub
 config.status
 *config.js
 all.js
+*-min.html
+*-min.js
+*-min.css
 intro*.png
 intro*.b64
 depcomp

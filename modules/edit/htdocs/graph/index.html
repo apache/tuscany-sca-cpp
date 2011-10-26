@@ -2092,7 +2092,7 @@ function showdata(gcomp) {
 
     // Get the component result data
     var comp = sca.component(gcomp.id, appname);
-    comp.getnocache('', function(doc) {
+    comp.get('', function(doc) {
         function displaydata(t, w) {
             pdiv.style.width = w;
             pdiv.innerHTML = t;

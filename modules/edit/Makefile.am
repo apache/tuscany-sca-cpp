@@ -21,6 +21,20 @@ moddir = $(prefix)/modules/edit
 dist_mod_SCRIPTS = start stop ssl-start mkapplinks
 
 nobase_dist_mod_DATA = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/account/*.html htdocs/create/*.html htdocs/clone/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/home/*.html htdocs/page/*.html htdocs/login/*.html htdocs/logout/*.html htdocs/notauth/*.html htdocs/notfound/*.html htdocs/oops/*.html htdocs/public/*.html htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps
+
 EXTRA_DIST = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/account/*.html htdocs/create/*.html htdocs/clone/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/home/*.html htdocs/page/*.html htdocs/login/*.html htdocs/logout/*.html htdocs/notauth/*.html htdocs/notfound/*.html htdocs/oops/*.html htdocs/public/*.html htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps
+
+BUILT_SOURCES = minify_html.stamp minify_js.stamp
+minify_html.stamp: htdocs/*.html htdocs/*/*.html
+	find htdocs -name "*-min.html" -exec rm {} \;
+	find htdocs -name "*.html" -exec ../http/minify-html {} \;
+	touch minify_html.stamp
+
+minify_js.stamp: htdocs/*.js
+	find htdocs -name "*-min.js" -exec rm {} \;
+	find htdocs -name "*.js" -exec ../http/minify-js {} \;
+	touch minify_js.stamp
+
+CLEANFILES = *.stamp
 
 endif

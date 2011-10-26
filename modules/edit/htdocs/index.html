@@ -77,7 +77,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
 })();
 </script>
 </div>
@@ -117,15 +117,15 @@ var appresources = [
     ['/account/', 'flip'],
     ['/clone/', 'flip'],
     ['/create/', 'flip'],
-    ['/footconfig.js'],
+    ['/footconfig-min.js'],
     ['/graph/', 'flip'],
-    ['/headconfig.js'],
+    ['/headconfig-min.js'],
     ['/home/', 'right'],
     ['/home/home.b64'],
     ['/page/', 'flip'],
     ['/public/app.b64'],
     ['/public/grid72.b64'],
-    ['/public/iframe.html'],
+    ['/public/iframe-min.html'],
     ['/public/img.b64'],
     ['/public/user.b64'],
     ['/stats/', 'flip'],
@@ -427,7 +427,7 @@ function onload() {
 <div id="footdiv" class="fsection">
 <script type="text/javascript">
 (function() {
-$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig.js')));
+$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig-min.js')));
 })();
 </script>
 </div>

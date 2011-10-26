@@ -75,7 +75,7 @@
 </span>
 <span class="link" id="palette:link" style="position: absolute; left: 0px; top: 340px;"><a href="/"><span>link</span></a></span>
 <span class="text" id="palette:text" style="position: absolute; left: 0px; top: 370px;"><span>text</span></span>
-<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 400px; width: 200px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
+<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 400px; width: 200px;"><a href="/public/iframe-min.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
 <span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img id="imgimg"/></span>
 </div>
 
@@ -555,7 +555,7 @@ page.settext = function(e, t) {
         return t;
     }
     if (e.className == 'iframe') {
-        car(childElements(e)).href = isNil(c)? '/public/iframe.html' : car(c);
+        car(childElements(e)).href = isNil(c)? '/public/iframe-min.html' : car(c);
         return t;
     }
     return '';

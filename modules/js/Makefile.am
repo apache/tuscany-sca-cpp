@@ -18,11 +18,17 @@
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/js
 
-BUILT_SOURCES = htdocs/all.js
+BUILT_SOURCES = htdocs/all.js htdocs/all-min.js htdocs/ui-min.css
 htdocs/all.js: htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js
 	cat htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js >htdocs/all.js
 
-CLEANFILES = htdocs/all.js
+htdocs/all-min.js: htdocs/all.js
+	../http/minify-js htdocs/all.js
+
+htdocs/ui-min.css: htdocs/ui.css
+	../http/minify-css htdocs/ui.css
+
+CLEANFILES = htdocs/all.js htdocs/all-min.js
 
 moddir = $(prefix)/modules/js
 nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css

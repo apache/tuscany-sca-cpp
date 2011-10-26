@@ -405,6 +405,45 @@ else
   AM_CONDITIONAL([WANT_PYTHON], false)
 fi
 
+# Configure path to Page Speed.
+AC_MSG_CHECKING([for pagespeed])
+AC_ARG_WITH([pagespeed], [AC_HELP_STRING([--with-pagespeed=PATH], [path to installed Page Speed [default=/usr/bin]])], [
+  PAGESPEED_PREFIX="${withval}"
+  AC_MSG_RESULT("${withval}")
+], [
+  PAGESPEED_PREFIX="/usr/bin"
+  AC_MSG_RESULT(/usr/bin)
+])
+AC_SUBST(PAGESPEED_PREFIX)
+
+# Enable Page Speed optimizations.
+AC_MSG_CHECKING([whether to run Page Speed optimizations])
+AC_ARG_ENABLE(pagespeed, [AS_HELP_STRING([--enable-pagespeed], [run Page Speed optimizations [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_pagespeed=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_pagespeed}" = "true"; then
+    AC_PATH_PROG(MINIFY_HTML, minify_html_bin, , ${PAGESPEED_PREFIX})
+    if test "${MINIFY_HTML}" = ""; then
+      AC_MSG_ERROR([could not find Page Speed minify_html_bin])
+    fi
+    AC_PATH_PROG(MINIFY_JS, jsmin_bin, , ${PAGESPEED_PREFIX})
+    if test "${MINIFY_JS}" = ""; then
+      AC_MSG_ERROR([could not find Page Speed jsmin_bin])
+    fi
+  AM_CONDITIONAL([WANT_PAGESPEED], true)
+  AC_DEFINE([WANT_PAGESPEED], 1, [run Page Speed optimizations])
+else
+  AM_CONDITIONAL([WANT_PAGESPEED], false)
+fi
+
 # Enable OpenCL support.
 AC_MSG_CHECKING([whether to enable OpenCL support])
 AC_ARG_ENABLE(opencl, [AS_HELP_STRING([--enable-opencl], [enable OpenCL support [default=no]])],

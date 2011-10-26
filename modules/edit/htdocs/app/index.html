@@ -77,7 +77,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
 })();
 </script>
 </div>
@@ -96,8 +96,9 @@ document.title = location.hostname.split('.')[0];
 var contentdiv = $('content');
 
 /**
- * Start, stop, timer, animation and location components.
+ * Initialize the app HTTP clients.
  */
+var pagecomp = sca.httpclient('page', '');
 var startcomp = sca.httpclient('start', '/start');
 var stopcomp = sca.httpclient('stop', '/stop');
 var timercomp = sca.httpclient('timer', '/timer');
@@ -109,10 +110,9 @@ var locationcomp = sca.httpclient('location', '/location');
  */
 var appresources = [
     ['/all-min.js'],
-    ['/app.html'],
     ['/ui-min.css'],
-    ['/footconfig.js'],
-    ['/headconfig.js'],
+    ['/footconfig-min.js'],
+    ['/headconfig-min.js'],
 ];
 
 /**
@@ -266,12 +266,12 @@ function setwidgetvalue(e, dv) {
 
                 // Define the stylesheet
                 if (s != '') {
-                    var esheet = contentdiv.getElementById('style_' + e.id);
+                    var esheet = ui.elementByID(contentdiv, 'style_' + e.id);
                     if (isNil(esheet)) {
                         var nesheet = document.createElement('style');
                         nesheet.id = 'style_' + e.id;
                         nesheet.type = 'text/css';
-                        contentdiv.getElementsByTagName('head')[0].appendChild(nesheet);
+                        document.head.appendChild(nesheet);
                         nesheet.innerHTML = s;
                     } else {
                         esheet.innerHTML = s;
@@ -526,18 +526,6 @@ function initwidget(e) {
 }
 
 /**
- * Get document from a component.
- */
-function getdoc(comp, name, uri) {
-    try {
-        return comp.getnocache(uri);
-    } catch(e) {
-        log('exception on get(' + name + ', ' + uri + ')', e);
-        return null;
-    }
-}
-
-/**
  * Get app data from the main app page component.
  */
 function getpagedata() {
@@ -567,19 +555,48 @@ function getpagedata() {
             bindwidgethandler(e);
         }
 
-        // Get the component app data
-        var doc = getdoc(startcomp, 'start', location.search);
-
         // Setup the widgets
         map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
 
-        // Display data on the page
-        displaypage(doc);
+        // Get the component app data
+        startcomp.get(location.search, function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(start, ' + location.search + ')', e);
+                return false;
+            }
+
+            // Display data on the page
+            displaypage(doc);
+        });
 
         // Get and eval the optional timer, animation and location watch setup scripts
-        evalcompinit(getdoc(timercomp, 'timer', 'setup'));
-        evalcompinit(getdoc(animationcomp, 'animation', 'setup'));
-        evalcompinit(getdoc(locationcomp, 'location', 'setup'));
+        timercomp.get('setup', function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(timer, setup)', e);
+                return false;
+            }
+
+            // Evaluate the component init expression
+            return evalcompinit(doc);
+        });
+        animationcomp.get('setup', function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(animation, setup)', e);
+                return false;
+            }
+
+            // Evaluate the component init expression
+            return evalcompinit(doc);
+        });
+        locationcomp.get('setup', function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(location, setup)', e);
+                return false;
+            }
+
+            // Evaluate the component init expression
+            return evalcompinit(doc);
+        });
 
         return true;
 
@@ -619,7 +636,16 @@ function compquery() {
  */
 function buttonClickHandler(id) {
     try {
-        return updatepage(docdata(getdoc(sca.component(id), 'button', compquery())));
+        var uri = compquery();
+        return sca.component(id).get(uri, function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(button, ' + uri + ')', e);
+                return false;
+            }
+
+            // Inject data into the page
+            updatepage(docdata(doc));
+        });
     } catch(e) {
         log('exception in buttonClickHandler()', e);
         return true;
@@ -631,7 +657,16 @@ function buttonClickHandler(id) {
  */
 function intervalHandler() {
     try {
-        return updatepage(docdata(getdoc(timercomp, 'timer', compquery())));
+        var uri = compquery();
+        return timercomp.get(uri, function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(timer, ' + uri + ')', e);
+                return false;
+            }
+
+            // Inject data into the page
+            updatepage(docdata(doc));
+        });
     } catch(e) {
         log('exception in intervalHandler()', e);
         return true;
@@ -655,50 +690,64 @@ function setupIntervalHandler(msec) {
  * Handle an animation event.
  */
 var animationData = null;
+var gettingAnimationData = false;
 var currentAnimationData = null;
 var animationLoop = 0;
 var currentAnimationLoop = 0;
 
 function animationHandler() {
     try {
-        // Get animation data if necessary
-        if (isNil(animationData)) {
-            animationData = docdata(getdoc(animationcomp, 'animation', compquery()));
-            if (isNil(animationData)) {
-                // Retry later
-                return true;
-            }
-            currentAnimationData = animationData;
-            currentAnimationLoop = animationLoop;
-        }
+        function applyAnimation() {
+            // Update page with current animation data
+            updatepage(car(currentAnimationData));
 
-        // Update page with animation data
-        updatepage(car(currentAnimationData));
+            // End of animation?
+            if (isNil(cdr(currentAnimationData))) {
+                if (currentAnimationLoop == -1) {
+                    // Repeat current animation forever
+                    currentAnimationData = animationData;
+                    return true;
+                }
 
-        // End of animation?
-        if (isNil(cdr(currentAnimationData))) {
-            if (currentAnimationLoop == -1) {
-                // Repeat current animation forever
+                currentAnimationLoop = currentAnimationLoop - 1;
+                if (currentAnimationLoop <= 0) {
+                    // Get next animation data
+                    currentAnimationData = null;
+                    animationData = null;
+                    return true;
+                }
+
+                // Repeat animation
                 currentAnimationData = animationData;
                 return true;
             }
 
-            currentAnimationLoop = currentAnimationLoop - 1;
-            if (currentAnimationLoop <= 0) {
-                // Get next animation data
-                currentAnimationData = null;
-                animationData = null;
-                return true;
-            }
-
-            // Repeat animation
-            currentAnimationData = animationData;
+            // Move to the next animation frame
+            currentAnimationData = cdr(currentAnimationData);
             return true;
         }
 
-        // Move to the next animation frame
-        currentAnimationData = cdr(currentAnimationData);
-        return true;
+        // Get new animation data if necessary
+        if (isNil(animationData)) {
+            if (gettingAnimationData)
+                return true;
+            var uri = compquery();
+            return animationcomp.get(uri, function(doc, e) {
+                if (isNil(doc)) {
+                    log('exception on get(animation, ' + uri + ')', e);
+                    return false;
+                }
+
+                // Apply the new animation
+                currentAnimationData = docdata(doc);
+                currentAnimationLoop = animationLoop;
+                gettingAnimationData = false;
+                applyAnimation();
+            });
+        }
+
+        // Apply the current animation
+        return applyAnimation();
 
     } catch(e) {
         log('exception in animationHandler()', e);
@@ -729,9 +778,18 @@ var geoposition = null;
 function locationHandler(pos) {
     try {
         geoposition = pos;
-        return updatepage(docdata(getdoc(locationcomp, 'location', compquery())));
+        var uri = compquery();
+        return locationcomp.get(uri, function(doc, e) {
+            if (isNil(doc)) {
+                log('exception on get(location, ' + uri + ')', e);
+                return false;
+            }
+
+            // Inject data into the page
+            updatepage(docdata(doc));
+        });
     } catch(e) {
-        locationErrorHandler(e);
+        return locationErrorHandler(e);
     }
 }
 
@@ -758,6 +816,7 @@ function setupLocationHandler() {
         } catch(e) {
             log('exception in installLocationHandler()', e);
         }
+        return true;
     }
 
     installLocationHandler();
@@ -766,11 +825,19 @@ function setupLocationHandler() {
 }
 
 // Load the app page
-var appcontent = appcache.get('/app.html');
-contentdiv.innerHTML = appcontent;
+pagecomp.get('app.html', function(doc, e) {
+    log('page get');
+    if (isNil(doc)) {
+        log('exception getting app page', e);
+        return false;
+    }
 
-// Merge in the app data
-getpagedata();
+    // Set the app HTML page into the content div
+    contentdiv.innerHTML = doc;
+
+    // Merge in the app data
+    getpagedata();
+});
 
 /**
  * Document load post processing.
@@ -791,7 +858,7 @@ function onload() {
 <div id="footdiv" class="fsection">
 <script type="text/javascript">
 (function() {
-$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig.js')));
+$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig-min.js')));
 })();
 </script>
 </div>
