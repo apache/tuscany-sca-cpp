@@ -28,7 +28,7 @@ else
 fi
 
 html="$1"
-minhtml="${html%.*}-min.html"
+minhtml="$2"
 
 ${minify_html} ${html} ${minhtml}
 

@@ -28,7 +28,7 @@ else
 fi
 
 js="$1"
-minjs="${js%.*}-min.js"
+minjs="$2"
 
 ${minify_js} <${js} >${minjs}
 

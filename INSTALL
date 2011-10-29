@@ -97,7 +97,7 @@ Mozilla SpiderMonkey libmozjs 1.8.5 and
 (https://developer.mozilla.org/en/SpiderMonkey)
 built with Mozilla nspr-4.8.8
 
-Key/value store:
+Key/value persistent store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
 
 Optional dependencies:
@@ -105,6 +105,9 @@ Optional dependencies:
 Web application firewall:
 Mod-security 2.6.0 (http://www.modsecurity.org/)
 with the Mod-security core rule set 2.2.0
+
+Web page optimizations:
+Page Speed SDK 1.9 (http://code.google.com/p/page-speed/)
 
 Web Services:
 Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
@@ -141,8 +144,11 @@ Apache Vysper 0.5 (http://mina.apache.org/)
 Libstrophe (http://code.stanziq.com/strophe/)
 build it from source at git://github.com/jsdelfino/libstrophe.git
 
-SQL Database:
-postgresql-9.0.3 (http://www.postgresql.org/)
+Key/value persistent store:
+Google LevelDB 1.2 (http://code.google.com/p/leveldb/)
+
+SQL database:
+PostgreSQL 9.0.3 (http://www.postgresql.org/)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
@@ -200,6 +206,9 @@ To build the support for OpenID authentication:
 To build the support for Mod-security:
 --enable-mod-security
 
+To enable Page Speed Web page optimizations:
+--enable-pagespeed
+
 To generate doxygen documentation, add:
 --enable-doxygen
 
@@ -237,6 +246,7 @@ dependencies installed under $build:
 --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin \
 --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin \
 --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin \
+--enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin \
 --enable-maintainer-mode
 
 

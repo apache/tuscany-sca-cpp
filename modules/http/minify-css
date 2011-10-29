@@ -28,7 +28,7 @@ else
 fi
 
 css="$1"
-mincss="${css%.*}-min.css"
+mincss="$2"
 
 ${minify_css} <${css} >${mincss}
 

@@ -14,10 +14,11 @@ can be used to help assemble distributed SCA composite applications:
 
 Cache: key/value memory cache, using Memcached;
 Chat: XMPP chat, using Apache Vysper and Libstrophe;
+Constdb: fast persistent store for mostly constant data, using TinyCDB;
 Filedb: key/value 'NoSQL' persistent store, using plain files;
 Http: HTTP client, using Libcurl;
+Kvdb: fast key/value 'NoSQL' persistent store, using LevelDB;
 Log: distributed logger, using Facebook Scribe;
-Nosqldb: key/value 'NoSQL' persistent store, using TinyCDB;
 Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL;
 Webservice: Web service gateway, using Apache Axis2/C.
@@ -75,10 +76,11 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- components           Useful SCA components
  |   |   |-- cache            Memcached key/value cache
  |   |   |-- chat             XMPP chat
- |   |   |-- filedb           Plain file NoSQL database
+ |   |   |-- constdb          TinyCDB constant persistent store
+ |   |   |-- filedb           Plain file NoSQL persistent store
  |   |   |-- http             HTTP client
+ |   |   |-- kvdb             LevelDB NoSQL persistent store
  |   |   |-- log              Scribe logger
- |   |   |-- nosqldb          TinyCDB NoSQL database
  |   |   |-- queue            AMQP message queue
  |   |   |-- sqldb            PostgreSQL database
  |   |   |-- webservice       Axis2 Web service gateway
