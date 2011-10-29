@@ -22,7 +22,7 @@
 <table style="width: 100%;">
 <tr>
 <td><h2><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
 </tr>
 </table>
 
@@ -744,11 +744,16 @@ var widget = null;
 function getpage(name, ediv) {
     if (isNil(name))
         return false;
+    showStatus('Loading');
+
     return pages.get(name, function(doc) {
 
         // Stop now if we didn't get a page
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         // Convert the page to XHTML and place it in a hidden buffer
         var buffer = $('buffer');
@@ -861,7 +866,7 @@ function pagexhtml(ediv) {
  * Save the current page.
  */
 function save(newxml) {
-    $('saveStatus').innerHTML = 'Saving';
+    showStatus('Saving');
 
     // Get the current page XHTML content
     savedpagexhtml = newxml;
@@ -872,9 +877,11 @@ function save(newxml) {
         newxml + '</content></entry>';
 
     pages.put(appname, entry, function(e) {
-        if (e)
+        if (e) {
+            showStatus('Local copy');
             return false;
-        $('saveStatus').innerHTML = 'Saved';
+        }
+        showStatus('Saved');
         return false;
     });
     return true;
@@ -887,7 +894,7 @@ function onpagechange(prop) {
     var newxml = pagexhtml(ediv);
     if (savedpagexhtml == newxml)
         return false;
-    $('saveStatus').innerHTML = 'Modified';
+    showStatus('Modified');
 
     // Save property changes right away
     if (prop)
@@ -896,7 +903,7 @@ function onpagechange(prop) {
     // Autosave other changes after 1 second
     setTimeout(function() {
         if (savedpagexhtml == newxml) {
-            $('saveStatus').innerHTML = 'Saved';
+            showStatus('Saved');
             return false;
         }
         return save(newxml);

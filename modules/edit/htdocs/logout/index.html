@@ -20,7 +20,7 @@
 <html>
 <head>
 <title>Sign out</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <base href="/logout/"/>
@@ -46,12 +46,28 @@ function submitSignout() {
     return true;
 }
 
+/**
+ * Handle orientation change.
+ */
+document.body.onorientationchange = function(e) {
+    //log('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
+
+/**
+ * Document load post processing.
+ */
 function onload() {
+    //log('onload');
+
     // Show the page
     document.body.style.visibility = 'visible';
 
     // Scroll to the top and hide the address bar
-    window.scrollTo(0, 1);
     window.scrollTo(0, 0);
     return true;
 }

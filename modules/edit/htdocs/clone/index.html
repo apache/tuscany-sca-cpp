@@ -22,6 +22,7 @@
 <table style="width: 100%;">
 <tr>
 <td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
+<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
 </tr>
 </table>
 
@@ -99,11 +100,16 @@ var savedappentryxml = '';
 function getapp(name) {
     if (isNil(name))
         return false;
+    showStatus('Loading');
+
     return apps.get(name, function(doc) {
 
         // Stop now if we didn't get the app
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(appentry)));
@@ -121,14 +127,18 @@ $('cloneAppForm').onsubmit = function() {
     var name = $('appName').value;
     if (name == '')
         return false;
+    showStatus('Saving');
 
     // Clone the app
     var title = $('appTitle').value;
     var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname)));
     var entry = atom.writeATOMEntry(valuesToElements(app));
     dashboards.put(name, car(entry), function(e) {
-        if (e)
+        if (e) {
+            showStatus('Local copy');
             return false;
+        }
+        showStatus(defaultStatus());
 
         // Open it in the page editor
         ui.navigate('/#view=page&app=' + name, '_view');

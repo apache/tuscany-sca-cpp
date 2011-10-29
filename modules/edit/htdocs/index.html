@@ -20,7 +20,7 @@
 <html manifest="/cache-manifest.cmf">
 <head>
 <title></title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
@@ -47,16 +47,16 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http err', u, 'X-Login');
+            if (log) log('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http err', u, 'No-Content');
+            if (log) log('http error', u, 'No-Content');
             return null;
         }
         localStorage.setItem(u, http.responseText);
         return http.responseText;
     }
-    if (log) log('http err', u, http.status, http.statusText);
+    if (log) log('http error', u, http.status, http.statusText);
     return null;
 };
 
@@ -137,39 +137,49 @@ var appresources = [
  */
 applicationCache.addEventListener('checking', function(e) {
     //log('appcache checking', e);
+    showStatus('Checking');
 }, false);
 applicationCache.addEventListener('error', function(e) {
     //log('appcache error', e);
+    showStatus(defaultStatus());
 }, false);
 applicationCache.addEventListener('noupdate', function(e) {
     //log('appcache noupdate', e);
+    showStatus(defaultStatus());
 }, false);
 applicationCache.addEventListener('downloading', function(e) {
     //log('appcache downloading', e);
+    showStatus('Updating');
 }, false);
 applicationCache.addEventListener('progress', function(e) {
     //log('appcache progress', e);
+    showStatus('Updating');
 }, false);
 applicationCache.addEventListener('updateready', function(e) {
     //log('appcache updateready', e);
     applicationCache.swapCache();
+    showStatus(defaultStatus());
     //log('appcache swapped', e);
 }, false);
 applicationCache.addEventListener('cached', function(e) {
     //log('appcache cached', e);
     map(function(res) {
+        showStatus('Updating');
         appcache.get(res[0]);
     }, appresources);
+    showStatus(defaultStatus());
 }, false);
 
 /**
  * Handle network offline/online events.
  */
 window.addEventListener('offline', function(e) {
-      //log('going offline');
+    //log('going offline');
+    showStatus('Offline');
 }, false);
 window.addEventListener('online', function(e) {
-      //log('going online');
+    //log('going online');
+    showStatus('Online');
 }, false);
 
 //log(navigator.onLine? 'online' : 'offline');
@@ -224,10 +234,7 @@ function mkviewdiv(cname) {
  * Return the last visited location.
  */
 function lastvisited() {
-    var loc = localStorage.getItem('ui.lastvisited')
-    if (!isNil(loc))
-        return loc;
-    return '' + location;
+    return localStorage.getItem('ui.lastvisited')
 }
 
 /**
@@ -243,6 +250,24 @@ function showmenu(mdiv, view, appname) {
                         ui.menu('Page', '/#view=page&app=' + appname, '_view', view == 'page'),
                         ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/#view=graph&app=' + appname, '_view', view == 'graph'))),
         mklist(ui.menu('Account', '/#view=account', '_view', view == 'account'), ui.menu('Sign out', '/logout/', '_self', false)));
+}
+
+/**
+ * Show a status message.
+ */
+function showStatus(s) {
+    var sdiv = $('status');
+    if (isNil(sdiv))
+        return s;
+    sdiv.innerHTML = s;
+    return s;
+}
+
+/**
+ * Return the default status message.
+ */
+function defaultStatus() {
+    return navigator.onLine? 'Online' : 'Offline';
 }
 
 /**
@@ -352,21 +377,33 @@ function showview(url) {
 }
 
 /**
- * Handle navigations.
+ * Update the browser window location.
  */
-window.onnavigate = function(url) {
-    //log('onnavigate', url);
+function updatelocation(url) {
+    //log('updatelocation', url);
 
-    // Add url to the history
+    // Add url to the history if necessary
     if (url != ui.pathandparams(location)) {
         history.pushState(null, null, url);
+        //log('pushstate', history.length);
+
+        // Update the location hash if necessary
         var f = ui.fragment(url);
         if (f != '' && f != location.hash) {
             location.hash = f;
             //log('hash', f);
         }
-        //log('pushstate', history.length);
     }
+    return url;
+}
+
+/**
+ * Handle navigations.
+ */
+window.onnavigate = function(url) {
+    //log('onnavigate', url);
+
+    updatelocation(url);
 
     // Show the specified view
     if (url == viewurl)
@@ -378,7 +415,7 @@ window.onnavigate = function(url) {
  * Handle history.
  */
 window.addEventListener('popstate', function(e) {
-    //log('popstate', history.length);
+    //log('onpopstate', history.length);
     var furl = ui.fragment(location);
     var url = location.pathname + (furl == ''? '' : '#' + furl);
 
@@ -402,25 +439,49 @@ window.addEventListener('hashchange', function(e) {
 }, false);
 
 /**
+ * Handle orientation change.
+ */
+document.body.onorientationchange = function(e) {
+    //log('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
+
+/**
  * Document load post processing.
  */
 function onload() {
     //log('onload', history.length);
     var furl = ui.fragment(location);
-    url = location.pathname + (furl == ''? '' : '#' + furl);
 
-    // Show the current view
+    // Show the view specified in the given url fragment
+    if (furl != '') {
+        var url = location.pathname + '#' + furl;
+        if (url == viewurl)
+            return true;
+        return showview(url);
+    }
+
+    // Show the last visited view
+    if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
+        //log('show lastvisited');
+        var lv = lastvisited();
+        var url = isNil(lv)? location.pathname : lv;
+        updatelocation(url);
+        if (url == viewurl)
+            return true;
+        return showview(url);
+    }
+
+    // Show the main home view
+    var url = location.pathname;
     if (url == viewurl)
         return true;
     return showview(url);
 }
-
-// Show the last visited view
-//if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
-    //log('show lastvisited');
-    //showview(lastvisited());
-//} else
-    //showview('/');
 
 </script>
 

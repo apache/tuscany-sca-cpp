@@ -22,7 +22,7 @@
 <table style="width: 100%;">
 <tr>
 <td><h2><span id="h1"></span><span id="userNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
 </tr>
 </table>
 
@@ -102,11 +102,16 @@ var savedaccountentryxml = '';
  * Get and display the user's account.
  */
 function getaccount(name) {
+    showStatus('Loading');
+
     return accounts.get(name, function(doc) {
 
         // Stop now if we didn't get an account
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         accountentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         username = cadr(assoc("'id", cdr(accountentry)));
@@ -149,11 +154,16 @@ function getaccount(name) {
 function save(entryxml) {
     if (isNil(username))
         return false;
-    $('saveStatus').innerHTML = 'Saving';
+    showStatus('Saving');
     savedaccountentryxml = entryxml;
     accounts.put(username, savedaccountentryxml, function(e) {
-        if (!e)
-            $('saveStatus').innerHTML = 'Saved';
+        if (e) {
+            showStatus('Local copy');
+            return false;
+        }
+
+        showStatus('Saved');
+        return true;
     });
     return true;
 }
@@ -181,7 +191,7 @@ function onaccountchange() {
     if (savedaccountentryxml == entryxml)
         return false;
 
-    $('saveStatus').innerHTML = 'Modified';
+    showStatus('Modified');
     return save(entryxml);
 }
 

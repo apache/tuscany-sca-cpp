@@ -20,7 +20,10 @@
 <div id="bodydiv" class="bodydiv">
 
 <table style="width: 100%;">
-<tr><td><h2><span id="h1"></span></h2></td></tr>
+<tr>
+<td><h2><span id="h1"></span></h2></td>
+<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
+</tr>
 </table>
 
 <div style="margin-left: auto; margin-right: auto; text-align: center;">
@@ -57,6 +60,8 @@ setInterval(function() {
         bgpos = 0;
     diagram.style.backgroundPosition = '0px ' + ui.pixpos(bgpos);
 }, 2000);
+
+showStatus(defaultStatus());
 
 </script>
 

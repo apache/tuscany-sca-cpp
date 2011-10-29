@@ -22,7 +22,7 @@
 <table style="width: 100%;">
 <tr>
 <td><h2><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
 </tr>
 </table>
 
@@ -1924,11 +1924,16 @@ function atomcomposite(doc) {
 function getapp(name, g) {
     if (isNil(name))
         return false;
+    showStatus('Loading');
+
     return composites.get(name, function(doc) {
 
         // Stop now if we didn't get a composite
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         composite = atomcomposite(doc);
         if (isNil(composite)) {
@@ -2003,15 +2008,17 @@ function installpalette(name, pos, g, bg, palette, gpalettes) {
  * Save the current composite.
  */
 function save(savexml) {
-    $('saveStatus').innerHTML = 'Saving';
+    showStatus('Saving');
     savedcomposxml = savexml;
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
         '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
         savedcomposxml + '</content></entry>';
     composites.put(appname, entry, function(e) {
-        if (e)
+        if (e) {
+            showStatus('Local copy');
             return false;
-        $('saveStatus').innerHTML = 'Saved';
+        }
+        showStatus('Saved');
         return false;
     });
     return true;
@@ -2024,17 +2031,17 @@ function oncomposchange(prop) {
     var newxml = car(writeXML(composite, false));
     if (savedcomposxml == newxml)
         return false;
-    $('saveStatus').innerHTML = 'Modified';
+    showStatus('Modified');
 
     // Save property changes right away
     if (prop)
         return save(newxml);
 
     // Autosave other changes after 1 second
-    $('saveStatus').innerHTML = 'Modified';
+    showStatus('Modified');
     setTimeout(function() {
         if (savedcomposxml == newxml) {
-            $('saveStatus').innerHTML = 'Saved';
+            showStatus('Saved');
             return false;
         }
         return save(newxml);

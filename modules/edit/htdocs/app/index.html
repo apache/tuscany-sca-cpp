@@ -20,7 +20,7 @@
 <html manifest="/cache-manifest.cmf">
 <head>
 <title></title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
@@ -47,16 +47,16 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http err', u, 'X-Login');
+            if (log) log('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http err', u, 'No-Content');
+            if (log) log('http error', u, 'No-Content');
             return null;
         }
         localStorage.setItem(u, http.responseText);
         return http.responseText;
     }
-    if (log) log('http err', u, http.status, http.statusText);
+    if (log) log('http error', u, http.status, http.statusText);
     return null;
 };
 
@@ -561,7 +561,7 @@ function getpagedata() {
         // Get the component app data
         startcomp.get(location.search, function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(start, ' + location.search + ')', e);
+                log('error on get(start, ' + location.search + ')', e);
                 return false;
             }
 
@@ -572,7 +572,7 @@ function getpagedata() {
         // Get and eval the optional timer, animation and location watch setup scripts
         timercomp.get('setup', function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(timer, setup)', e);
+                log('error on get(timer, setup)', e);
                 return false;
             }
 
@@ -581,7 +581,7 @@ function getpagedata() {
         });
         animationcomp.get('setup', function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(animation, setup)', e);
+                log('error on get(animation, setup)', e);
                 return false;
             }
 
@@ -590,7 +590,7 @@ function getpagedata() {
         });
         locationcomp.get('setup', function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(location, setup)', e);
+                log('error on get(location, setup)', e);
                 return false;
             }
 
@@ -601,7 +601,7 @@ function getpagedata() {
         return true;
 
     } catch(e) {
-        log('exception in getpagedata()', e);
+        log('error in getpagedata()', e);
         return true;
     }
 }
@@ -639,7 +639,7 @@ function buttonClickHandler(id) {
         var uri = compquery();
         return sca.component(id).get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(button, ' + uri + ')', e);
+                log('error on get(button, ' + uri + ')', e);
                 return false;
             }
 
@@ -647,7 +647,7 @@ function buttonClickHandler(id) {
             updatepage(docdata(doc));
         });
     } catch(e) {
-        log('exception in buttonClickHandler()', e);
+        log('error in buttonClickHandler()', e);
         return true;
     }
 }
@@ -660,7 +660,7 @@ function intervalHandler() {
         var uri = compquery();
         return timercomp.get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(timer, ' + uri + ')', e);
+                log('error on get(timer, ' + uri + ')', e);
                 return false;
             }
 
@@ -668,7 +668,7 @@ function intervalHandler() {
             updatepage(docdata(doc));
         });
     } catch(e) {
-        log('exception in intervalHandler()', e);
+        log('error in intervalHandler()', e);
         return true;
     }
 }
@@ -681,7 +681,7 @@ function setupIntervalHandler(msec) {
     try {
         return setInterval(intervalHandler, msec);
     } catch(e) {
-        log('exception in setupIntervalHandler()', e);
+        log('error in setupIntervalHandler()', e);
         return true;
     }
 }
@@ -734,7 +734,7 @@ function animationHandler() {
             var uri = compquery();
             return animationcomp.get(uri, function(doc, e) {
                 if (isNil(doc)) {
-                    log('exception on get(animation, ' + uri + ')', e);
+                    log('error on get(animation, ' + uri + ')', e);
                     return false;
                 }
 
@@ -750,7 +750,7 @@ function animationHandler() {
         return applyAnimation();
 
     } catch(e) {
-        log('exception in animationHandler()', e);
+        log('error in animationHandler()', e);
         return true;
     }
 }
@@ -764,7 +764,7 @@ function setupAnimationHandler(msec, loop) {
     try {
         return setInterval(animationHandler, msec);
     } catch(e) {
-        log('exception in setupAnimationHandler()', e);
+        log('error in setupAnimationHandler()', e);
         return true;
     }
 }
@@ -781,7 +781,7 @@ function locationHandler(pos) {
         var uri = compquery();
         return locationcomp.get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('exception on get(location, ' + uri + ')', e);
+                log('error on get(location, ' + uri + ')', e);
                 return false;
             }
 
@@ -814,7 +814,7 @@ function setupLocationHandler() {
         try {
             locationWatch = navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
         } catch(e) {
-            log('exception in installLocationHandler()', e);
+            log('error in installLocationHandler()', e);
         }
         return true;
     }
@@ -826,9 +826,9 @@ function setupLocationHandler() {
 
 // Load the app page
 pagecomp.get('app.html', function(doc, e) {
-    log('page get');
+    //log('page get');
     if (isNil(doc)) {
-        log('exception getting app page', e);
+        log('error getting app page', e);
         return false;
     }
 
@@ -838,6 +838,18 @@ pagecomp.get('app.html', function(doc, e) {
     // Merge in the app data
     getpagedata();
 });
+
+/**
+ * Handle orientation change.
+ */
+document.body.onorientationchange = function(e) {
+    //log('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
 
 /**
  * Document load post processing.

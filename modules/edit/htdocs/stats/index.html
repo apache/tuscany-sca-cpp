@@ -22,7 +22,7 @@
 <table style="width: 100%;">
 <tr>
 <td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
 </tr>
 </table>
 
@@ -96,11 +96,16 @@ var savedappentryxml = '';
 function getapp(name) {
     if (isNil(name))
         return false;
+    showStatus('Loading');
+
     return apps.get(name, function(doc) {
 
         // Stop now if we didn't get the app
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(appentry)));
@@ -116,12 +121,15 @@ function getapp(name) {
  * Save the current app.
  */
 function save(entryxml) {
-    $('saveStatus').innerHTML = 'Saving';
+    showStatus('Saving');
     savedappentryxml = entryxml;
     dashboards.put(appname, savedappentryxml, function(e) {
-        if (e)
+        if (e) {
+            showStatus('Local copy');
             return false;
-        $('saveStatus').innerHTML = 'Saved';
+        }
+
+        showStatus('Saved');
         return false;
     });
     return true;
@@ -136,7 +144,7 @@ function onappchange() {
     var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
     if (savedappentryxml == entryxml)
         return false;
-    $('saveStatus').innerHTML = 'Modified';
+    showStatus('Modified');
     return save(entryxml);
 }
 

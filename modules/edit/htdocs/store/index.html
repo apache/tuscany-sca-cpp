@@ -20,7 +20,10 @@
 <div id="bodydiv" class="bodydiv">
 
 <table style="width: 100%;">
-<tr><td><h2><span id="h1"></span></h2></td></tr>
+<tr>
+<td><h2><span id="h1"></span></h2></td>
+<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
+</tr>
 </table>
 
 <div id="catmenu"></div>
@@ -115,11 +118,16 @@ if (category == 'myapps') {
  */
 function getapps(category) {
     //log('category', category);
+    showStatus('Loading');
+
     function display(doc) {
 
         // Stop now if we didn't get the apps
-        if (doc == null)
+        if (doc == null) {
+            showStatus('No data');
             return false;
+        }
+        showStatus(defaultStatus());
 
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));

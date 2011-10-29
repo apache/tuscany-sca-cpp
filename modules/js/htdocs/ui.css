@@ -180,13 +180,14 @@ overflow: hidden;
 }
 
 .hsection {
-width: 100%; height: 50px;
+width: 100%; height: 0px; visibility: hidden;
 border-top: 0px; border-bottom: 0px; border-left: 0px; border-right: 0px; border-style: solid; border-bottom-color: #000000; background-color: #ffffff;
 padding: 0px; margin-bottom: 0px; margin-left: auto; margin-right: auto; text-align: center;
 }
 
 .fsection{
-width: 100%; height: 50px; border-top: 0px; border-bottom: 0px; border-left: 0px; border-right: 0px; border-style: solid; border-top-color: #a2bae7;
+width: 100%; height: 0px; visibility: hidden;
+border-top: 0px; border-bottom: 0px; border-left: 0px; border-right: 0px; border-style: solid; border-top-color: #a2bae7;
 padding: 0px; margin-top: 0px; margin-left: auto; margin-right: auto; text-align: center;
 }
 

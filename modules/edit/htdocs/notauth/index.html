@@ -20,7 +20,7 @@
 <html>
 <head>
 <title>Sorry</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, target-densitydpi=devicedpi"/> 
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <base href="/notauth/"/>
@@ -46,16 +46,16 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http err', u, 'X-Login');
+            if (log) log('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http err', u, 'No-Content');
+            if (log) log('http error', u, 'No-Content');
             return null;
         }
         localStorage.setItem(u, http.responseText);
         return http.responseText;
     }
-    if (log) log('http err', u, http.status, http.statusText);
+    if (log) log('http error', u, http.status, http.statusText);
     return null;
 };
 
@@ -117,9 +117,23 @@ showmenu($('menu'));
 cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
 
 /**
+ * Handle orientation change.
+ */
+document.body.onorientationchange = function(e) {
+    //log('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
+
+/**
  * Load post processing.
  */
 function onload() {
+    //log('onload');
+
     // Show the page
     document.body.style.visibility = 'visible';
 
