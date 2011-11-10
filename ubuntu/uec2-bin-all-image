@@ -19,5 +19,5 @@
 host=$1
 
 # Download and execute Tuscany SCA install script
-ssh -i $HOME/.ec2/ec2-keypair.pem ubuntu@$host "curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-bin-all-image; chmod 700 ./ubuntu-bin-all-image; ./ubuntu-bin-all-image"
+ssh -i $HOME/.ec2/ec2-keypair.pem ubuntu@$host "wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-bin-all-image; chmod 700 ./ubuntu-bin-all-image; ./ubuntu-bin-all-image"
 

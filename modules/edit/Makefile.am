@@ -20,9 +20,18 @@ if WANT_PYTHON
 moddir = $(prefix)/modules/edit
 dist_mod_SCRIPTS = start stop ssl-start mkapplinks
 
+BUILT_SOURCES = htdocs/headconfig.js htdocs/footconfig.js
+htdocs/headconfig.js:
+	touch htdocs/headconfig.js
+
+htdocs/footconfig.js:
+	touch htdocs/footconfig.js
+
+not_minified = htdocs/public/iframe.html htdocs/create/index.html htdocs/page/index.html htdocs/login/index.html htdocs/notfound/index.html htdocs/oops/index.html htdocs/graph/index.html htdocs/notauth/index.html htdocs/account/index.html htdocs/home/index.html htdocs/index.html htdocs/notyet/index.html htdocs/clone/index.html htdocs/stats/index.html htdocs/app/index.html htdocs/logout/index.html htdocs/store/index.html htdocs/headconfig.js htdocs/footconfig.js
+
 minified = htdocs/public/iframe-min.html htdocs/create/index-min.html htdocs/page/index-min.html htdocs/login/index-min.html htdocs/notfound/index-min.html htdocs/oops/index-min.html htdocs/graph/index-min.html htdocs/notauth/index-min.html htdocs/account/index-min.html htdocs/home/index-min.html htdocs/index-min.html htdocs/notyet/index-min.html htdocs/clone/index-min.html htdocs/stats/index-min.html htdocs/app/index-min.html htdocs/logout/index-min.html htdocs/store/index-min.html htdocs/headconfig-min.js htdocs/footconfig-min.js
 
-resources = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/account/*.html htdocs/create/*.html htdocs/clone/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/home/*.html htdocs/page/*.html htdocs/login/*.html htdocs/logout/*.html htdocs/notauth/*.html htdocs/notfound/*.html htdocs/oops/*.html htdocs/public/*.html htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps ${minified}
+resources = edit.composite *.py htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps ${not_minified} ${minified}
 
 nobase_dist_mod_DATA = ${resources}
 EXTRA_DIST = ${resources}

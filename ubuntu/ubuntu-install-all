@@ -289,10 +289,10 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-curl -OL http://downloads.sourceforge.net/project/mod-security/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.1.tar.gz
-tar xzf modsecurity-crs_2.2.1.tar.gz
-cp -R $build/modsecurity-crs_2.2.1/base_rules $build/modsecurity-apache-2.6.1-bin
-cp -R $build/modsecurity-crs_2.2.1/optional_rules $build/modsecurity-apache-2.6.1-bin
+curl -OL http://downloads.sourceforge.net/project/mod-security/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.2.tar.gz
+tar xzf modsecurity-crs_2.2.2.tar.gz
+cp -R $build/modsecurity-crs_2.2.2/base_rules $build/modsecurity-apache-2.6.1-bin
+cp -R $build/modsecurity-crs_2.2.2/optional_rules $build/modsecurity-apache-2.6.1-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -347,7 +347,7 @@ sudo apt-get -y install gawk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -OL --no-check-certificate http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
+curl -OL http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
 tar xzf scribe-2.2.tar.gz
 cd scribe
 ./bootstrap.sh --prefix=$build/scribe-2.2-bin PY_PREFIX=$build/scribe-2.2-bin --with-thriftpath=$build/thrift-0.2.0-bin --with-fb303path=$build/thrift-0.2.0-bin/contrib/fb303 --disable-static
@@ -400,7 +400,7 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-all-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin axis2c-1.6.0-bin axis2c-src-1.6.0 axis2c-src-1.6.0.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz google_appengine google_appengine_1.4.0.zip htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.1-bin modsecurity-apache_2.6.1.tar.gz modsecurity-crs_2.2.1 modsecurity-crs_2.2.1.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip postgresql-9.0.3 postgresql-9.0.3-bin postgresql-9.0.3.tar.gz qpidc-0.6 qpidc-0.6-bin qpid-cpp-0.6.tar.gz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tidy tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin vysper-0.6 vysper-0.6-bin.tar.gz
+tar czf tuscany-sca-cpp-all-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin axis2c-1.6.0-bin axis2c-src-1.6.0 axis2c-src-1.6.0.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz google_appengine google_appengine_1.4.0.zip htmltidy-bin httpd-2.3.10 httpd-2.3.10-alpha.tar.gz httpd-2.3.10-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.1-bin modsecurity-apache_2.6.1.tar.gz modsecurity-crs_2.2.2 modsecurity-crs_2.2.2.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip postgresql-9.0.3 postgresql-9.0.3-bin postgresql-9.0.3.tar.gz qpidc-0.6 qpidc-0.6-bin qpid-cpp-0.6.tar.gz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tidy tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin vysper-0.6 vysper-0.6-bin.tar.gz
 
 # Create bin archive
 tar czf tuscany-sca-cpp-all-1.0.tar.gz apr-1.4.x-bin axis2c-1.6.0-bin curl-7.19.5-bin expat-2.0.1-bin google_appengine htmltidy-bin httpd-2.3.10-bin js-1.8.5-bin libcloud-0.4.2-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel page-speed-1.9-bin postgresql-9.0.3-bin qpidc-0.6-bin scribe-2.2-bin thrift-0.2.0-bin tinycdb-0.77-bin tuscany-sca-cpp tuscany-sca-cpp-bin vysper-0.6
