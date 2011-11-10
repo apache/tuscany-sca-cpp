@@ -40,6 +40,18 @@ namespace tuscany {
 namespace filedb {
 
 /**
+ * Convert a database name to an absolute path.
+ */
+const string absdbname(const string& name) {
+    if (length(name) == 0 || c_str(name)[0] == '/')
+        return name;
+    char cwd[512];
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        return name;
+    return string(cwd) + "/" + name;
+}
+
+/**
  * Represents a FileDB connection.
  */
 class FileDB {
@@ -48,7 +60,7 @@ public:
         debug("filedb::filedb");
     }
 
-    FileDB(const string& name, const string& format) : owner(true), name(name), format(format) {
+    FileDB(const string& name, const string& format) : owner(true), name(absdbname(name)), format(format) {
         debug(name, "filedb::filedb::name");
         debug(format, "filedb::filedb::format");
     }

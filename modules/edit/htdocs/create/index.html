@@ -35,7 +35,7 @@
 <form id="createAppForm">
 <table style="width: 100%;">
 <tr><td><b>App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
+<tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
 <tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
@@ -59,9 +59,6 @@ $('h1').innerHTML = ui.hometitle(location.hostname);
 
 // Set images
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
-
-// Init form
-$('appDomain').innerHTML = '.' + location.hostname;
 
 // Init service references
 var editWidget = sca.component("EditWidget");

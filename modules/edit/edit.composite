@@ -48,6 +48,13 @@
         <reference name="log" target="Log"/>
     </component>
     
+    <component name="AppWidget">
+        <implementation.widget location="/app/index.html"/>
+        <reference name="user" target="User"/>
+        <reference name="pages" target="Pages"/>
+        <reference name="log" target="Log"/>
+    </component>
+    
     <component name="Accounts">
         <implementation.python script="accounts.py"/>
         <service name="Accounts">

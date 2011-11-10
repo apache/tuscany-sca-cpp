@@ -17,8 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# For this module to work, add the app domains to your /etc/hosts as follows:
-# 127.0.0.1 sca-store.com abc.sca-store.com xyz.sca-store.com ...
+# For this module to work, add the sca-store.com domain to your /etc/hosts as follows:
+# 127.0.0.1 sca-store.com
 
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
@@ -26,14 +26,11 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 # Create SSL certificates
 ../../modules/http/ssl-ca-conf tmp sca-store.com
 ../../modules/http/ssl-cert-conf tmp sca-store.com server
-../../modules/http/ssl-cert-conf tmp *.sca-store.com vhost
 
-# Configure server with virtual hosting
+# Configure server
 ../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
-../../modules/http/vhost-conf tmp apps htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
-../../modules/http/vhost-ssl-conf tmp
 
 # Configure authentication
 ../../modules/http/open-auth-conf tmp
@@ -55,15 +52,6 @@ ErrorDocument 404 /notfound/
 ErrorDocument 401 /notauth/
 ErrorDocument 500 /oops/
 
-EOF
-
-# Configure app home pages
-cat >>tmp/conf/dvhost-ssl.conf <<EOF
-# App error pages
-ErrorDocument 404 /notfound/
-ErrorDocument 401 /notauth/
-ErrorDocument 500 /oops/
-
 # Redirect www to main home page
 RewriteEngine on
 RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
@@ -71,17 +59,6 @@ RewriteCond %{SERVER_PORT} !^443$
 RewriteRule .* https://sca-store.com:%{SERVER_PORT}%{REQUEST_URI} [L,R]
 RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
 RewriteRule .* https://sca-store.com%{REQUEST_URI} [L,R]
-
-EOF
-
-cat >>tmp/conf/dvhost.conf <<EOF
-# Redirect www to main home page
-RewriteEngine on
-RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
-RewriteCond %{SERVER_PORT} !^80$
-RewriteRule .* http://sca-store.com:%{SERVER_PORT}%{REQUEST_URI} [L,R]
-RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
-RewriteRule .* http://sca-store.com%{REQUEST_URI} [L,R]
 
 EOF
 
@@ -98,7 +75,7 @@ SCAVirtualComposite app.composite
 
 EOF
 
-# Configure main aliases
+# Configure resource aliases
 cat >>tmp/conf/httpd.conf <<EOF
 
 Alias /home/home.png $here/htdocs/home/home.png
@@ -109,24 +86,21 @@ EOF
 # Create app links and sub-directories if needed
 ./mkapplinks
 
-# Configure app aliases
-cat >>tmp/conf/dvhost-ssl.conf <<EOF
-# Configure aliases
-Alias /cache-manifest.cmf $here/htdocs/app/cache-manifest.cmf
-Alias /data $here/htdocs/data
-Alias /favicon.ico $here/htdocs/favicon.ico
-Alias /footconfig.js $here/htdocs/footconfig.js
-Alias /frame.html $here/htdocs/app/frame.html
-Alias /headconfig.js $here/htdocs/headconfig.js
-Alias /index.html $here/htdocs/app/index.html
-Alias /login $here/htdocs/login
-Alias /logout $here/htdocs/logout
-Alias /notauth $here/htdocs/notauth
-Alias /notfound $here/htdocs/notfound
-Alias /notyet $here/htdocs/notyet
-Alias /oops $here/htdocs/oops
-Alias /public $here/htdocs/public
-Alias /robots.txt $here/htdocs/robots.txt
+# Configure app resource aliases
+cat >>tmp/conf/svhost-ssl.conf <<EOF
+
+<Location /v>
+RewriteEngine on
+
+# Map /v/<app-name>/<path> to htdocs/app/<path>
+RewriteCond %{REQUEST_URI} ^/v/.+/.*$
+RewriteRule /v/(.+)/(.*)$ $here/htdocs/app/\$2 [L]
+
+# Redirect /v/<app-name> to /<app-name>/
+RewriteCond %{REQUEST_URI} ^/v/[^/]+$
+RewriteRule /v/([^/]+)$ /\$1/ [L,R]
+
+</Location>
 
 EOF
 
@@ -137,5 +111,5 @@ mkdir -p tmp/appdata/filedb
 ../../components/cache/memcached-start
 
 # Start server
-../../modules/http/httpd-start tmp
+../http/httpd-start tmp
 

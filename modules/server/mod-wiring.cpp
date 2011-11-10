@@ -57,6 +57,9 @@ public:
     ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
     }
 
+    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostContributionPath(""), virtualHostCompositeName("") {
+    }
+
     const gc_pool p;
     server_rec* server;
     string contributionPath;
@@ -85,12 +88,13 @@ const bool hasVirtualCompositeConf(const ServerConf& sc) {
  * Route a /references/component-name/reference-name request,
  * to the target of the component reference.
  */
-int translateReference(const ServerConf& sc, request_rec *r) {
+int translateReference(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
     httpdDebugRequest(r, "modwiring::translateReference::input");
     debug(r->uri, "modwiring::translateReference::uri");
+    debug(apath, "modwiring::translateReference::apath");
+    debug(rpath, "modwiring::translateReference::rpath");
 
     // Find the requested component
-    const list<value> rpath(pathValues(r->uri));
     if (isNil(cdr(rpath)))
         return HTTP_NOT_FOUND;
     const list<value> comp(assoctree(cadr(rpath), sc.references));
@@ -110,8 +114,9 @@ int translateReference(const ServerConf& sc, request_rec *r) {
         if (useModProxy) {
             // Build proxy URI
             string turi = target + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
-            r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + turi));
-            debug(r->filename, "modwiring::translateReference::filename");
+            const string proxy(string("proxy:") + turi);
+            debug(proxy, "modwiring::translateReference::proxy");
+            r->filename = apr_pstrdup(r->pool, c_str(proxy));
             r->proxyreq = PROXYREQ_REVERSE;
             r->handler = "proxy-server";
             apr_table_setn(r->notes, "proxy-nocanon", "1");
@@ -126,9 +131,10 @@ int translateReference(const ServerConf& sc, request_rec *r) {
     // Route to a relative target URI using a local internal redirect
     // /components/, target component name and request path info
     const value tname = substr(target, 0, find(target, '/'));
-    const string tpath = path(cons(tname, pathInfo)) + (r->args != NULL? string("?") + r->args : string(""));
-    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components") + tpath));
-    debug(r->filename, "modwiring::translateReference::filename");
+    const string tp = path(append(apath, cons<value>(string("c"), cons(tname, pathInfo)))) + (r->args != NULL? string("?") + r->args : string(""));
+    const string redir(string("/redirect:") + tp);
+    debug(redir, "modwiring::translateReference::redirect");
+    r->filename = apr_pstrdup(r->pool, c_str(redir));
     r->handler = "mod_tuscany_wiring";
     return OK;
 }
@@ -159,62 +165,28 @@ const list<value> assocPath(const value& k, const list<value>& tree) {
 /**
  * Route a service request to the component providing the requested service.
  */
-int translateService(const ServerConf& sc, request_rec *r) {
+int translateService(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
     httpdDebugRequest(r, "modwiring::translateService::input");
     debug(r->uri, "modwiring::translateService::uri");
 
     // Find the requested component
     debug(sc.services, "modwiring::translateService::services");
-    const list<value> p(pathValues(r->uri));
-    const list<value> svc(assocPath(p, sc.services));
+    const list<value> svc(assocPath(rpath, sc.services));
     if (isNil(svc))
         return DECLINED;
     debug(svc, "modwiring::translateService::service");
 
     // Build a component-name + path-info URI
-    const list<value> target(cons<value>(cadr(svc), httpd::pathInfo(p, car(svc))));
+    const list<value> target(append(apath, cons<value>(string("c"), cons<value>(cadr(svc), httpd::pathInfo(rpath, car(svc))))));
     debug(target, "modwiring::translateService::target");
 
     // Dispatch to the target component using a local internal redirect
-    const string tp(path(target));
-    debug(tp, "modwiring::translateService::path");
-    const string redir(string("/redirect:/components") + tp);
+    const string tp(path(target) + (r->args != NULL? string("?") + r->args : string("")));
+    const string redir(string("/redirect:") + tp);
     debug(redir, "modwiring::translateService::redirect");
     r->filename = apr_pstrdup(r->pool, c_str(redir));
     r->handler = "mod_tuscany_wiring";
     return OK;
-}
-
-/**
- * Route an /apps/app-name/... request to the target app domain.
- */
-int translateDomain(request_rec *r) {
-    httpdDebugRequest(r, "modwiring::translateDomain::input");
-    debug(r->uri, "modwiring::translateDomain::uri");
-
-    // Extract the requested app name
-    const list<value> apath(pathValues(r->uri));
-    if (isNil(cdr(apath)))
-        return HTTP_NOT_FOUND;
-
-    // Compute the target uri in the target app domain
-    ostringstream turi;
-    turi << httpd::scheme(r) << "://" << string(cadr(apath)) << "." << httpd::hostName(r) << ":" << httpd::port(r) << string(path(cddr(apath))) << (r->args != NULL? string("?") + r->args : string(""));
-    debug(str(turi), "modwiring::translateDomain::appuri");
-    
-    // Route to an absolute target URI using mod_proxy or an HTTP client redirect
-    if (useModProxy) {
-        r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + str(turi)));
-        debug(r->filename, "modwiring::translateDomain::filename");
-        r->proxyreq = PROXYREQ_REVERSE;
-        r->handler = "proxy-server";
-        apr_table_setn(r->notes, "proxy-nocanon", "1");
-        return OK;
-    }
-
-    debug(str(turi), "modwiring::translateDomain::location");
-    r->handler = "mod_tuscany_wiring";
-    return httpd::externalRedirect(str(turi), r);
 }
 
 /**
@@ -299,37 +271,83 @@ const bool confComponents(ServerConf& sc) {
 }
 
 /**
- * Virtual host scoped server configuration.
- */
-class VirtualHostConf {
-public:
-    VirtualHostConf(const gc_pool& p, const ServerConf& ssc) : sc(pool(p), ssc.server) {
-        sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
-        sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
-    }
-
-    ~VirtualHostConf() {
-    }
-
-    ServerConf sc;
-};
-
-/**
  * Configure and start the components deployed in a virtual host.
  */
-const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
-    debug(httpd::serverName(sc.server), "modwiring::virtualHostConfig::serverName");
+const failable<ServerConf> virtualHostConfig(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
+    debug(httpd::serverName(ssc.server), "modwiring::virtualHostConfig::serverName");
     debug(httpd::serverName(r), "modwiring::virtualHostConfig::virtualHostName");
-    debug(sc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
-
-    // Resolve the configured virtual contribution under
-    // the virtual host's SCA contribution root
-    sc.contributionPath = sc.virtualHostContributionPath + http::subDomain(httpd::hostName(r)) + "/";
-    sc.compositeName = sc.virtualHostCompositeName;
+    debug(ssc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
+    debug(sc.contributionPath, "modwiring::virtualHostConfig::contributionPath");
 
     // Configure the wiring for the deployed components
     confComponents(sc);
-    return true;
+
+    return sc;
+}
+
+/**
+ * Translate an HTTP service or reference request and route it
+ * to the target component.
+ */
+const int translateRequest(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
+    debug(apath, "modwiring::translateRequest::apath");
+    debug(rpath, "modwiring::translateRequest::rpath");
+    if (isNil(apath) && isNil(rpath))
+        return DECLINED;
+
+    if (!isNil(rpath)) {
+
+        // No translation needed for a component or resource request
+        const value c = car(rpath);
+        if (c == string("components") || c == string("c") || c == string("vhosts") || c == string("v"))
+            return DECLINED;
+
+        // If the request is targeting a virtual host, use the corresponding
+        // virtual host configuration
+        const bool vcc = hasVirtualCompositeConf(sc);
+        if (vcc && httpd::isVirtualHostRequest(sc.server, r)) {
+            ServerConf vsc(r->pool, sc, http::subDomain(httpd::hostName(r)));
+            if (!hasContent(virtualHostConfig(vsc, sc, r)))
+                return HTTP_INTERNAL_SERVER_ERROR;
+            return translateRequest(vsc, r, rpath, list<value>());
+        }
+
+        // Translate a component reference request
+        if (c == string("references") || c == string("r"))
+            return translateReference(sc, r, rpath, apath);
+
+        // Attempt to translate the request to a service request
+        if (translateService(sc, r, rpath, apath) == OK)
+            return OK;
+
+        // If the request is targeting a virtual app, use the corresponding
+        // virtual host configuration
+        if (vcc) {
+            const string cp = sc.virtualHostContributionPath + string(c) + "/" + sc.virtualHostCompositeName;
+            struct stat st;
+            const int s = stat(c_str(cp), &st);
+            if (s == -1)
+                return DECLINED;
+            ServerConf vsc(r->pool, sc, string(c));
+            if (!hasContent(virtualHostConfig(vsc, sc, r)))
+                return HTTP_INTERNAL_SERVER_ERROR;
+            return translateRequest(vsc, r, cdr(rpath), mklist<value>(car(rpath)));
+        }
+    }
+
+    // If we're in a virtual app and the request is targeting a regular
+    // resource, redirect it to /v/<uri>. This will allow mapping to the
+    // actual resources using HTTPD aliases.
+    if (!isNil(apath)) {
+        const string tp = string("/v") + string(r->uri) + (r->args != NULL? string("?") + r->args : string(""));
+        const string redir = string("/redirect:") + tp;
+        debug(redir, "modwiring::translateRequest::redirect");
+        r->filename = apr_pstrdup(r->pool, c_str(redir));
+        r->handler = "mod_tuscany_wiring";
+        return OK;
+    }
+
+    return DECLINED;
 }
 
 /**
@@ -340,35 +358,15 @@ int translate(request_rec *r) {
     if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
         return DECLINED;
 
-    // No translation needed for a component or tunnel request
-    if (!strncmp(r->uri, "/components/", 12) || !strncmp(r->uri, "/c/", 3))
-        return DECLINED;
-
     // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
-
-    // Translate an app domain request
-    if (!strncmp(r->uri, "/apps/", 6) || !strncmp(r->uri, "/a/", 3))
-        return translateDomain(r);
+    httpdDebugRequest(r, "modwiring::translate::input");
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
 
-    // Process dynamic virtual host configuration
-    VirtualHostConf vhc(gc_pool(r->pool), sc);
-    const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
-    if (usevh) {
-        const failable<bool> cr = virtualHostConfig(vhc.sc, r);
-        if (!hasContent(cr))
-            return -1;
-    }
-
-    // Translate a component reference request
-    if (!strncmp(r->uri, "/references/", 12) || !strncmp(r->uri, "/r/", 3))
-        return translateReference(usevh? vhc.sc: sc, r);
-
-    // Translate a service request
-    return translateService(usevh? vhc.sc : sc, r);
+    // Translate the request
+    return translateRequest(sc, r, pathValues(r->uri), list<value>());
 }
 
 /**
@@ -389,12 +387,12 @@ int handler(request_rec *r) {
     // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
 
-    // Do an internal redirect
     httpdDebugRequest(r, "modwiring::handler::input");
-
     debug(r->uri, "modwiring::handler::uri");
     debug(r->filename, "modwiring::handler::filename");
     debug(r->path_info, "modwiring::handler::path info");
+
+    // Do an internal redirect
     if (r->args == NULL)
         return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
     return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);

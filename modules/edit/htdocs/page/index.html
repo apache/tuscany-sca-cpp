@@ -100,13 +100,13 @@ function applink(appname) {
     var port = ':' + location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/';
+    var link = protocol + '//' + host + port + '/' + appname + '/';
     return link;
 }
 
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - Page - ' + appname;
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"/' + appname + '/\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 /**
  * Page editor area, widget value field, add, delete and play page buttons.
@@ -149,8 +149,8 @@ resizeFields();
 window.onresize = resizeFields;
 
 // Init component references
-var editWidget = sca.component("EditWidget");
-var pages = sca.reference(editWidget, "pages");
+var editWidget = sca.component('EditWidget');
+var pages = sca.reference(editWidget, 'pages');
 
 /**
  * Page editing functions.
@@ -763,7 +763,7 @@ function getpage(name, ediv) {
         if (isNil(el))
             buffer.innerHTML = '<div id="page"></div>';
         else
-            buffer.innerHTML = writeStrings(writeXML(atompage(doc), false));
+            buffer.innerHTML = writeStrings(writeXML(el, false));
 
         // Remove any existing page nodes from the editor div
         var fnodes = filter(function(e) {
@@ -941,8 +941,8 @@ function playpage() {
     evisible = false;
     pdiv.style.visibility = 'visible';
     pdiv.innerHTML = '';
-    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="' +
-                        applink(appname) + '"></iframe>';
+    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="/' +
+                        appname + '"></iframe>';
     setTimeout(function() {
         ediv.style.visibility = 'hidden'
     }, 0);

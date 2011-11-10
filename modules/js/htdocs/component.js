@@ -580,7 +580,7 @@ sca.httpclient = function(name, uri, domain) {
 sca.component = function(name, domain) {
     if (!domain)
         return new HTTPBindingClient(name, '/c/' + name, domain);
-    return new HTTPBindingClient(name, '/a/' + domain + '/c/' + name, domain);
+    return new HTTPBindingClient(name, '/' + domain + '/c/' + name, domain);
 };
 
 /**
@@ -589,7 +589,7 @@ sca.component = function(name, domain) {
 sca.reference = function(comp, rname) {
     if (!comp.domain)
         return new HTTPBindingClient(comp.name + '/' + rname, '/r/' + comp.name + '/' + rname, comp.domain);
-    return new HTTPBindingClient(comp.name + '/' + rname, '/a/' + comp.domain + '/r/' + comp.name + '/' + rname, comp.domain);
+    return new HTTPBindingClient(comp.name + '/' + rname, '/' + comp.domain + '/r/' + comp.name + '/' + rname, comp.domain);
 };
 
 /**

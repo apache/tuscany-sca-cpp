@@ -26,6 +26,8 @@
  * HTTPD module used to eval component implementations.
  */
 
+#include <sys/stat.h>
+
 #include "string.hpp"
 #include "stream.hpp"
 #include "function.hpp"
@@ -54,13 +56,15 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), wiringServerName(""), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
+    }
+
+    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(ssc.ca), cert(ssc.cert), key(ssc.key) {
     }
 
     const gc_pool p;
     server_rec* server;
     lambda<value(const list<value>&)> lifecycle;
-    string wiringServerName;
     string contributionPath;
     string compositeName;
     string virtualHostContributionPath;
@@ -119,7 +123,7 @@ public:
 /**
  * Handle an HTTP GET.
  */
-const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>& impl) {
+const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
     debug(r->uri, "modeval::get::uri");
 
     // Inspect the query string
@@ -145,8 +149,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     }
 
     // Evaluate the GET expression
-    const list<value> path(pathValues(r->uri));
-    const list<value> params(append<value>(cddr(path), mkvalues(args)));
+    const list<value> params(append<value>(cddr(rpath), mkvalues(args)));
     const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
@@ -222,7 +225,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
 /**
  * Handle an HTTP POST.
  */
-const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>& impl) {
+const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
     debug(r->uri, "modeval::post::url");
 
     // Evaluate a JSON-RPC request and return a JSON result
@@ -257,7 +260,6 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
     if (contains(ct, "application/atom+xml")) {
 
         // Read the ATOM entry
-        const list<value> path(pathValues(r->uri));
         const int rc = httpd::setupReadPolicy(r);
         if(rc != OK)
             return rc;
@@ -266,7 +268,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
         const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
 
         // Evaluate the POST expression
-        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(path), entry))));
+        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), entry))));
         if (!hasContent(val))
             return mkfailure<int>(reason(val));
 
@@ -288,11 +290,10 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
 /**
  * Handle an HTTP PUT.
  */
-const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>& impl) {
+const failable<int> put(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
     debug(r->uri, "modeval::put::url");
 
     // Read the ATOM entry
-    const list<value> path(pathValues(r->uri));
     const int rc = httpd::setupReadPolicy(r);
     if(rc != OK)
         return rc;
@@ -301,7 +302,7 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
     const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
 
     // Evaluate the PUT expression and update the corresponding resource
-    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(path), entry))));
+    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), entry))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     if (val == value(false))
@@ -312,12 +313,11 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
 /**
  * Handle an HTTP DELETE.
  */
-const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>& impl) {
+const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
     debug(r->uri, "modeval::delete::url");
 
     // Evaluate an ATOM delete request
-    const list<value> path(pathValues(r->uri));
-    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(path)))));
+    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(rpath)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     if (val == value(false))
@@ -328,13 +328,52 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
 /**
  * Translate a component request.
  */
+const int translateRequest(const ServerConf& sc, const list<value>& rpath, request_rec *r) {
+    debug(rpath, "modeval::translateRequest::path");
+    if (isNil(rpath))
+        return DECLINED;
+
+    // Translate a component request
+    const value c = car(rpath);
+    if (c == string("components") || c == string("c")) {
+        r->handler = "mod_tuscany_eval";
+        return OK;
+    }
+
+    // Translate a request targeting a virtual host or virtual app
+    if (hasVirtualCompositeConf(sc) && !isNil(cdr(rpath))) {
+        const string cp = sc.virtualHostContributionPath + string(c) + "/" + sc.virtualHostCompositeName;
+        struct stat st;
+        const int s = stat(c_str(cp), &st);
+        if (s != -1) {
+            const value d = cadr(rpath);
+            if (d == string("components") || d == string("c")) {
+                r->handler = "mod_tuscany_eval";
+                return OK;
+            }
+        }
+    }
+
+    return DECLINED;
+}
+
+/**
+ * Translate a component request.
+ */
 int translate(request_rec *r) {
     if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
         return DECLINED;
-    if (strncmp(r->uri, "/components/", 12) != 0 && strncmp(r->uri, "/c/", 3) != 0)
-        return DECLINED;
-    r->handler = "mod_tuscany_eval";
-    return OK;
+
+    // Create a scoped memory pool
+    gc_scoped_pool pool(r->pool);
+
+    httpdDebugRequest(r, "modeval::translate::input");
+
+    // Get the server configuration
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
+
+    // Translate the request
+    return translateRequest(sc, pathValues(r->uri), r);
 }
 
 /**
@@ -473,7 +512,7 @@ const value mkunwiredProxy(const string& ref) {
 /**
  * Convert a list of component references to a list of proxy lambdas.
  */
-const value mkrefProxy(const ServerConf& sc, const value& ref, unused const string& base) {
+const value mkrefProxy(const ServerConf& sc, const value& ref) {
     const value target = scdl::target(ref);
     const bool wbyimpl = scdl::wiredByImpl(ref);
     debug(ref, "modeval::mkrefProxy::ref");
@@ -490,10 +529,10 @@ const value mkrefProxy(const ServerConf& sc, const value& ref, unused const stri
     return mkimplProxy(sc, car(pathValues(target)));
 }
 
-const list<value> refProxies(const ServerConf& sc, const list<value>& refs, const string& base) {
+const list<value> refProxies(const ServerConf& sc, const list<value>& refs) {
     if (isNil(refs))
         return refs;
-    return cons(mkrefProxy(sc, car(refs), base), refProxies(sc, cdr(refs), base));
+    return cons(mkrefProxy(sc, car(refs)), refProxies(sc, cdr(refs)));
 }
 
 /**
@@ -525,7 +564,8 @@ struct pathPropProxy {
     pathPropProxy(unused const value& v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const value v = pathValues(currentRequest->uri);
+        const char* u = apr_table_get(currentRequest->headers_in, "X-Request-URI");
+        const value v = u != NULL? pathValues(string(u)) : list<value>();
         debug(v, "modeval::pathPropProxy::value");
         return v;
     }
@@ -624,9 +664,7 @@ const value evalComponent(ServerConf& sc, const value& comp) {
     debug(impl, "modeval::evalComponent::impl");
 
     // Convert component references to configured proxy lambdas
-    ostringstream base;
-    base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
-    const list<value> rpx(refProxies(sc, scdl::references(comp), str(base)));
+    const list<value> rpx(refProxies(sc, scdl::references(comp)));
 
     // Convert component properties to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
@@ -719,80 +757,109 @@ const failable<bool> startComponents(ServerConf& sc) {
 }
 
 /**
- * Virtual host scoped server configuration.
- */
-class VirtualHostConf {
-public:
-    VirtualHostConf(const gc_pool& p, const ServerConf& sc) : sc(sc), vsc(pool(p), sc.server) {
-        vsc.lifecycle = sc.lifecycle;
-        vsc.virtualHostContributionPath = sc.virtualHostContributionPath;
-        vsc.virtualHostCompositeName = sc.virtualHostCompositeName;
-        vsc.ca = sc.ca;
-        vsc.cert = sc.cert;
-        vsc.key = sc.key;
-    }
-
-    ~VirtualHostConf() {
-        extern const failable<bool> virtualHostCleanup(const ServerConf& vsc, const ServerConf& sc);
-        virtualHostCleanup(vsc, sc);
-    }
-
-    const ServerConf& sc;
-    ServerConf vsc;
-};
-
-/**
  * Configure and start the components deployed in a virtual host.
  */
-const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, request_rec* r) {
-
-    // Determine the server name and wiring server name
-    debug(httpd::serverName(vsc.server), "modeval::virtualHostConfig::serverName");
+const failable<bool> virtualHostConfig(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
+    debug(httpd::serverName(ssc.server), "modeval::virtualHostConfig::serverName");
     debug(httpd::serverName(r), "modeval::virtualHostConfig::virtualHostName");
-    vsc.wiringServerName = httpd::serverName(r);
-    debug(vsc.wiringServerName, "modeval::virtualHostConfig::wiringServerName");
-    debug(vsc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
-
-    // Resolve the configured virtual contribution under
-    // the virtual host's SCA contribution root
-    vsc.contributionPath = vsc.virtualHostContributionPath + http::subDomain(httpd::hostName(r)) + "/";
-    vsc.compositeName = vsc.virtualHostCompositeName;
+    debug(ssc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
+    debug(sc.contributionPath, "modeval::virtualHostConfig::contributionPath");
 
     // Chdir to the virtual host's contribution
     if (chdir(c_str(sc.contributionPath)) != 0)
         return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
 
     // Configure the deployed components
-    const failable<bool> cr = confComponents(vsc);
+    const failable<bool> cr = confComponents(sc);
     if (!hasContent(cr))
         return cr;
 
     // Start the configured components
-    const failable<bool> sr = startComponents(vsc);
+    const failable<bool> sr = startComponents(sc);
     if (!hasContent(sr))
         return sr;
 
     // Store the implementation lambda functions (from both the virtual host and the
     // main server) in a tree for fast retrieval
-    vsc.implTree = mkbtree(sort(append(vsc.implementations, sc.implementations)));
+    sc.implTree = mkbtree(sort(append(sc.implementations, ssc.implementations)));
     return true;
 }
 
 /**
  * Cleanup a virtual host.
  */
-const failable<bool> virtualHostCleanup(const ServerConf& vsc, const ServerConf& sc) {
-    if (!hasCompositeConf(vsc))
+const failable<bool> virtualHostCleanup(const ServerConf& sc, const ServerConf& ssc) {
+    if (!hasCompositeConf(sc))
         return true;
     debug("modeval::virtualHostCleanup");
 
     // Stop the component implementations
-    applyLifecycleExpr(vsc.implementations, mklist<value>("stop"));
+    applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
 
     // Chdir back to the main server's contribution
-    if (chdir(c_str(sc.contributionPath)) != 0)
-        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
+    if (chdir(c_str(ssc.contributionPath)) != 0)
+        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + ssc.contributionPath);
     return true;
+}
+
+/**
+ * Handle a component request.
+ */
+const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_rec *r) {
+    debug(rpath, "modeval::handleRequest::path");
+    if (isNil(cdr(rpath)))
+        return HTTP_NOT_FOUND;
+
+    // Handle a request targeting a virtual host or virtual app
+    if (hasVirtualCompositeConf(sc)) {
+        if (httpd::isVirtualHostRequest(sc.server, r)) {
+            ServerConf vsc(r->pool, sc, http::subDomain(httpd::hostName(r)));
+            if (!hasContent(virtualHostConfig(vsc, sc, r)))
+                return HTTP_INTERNAL_SERVER_ERROR;
+            const int rc = handleRequest(vsc, rpath, r);
+            virtualHostCleanup(vsc, sc);
+            return rc;
+        }
+
+        const value c = car(rpath);
+        if (c != string("components") && c != string("c")) {
+            const string cp = sc.virtualHostContributionPath + string(c) + "/" + sc.virtualHostCompositeName;
+            struct stat st;
+            const int s = stat(c_str(cp), &st);
+            if (s != -1) {
+                ServerConf vsc(r->pool, sc, string(c));
+                if (!hasContent(virtualHostConfig(vsc, sc, r)))
+                    return HTTP_INTERNAL_SERVER_ERROR;
+                const int rc = handleRequest(vsc, cdr(rpath), r);
+                virtualHostCleanup(vsc, sc);
+                return rc;
+            }
+        }
+    }
+
+    // Store the request uri path in a header
+    apr_table_setn(r->headers_in, "X-Request-URI", apr_pstrdup(r->pool, c_str(path(rpath))));
+
+    // Get the component implementation lambda
+    const list<value> impl(assoctree<value>(cadr(rpath), sc.implTree));
+    if (isNil(impl)) {
+        mkfailure<int>(string("Couldn't find component implementation: ") + cadr(rpath));
+        return HTTP_NOT_FOUND;
+    }
+
+    // Handle HTTP method
+    const lambda<value(const list<value>&)> l(cadr<value>(impl));
+    if (r->header_only)
+         return OK;
+    if(r->method_number == M_GET)
+        return httpd::reportStatus(get(rpath, r, l));
+    if(r->method_number == M_POST)
+        return httpd::reportStatus(post(rpath, r, l));
+    if(r->method_number == M_PUT)
+        return httpd::reportStatus(put(rpath, r, l));
+    if(r->method_number == M_DELETE)
+        return httpd::reportStatus(del(rpath, r, l));
+    return HTTP_NOT_IMPLEMENTED;
 }
 
 /**
@@ -813,38 +880,8 @@ int handler(request_rec *r) {
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
 
-    // Process dynamic virtual host configuration, if any
-    VirtualHostConf vhc(gc_pool(r->pool), sc);
-    const bool usevh = hasVirtualCompositeConf(vhc.vsc) && httpd::isVirtualHostRequest(sc.server, r);
-    if (usevh) {
-        const failable<bool> cr = virtualHostConfig(vhc.vsc, sc, r);
-        if (!hasContent(cr))
-            return httpd::reportStatus(mkfailure<int>(reason(cr)));
-    }
-
-    // Get the component implementation lambda
-    const list<value> path(pathValues(r->uri));
-    if (isNil(cdr(path)))
-        return HTTP_NOT_FOUND;
-    const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.vsc.implTree : sc.implTree));
-    if (isNil(impl)) {
-        mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path));
-        return HTTP_NOT_FOUND;
-    }
-
-    // Handle HTTP method
-    const lambda<value(const list<value>&)> l(cadr<value>(impl));
-    if (r->header_only)
-         return OK;
-    if(r->method_number == M_GET)
-        return httpd::reportStatus(get(r, l));
-    if(r->method_number == M_POST)
-        return httpd::reportStatus(post(r, l));
-    if(r->method_number == M_PUT)
-        return httpd::reportStatus(put(r, l));
-    if(r->method_number == M_DELETE)
-        return httpd::reportStatus(del(r, l));
-    return HTTP_NOT_IMPLEMENTED;
+    // Handle the request
+    return handleRequest(sc, pathValues(r->uri), r);
 }
 
 /**
@@ -876,9 +913,6 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
-    if (sc.wiringServerName == "")
-        sc.wiringServerName = mainsc.wiringServerName != ""? mainsc.wiringServerName : httpd::serverName(s);
-    debug(sc.wiringServerName, "modeval::postConfigMerge::wiringServerName");
     sc.lifecycle = mainsc.lifecycle;
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
@@ -900,8 +934,6 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Get the server configuration and determine the wiring server name
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfig::serverName");
-    if (sc.wiringServerName == "") sc.wiringServerName = httpd::serverName(s);
-    debug(sc.wiringServerName, "modeval::postConfig::wiringServerName");
 
     // Count the calls to post config
     const string k("tuscany::modeval::postConfig");
@@ -982,12 +1014,6 @@ void childInit(apr_pool_t* p, server_rec* s) {
 /**
  * Configuration commands.
  */
-const char* confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.wiringServerName = arg;
-    return NULL;
-}
 const char* confContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
@@ -1040,7 +1066,6 @@ const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, con
  * HTTP server module declaration.
  */
 const command_rec commands[] = {
-    AP_INIT_TAKE1("SCAWiringServerName", (const char*(*)())confWiringServerName, NULL, RSRC_CONF, "SCA wiring server name"),
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),

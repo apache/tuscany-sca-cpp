@@ -56,22 +56,9 @@
 // Get the app name
 var appname = ui.fragmentParams(location)['app'];
 
-/**
- * Return the link to an app.
- */
-function applink(appname) {
-    var protocol = location.protocol;
-    var host = location.hostname;
-    var port = ':' + location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/';
-    return link;
-}
-
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - Stats - ' + appname;
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"/' + appname + '/\" target=\"' + '_blank' + '\">' + appname + '</a>';
 var tclone = isNil(config.clone)? 'Clone' : config.clone;
 $('cloneApp').value = tclone;
 $('cloneApp').title = tclone + ' this app';

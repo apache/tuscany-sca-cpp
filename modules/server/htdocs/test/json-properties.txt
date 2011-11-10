@@ -3,7 +3,7 @@
  "result": {
   "host": "localhost",
   "path": [
-   "components",
+   "c",
    "property-test"
   ],
   "query": {

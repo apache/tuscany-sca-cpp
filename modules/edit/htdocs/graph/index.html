@@ -68,22 +68,9 @@ if (isNil(appname)) {
         ispalette = true;
 }
 
-/**
- * Return the link to an app.
- */
-function applink(appname) {
-    var protocol = location.protocol;
-    var host = location.hostname;
-    var port = ':' + location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/';
-    return link;
-}
-
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - ' + (isNil(config.compose)? 'Composition' : config.compose) + ' - ' + appname;
-$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+$('appNameHeader').innerHTML = '<a href=\"/' + appname + '/\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 /**
  * Component value field, add, delete and play buttons.
@@ -2060,7 +2047,7 @@ function complink(appname, cname) {
     var port = ':' + location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/c/' + cname;
+    var link = protocol + '//' + host + port + '/' + appname + '/c/' + cname;
     return link;
 }
 
@@ -2090,8 +2077,7 @@ function showdata(gcomp) {
         return true;
     if (isNil(gcomp))
         return true;
-    var clink = complink(appname, gcomp.id);
-    cvalue.value = clink;
+    cvalue.value = complink(appname, gcomp.id);
     cplay.innerHTML = '&lt;';
     gvisible = false;
     pdiv.innerHTML = '';

@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
+<html manifest="cache-manifest.cmf">
 <head>
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
@@ -87,8 +87,13 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
 
 <script type="text/javascript">
 
-// Set the document title
-document.title = location.hostname.split('.')[0];
+/**
+ * Get the app name
+ */
+var appname = location.pathname.split('/')[1];
+
+// Set page title
+document.title = appname;
 
 /**
  * The main page div.
@@ -98,12 +103,13 @@ var contentdiv = $('content');
 /**
  * Initialize the app HTTP clients.
  */
-var pagecomp = sca.httpclient('page', '');
-var startcomp = sca.httpclient('start', '/start');
-var stopcomp = sca.httpclient('stop', '/stop');
-var timercomp = sca.httpclient('timer', '/timer');
-var animationcomp = sca.httpclient('animation', '/animation');
-var locationcomp = sca.httpclient('location', '/location');
+var appWidget = sca.component('AppWidget');
+var pagecomp = sca.reference(appWidget, 'pages');
+var startcomp = sca.httpclient('start', '/' + appname + '/start');
+var stopcomp = sca.httpclient('stop', '/' + appname + '/stop');
+var timercomp = sca.httpclient('timer', '/' + appname + '/timer');
+var animationcomp = sca.httpclient('animation', '/' + appname + '/animation');
+var locationcomp = sca.httpclient('location', '/' + appname + '/location');
 
 /**
  * Pre-fetch app resources.
@@ -414,11 +420,11 @@ function docdata(doc) {
 /**
  * Bind a handler to a widget.
  */
-function bindwidgethandler(e) {
+function bindwidgethandler(e, appname) {
     if (e.className == 'button') {
         var b = car(childElements(e));
         b.name = e.id;
-        b.onclick = function() { return buttonClickHandler(b.value); };
+        b.onclick = function() { return buttonClickHandler(b.value, appname); };
         return e;
     }
     if (e.className == 'link') {
@@ -427,7 +433,7 @@ function bindwidgethandler(e) {
         if (hr.substring(0, 5) == 'link:' && hr.indexOf('://') == -1) {
             var f = function(e) {
                 e.preventDefault();
-                return buttonClickHandler(hr.substring(5));
+                return buttonClickHandler(hr.substring(5), appname);
             };
             l.ontouchstart = l.onclick = f;
             l.href = 'javascript:void()';
@@ -528,7 +534,7 @@ function initwidget(e) {
 /**
  * Get app data from the main app page component.
  */
-function getpagedata() {
+function getpagedata(appname) {
     try {
 
         // Display component data on the page
@@ -552,7 +558,7 @@ function getpagedata() {
         function setupwidget(e) {
             initwidget(e);
             fixupwidget(e);
-            bindwidgethandler(e);
+            bindwidgethandler(e, appname);
         }
 
         // Setup the widgets
@@ -634,10 +640,10 @@ function compquery() {
 /**
  * Handle a button click event.
  */
-function buttonClickHandler(id) {
+function buttonClickHandler(id, appname) {
     try {
         var uri = compquery();
-        return sca.component(id).get(uri, function(doc, e) {
+        return sca.component(id, appname).get(uri, function(doc, e) {
             if (isNil(doc)) {
                 log('error on get(button, ' + uri + ')', e);
                 return false;
@@ -824,8 +830,21 @@ function setupLocationHandler() {
     return true;
 }
 
+/**
+ * Return the page in an ATOM entry.
+ */
+function atompage(doc) {
+    var entry = atom.readATOMEntry(mklist(doc));
+    if (isNil(entry))
+        return mklist();
+    var content = namedElementChild("'content", car(entry));
+    if (content == null)
+        return mklist();
+    return elementChildren(content);
+}
+
 // Load the app page
-pagecomp.get('app.html', function(doc, e) {
+pagecomp.get(appname, function(doc, e) {
     //log('page get');
     if (isNil(doc)) {
         log('error getting app page', e);
@@ -833,10 +852,12 @@ pagecomp.get('app.html', function(doc, e) {
     }
 
     // Set the app HTML page into the content div
-    contentdiv.innerHTML = doc;
+    //log('page', doc);
+    var el = atompage(doc);
+    contentdiv.innerHTML = writeStrings(writeXML(el, false));
 
     // Merge in the app data
-    getpagedata();
+    getpagedata(appname);
 });
 
 /**

@@ -78,19 +78,6 @@ var store = sca.reference(editWidget, "store");
 var dashboards = sca.reference(editWidget, "dashboards");
 
 /**
- * Return the link to an app.
- */
-function applink(appname) {
-    var protocol = location.protocol;
-    var host = location.hostname;
-    var port = ':' + location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/';
-    return link;
-}
-
-/**
  * Edit an app.
  */
 function editApp(appname) {
@@ -151,7 +138,7 @@ function getapps(category) {
             apps += '<div>' + ui.ahref('/#view=stats&app=' + name, '_view', '<img src="' + appimg + '" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin: 0px; padding: 0px;"></img>') + '</div>';
             apps += '</td>';
             apps += '<td class="tdw">';
-            apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
+            apps += '<div style="font-weight: bold">' + ui.ahref('/' + name + '/', '_blank', name) + '</div>';
             if (category == 'myapps')
                 apps += '<div style="color: #808080;">Shared</div>';
             else

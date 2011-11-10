@@ -156,8 +156,8 @@ Include conf/vhost-ssl.conf
 # Declare SSL certificates used in this virtual host
 SSLCACertificateFile "$root/cert/ca.crt"
 SSLCertificateChainFile "$root/cert/ca.crt"
-SSLCertificateFile "$root/cert/vhost.crt"
-SSLCertificateKeyFile "$root/cert/vhost.key"
+SSLCertificateFile "$root/cert/server.crt"
+SSLCertificateKeyFile "$root/cert/server.key"
 
 # Declare proxy SSL client certificates
 SSLProxyCACertificateFile "$root/cert/ca.crt"

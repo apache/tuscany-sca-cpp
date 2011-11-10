@@ -90,6 +90,18 @@ const bool free(const buffer&b) {
 }
 
 /**
+ * Convert a database name to an absolute path.
+ */
+const string absdbname(const string& name) {
+    if (length(name) == 0 || c_str(name)[0] == '/')
+        return name;
+    char cwd[512];
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        return name;
+    return string(cwd) + "/" + name;
+}
+
+/**
  * Represents a LevelDB connection.
  */
 class LevelDB {
@@ -99,7 +111,7 @@ public:
         st.st_ino = 0;
     }
 
-    LevelDB(const string& name) : owner(true), name(name), fd(-1) {
+    LevelDB(const string& name) : owner(true), name(absdbname(name)), fd(-1) {
         debug(name, "leveldb::leveldb::name");
         st.st_ino = 0;
     }
