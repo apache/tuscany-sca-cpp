@@ -22,7 +22,7 @@ INCLUDES = -I${PYTHON_INCLUDE}
 dist_mod_SCRIPTS = composite.py wsgi-start wsgi-stop gae-start gae-stop
 moddir = $(prefix)/modules/wsgi
 
-dist_mod_DATA = app.yaml scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py
+dist_mod_DATA = app.yaml scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py httputil.py rssutil.py
 
 noinst_DATA = target.stamp
 

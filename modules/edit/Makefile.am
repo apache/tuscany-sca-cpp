@@ -31,7 +31,7 @@ not_minified = htdocs/public/iframe.html htdocs/create/index.html htdocs/page/in
 
 minified = htdocs/public/iframe-min.html htdocs/create/index-min.html htdocs/page/index-min.html htdocs/login/index-min.html htdocs/notfound/index-min.html htdocs/oops/index-min.html htdocs/graph/index-min.html htdocs/notauth/index-min.html htdocs/account/index-min.html htdocs/home/index-min.html htdocs/index-min.html htdocs/notyet/index-min.html htdocs/clone/index-min.html htdocs/stats/index-min.html htdocs/app/index-min.html htdocs/logout/index-min.html htdocs/store/index-min.html htdocs/headconfig-min.js htdocs/footconfig-min.js
 
-resources = edit.composite *.py htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps ${not_minified} ${minified}
+resources = edit.composite *.py htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/app/*.cmf htdocs/home/*.b64 htdocs/*.txt htdocs/public/*.png htdocs/public/*.b64 palettes/*/palette.composite accounts/*/*.account apps/*/app.composite apps/*/app.stats apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps ${not_minified} ${minified}
 
 nobase_dist_mod_DATA = ${resources}
 EXTRA_DIST = ${resources}
