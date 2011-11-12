@@ -76,7 +76,7 @@ gcc-g++-4.4.5
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
-httpd-2.3.10 (http://httpd.apache.org/)
+httpd-2.3.15 (http://httpd.apache.org/)
 apr-1.4.x (http://apr.apache.org/)
 built with OpenSSL libssl-0.9.8, libpcre3-8.02,
 and expat 2.0.1
@@ -222,7 +222,7 @@ dependencies installed in the standard system directories and some of the
 dependencies installed under $build:
 
 ./configure --prefix=$build/tuscany-sca-cpp-bin \
---with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.10-bin \
+--with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin \
 --with-memcached=$build/memcached-1.4.7-bin \
 --with-tinycdb=$build/tinycdb-0.77-bin \
 --with-curl=$build/curl-7.19.5-bin --with-libxml2=/usr \

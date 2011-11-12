@@ -31,6 +31,11 @@ pport=`$here/httpd-addr pport $gport`
 sslpport=`$here/httpd-addr pport $2`
 sslport=`$here/httpd-addr listen $2`
 sslvhost=`$here/httpd-addr vhost $2`
+if [ "$sslpport" = "443" ]; then
+    sslpportsuffix=""
+else
+    sslpportsuffix=":$sslpport"
+fi
 
 htdocs=`echo $conf | awk '{ print $8 }'`
 mkdir -p $htdocs
@@ -58,7 +63,13 @@ Listen $sslport
 
 # HTTPS virtual host
 <VirtualHost $sslvhost>
-ServerName https://$host:$sslpport
+ServerName https://$host$sslpportsuffix
+
+<Location />
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^$host [NC]
+RewriteRule .* https://$host$sslpportsuffix%{REQUEST_URI} [R]
+</Location>
 
 Include conf/svhost-ssl.conf
 
@@ -86,7 +97,7 @@ cat >>$root/conf/svhost.conf <<EOF
 RewriteEngine on
 RewriteCond %{SERVER_PORT} ^$port$ [OR]
 RewriteCond %{SERVER_PORT} ^$pport$
-RewriteRule .* https://$host:$sslpport%{REQUEST_URI} [R,L]
+RewriteRule .* https://$host$sslpportsuffix%{REQUEST_URI} [R]
 </Location>
 
 EOF
@@ -98,7 +109,7 @@ cat >>$root/conf/dvhost.conf <<EOF
 RewriteEngine on
 RewriteCond %{SERVER_PORT} ^$port$ [OR]
 RewriteCond %{SERVER_PORT} ^$pport$
-RewriteRule .* https://%{SERVER_NAME}:$sslpport%{REQUEST_URI} [R,L]
+RewriteRule .* https://%{SERVER_NAME}$sslpportsuffix%{REQUEST_URI} [R]
 </Location>
 
 EOF

@@ -38,14 +38,6 @@ ErrorDocument 404 /notfound/
 ErrorDocument 401 /notauth/
 ErrorDocument 500 /oops/
 
-# Redirect www to main home page
-RewriteEngine on
-RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
-RewriteCond %{SERVER_PORT} !^80$
-RewriteRule .* http://sca-store.com:%{SERVER_PORT}%{REQUEST_URI} [L,R]
-RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
-RewriteRule .* http://sca-store.com%{REQUEST_URI} [L,R]
-
 EOF
 
 # Configure SCA contributions

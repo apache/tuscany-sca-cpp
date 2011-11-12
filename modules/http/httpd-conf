@@ -29,6 +29,11 @@ port=`$here/httpd-addr port $3`
 pport=`$here/httpd-addr pport $3`
 listen=`$here/httpd-addr listen $3`
 vhost=`$here/httpd-addr vhost $3`
+if [ "$pport" = "80" ]; then
+    pportsuffix=""
+else
+    pportsuffix=":$pport"
+fi
 
 mkdir -p $4
 htdocs=`echo "import os; print os.path.realpath('$4')" | python`
@@ -53,7 +58,7 @@ cat >$root/conf/httpd.conf <<EOF
 # Apache HTTPD server configuration
 
 # Main server name
-ServerName http://$host:$pport
+ServerName http://$host$pportsuffix
 PidFile $root/logs/httpd.pid
 
 # Load configured MPM
@@ -150,11 +155,13 @@ Listen $listen
 
 # Setup HTTP virtual host
 <VirtualHost $vhost>
-ServerName http://$host:$pport
+ServerName http://$host$pportsuffix
 
+<Location />
 RewriteEngine on
 RewriteCond %{HTTP_HOST} !^$host [NC]
-RewriteRule .* http://$host:$pport%{REQUEST_URI} [R,L]
+RewriteRule .* http://$host$pportsuffix%{REQUEST_URI} [R]
+</Location>
 
 Include conf/svhost.conf
 
@@ -218,7 +225,6 @@ LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
 LoadModule mime_module ${modules_prefix}/modules/mod_mime.so
 LoadModule status_module ${modules_prefix}/modules/mod_status.so
 LoadModule info_module ${modules_prefix}/modules/mod_info.so
-LoadModule asis_module ${modules_prefix}/modules/mod_asis.so
 LoadModule negotiation_module ${modules_prefix}/modules/mod_negotiation.so
 LoadModule dir_module ${modules_prefix}/modules/mod_dir.so
 LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
