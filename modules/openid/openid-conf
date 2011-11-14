@@ -44,8 +44,7 @@ Require valid-user
 AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
 AuthOpenIDCookieName TuscanyOpenAuth
-AuthOpenIDSecureCookie On
-AuthOpenIDLoginPage /login
+AuthOpenIDLoginPage /login/
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
 AuthOpenIDAXAdd FULLNAME http://axschema.org/namePerson
 AuthOpenIDAXAdd NICKNAME http://axschema.org/namePerson/friendly

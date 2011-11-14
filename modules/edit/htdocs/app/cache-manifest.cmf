@@ -4,12 +4,12 @@ CACHE MANIFEST
 
 # App resources
 /favicon.ico
-/notauth/
-/notfound/
-/notyet/
-/oops/
 /public/iframe-min.html
 /public/img.png
+/public/notauth/
+/public/notfound/
+/public/notyet/
+/public/oops/
 /public/touchicon.png
 
 NETWORK:

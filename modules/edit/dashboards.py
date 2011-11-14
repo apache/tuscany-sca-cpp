@@ -25,7 +25,7 @@ def dashboardid(user):
 # Get a dashboard from the cache
 def getdashboard(id, cache):
     dashboard = cache.get(id)
-    if isNil(dashboard):
+    if isNil(dashboard) or dashboard is None:
         return ()
     return dashboard
 

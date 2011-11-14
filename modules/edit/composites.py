@@ -33,7 +33,7 @@ def get(id, cache):
     if isNil(id):
         return (("'feed", ("'title", "Composites"), ("'id", "composites")),)
     app = cache.get(appid(id));
-    if (isNil(app) or app is None):
+    if isNil(app) or app is None:
         return (("'entry", ("'title", car(id)), ("'id", car(id))),)
     return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(app))),)
 

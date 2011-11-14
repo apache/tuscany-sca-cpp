@@ -19,11 +19,11 @@
 -->
 <html>
 <head>
-<title>Sorry</title>
+<title>Page not found</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<base href="/notauth/"/>
+<base href="/notfound/"/>
 <script type="text/javascript">
 
 window.appcache = {};
@@ -76,7 +76,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
 })();
 </script>
 </div>
@@ -90,7 +90,8 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
 </table>
 
 <div style="margin-left: auto; margin-right: auto; text-align: center;">
-<div class="hd2">Sorry, you're not authorized to view this page.</div>
+<div class="hd2">Sorry, that page was not found.</div>
+<div>You may have clicked an expired link or mistyped the address.</div>
 </div>
 
 </div>
@@ -109,8 +110,8 @@ var cdiv = $('content');
  */
 function showmenu(mdiv) {
     mdiv.innerHTML = ui.menubar(
-        mklist(ui.menu('Home', '/', '_view', false), ui.menu('Store', '/#view=store', '_view', false)),
-            mklist(ui.menu('Account', '/#view=account', '_view', false), ui.menu('Sign out', '/logout/', '_self', false)));
+        mklist(ui.menu('Home', '/', '_view', false)),
+            mklist(ui.signedin()? ui.menu('Sign out', '/logout/', '_self', false) : ui.menu('Sign in', '/login/', '_self', false)));
 }
 
 showmenu(mdiv);
@@ -145,11 +146,6 @@ function onload() {
 </script>
 
 <div id="footdiv" class="fsection">
-<script type="text/javascript">
-(function() {
-$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig-min.js')));
-})();
-</script>
 </div>
 
 </div>

@@ -603,6 +603,7 @@ const int externalRedirect(const string& uri, request_rec* r) {
     debug(uri, "httpd::externalRedirect");
     r->status = HTTP_MOVED_TEMPORARILY;
     apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
+    apr_table_setn(r->headers_out, "Cache-Control", "no-cache");
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + uri));
     return HTTP_MOVED_TEMPORARILY;
 }

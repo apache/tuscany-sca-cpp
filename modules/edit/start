@@ -34,9 +34,10 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 # Configure error pages
 cat >>tmp/conf/svhost.conf <<EOF
 # Error pages
-ErrorDocument 404 /notfound/
-ErrorDocument 401 /notauth/
-ErrorDocument 500 /oops/
+ErrorDocument 404 /public/notfound/
+ErrorDocument 401 /public/notauth/
+ErrorDocument 500 /public/oops/
+ErrorDocument 405 /public/oops/
 
 EOF
 
@@ -86,7 +87,8 @@ mkdir -p tmp/appdata/filedb
 
 # Start memcached
 ../../components/cache/memcached-start 11211
+../../components/cache/memcached-start 11212
 
 # Start server
-../http/httpd-start tmp
+../../modules/http/httpd-start tmp
 

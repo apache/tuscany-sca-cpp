@@ -15,9 +15,9 @@ can be used to help assemble distributed SCA composite applications:
 Cache: key/value memory cache, using Memcached;
 Chat: XMPP chat, using Apache Vysper and Libstrophe;
 Constdb: fast persistent store for mostly constant data, using TinyCDB;
-Filedb: key/value 'NoSQL' persistent store, using plain files;
+Filedb: key/value persistent store, using plain files;
 Http: HTTP client, using Libcurl;
-Kvdb: fast key/value 'NoSQL' persistent store, using LevelDB;
+Kvdb: fast key/value persistent store, using LevelDB;
 Log: distributed logger, using Facebook Scribe;
 Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL;
@@ -77,9 +77,9 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- cache            Memcached key/value cache
  |   |   |-- chat             XMPP chat
  |   |   |-- constdb          TinyCDB constant persistent store
- |   |   |-- filedb           Plain file NoSQL persistent store
+ |   |   |-- filedb           Plain file persistent store
  |   |   |-- http             HTTP client
- |   |   |-- kvdb             LevelDB NoSQL persistent store
+ |   |   |-- kvdb             LevelDB key/value persistent store
  |   |   |-- log              Scribe logger
  |   |   |-- queue            AMQP message queue
  |   |   |-- sqldb            PostgreSQL database
@@ -98,6 +98,7 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |
  |   |-- macos                Automated install on Mac OS X 10.1.7
  |   |-- ubuntu               Automated install on Ubuntu 10.10
+ |   |-- patches              Temporary patches to some of the dependencies
  |
  |-- branches                 Topic and release branches
  |

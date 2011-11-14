@@ -267,6 +267,11 @@ AuthUserFile "$root/conf/httpd.passwd"
 Require all granted
 </Location>
 
+# Mark login page with a header
+<Location /login>
+Header set X-Login open-auth
+</Location>
+
 EOF
 
 # Create password and group files

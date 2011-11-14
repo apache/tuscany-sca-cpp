@@ -57,7 +57,7 @@ if (typeof(oauthReferrer()) == 'undefined') {
 
 function submitSignin2(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.signin2.mod_oauth2_authorize.value = parms[0];
     document.signin2.mod_oauth2_access_token.value = parms[1];
@@ -79,7 +79,7 @@ function withGithub() {
 
 function submitSignin1(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.signin1.mod_oauth1_request_token.value = parms[0];
     document.signin1.mod_oauth1_authorize.value = parms[1];

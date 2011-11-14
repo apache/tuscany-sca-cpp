@@ -17,6 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../http/httpd-stop tmp
+../../modules/http/httpd-stop tmp
 ../../components/cache/memcached-stop 11211
+../../components/cache/memcached-stop 11212
 

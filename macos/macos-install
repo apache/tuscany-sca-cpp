@@ -105,7 +105,8 @@ curl -OL http://memcached.googlecode.com/files/memcached-1.4.7.tar.gz
 tar xzf memcached-1.4.7.tar.gz
 cd memcached-1.4.7
 # http://code.google.com/p/memcached/issues/detail?id=218
-patch -p0<$build/../memcached-1.4.7.patch
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/memcached-1.4.7.patch
+patch -p0 <memcached-1.4.7.patch
 autoreconf --install
 ./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.7-bin
 make
@@ -265,10 +266,13 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.1.tar.gz/download -o modsecurity-crs_2.2.1.tar.gz 
-tar xzf modsecurity-crs_2.2.1.tar.gz
-cp -R $build/modsecurity-crs_2.2.1/base_rules $build/modsecurity-apache-2.6.1-bin
-cp -R $build/modsecurity-crs_2.2.1/optional_rules $build/modsecurity-apache-2.6.1-bin
+curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.2.tar.gz/download -o modsecurity-crs_2.2.2.tar.gz 
+tar xzf modsecurity-crs_2.2.2.tar.gz
+cd modsecurity-crs_2.2.2
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.2.patch
+patch -p0 <modsecurity-crs_2.2.2.patch
+cp -R base_rules $build/modsecurity-apache-2.6.1-bin
+cp -R optional_rules $build/modsecurity-apache-2.6.1-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -305,7 +309,7 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.15-beta httpd-2.3.15-beta.tar.gz httpd-2.3.15-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.13-stable libevent-2.0.13-stable-bin libevent-2.0.13-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.1 modsecurity-crs_2.2.1.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.19.5 curl-7.19.5-bin curl-7.19.5.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.15-beta httpd-2.3.15-beta.tar.gz httpd-2.3.15-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.13-stable libevent-2.0.13-stable-bin libevent-2.0.13-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.2 modsecurity-crs_2.2.2.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz tidy tinycdb tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
 tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.19.5-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.15-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.13-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin

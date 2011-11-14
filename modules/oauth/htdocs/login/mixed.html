@@ -30,7 +30,7 @@
 
 <script type="text/javascript">
 function submitFormSignin() {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
@@ -62,7 +62,7 @@ if (typeof(openauthReferrer()) == 'undefined') {
 }
 
 function submitOpenIDSignin(w) {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.openIDSignin.openid_identifier.value = w();
     document.openIDSignin.action = openauthReferrer();
@@ -111,7 +111,7 @@ function withXRDSEndpoint() {
 
 function submitOAuth2Signin(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.oauth2Signin.mod_oauth2_authorize.value = parms[0];
     document.oauth2Signin.mod_oauth2_access_token.value = parms[1];
@@ -133,7 +133,7 @@ function withGithub() {
 
 function submitOAuth1Signin(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
     document.cookie = reset;
     document.oauth1Signin.mod_oauth1_request_token.value = parms[0];
     document.oauth1Signin.mod_oauth1_authorize.value = parms[1];

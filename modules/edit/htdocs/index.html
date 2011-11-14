@@ -48,6 +48,8 @@ appcache.get = function(uri) {
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
             if (log) log('http error', u, 'X-Login');
+            // Redirect to login page if not signed in
+            document.location = '/login/';
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
             if (log) log('http error', u, 'No-Content');
@@ -57,6 +59,9 @@ appcache.get = function(uri) {
         return http.responseText;
     }
     if (log) log('http error', u, http.status, http.statusText);
+    // Redirect to login page if not signed in
+    if (http.status == 403)
+        document.location = '/login/';
     return null;
 };
 
@@ -69,6 +74,10 @@ appcache.get = function(uri) {
     document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 })();
 
+// Redirect to login page if not signed in
+if (document.location.protocol == 'https:' && !ui.signedin())
+    document.location = '/login/';
+
 </script>
 </head>
 <body class="delayed" onload="onload();">
@@ -77,7 +86,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
 })();
 </script>
 </div>
@@ -117,13 +126,13 @@ var appresources = [
     ['/account/', 'flip'],
     ['/clone/', 'flip'],
     ['/create/', 'flip'],
-    ['/footconfig-min.js'],
     ['/graph/', 'flip'],
-    ['/headconfig-min.js'],
+    ['/config-min.js'],
     ['/home/', 'right'],
     ['/home/home.b64'],
     ['/page/', 'flip'],
     ['/public/app.b64'],
+    ['/public/config-min.js'],
     ['/public/grid72.b64'],
     ['/public/iframe-min.html'],
     ['/public/img.b64'],
@@ -249,7 +258,9 @@ function showmenu(mdiv, view, appname) {
                         ui.menu('Stats', '/#view=stats&app=' + appname, '_view', view == 'stats'),
                         ui.menu('Page', '/#view=page&app=' + appname, '_view', view == 'page'),
                         ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/#view=graph&app=' + appname, '_view', view == 'graph'))),
-        mklist(ui.menu('Account', '/#view=account', '_view', view == 'account'), ui.menu('Sign out', '/logout/', '_self', false)));
+        mklist(
+            ui.menu('Account', '/#view=account', '_view', view == 'account'),
+            ui.signedin()? ui.menu('Sign out', '/logout/', '_self', false) : ui.menu('Sign in', '/login/', '_self', false)));
 }
 
 /**
@@ -486,11 +497,6 @@ function onload() {
 </script>
 
 <div id="footdiv" class="fsection">
-<script type="text/javascript">
-(function() {
-$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig-min.js')));
-})();
-</script>
 </div>
 
 </div>

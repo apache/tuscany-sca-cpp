@@ -32,16 +32,18 @@
 
 <h1>Sign out</h1>
 
-<form name="signout" onsubmit="submitSignout();" action="/" method="GET">
+<form name="signout" onsubmit="submitSignout();" action="/login/" method="GET">
 <input type="submit" id="signOut" value="Sign out" class="graybutton" style="font-weight: bold"/>
 </form>
 
 <script type="text/javascript">
 function submitSignout() {
-    // Clear session cookie and local storage
+    // Clear session cookie and user-specific local storage entries
     var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
     document.cookie = reset;
-    localStorage.clear();
+    localStorage.removeItem('/r/EditWidget/accounts');
+    localStorage.removeItem('/r/EditWidget/dashboards');
+    //localStorage.clear();
     document.signout.submit();
     return true;
 }

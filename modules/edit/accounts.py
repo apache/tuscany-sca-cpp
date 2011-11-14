@@ -25,7 +25,7 @@ def accountid(user):
 # Get the current user's account
 def get(id, user, cache):
     account = cache.get(accountid(user))
-    if isNil(account):
+    if isNil(account) or account is None:
         return ()
     return account
 

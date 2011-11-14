@@ -32,11 +32,30 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 ../../modules/http/httpd-event-conf tmp
 ../../modules/http/httpd-ssl-conf tmp 8453
 
-# Configure authentication
-../../modules/http/open-auth-conf tmp
-../../modules/http/passwd-auth-conf tmp john john
-../../modules/http/passwd-auth-conf tmp jane jane
-../../modules/http/passwd-auth-conf tmp admin admin
+# Configure password authentication
+#../../modules/http/open-auth-conf tmp
+#../../modules/http/passwd-auth-conf tmp john john
+#../../modules/http/passwd-auth-conf tmp jane jane
+#../../modules/http/passwd-auth-conf tmp admin admin
+
+# Configure OAuth authentication
+# Configure your OAuth app keys here
+../../modules/oauth/oauth-conf tmp
+../../modules/oauth/oauth-memcached-conf tmp sca-store.com 11212
+../../modules/oauth/oauth2-appkey-conf tmp facebook.com 12345 67890
+
+# Configure OpenID step2 authentication
+../../modules/openid/openid-conf tmp
+../../modules/openid/openid-step2-conf tmp
+../../modules/openid/openid-memcached-conf tmp sca-store.com 11212
+
+# Configure authorized users
+#../../modules/http/group-auth-conf tmp john
+#../../modules/http/group-auth-conf tmp jane
+#../../modules/http/group-auth-conf tmp admin
+# Configure your OpenID and OAuth ids here
+../../modules/http/group-auth-conf tmp https://www.google.com/accounts/o8/id?id=45678
+../../modules/http/group-auth-conf tmp 23456789
 
 # Configure mod-security
 ../../modules/http/mod-security-conf tmp
@@ -48,9 +67,10 @@ jsprefix=`echo "import os; print os.path.realpath('$here/../js')" | python`
 # Configure error pages
 cat >>tmp/conf/svhost-ssl.conf <<EOF
 # Error pages
-ErrorDocument 404 /notfound/
-ErrorDocument 401 /notauth/
-ErrorDocument 500 /oops/
+ErrorDocument 404 /public/notfound/
+ErrorDocument 401 /public/notauth/
+ErrorDocument 500 /public/oops/
+ErrorDocument 405 /public/oops/
 
 EOF
 
@@ -100,8 +120,9 @@ EOF
 mkdir -p tmp/appdata/filedb
 
 # Start memcached
-../../components/cache/memcached-start
+../../components/cache/memcached-start 11211
+../../components/cache/memcached-start 11212
 
 # Start server
-../http/httpd-start tmp
+../../modules/http/httpd-start tmp
 

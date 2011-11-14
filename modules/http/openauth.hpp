@@ -77,7 +77,7 @@ const string cookie(const string& sid, const string& domain) {
     const time_t t = time(NULL) + 86400;
     char exp[32];
     strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = string("TuscanyOpenAuth=") + sid + ";domain=." + domain + ";path=/;expires=" + string(exp) + ";secure=TRUE";
+    const string c = string("TuscanyOpenAuth=") + sid + "; expires=" + string(exp) + "; domain=." + domain + "; path=/";
     debug(c, "openauth::cookie");
     return c;
 }

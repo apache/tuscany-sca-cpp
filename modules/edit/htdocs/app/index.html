@@ -48,6 +48,8 @@ appcache.get = function(uri) {
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
             if (log) log('http error', u, 'X-Login');
+            // Redirect to login page if not signed in
+            document.location = '/login/';
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
             if (log) log('http error', u, 'No-Content');
@@ -57,6 +59,9 @@ appcache.get = function(uri) {
         return http.responseText;
     }
     if (log) log('http error', u, http.status, http.statusText);
+    // Redirect to login page if not signed in
+    if (http.status == 403)
+        document.location = '/login/';
     return null;
 };
 
@@ -69,6 +74,10 @@ appcache.get = function(uri) {
     document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 })();
 
+// Redirect to login page if not signed in
+if (document.location.protocol == 'https:' && !ui.signedin())
+    document.location = '/login/';
+
 </script>
 </head>
 <body class="delayed" onload="onload();">
@@ -77,7 +86,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/headconfig-min.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
 })();
 </script>
 </div>
@@ -117,8 +126,8 @@ var locationcomp = sca.httpclient('location', '/' + appname + '/location');
 var appresources = [
     ['/all-min.js'],
     ['/ui-min.css'],
-    ['/footconfig-min.js'],
-    ['/headconfig-min.js'],
+    ['/config-min.js'],
+    ['/public/config-min.js']
 ];
 
 /**
@@ -889,11 +898,6 @@ function onload() {
 </script>
 
 <div id="footdiv" class="fsection">
-<script type="text/javascript">
-(function() {
-$('footdiv').appendChild(ui.declareScript(appcache.get('/footconfig-min.js')));
-})();
-</script>
 </div>
 
 </div>

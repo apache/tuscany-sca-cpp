@@ -56,7 +56,7 @@ def get(id, cache, store, composites, pages):
     if isNil(id):
         return (("'feed", ("'title", "Apps"), ("'id", "apps")),)
     app = cache.get(appid(id));
-    if (isNil(app) or app is None):
+    if isNil(app) or app is None:
         return (("'entry", ("'title", car(id)), ("'id", car(id))),)
     return app
 

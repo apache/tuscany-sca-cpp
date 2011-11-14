@@ -291,8 +291,11 @@ fi
 cd $build
 curl -OL http://downloads.sourceforge.net/project/mod-security/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.2.tar.gz
 tar xzf modsecurity-crs_2.2.2.tar.gz
-cp -R $build/modsecurity-crs_2.2.2/base_rules $build/modsecurity-apache-2.6.1-bin
-cp -R $build/modsecurity-crs_2.2.2/optional_rules $build/modsecurity-apache-2.6.1-bin
+cd modsecurity-crs_2.2.2
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.2.patch
+patch -p0 <modsecurity-crs_2.2.2.patch
+cp -R base_rules $build/modsecurity-apache-2.6.1-bin
+cp -R optional_rules $build/modsecurity-apache-2.6.1-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi

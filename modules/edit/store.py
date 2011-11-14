@@ -25,7 +25,7 @@ def storeid(tag):
 # Get a store from the cache
 def getstore(id, cache):
     store = cache.get(id)
-    if isNil(store):
+    if isNil(store) or store is None:
         return ()
     return store
 

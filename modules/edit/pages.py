@@ -33,7 +33,7 @@ def get(id, cache):
     if isNil(id):
         return (("'feed", ("'title", "Pages"), ("'id", "pages")),)
     xhtml = cache.get(appid(id))
-    if (isNil(xhtml) or xhtml is None):
+    if isNil(xhtml) or xhtml is None:
         return (("'entry", ("'title", car(id)), ("'id", car(id))),)
     return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(xhtml))),)
 
