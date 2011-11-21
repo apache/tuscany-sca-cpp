@@ -81,8 +81,8 @@ IH %{MULTIPART_FILE_LIMIT_EXCEEDED}'"
 SecRule MULTIPART_UNMATCHED_BOUNDARY "!@eq 0" "phase:2,t:none,log,deny,status:44,msg:'Multipart parser detected a possible unmatched boundary.'"
 
 # Avoid a potential RegEx DoS condition
-SecPcreMatchLimit 1000
-SecPcreMatchLimitRecursion 1000
+SecPcreMatchLimit 10000
+SecPcreMatchLimitRecursion 10000
 SecRule TX:/^MSC_/ "!@streq 0" "phase:2,t:none,deny,msg:'ModSecurity internal error flagged: %{MATCHED_VAR_NAME}'"
 
 # Detect slow DoS attacks

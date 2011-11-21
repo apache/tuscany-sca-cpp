@@ -53,9 +53,23 @@ cat >>$root/conf/auth.conf <<EOF
 <Location />
 AuthType Open
 AuthName "$host"
+Require valid-user
 AuthOAuth On
 AuthOAuthLoginPage /login
-Require valid-user
+AddAuthOAuth2ScopeAttr REALM realm
+AddAuthOAuth2ScopeAttr REMOTE_USER email
+AddAuthOAuth2ScopeAttr EMAIL email
+AddAuthOAuth2ScopeAttr NICKNAME name
+AddAuthOAuth2ScopeAttr FULLNAME name
+AddAuthOAuth2ScopeAttr FIRSTNAME first_name
+AddAuthOAuth2ScopeAttr LASTNAME last_name
+AddAuthOAuth1ScopeAttr REALM realm
+AddAuthOAuth1ScopeAttr REMOTE_USER email
+AddAuthOAuth1ScopeAttr EMAIL email
+AddAuthOAuth1ScopeAttr NICKNAME screen_name
+AddAuthOAuth2ScopeAttr FULLNAME name
+AddAuthOAuth1ScopeAttr FIRSTNAME first-name
+AddAuthOAuth1ScopeAttr LASTNAME last-name
 </Location>
 
 # Configure OAuth App keys

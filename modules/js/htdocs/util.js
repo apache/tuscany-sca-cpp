@@ -315,8 +315,15 @@ function properties(o) {
  * Convert a host name to a domain name.
  */
 function domainname(host) {
+    var ds = host.indexOf('//');
+    if (ds != -1)
+        return domainname(host.substring(ds + 2));
+    var s = host.indexOf('/');
+    if (s != -1)
+        return domainname(host.substring(0, s));
     var h = reverse(host.split('.'));
-    return reverse(mklist(car(h), cadr(h))).join('.');
+    var d = (!isNil(cddr(h)) && caddr(h) == 'www')? mklist(car(h), cadr(h), caddr(h)) : mklist(car(h), cadr(h));
+    return reverse(d).join('.');
 }
 
 /**

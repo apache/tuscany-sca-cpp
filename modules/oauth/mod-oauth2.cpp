@@ -75,6 +75,7 @@ public:
     const char* dir;
     bool enabled;
     string login;
+    list<list<value> > scopeattrs;
 };
 
 /**
@@ -87,39 +88,36 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& info, request_rec* r) {
+const failable<int> authenticated(const list<list<value> >& attrs, const list<list<value> >& info, request_rec* r) {
     debug(info, "modoauth2::authenticated::info");
 
-    // Store user info in the request
-    const list<value> realm = assoc<value>("realm", info);
-    if (isNil(realm) || isNil(cdr(realm)))
-        return mkfailure<int>("Couldn't retrieve realm");
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "REALM"), apr_pstrdup(r->pool, c_str(cadr(realm))));
+    if (isNil(attrs)) {
 
-    const list<value> id = assoc<value>("id", info);
-    if (isNil(id) || isNil(cdr(id)))
-        return mkfailure<int>("Couldn't retrieve user id");
-    r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
+        // Store user id in an environment variable
+        const list<value> id = assoc<value>("id", info);
+        if (isNil(id) || isNil(cdr(id)))
+            return mkfailure<int>("Couldn't retrieve user id");
+        apr_table_set(r->subprocess_env, "OAUTH2_ID", apr_pstrdup(r->pool, c_str(cadr(id))));
 
-    const list<value> email = assoc<value>("email", info);
-    if (!isNil(email) && !isNil(cdr(email)))
-        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "EMAIL"), apr_pstrdup(r->pool, c_str(cadr(email))));
-
-    const list<value> fullname = assoc<value>("name", info);
-    if (!isNil(fullname) && !isNil(cdr(fullname))) {
-        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
-        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FULLNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
+        // If the request user field has not been mapped to another attribute, map the
+        // OAuth id attribute to it
+        if (r->user == NULL || r->user[0] == '\0')
+            r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
+        return OK;
     }
 
-    const list<value> firstname = assoc<value>("first_name", info);
-    if (!isNil(firstname) && !isNil(cdr(firstname)))
-        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FIRSTNAME"), apr_pstrdup(r->pool, c_str(cadr(firstname))));
+    // Store each configure OAuth scope attribute in an environment variable
+    const list<value> a = car(attrs);
+    const list<value> v = assoc<value>(cadr(a), info);
+    if (!isNil(v) && !isNil(cdr(v))) {
 
-    const list<value> lastname = assoc<value>("last_name", info);
-    if (!isNil(lastname) && !isNil(cdr(lastname)))
-        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "LASTNAME"), apr_pstrdup(r->pool, c_str(cadr(lastname))));
-
-    return OK;
+        // Map the REMOTE_USER attribute to the request user field
+        if (string(car(a)) == "REMOTE_USER")
+            r->user = apr_pstrdup(r->pool, c_str(cadr(v)));
+        else
+            apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, c_str(car(a))), apr_pstrdup(r->pool, c_str(cadr(v))));
+    }
+    return authenticated(cdr(attrs), info, r);
 }
 
 /**
@@ -139,6 +137,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     const list<value> info = assoc<value>("mod_oauth2_info", args);
     if (isNil(info) || isNil(cdr(info)))
         return mkfailure<int>("Missing mod_oauth2_info parameter");
+    const list<value> display = assoc<value>("mod_oauth2_display", args);
 
     // Build the redirect URI
     const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth2_step", "access_token"), tok, cid, info);
@@ -152,7 +151,8 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     list<value> appkey = cadr(app);
 
     // Redirect to the authorize URI
-    const list<list<value> > aargs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("scope", "email"), mklist<value>("redirect_uri", httpd::escape(redir)));
+    const list<value> adisplay = (isNil(display) || isNil(cdr(display)))? list<value>() : mklist<value>("display", cadr(display));
+    const list<list<value> > aargs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("scope", "email"), adisplay, mklist<value>("redirect_uri", httpd::escape(redir)));
     const string uri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(aargs);
     debug(uri, "modoauth2::authorize::uri");
     return httpd::externalRedirect(uri, r);
@@ -266,7 +266,7 @@ static int checkAuthn(request_rec *r) {
         const failable<value> info = userInfo(content(sid), sc.mc);
         if (hasContent(info)) {
             r->ap_auth_type = const_cast<char*>(atype);
-            return httpd::reportStatus(authenticated(content(info), r));
+            return httpd::reportStatus(authenticated(dc.scopeattrs, content(info), r));
         }
     }
 
@@ -313,6 +313,8 @@ int postConfigMerge(ServerConf& mainsc, server_rec* s) {
     // Merge configuration from main server
     if (isNil(sc.appkeys))
         sc.appkeys = mainsc.appkeys;
+    if (isNil(sc.mcaddrs))
+        sc.mcaddrs = mainsc.mcaddrs;
     sc.mc = mainsc.mc;
     sc.cs = mainsc.cs;
 
@@ -416,6 +418,12 @@ const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.key = arg;
     return NULL;
 }
+const char* confScopeAttr(cmd_parms *cmd, void* c, const char* arg1, const char* arg2) {
+    gc_scoped_pool pool(cmd->pool);
+    DirConf& dc = httpd::dirConf<DirConf>(c);
+    dc.scopeattrs = cons<list<value> >(mklist<value>(arg1, arg2), dc.scopeattrs);
+    return NULL;
+}
 
 /**
  * HTTP server module declaration.
@@ -428,6 +436,7 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("AuthOAuthSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "OAUth 2.0 SSL CA certificate file"),
     AP_INIT_TAKE1("AuthOAuthSSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "OAuth 2.0 SSL certificate file"),
     AP_INIT_TAKE1("AuthOAuthSSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "OAuth 2.0 SSL certificate key file"),
+    AP_INIT_TAKE2("AddAuthOAuth2ScopeAttr", (const char*(*)())confScopeAttr, NULL, OR_AUTHCFG, "OAuth 2.0 scope attribute"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 

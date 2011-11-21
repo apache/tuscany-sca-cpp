@@ -265,13 +265,16 @@ HTTPBindingClient.prototype.get = function(id, cb) {
                     if (http.getResponseHeader("X-Login") != null) { 
                         // Detect redirect to a login page
                         try {
-                            cb(null, new HTTPBindingClient.Exception(403, 'X-Login'));
+                            var le = new HTTPBindingClient.Exception(403, 'X-Login');
+                            if (window.onloginredirect)
+                                window.onloginredirect(le);
+                            return cb(null, le);
                         } catch(cbe) {}
 
                     } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
                         // Report empty response
                         try {
-                            cb(null, new HTTPBindingClient.Exception(403, 'No-Content'));
+                            return cb(null, new HTTPBindingClient.Exception(403, 'No-Content'));
                         } catch(cbe) {}
 
                     } else {
@@ -282,7 +285,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
                                 localStorage.setItem(u, http.responseText);
                             }
                             try {
-                                cb(http.responseText);
+                                return cb(http.responseText);
                             } catch(cbe) {}
                         }
                     }
@@ -291,7 +294,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
                     // Pass exception if we didn't have a local result
                     if (item == null) {
                         try {
-                            cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                            return cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
                         } catch(cbe) {}
                     }
                 }
@@ -309,7 +312,10 @@ HTTPBindingClient.prototype.get = function(id, cb) {
         if (http.getResponseHeader("X-Login") != null) {
 
             // Detect redirect to a login page
-            throw new HTTPBindingClient.Exception(403, 'X-Login');
+            var le = new HTTPBindingClient.Exception(403, 'X-Login');
+            if (window.onloginredirect)
+                window.onloginredirect(le);
+            throw le;
 
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
 
@@ -341,7 +347,10 @@ HTTPBindingClient.prototype.getnocache = function(id, cb) {
                     if (http.getResponseHeader("X-Login") != null) {
                         // Detect redirect to a login page
                         try {
-                            return cb(null, new HTTPBindingClient.Exception(403, 'X-Login'));
+                            var le = new HTTPBindingClient.Exception(403, 'X-Login');
+                            if (window.onloginredirect)
+                                window.onloginredirect(le);
+                            return cb(null, le);
                         } catch(cbe) {}
 
                     } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
@@ -352,12 +361,12 @@ HTTPBindingClient.prototype.getnocache = function(id, cb) {
 
                     } else {
                         try {
-                            cb(http.responseText);
+                            return cb(http.responseText);
                         } catch(cbe) {}
                     }
                 } else {
                     try {
-                        cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
+                        return cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
                     } catch(cbe) {}
                 }
             }
@@ -374,7 +383,10 @@ HTTPBindingClient.prototype.getnocache = function(id, cb) {
         if (http.getResponseHeader("X-Login") != null) {
 
             // Detect redirect to a login page
-            throw new HTTPBindingClient.Exception(403, 'X-Login');
+            var le = new HTTPBindingClient.Exception(403, 'X-Login');
+            if (window.onloginredirect)
+                window.onloginredirect(le);
+            throw le;
 
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
 

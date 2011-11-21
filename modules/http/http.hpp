@@ -869,8 +869,11 @@ const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs) {
 ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
     if (isNil(args))
         return os;
-    debug(car(args), "http::queryString::arg");
-    os << car(car(args)) << "=" << c_str(cadr(car(args)));
+    const list<value> arg = car(args);
+    debug(arg, "http::queryString::arg");
+    if (isNil(arg) || isNil(cdr(arg)))
+        return queryString(cdr(args), os);
+    os << car(arg) << "=" << c_str(cadr(arg));
     if (!isNil(cdr(args)))
         os << "&";
     return queryString(cdr(args), os);

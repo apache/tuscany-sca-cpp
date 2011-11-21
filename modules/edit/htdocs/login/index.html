@@ -32,19 +32,6 @@
 
 <h1>Sign in</h1>
 
-<!--
-<form name="passwordSignin" onsubmit="submitPasswordSignin();" method="POST" action="/login/dologin/">
-<table border="0">
-<tr><td><b>Username:</b></td></tr>
-<tr><td><input type="text" id="httpd_username" name="httpd_username" value="" size="15" autocapitalize="off" placeholder="Enter your user name" style="width: 300px;"/></td></tr>
-<tr><td><b>Password:</b></td></tr>
-<tr><td><input type="password" name="httpd_password" value="" size="15" placeholder="Enter your password" style="width: 300px;"/></td></tr>
-<tr><td><input type="submit" value="Sign in" class="graybutton" style="font-weight: bold;"/></td><td></td></tr>
-</table>
-<input type="hidden" name="httpd_location" value="/"/>
-</form>
--->
-
 <form name="openIDForm">
 <table border="0">
 <tr><td><b>Sign in with your Google account</b></td></tr>
@@ -68,55 +55,30 @@
 <input type="hidden" name="mod_oauth2_access_token" value=""/>
 <input type="hidden" name="mod_oauth2_client_id" value=""/>
 <input type="hidden" name="mod_oauth2_info" value=""/>
+<input type="hidden" name="mod_oauth2_display" value=""/>
 <input type="hidden" name="mod_oauth2_step" value="authorize"/>
 </form>
 
 <script type="text/javascript">
 function queryParams() {
-    qp = new Array();
-    qs = window.location.search.substring(1).split('&');
-    for (i = 0; i < qs.length; i++) {
-        e = qs[i].indexOf('=');
+    var qp = new Array();
+    var qs = window.location.search.substring(1).split('&');
+    for (var i = 0; i < qs.length; i++) {
+        var e = qs[i].indexOf('=');
         if (e > 0)
             qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
     }
     return qp;
 }
 
-function formReferrer() {
-    r = queryParams()['openauth_referrer'];
-    if (typeof(r) == 'undefined')
-        return '/';
-    s = r.indexOf('//');
-    if (s > 0)
-        r = r.substring(s + 2);
-    s = r.indexOf('/');
-    if (s > 0)
-        r = r.substring(s);
-    return r;
-}
-
 function openauthReferrer() {
-    r = queryParams()['openauth_referrer'];
-    if (typeof(r) == 'undefined')
+    var r = queryParams()['openauth_referrer'];
+    if (typeof(r) == 'undefined' || domainname(r) != domainname(window.location.hostname))
         return '/';
-    q = r.indexOf('?');
+    var q = r.indexOf('?');
     if (q > 0)
         return r.substring(0, q);
     return r;
-}
-
-/**
- * Signin with a userid and password.
- */
-function submitPasswordSignin() {
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = reset;
-    localStorage.removeItem('/r/EditWidget/accounts');
-    localStorage.removeItem('/r/EditWidget/dashboards');
-    //localStorage.clear();
-    document.passwordSignin.httpd_location.value = formReferrer();
-    document.passwordSignin.submit();
 }
 
 /**
@@ -151,12 +113,13 @@ function submitOAuth2Signin(w) {
     document.oauth2Signin.mod_oauth2_access_token.value = parms[1];
     document.oauth2Signin.mod_oauth2_client_id.value = parms[2];
     document.oauth2Signin.mod_oauth2_info.value = parms[3];
+    document.oauth2Signin.mod_oauth2_display.value = parms[4];
     document.oauth2Signin.action = openauthReferrer();
     document.oauth2Signin.submit();
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me', ui.isMobile()? 'touch' : 'page'];
     return parms;
 }
 

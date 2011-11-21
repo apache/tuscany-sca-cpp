@@ -274,6 +274,21 @@ ui.menu = function(name, href, target, hilight) {
     return new Menu();
 };
 
+ui.menufunc = function(name, fun, hilight) {
+    function Menu() {
+        this.content = function() {
+            function href(fun, html) {
+                return '<a href="javascript:void(0)" onclick="' + fun + '">' + html + '</a>';
+            }
+
+            if (hilight)
+                return href(fun, '<span class="tbarsmenu">' + name + '</span>');
+            return href(fun, '<span class="tbaramenu">' + name + '</span>');
+        };
+    }
+    return new Menu();
+};
+
 ui.menubar = function(left, right) {
     var bar = '<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr>' +
     '<td class="dtbar"><table border="0" cellspacing="0" cellpadding="0"><tr>';

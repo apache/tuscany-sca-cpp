@@ -45,6 +45,7 @@ AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
 AuthOpenIDCookieName TuscanyOpenAuth
 AuthOpenIDLoginPage /login/
+AuthOpenIDAXAdd REMOTE_USER http://axschema.org/contact/email
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
 AuthOpenIDAXAdd FULLNAME http://axschema.org/namePerson
 AuthOpenIDAXAdd NICKNAME http://axschema.org/namePerson/friendly
