@@ -175,8 +175,11 @@ const failable<bool> post(const value& key, const value& val, FileDB& db) {
     const string fn = filename(key, db.name);
     debug(fn, "filedb::post::filename");
     ofstream os(fn);
-    if (os.fail())
-        return mkfailure<bool>("Couldn't post file database entry.");
+    if (os.fail()) {
+        ostringstream os;
+        os << "Couldn't post file database entry: " << key;
+        return mkfailure<bool>(str(os));
+    }
     const failable<bool> r = write(val, os, db.format);
 
     debug(r, "filedb::post::result");
@@ -196,8 +199,11 @@ const failable<bool> put(const value& key, const value& val, FileDB& db) {
     const string fn = filename(key, db.name);
     debug(fn, "filedb::put::filename");
     ofstream os(fn);
-    if (os.fail())
-        return mkfailure<bool>("Couldn't put file database entry.");
+    if (os.fail()) {
+        ostringstream os;
+        os << "Couldn't put file database entry: " << key;
+        return mkfailure<bool>(str(os));
+    }
     const failable<bool> r = write(val, os, db.format);
 
     debug(r, "filedb::put::result");
@@ -214,8 +220,11 @@ const failable<value> get(const value& key, FileDB& db) {
     const string fn = filename(key, db.name);
     debug(fn, "filedb::get::filename");
     ifstream is(fn);
-    if (is.fail())
-        return mkfailure<value>("Couldn't get file database entry.");
+    if (is.fail()) {
+        ostringstream os;
+        os << "Couldn't get file database entry: " << key;
+        return mkfailure<value>(str(os));
+    }
     const failable<value> val = read(is, db.format);
 
     debug(val, "filedb::get::result");
@@ -232,8 +241,11 @@ const failable<bool> del(const value& key, FileDB& db) {
     const string fn = filename(key, db.name);
     debug(fn, "filedb::del::filename");
     const int rc = unlink(c_str(fn));
-    if (rc == -1)
-        return mkfailure<bool>("Couldn't delete file database entry.");
+    if (rc == -1) {
+        ostringstream os;
+        os << "Couldn't delete file database entry: " << key;
+        return mkfailure<bool>(str(os));
+    }
 
     debug(true, "filedb::delete::result");
     return true;

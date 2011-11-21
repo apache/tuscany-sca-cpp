@@ -81,7 +81,7 @@ HostNameLookups Off
 # [timestamp] [access] remote-host remote-ident remote-user "request-line"
 # status response-size "referrer" "user-agent" "user-track" local-IP
 # virtual-host response-time bytes-received bytes-sent
-LogLevel info
+LogLevel notice
 ErrorLog $root/logs/error_log
 LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [access] %h %l %u \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%{cookie}n\" %A %V %D %I %O" combined
 CustomLog $root/logs/access_log combined

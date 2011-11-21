@@ -282,6 +282,11 @@ template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
     os << f;
     if (length(str(os)) != 0)
         debug(f, "failable::mkfailure");
+#else
+    ostringstream os;
+    os << f;
+    if (length(str(os)) != 0)
+        cfailure << "failable::mkfailure" << ": " << f << endl;
 #endif
     return failable<V, F>(false, f);
 }

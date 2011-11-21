@@ -52,8 +52,11 @@ const failable<value> get(const value& key, const lambda<value(const list<value>
 
     // Lookup level2 cache
     const value val2 = rcache2(mklist<value>("get", key));
-    if (isNil(val2))
-        return mkfailure<value>("Couldn't get cache entry");
+    if (isNil(val2)) {
+        ostringstream os;
+        os << "Couldn't get cache entry: " << key;
+        return mkfailure<value>(str(os));
+    }
 
     // Update level1 cache
     wcache1(mklist<value>("put", key, val2));
