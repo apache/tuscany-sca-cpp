@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,8 +17,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-dist_ubuntu_SCRIPTS = ip-redirect ip-redirect-all uec2-conf uec2-setenv uec2-ssh uec2-start uec2-status uec2-stop
-ubuntudir=$(prefix)/ubuntu
-
-dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-bin-all-image ubuntu-dev-image ubuntu-dev-all-image ubuntu-install ubuntu-backup ubuntu-install-all ubuntu-backup-all uec2-bin-image uec2-bin-all-image uec2-dev-image uec2-dev-all-image
+cd ../../
+tar czf ../config-backup.tar.gz modules/edit/*start modules/edit/*stop modules/edit/htdocs/*.js modules/edit/htdocs/public/*.js modules/edit/htdocs/home/*.b64 modules/edit/htdocs/home/*.png
 
