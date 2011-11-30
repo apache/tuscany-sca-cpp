@@ -26,7 +26,7 @@ set -x
 build=`pwd`
 
 # Install core dev tools
-sudo apt-get -y install curl git-core subversion autoconf pkg-config automake libtool g++ make
+sudo apt-get -y install curl git-core subversion autoconf pkg-config automake libtool g++ make gdb vim
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -245,6 +245,7 @@ cp -R optional_rules $build/modsecurity-apache-2.6.1-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
+cd $build
 
 # Build Apache Thrift
 sudo apt-get -y install bison flex python-dev libboost-dev libboost-filesystem-dev 
