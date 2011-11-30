@@ -136,6 +136,7 @@ js-test
 js-eval
 file-test
 test-start*
+test-stop*
 xml-value
 value-xml
 json-value

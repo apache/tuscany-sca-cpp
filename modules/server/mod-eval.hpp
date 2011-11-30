@@ -97,7 +97,7 @@ const bool hasVirtualCompositeConf(const ServerConf& sc) {
 const failable<value> failableResult(const list<value>& v) {
     if (isNil(cdr(v)))
         return car(v);
-    return mkfailure<value>(string(cadr(v)));
+    return mkfailure<value>(string(cadr(v)), false);
 }
 
 /**

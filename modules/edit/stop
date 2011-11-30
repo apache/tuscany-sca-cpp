@@ -18,6 +18,12 @@
 #  under the License.
 
 ../../modules/http/httpd-stop tmp
+
 ../../components/cache/memcached-stop 11211
 ../../components/cache/memcached-stop 11212
+
+if [ -x ../../components/log/scribe-cat ]; then
+    ../../components/log/scribed-client-stop tmp
+    ../../components/log/scribed-central-stop tmp
+fi
 

@@ -180,7 +180,7 @@ const failable<value> get(const value& key, const MemCached& cache) {
     if (rc != APR_SUCCESS) {
         ostringstream os;
         os << "Couldn't get memcached entry: " << key;
-        return mkfailure<value>(str(os));
+        return mkfailure<value>(str(os), false);
     }
     const value val(scheme::readValue(string(data, size)));
 

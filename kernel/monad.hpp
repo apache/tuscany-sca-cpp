@@ -242,7 +242,7 @@ private:
     template<typename A, typename B> friend const bool hasContent(const failable<A, B>& m);
     template<typename A, typename B> friend const A content(const failable<A, B>& m);
     template<typename A, typename B> friend const B reason(const failable<A, B>& m);
-    template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f);
+    template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f, const bool log = true);
     template<typename A> friend const failable<A, string> mkfailure();
 
     bool hasv;
@@ -276,22 +276,26 @@ template<typename V, typename F> const lambda<failable<V, F>(const V)> success()
 /**
  * Returns a failable monad with a failure in it.
  */
-template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
+template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const bool log = true) {
 #ifdef WANT_MAINTAINER_MODE
-    ostringstream os;
-    os << f;
-    if (length(str(os)) != 0)
-        debug(f, "failable::mkfailure");
+    if (log) {
+        ostringstream os;
+        os << f;
+        if (length(str(os)) != 0)
+            debug(f, "failable::mkfailure");
+    }
 #else
-    ostringstream os;
-    os << f;
-    if (length(str(os)) != 0)
-        cfailure << "failable::mkfailure" << ": " << f << endl;
+    if (log) {
+        ostringstream os;
+        os << f;
+        if (length(str(os)) != 0)
+            cfailure << "failable::mkfailure" << ": " << f << endl;
+    }
 #endif
     return failable<V, F>(false, f);
 }
 
-template<typename V> const failable<V> mkfailure(const char* f) {
+template<typename V> const failable<V> mkfailure(const char* f, const bool log = true) {
     return mkfailure<V, string>(string(f));
 }
 
