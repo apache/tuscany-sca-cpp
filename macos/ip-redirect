@@ -15,24 +15,22 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-ACLOCAL_AMFLAGS = -I m4
+# Redirect TCP/IP traffic to a particular IP address from one port to another
+# port. This is useful to handle incoming traffic on a standard reserved port
+# like 80 or 443 for example in an unprivileged user process bound to a non
+# reserved port.
+# Example: ip-redirect 80 8090 10.1.1.1
 
-SUBDIRS = etc kernel modules components samples doc macos ubuntu
+sport=$1
+tport=$2
+dest=$3
+if [ "$dest" = "" ]; then
+    dest="127.0.0.1"
+fi
 
-datadir=$(prefix)
-dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE NEWS
-nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-EXTRA_DIST = INSTALL bootstrap
+# Delete existing rule
+sudo /sbin/ipfw list | grep "fwd $dest,$sport tcp from any" | awk '{ printf "sudo ipfw delete %s\n", $1 }' | /bin/sh
 
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
-	rm -rf $(distdir)/.git
+# Redirect incoming traffic
+sudo /sbin/ipfw add $sport fwd $dest,$sport tcp from any to $dest $tport
 
-bindist: install
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	

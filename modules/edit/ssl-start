@@ -141,8 +141,8 @@ Alias /home/home.b64 $here/htdocs/home/home.b64
 
 EOF
 
-# Create app links and sub-directories if needed
-./mkapplinks
+# Create app resource links
+./mkapplinks . ../../../.. ../../../../../nuvem
 
 # Configure app resource aliases
 cat >>tmp/conf/svhost-ssl.conf <<EOF

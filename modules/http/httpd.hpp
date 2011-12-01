@@ -45,12 +45,16 @@
 #include <http_request.h>
 // Ignore conversion warnings in HTTPD 2.3.15 header
 #ifdef WANT_MAINTAINER_MODE
+#ifndef IS_DARWIN
 #pragma GCC diagnostic ignored "-Wconversion"
+#endif
 #endif
 #include <http_protocol.h>
 // Re-enable conversion warnings
 #ifdef WANT_MAINTAINER_MODE
+#ifndef IS_DARWIN
 #pragma GCC diagnostic warning "-Wconversion"
+#endif
 #endif
 // Hack to workaround compile error with HTTPD 2.3.8
 #define aplog_module_index aplog_module_index = 0

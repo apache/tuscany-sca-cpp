@@ -16,7 +16,7 @@
 #  under the License.
 
 # Install a complete distribution, the required system tools and libraries, the
-# runtime dependencies and the Tuscany SCA runtime on a fresh MacOS 10.6.7
+# runtime dependencies and the Tuscany SCA runtime on a fresh Mac OS X 10.6.7
 # system.
 
 # Display commands as they are executed
@@ -24,10 +24,6 @@ set -x
 
 # Build and install in the current directory
 build=`pwd`
-build=$build/build
-rm -rf $build
-mkdir $build
-cd $build
 
 # Install pkg-config
 curl -OL http://pkgconfig.freedesktop.org/releases/pkg-config-0.25.tar.gz

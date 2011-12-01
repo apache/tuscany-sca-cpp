@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-dist_macos_SCRIPTS = 
+dist_macos_SCRIPTS = ip-redirect ip-redirect-all
 macosdir=$(prefix)/macos
 
 dist_noinst_SCRIPTS = macos-install

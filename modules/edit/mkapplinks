@@ -17,16 +17,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Create app links and sub-directories if needed
+aprefix=$1
+tprefix=$2
+nprefix=$3
+
+# Create app links to Nuvem and Tuscany components
+cd $1
 for n in `ls apps | awk '{ printf "apps/%s/nuvem\n", $1 }'`; do
     if [ ! -e "$n" ]; then
-        ln -s ../../../../../nuvem/nuvem-parallel/nuvem "$n"
+        ln -s "$nprefix/nuvem-parallel/nuvem" "$n"
     fi
 done
 
 for n in `ls apps | awk '{ printf "apps/%s/lib\n", $1 }'`; do
     if [ ! -e "$n" ]; then
-        ln -s ../../../../components "$n"
+        ln -s "$tprefix/components" "$n"
     fi
 done
 

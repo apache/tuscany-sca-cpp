@@ -16,7 +16,7 @@
 #  under the License.
 
 # Redirect TCP/IP traffic to all local addresses from one port to another
-# Example: ip-redirect 80 8090
+# Example: ip-redirect-all 80 8090
 
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 sport=$1
