@@ -148,7 +148,7 @@ Key/value persistent store:
 Google LevelDB 1.2 (http://code.google.com/p/leveldb/)
 
 SQL database:
-PostgreSQL 9.0.3 (http://www.postgresql.org/)
+PostgreSQL 9.1.2 (http://www.postgresql.org/)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
@@ -240,7 +240,7 @@ dependencies installed under $build:
 --enable-queue --with-qpidc=$build/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$build/libstrophe-bin \
 --with-vysper=$build/vysper-0.5 \
---enable-sqldb --with-pgsql=$build/postgresql-9.0.3-bin \
+--enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin \
 --enable-log --with-thrift=$build/thrift-0.2.0-bin \
 --with-scribe=$build/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin \
