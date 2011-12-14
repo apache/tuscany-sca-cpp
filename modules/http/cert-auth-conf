@@ -43,10 +43,10 @@ EOF
 
 # Create password file and certificate-based users
 cat >>$root/conf/httpd.passwd <<EOF
-/C=US/ST=CA/L=San Francisco/O=$host/OU=server/CN=$host:\$1\$OXLyS...\$Owx8s2/m9/gfkcRVXzgoE/
-/C=US/ST=CA/L=San Francisco/O=$host/OU=proxy/CN=$host:\$1\$OXLyS...\$Owx8s2/m9/gfkcRVXzgoE/
-/C=US/ST=CA/L=San Francisco/O=$host/OU=tunnel/CN=$host:\$1\$OXLyS...\$Owx8s2/m9/gfkcRVXzgoE/
-/C=US/ST=CA/L=San Francisco/O=localhost/OU=server/CN=localhost:\$1\$OXLyS...\$Owx8s2/m9/gfkcRVXzgoE/
-/C=US/ST=CA/L=San Francisco/O=localhost/OU=tunnel/CN=localhost:\$1\$OXLyS...\$Owx8s2/m9/gfkcRVXzgoE/
+/C=US/ST=CA/L=San Francisco/O=$host/OU=server/CN=$host:xxj31ZMTZzkVA
+/C=US/ST=CA/L=San Francisco/O=$host/OU=proxy/CN=$host:xxj31ZMTZzkVA
+/C=US/ST=CA/L=San Francisco/O=$host/OU=tunnel/CN=$host:xxj31ZMTZzkVA
+/C=US/ST=CA/L=San Francisco/O=localhost/OU=server/CN=localhost:xxj31ZMTZzkVA
+/C=US/ST=CA/L=San Francisco/O=localhost/OU=tunnel/CN=localhost:xxj31ZMTZzkVA
 EOF
 
