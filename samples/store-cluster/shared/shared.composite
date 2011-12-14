@@ -37,7 +37,7 @@
         <service name="Memcache">
             <binding.atom uri="memcache"/>
         </service>
-        <property name="servers">localhost:11211,localhost:11212,localhost:11213</property>
+        <property name="servers">localhost:11211 localhost:11212 localhost:11213</property>
     </component>
 
     <component name="Masterdb">

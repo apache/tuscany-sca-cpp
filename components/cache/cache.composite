@@ -26,7 +26,7 @@
         <service name="memcache">
             <binding.http uri="memcache"/>
         </service>
-        <property name="servers">localhost,localhost:11212,localhost:11213</property>
+        <property name="servers">localhost localhost:11212 localhost:11213</property>
     </component>
 
     <component name="l2cache">
@@ -34,7 +34,7 @@
         <service name="l2cache">
             <binding.http uri="l2cache"/>
         </service>
-        <property name="servers">localhost:11411,localhost:11412,localhost:11413</property>
+        <property name="servers">localhost:11411 localhost:11412 localhost:11413</property>
     </component>
 
     <component name="datacache">
