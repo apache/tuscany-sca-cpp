@@ -323,7 +323,7 @@ UseCanonicalName Off
 
 # Enable HTTP reverse proxy
 ProxyRequests Off
-ProxyPreserveHost On
+ProxyPreserveHost Off
 ProxyStatus On
 
 EOF

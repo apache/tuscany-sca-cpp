@@ -129,7 +129,7 @@ Include conf/log-ssl.conf
 
 # Enable HTTPS reverse proxy
 ProxyRequests Off
-ProxyPreserveHost On
+ProxyPreserveHost Off
 ProxyStatus On
 SSLProxyEngine on
 SSLProxyCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
