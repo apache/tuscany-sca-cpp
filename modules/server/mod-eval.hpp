@@ -56,10 +56,10 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
     }
 
-    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(ssc.ca), cert(ssc.cert), key(ssc.key) {
+    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(ssc.ca), cert(ssc.cert), key(ssc.key) {
     }
 
     const gc_pool p;
@@ -67,6 +67,7 @@ public:
     lambda<value(const list<value>&)> lifecycle;
     string contributionPath;
     string compositeName;
+    string virtualHostDomain;
     string virtualHostContributionPath;
     string virtualHostCompositeName;
     string ca;
@@ -81,6 +82,13 @@ public:
  */
 const bool hasCompositeConf(const ServerConf& sc) {
     return sc.contributionPath != "" && sc.compositeName != "";
+}
+
+/**
+ * Return true if a server contains a virtual host domain configuration.
+ */
+const bool hasVirtualDomainConf(const ServerConf& sc) {
+    return sc.virtualHostDomain != "";
 }
 
 /**
@@ -812,7 +820,7 @@ const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_
 
     // Handle a request targeting a virtual host or virtual app
     if (hasVirtualCompositeConf(sc)) {
-        if (httpd::isVirtualHostRequest(sc.server, r)) {
+        if (hasVirtualDomainConf(sc) && httpd::isVirtualHostRequest(sc.server, sc.virtualHostDomain, r)) {
             ServerConf vsc(r->pool, sc, http::subDomain(httpd::hostName(r)));
             if (!hasContent(virtualHostConfig(vsc, sc, r)))
                 return HTTP_INTERNAL_SERVER_ERROR;
@@ -916,6 +924,7 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     sc.lifecycle = mainsc.lifecycle;
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
+    sc.virtualHostDomain = mainsc.virtualHostDomain;
     sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
     sc.virtualHostCompositeName = mainsc.virtualHostCompositeName;
     if (sc.ca == "") sc.ca = mainsc.ca;
@@ -1026,6 +1035,12 @@ const char* confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.compositeName = arg;
     return NULL;
 }
+const char* confVirtualDomain(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.virtualHostDomain = arg;
+    return NULL;
+}
 const char* confVirtualContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
@@ -1068,6 +1083,7 @@ const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, con
 const command_rec commands[] = {
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
+    AP_INIT_TAKE1("SCAVirtualDomain", (const char*(*)())confVirtualDomain, NULL, RSRC_CONF, "SCA virtual host domain"),
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),

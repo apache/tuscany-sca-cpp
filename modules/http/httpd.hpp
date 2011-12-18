@@ -79,6 +79,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "http.hpp"
 
 
 namespace tuscany {
@@ -119,31 +120,6 @@ template<typename C> C& dirConf(const void* c) {
 }
 
 /**
- * Return the name of a server.
- */
-const string serverName(const server_rec* s, const string& def = "localhost") {
-    ostringstream n;
-    n << (s->server_scheme != NULL? s->server_scheme : "http") << "://"
-        << (s->server_hostname != NULL? s->server_hostname : def) << ":"
-        << (s->port != 0? s->port : 80)
-        << (s->path != NULL? string(s->path, s->pathlen) : "");
-    return str(n);
-}
-
-/**
- * Determine the name of a server from an HTTP request.
- */
-const string serverName(request_rec* r, const string& def = "localhost") {
-    ostringstream n;
-    const char* hn = ap_get_server_name(r);
-    n << (r->server->server_scheme != NULL? r->server->server_scheme : "http") << "://"
-        << (hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : def)) << ":"
-        << (r->server->port != 0? r->server->port : 80)
-        << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : "");
-    return str(n);
-}
-
-/**
  * Return the host name for a server.
  */
 const string hostName(const server_rec* s, const string& def = "localhost") {
@@ -154,15 +130,11 @@ const string hostName(const server_rec* s, const string& def = "localhost") {
  * Return the host name from an HTTP request.
  */
 const string hostName(request_rec* r, const string& def = "localhost") {
-    const char* hn = ap_get_server_name(r);
-    return hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : def);
-}
-
-/**
- * Return true if a request is targeting a virtual host.
- */
-const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
-    return hostName(r) != hostName(s);
+    const char* fh = apr_table_get(r->headers_in, "X-Forwarded-Server");
+    if (fh != NULL)
+        return fh;
+    const char* h = ap_get_server_name(r);
+    return h != NULL? h : (r->server->server_hostname != NULL? r->server->server_hostname : def);
 }
 
 /**
@@ -176,6 +148,9 @@ const string scheme(const server_rec* s, const string& def = "http") {
  * Return the protocol scheme from an HTTP request.
  */
 const string scheme(request_rec* r, const string& def = "http") {
+    const char* fs = apr_table_get(r->headers_in, "X-Forwarded-HTTPS");
+    if (fs != NULL)
+        return !strcmp(fs, "on")? "https" : "http";
     return r->server->server_scheme != NULL? r->server->server_scheme : def;
 }
 
@@ -190,7 +165,49 @@ const int port(const server_rec* s, const int def = 80) {
  * Return the port number from an HTTP request.
  */
 const int port(request_rec* r, const int def = 80) {
-    return r->server->port != 0? r->server->port : def;
+    const char* fp = apr_table_get(r->headers_in, "X-Forwarded-Port");
+    if (fp != NULL)
+        return atoi(fp);
+    const int p = ap_get_server_port(r);
+    return p != 0? p : def;
+}
+
+/**
+ * Return the name of a server.
+ */
+const string serverName(const server_rec* s, const string& def = "localhost") {
+    ostringstream n;
+    const string sc = scheme(s);
+    const string h = hostName(s, def);
+    const int p = port(s, sc == "https"? 443 : 80);
+    n << sc << "://" << h;
+    if (!((sc == "http" && p == 80) || (sc == "https" && p == 443)))
+        n << ":" << p;
+    n << (s->path != NULL? string(s->path, s->pathlen) : "");
+    return str(n);
+}
+
+/**
+ * Determine the name of a server from an HTTP request.
+ */
+const string serverName(request_rec* r, const string& def = "localhost") {
+    ostringstream n;
+    const string s = scheme(r);
+    const string h = hostName(r, def);
+    const int p = port(r, s == "https"? 443 : 80);
+    n << s << "://" << h;
+    if (!((s == "http" && p == 80) || (s == "https" && p == 443)))
+        n << ":" << p;
+    n << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : "");
+    return str(n);
+}
+
+/**
+ * Return true if a request is targeting a virtual host.
+ */
+const bool isVirtualHostRequest(const server_rec* s, const string& d, request_rec* r) {
+    const string rh = hostName(r);
+    return rh != hostName(s) && http::topDomain(rh) == d;
 }
 
 /**
@@ -223,18 +240,25 @@ const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
 }
 
 /**
- * Convert a URI and a path to an absolute URL.
- */
-const string url(const string& uri, const list<value>& p, request_rec* r) {
-    const string u = uri + path(p);
-    return ap_construct_url(r->pool, c_str(u), r);
-}
-
-/**
  * Convert a URI to an absolute URL.
  */
 const string url(const string& uri, request_rec* r) {
-    return ap_construct_url(r->pool, c_str(uri), r);
+    ostringstream n;
+    const string s = scheme(r);
+    const string h = hostName(r, "localhost");
+    const int p = port(r, s == "https"? 443 : 80);
+    n << s << "://" << h;
+    if (!((s == "http" && p == 80) || (s == "https" && p == 443)))
+        n << ":" << p;
+    n << uri;
+    return str(n);
+}
+
+/**
+ * Convert a URI and a path to an absolute URL.
+ */
+const string url(const string& uri, const list<value>& p, request_rec* r) {
+    return url(uri + path(p), r);
 }
 
 /**

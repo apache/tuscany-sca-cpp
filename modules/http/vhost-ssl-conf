@@ -52,13 +52,5 @@ ServerAlias *.$host
 VirtualDocumentRoot $vroot/%1/$vhtdocs/
 
 Include conf/dvhost-ssl.conf
-
-# Allow access to document root
-<Directory "$vroot">
-Options FollowSymLinks
-AuthType None
-Require all granted
-</Directory>
-
 </VirtualHost>
 

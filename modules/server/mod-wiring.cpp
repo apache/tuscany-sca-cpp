@@ -54,16 +54,17 @@ const bool useModProxy = true;
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
     }
 
-    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostContributionPath(""), virtualHostCompositeName("") {
+    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
     }
 
     const gc_pool p;
     server_rec* server;
     string contributionPath;
     string compositeName;
+    string virtualHostDomain;
     string virtualHostContributionPath;
     string virtualHostCompositeName;
     list<value> references;
@@ -75,6 +76,13 @@ public:
  */
 const bool hasCompositeConf(const ServerConf& sc) {
     return sc.contributionPath != "" && sc.compositeName != "";
+}
+
+/**
+ * Return true if a server contains a virtual host domain configuration.
+ */
+const bool hasVirtualDomainConf(const ServerConf& sc) {
+    return sc.virtualHostDomain != "";
 }
 
 /**
@@ -304,8 +312,9 @@ const int translateRequest(const ServerConf& sc, request_rec *r, const list<valu
 
         // If the request is targeting a virtual host, use the corresponding
         // virtual host configuration
+        const bool vdc = hasVirtualDomainConf(sc);
         const bool vcc = hasVirtualCompositeConf(sc);
-        if (vcc && httpd::isVirtualHostRequest(sc.server, r)) {
+        if (vdc && vcc && httpd::isVirtualHostRequest(sc.server, sc.virtualHostDomain, r)) {
             ServerConf vsc(r->pool, sc, http::subDomain(httpd::hostName(r)));
             if (!hasContent(virtualHostConfig(vsc, sc, r)))
                 return HTTP_INTERNAL_SERVER_ERROR;
@@ -409,6 +418,7 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
+    sc.virtualHostDomain = mainsc.virtualHostDomain;
     sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
     sc.virtualHostCompositeName = mainsc.virtualHostCompositeName;
     sc.references = mainsc.references;
@@ -462,6 +472,12 @@ const char *confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.compositeName = arg;
     return NULL;
 }
+const char *confVirtualDomain(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
+    sc.virtualHostDomain = arg;
+    return NULL;
+}
 const char *confVirtualContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
@@ -481,6 +497,7 @@ const char *confVirtualComposite(cmd_parms *cmd, unused void *c, const char *arg
 const command_rec commands[] = {
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
+    AP_INIT_TAKE1("SCAVirtualDomain", (const char*(*)())confVirtualDomain, NULL, RSRC_CONF, "SCA virtual host domain"),
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual host composite location"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}

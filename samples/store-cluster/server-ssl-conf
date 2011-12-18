@@ -52,6 +52,7 @@ SCAContribution `pwd`/shared/
 SCAComposite shared.composite
 
 # Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualDomain sca-store.com
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
 

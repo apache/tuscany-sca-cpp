@@ -41,6 +41,7 @@ sudo ../../ubuntu/ip-redirect-all 443 8453
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 # Configure SCA Composite for mass dynamic virtual Hosting
+SCAVirtualDomain $host
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
 

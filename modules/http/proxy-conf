@@ -32,5 +32,10 @@ Require all granted
 ProxySet lbmethod=byrequests
 </Proxy>
 
+<Location />
+RequestHeader set X-Forwarded-HTTPS %{HTTPS}s
+RequestHeader set X-Forwarded-Port %{SERVER_PORT}s
+</Location>
+
 EOF
 
