@@ -306,7 +306,7 @@ sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -OL ftp://ftp9.us.postgresql.org/pub/mirrors/postgresql/source/v9.1.2/postgresql-9.1.2.tar.gz
+curl -OL http://ftp.postgresql.org/pub/source/v9.1.2/postgresql-9.1.2.tar.gz
 tar xzf postgresql-9.1.2.tar.gz
 cd postgresql-9.1.2
 ./configure --prefix=$build/postgresql-9.1.2-bin --enable-thread-safety
