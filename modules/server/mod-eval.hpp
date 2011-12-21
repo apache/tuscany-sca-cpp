@@ -741,7 +741,7 @@ const failable<bool> confComponents(ServerConf& sc) {
     if (sc.key != "") debug(sc.key, "modeval::confComponents::sslKey");
 
     // Read the components and get their implementation lambda functions
-    const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
+    const failable<list<value> > comps = readComponents(scdl::resourcePath(sc.contributionPath, sc.compositeName));
     if (!hasContent(comps))
         return mkfailure<bool>(reason(comps));
     sc.implementations = componentToImplementationAssoc(sc, content(comps));

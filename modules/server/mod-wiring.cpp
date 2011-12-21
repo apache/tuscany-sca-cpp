@@ -265,7 +265,7 @@ const bool confComponents(ServerConf& sc) {
 
     // Read the component configuration and store the references and service URIs
     // in trees for fast retrieval later
-    const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
+    const failable<list<value> > comps = readComponents(scdl::resourcePath(sc.contributionPath, sc.compositeName));
     if (!hasContent(comps))
         return true;
     const list<value> refs = componentReferenceToTargetAssoc(content(comps));

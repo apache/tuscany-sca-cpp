@@ -208,6 +208,13 @@ const value propertyValue(const value& l) {
     return elementValue(l);
 }
 
+/**
+ * Returns the absolute path of a resource in a contribution.
+ */
+const string resourcePath(const string& contrib, const string& path) {
+    return c_str(path)[0] == '/'? path : contrib + path;
+}
+
 }
 }
 
