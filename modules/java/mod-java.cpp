@@ -23,6 +23,7 @@
  * HTTPD module used to eval Java component implementations.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"

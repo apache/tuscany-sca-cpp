@@ -34,6 +34,7 @@
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 #undef VERSION
+#undef OK
 
 // Ignore integer conversion issues in Thrift and Scribe headers
 #ifdef WANT_MAINTAINER_MODE

@@ -278,20 +278,15 @@ template<typename V, typename F> const lambda<failable<V, F>(const V)> success()
  */
 template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const bool log = true) {
 #ifdef WANT_MAINTAINER_MODE
-    if (log) {
-        ostringstream os;
-        os << f;
-        if (length(str(os)) != 0)
-            debug(f, "failable::mkfailure");
-    }
-#else
+    if (!log)
+        debug(f, "failable::mkfailure");
+#endif
     if (log) {
         ostringstream os;
         os << f;
         if (length(str(os)) != 0)
             cfailure << "failable::mkfailure" << ": " << f << endl;
     }
-#endif
     return failable<V, F>(false, f);
 }
 

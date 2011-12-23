@@ -23,6 +23,7 @@
  * Axis2/C service implementation that dispatches requests to SCA Web service components.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "value.hpp"
 #include "string.hpp"
 #include "../../modules/http/httpd.hpp"

@@ -29,6 +29,7 @@
  * cache without actually applying the function.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"

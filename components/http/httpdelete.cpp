@@ -23,6 +23,7 @@
  * HTTP client component implementation.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"

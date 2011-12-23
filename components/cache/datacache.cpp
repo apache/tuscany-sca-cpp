@@ -31,6 +31,7 @@
  * meantime the updates will be retrieved from the level1 cache).
  */
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"

@@ -25,6 +25,7 @@
  * input data from component references instead of function parameters.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"

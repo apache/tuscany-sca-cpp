@@ -30,6 +30,7 @@ extern "C" {
 #include <oauth.h>
 }
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "stream.hpp"
 #include "list.hpp"

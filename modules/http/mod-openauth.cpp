@@ -33,6 +33,7 @@
 
 #include <sys/stat.h>
 
+#define WANT_HTTPD_LOG 1
 #include "string.hpp"
 #include "stream.hpp"
 #include "list.hpp"
@@ -79,11 +80,18 @@ public:
 #ifdef WANT_MAINTAINER_MODE
 
 /**
- * Log a session entry.
+ * Log session entries.
  */
-int debugSession(unused void* r, const char* key, const char* value) {
+int debugSessionEntry(unused void* r, const char* key, const char* value) {
     cdebug << "  session key: " << key << ", value: " << value << endl;
     return 1;
+}
+
+const bool debugSession(request_rec* r, session_rec* z) {
+    if (!isDebugLog())
+        return true;
+    apr_table_do(debugSessionEntry, r, z->entries, NULL);
+    return true;
 }
 
 #endif
@@ -103,7 +111,7 @@ const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
     if (z == NULL)
         return mkfailure<value>("Couldn't retrieve user session");
 #ifdef WANT_MAINTAINER_MODE
-    apr_table_do(debugSession, r, z->entries, NULL);
+    debugSession(r, z);
 #endif
 
     if (ap_session_get_fn == NULL)
@@ -225,8 +233,8 @@ static int checkAuthn(request_rec *r) {
         if (hasContent(info)) {
 
             // Try to authenticate the request
-            const value cinfo = content(info);
-            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", cinfo)), cadr(assoc<value>("password", cinfo)), r);
+            const value uinfo = content(info);
+            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r);
             if (!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
@@ -236,7 +244,7 @@ static int checkAuthn(request_rec *r) {
 
             // Successfully authenticated, store the user info in the request
             r->ap_auth_type = const_cast<char*>(atype);
-            return httpd::reportStatus(authenticated(cinfo, r));
+            return httpd::reportStatus(authenticated(uinfo, r));
         }
     }
 
@@ -254,8 +262,8 @@ static int checkAuthn(request_rec *r) {
         if (hasContent(info)) {
 
             // Try to authenticate the request
-            const value cinfo = content(info);
-            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", cinfo)), cadr(assoc<value>("password", cinfo)), r);
+            const value uinfo = content(info);
+            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r);
             if (!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
@@ -265,7 +273,7 @@ static int checkAuthn(request_rec *r) {
 
             // Successfully authenticated, store the user info in the request
             r->ap_auth_type = const_cast<char*>(atype);
-            return httpd::reportStatus(authenticated(cinfo, r));
+            return httpd::reportStatus(authenticated(uinfo, r));
         }
     }
 

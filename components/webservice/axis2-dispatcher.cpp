@@ -23,6 +23,7 @@
  * Axis2/C module that dispatches all server requests to the Tuscany Axis/2C service.
  */
 
+#define WANT_HTTPD_LOG 1
 #include "axis2.hpp"
 
 namespace tuscany {

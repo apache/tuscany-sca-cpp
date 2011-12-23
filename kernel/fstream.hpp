@@ -28,12 +28,37 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+
+#ifdef WANT_HTTPD_LOG
+#include <apr_strings.h>
+#include <apr_fnmatch.h>
+#include <apr_lib.h>
+#define APR_WANT_STRFUNC
+#include <apr_want.h>
+#include <apr_base64.h>
+
+#include <httpd.h>
+// Hack to workaround compile error with CLang/LLVM
+#undef strtoul
+// Hack to workaround compile error with HTTPD 2.3.8
+#define new new_
+#include <http_config.h>
+#undef new
+#include <http_main.h>
+#include <http_log.h>
+
+#else
+
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+
 #ifdef WANT_THREADS
 #include <pthread.h>
 #endif
+
+#endif
+
 #include "string.hpp"
 #include "stream.hpp"
 
@@ -150,6 +175,73 @@ ifstream cin(stdin);
  * Streams used for logging.
  */
 
+#ifdef WANT_HTTPD_LOG
+
+/*
+ * HTTPD-based log stream.
+ */
+class loghstream : public ostream {
+public:
+    loghstream(const int level) : level(level), len(0) {
+    }
+
+    ~loghstream() {
+    }
+
+    ostream& vprintf(const char* fmt, ...) {
+        va_list args;
+        va_start (args, fmt);
+        const int l = vsnprintf(buf + len, (sizeof(buf) - 1) - len, fmt, args);
+        va_end (args);
+        len += l;
+        if (len > (int)(sizeof(buf) - 1))
+            len = sizeof(buf) - 1;
+        return *this;
+    }
+
+    ostream& write(const string& s) {
+        if (s != "\n")
+            return this->vprintf("%s", c_str(s));
+        buf[len] = '\0';
+        ap_log_error(NULL, 0, -1, level, 0, ap_server_conf, "%s", buf);
+        len = 0;
+        return *this;
+    }
+
+    ostream& flush() {
+        return *this;
+    }
+
+private:
+    const int level;
+    int len;
+    char buf[2049];
+};
+
+/**
+ * Info and failure log streams.
+ */
+loghstream cinfo(APLOG_INFO);
+loghstream cfailure(APLOG_ERR);
+
+#ifdef WANT_MAINTAINER_MODE
+
+/**
+ * Debug log stream.
+ */
+loghstream cdebug(APLOG_DEBUG);
+
+/**
+ * Return true if debug log is enabled.
+ */
+const bool isDebugLog() {
+    return APLOG_MODULE_IS_LEVEL(ap_server_conf, APLOG_NO_MODULE, APLOG_DEBUG);
+}
+
+#endif
+
+#else
+
 /**
  * Format the current time.
  */
@@ -166,25 +258,20 @@ const string logTime() {
 }
 
 /*
- * Log stream.
+ * File-based log stream.
  */
 class logfstream : public ostream {
 public:
-    logfstream(FILE* file, const string& type) : file(file), type(type), owner(false), head(false) {
+    logfstream(FILE* file, const string& type) : file(file), type(type), head(false) {
     }
 
-    logfstream(const logfstream& os) : file(os.file), type(os.type), owner(false), head(os.head) {
+    logfstream(const logfstream& os) : file(os.file), type(os.type), head(os.head) {
     }
 
     ~logfstream() {
-        if (!owner)
-            return;
-        if (file == NULL)
-            return;
-        fclose(file);
     }
 
-    logfstream& vprintf(const char* fmt, ...) {
+    ostream& vprintf(const char* fmt, ...) {
         whead();
         va_list args;
         va_start (args, fmt);
@@ -193,7 +280,7 @@ public:
         return *this;
     }
 
-    logfstream& write(const string& s) {
+    ostream& write(const string& s) {
         whead();
         fwrite(c_str(s), 1, length(s), file);
         if (s == "\n")
@@ -201,7 +288,7 @@ public:
         return *this;
     }
 
-    logfstream& flush() {
+    ostream& flush() {
         fflush(file);
         return *this;
     }
@@ -209,7 +296,6 @@ public:
 private:
     FILE* file;
     const string type;
-    bool owner;
     bool head;
 
     const unsigned long tid() const {
@@ -220,7 +306,7 @@ private:
 #endif
     }
 
-    logfstream& whead() {
+    ostream& whead() {
         if (head)
             return *this;
         head = true;
@@ -238,14 +324,29 @@ logfstream cfailure(stderr, "error");
 #ifdef WANT_MAINTAINER_MODE
 
 /**
- * Debug log stream and debug functions.
+ * Debug log stream.
  */
 logfstream cdebug(stderr, "debug");
+
+/**
+ * Return true if debug log is enabled.
+ */
+const bool isDebugLog() {
+    return true;
+}
+
+#endif
+
+#endif
+
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Log a debug message.
  */
 const bool debugLog(const string& msg) {
+    if (!isDebugLog())
+        return true;
     gc_scoped_pool();
     cdebug << msg << endl;
     return true;
@@ -255,6 +356,8 @@ const bool debugLog(const string& msg) {
  * Log a debug message and a value.
  */
 template<typename V> const bool debugLog(const V& v, const string& msg) {
+    if (!isDebugLog())
+        return true;
     gc_scoped_pool();
     cdebug << msg << ": " << v << endl;
     return true;
