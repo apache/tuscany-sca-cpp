@@ -18,7 +18,7 @@
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/cache
 
-dist_comp_SCRIPTS = memcached-start memcached-stop
+dist_comp_SCRIPTS = memcached-log-conf memcached-start memcached-stop
 compdir=$(prefix)/components/cache
 
 comp_DATA = memcached.prefix

@@ -31,5 +31,9 @@ else
     cmd="$3"
 fi
 
-$pgsql_prefix/bin/psql -h $host -p $port -c "$cmd" db
+if [ "$cmd" = "" ]; then
+    $pgsql_prefix/bin/psql -h $host -p $port db
+else
+    $pgsql_prefix/bin/psql -h $host -p $port -c "$cmd" db
+fi
 

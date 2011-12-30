@@ -22,6 +22,13 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
 pgsql_prefix=`cat $here/pgsql.prefix`
-mkdir -p $root/logs
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 1>>$root/logs/postgresql 2>&1
+
+if [ -f "$root/sqldb/log.conf" ]; then
+    pgsql_log=`cat $root/sqldb/log.conf`
+else
+    mkdir -p $root/logs
+    pgsql_log="cat >>$root/logs/postgresql"
+fi
+
+$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | $pgsql_log
 

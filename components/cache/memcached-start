@@ -19,8 +19,9 @@
 
 # Start memcached
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
-addr=$1
+addr=$2
 if [ "$addr" = "" ]; then
     ip=""
     port="11211"
@@ -30,9 +31,19 @@ else
 fi
 
 memcached_prefix=`cat $here/memcached.prefix`
-if [ "$ip" = "" ]; then
-    $memcached_prefix/bin/memcached -d -m 4 -p $port
+
+if [ -f "$root/memcached/log.conf" ]; then
+    log=`cat $root/memcached/log.conf`
+    v="-vv"
 else
-    $memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port
+    mkdir -p $root/logs
+    log="cat >>$root/logs/memcached"
+    v=""
+fi
+
+if [ "$ip" = "" ]; then
+    ($memcached_prefix/bin/memcached -d -m 4 -p $port $v 2>&1 | $log)&
+else
+    ($memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port $v 2>&1 | $log)&
 fi
 

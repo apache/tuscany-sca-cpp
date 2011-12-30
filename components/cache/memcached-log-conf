@@ -17,33 +17,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Backup postgresql data directory
+# Configure memcached logging
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+mkdir -p $1
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
+mkdir -p $root/memcached
 if [ "$2" = "" ]; then
-    host="localhost"
-    port="5432"
+    cat >$root/memcached/log.conf << EOF
+cat >>$root/logs/memcached
+EOF
+
 else
-    host="$2"
-    port="$3"
+    cat >$root/memcached/log.conf << EOF
+$2
+EOF
+
 fi
-
-pgsql_prefix=`cat $here/pgsql.prefix`
-
-if [ -f "$root/sqldb/log.conf" ]; then
-    pgsql_log=`cat $root/sqldb/log.conf`
-else
-    mkdir -p $root/logs
-    pgsql_log="cat >>$root/logs/postgresql"
-fi
-
-$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('backup', true)" db 2>&1 | $pgsql_log
-
-echo "Content-type: application/x-compressed"
-echo
-
-tar -C $root/sqldb -cz data
-
-$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_stop_backup()" db 2>&1 | $pgsql_log
 

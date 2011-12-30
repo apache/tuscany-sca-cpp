@@ -22,7 +22,7 @@ INCLUDES = -I${PGSQL_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/sqldb
 
-dist_comp_SCRIPTS = pgsql-conf pgsql-start pgsql-stop pgsql pgsql-standby-conf pgsql-backup
+dist_comp_SCRIPTS = pgsql-conf pgsql-log-conf pgsql-start pgsql-stop pgsql pgsql-standby-conf pgsql-backup
 compdir=$(prefix)/components/sqldb
 
 comp_DATA = pgsql.prefix

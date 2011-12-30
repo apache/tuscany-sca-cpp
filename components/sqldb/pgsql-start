@@ -22,8 +22,22 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
 pgsql_prefix=`cat $here/pgsql.prefix`
-mkdir -p $root/sqldb
-mkdir -p $root/logs
-$pgsql_prefix/bin/pg_ctl start -w -D $root/sqldb/data -l $root/logs/postgresql 1>>$root/logs/postgresql 2>&1
-sleep 1
+
+if [ -f "$root/sqldb/log.conf" ]; then
+    pgsql_log=`cat $root/sqldb/log.conf`
+else
+    mkdir -p $root/logs
+    pgsql_log="cat >>$root/logs/postgresql"
+fi
+
+($pgsql_prefix/bin/pg_ctl start -W -D $root/sqldb/data 2>&1 | $pgsql_log)&
+sti=0
+while [ $sti -ne 30 ]; do
+    st=`$pgsql_prefix/bin/pg_ctl status -D $root/sqldb/data | grep 'server is running'`
+    if [ "$st" != "" ]; then
+        break
+    fi
+    sleep 1
+    sti=$((sti+1))
+done
 
