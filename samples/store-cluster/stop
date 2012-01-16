@@ -26,9 +26,9 @@ set -x
 ../../modules/http/httpd-stop tmp/proxy1
 ../../modules/http/httpd-stop tmp/proxy2
 
-../../components/cache/memcached-stop 11211
-../../components/cache/memcached-stop 11212
-../../components/cache/memcached-stop 11213
+../../components/cache/memcached-stop tmp 11211
+../../components/cache/memcached-stop tmp 11212
+../../components/cache/memcached-stop tmp 11213
 
 ../../components/sqldb/pgsql-stop tmp/sqldb3
 ../../modules/http/httpd-stop tmp/sqldb3

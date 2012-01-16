@@ -29,6 +29,8 @@ else
     mkdir -p $root/logs
     pgsql_log="cat >>$root/logs/postgresql"
 fi
+mkdir -p $root/sqldb
+echo $pgsql_log >$root/sqldb/logger
 
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | $pgsql_log
+$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
 

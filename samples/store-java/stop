@@ -20,4 +20,4 @@
 export CLASSPATH=`pwd`/../../modules/java/libmod-tuscany-java-1.0.jar:`pwd`
 
 ../../modules/http/httpd-stop tmp
-../../components/cache/memcached-stop
+../../components/cache/memcached-stop tmp

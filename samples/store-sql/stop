@@ -19,4 +19,4 @@
 
 ../../modules/http/httpd-stop tmp
 ../../components/sqldb/pgsql-stop tmp
-../../components/cache/memcached-stop
+../../components/cache/memcached-stop tmp

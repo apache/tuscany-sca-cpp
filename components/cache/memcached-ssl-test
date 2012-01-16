@@ -22,9 +22,9 @@
 ../../modules/http/ssl-cert-conf tmp/ssl localhost server
 ../../modules/http/ssl-cert-conf tmp/ssl localhost tunnel
 
-./memcached-start 11411
-./memcached-start 11412
-./memcached-start 11413
+./memcached-start tmp 11411
+./memcached-start tmp 11412
+./memcached-start tmp 11413
 
 ../../modules/http/httpd-conf tmp/tunnel localhost 8089 htdocs
 ../../modules/http/httpd-event-conf tmp/tunnel
@@ -49,7 +49,7 @@ rc=$?
 # Cleanup
 ../../modules/http/httpd-stop tmp/tunnel
 ../../modules/http/httpd-stop tmp/server
-./memcached-stop 11411
-./memcached-stop 11412
-./memcached-stop 11413
+./memcached-stop tmp 11411
+./memcached-stop tmp 11412
+./memcached-stop tmp 11413
 exit $rc

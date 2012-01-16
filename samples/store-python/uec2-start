@@ -42,6 +42,6 @@ SCAComposite store.composite
 
 EOF
 
-../../components/cache/memcached-start
+../../components/cache/memcached-start tmp
 ../../modules/http/httpd-start tmp
 

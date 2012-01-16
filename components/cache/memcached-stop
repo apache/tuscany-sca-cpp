@@ -19,8 +19,9 @@
 
 # Stop memcached
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+root=`echo "import os; print os.path.realpath('$1')" | python`
 
-addr=$1
+addr=$2
 if [ "$addr" = "" ]; then
     ip=""
     port="11211"

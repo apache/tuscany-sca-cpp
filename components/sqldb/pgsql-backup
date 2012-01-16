@@ -37,13 +37,15 @@ else
     mkdir -p $root/logs
     pgsql_log="cat >>$root/logs/postgresql"
 fi
+mkdir -p $root/sqldb
+echo $pgsql_log >$root/sqldb/logger
 
-$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('backup', true)" db 2>&1 | $pgsql_log
+$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('backup', true)" db 2>&1 | sh $root/sqldb/logger
 
 echo "Content-type: application/x-compressed"
 echo
 
 tar -C $root/sqldb -cz data
 
-$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_stop_backup()" db 2>&1 | $pgsql_log
+$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_stop_backup()" db 2>&1 | sh $root/sqldb/logger
 

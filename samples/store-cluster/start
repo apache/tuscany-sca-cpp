@@ -33,9 +33,9 @@ sudo ../../ubuntu/ip-redirect-all 80 8090
 sleep 1
 
 # Start three memcached servers
-../../components/cache/memcached-start 11211
-../../components/cache/memcached-start 11212
-../../components/cache/memcached-start 11213
+../../components/cache/memcached-start tmp 11211
+../../components/cache/memcached-start tmp 11212
+../../components/cache/memcached-start tmp 11213
 
 # Start a master and two hot standby databases
 ./sqldb-master-conf tmp/sqldb1 5432 8502

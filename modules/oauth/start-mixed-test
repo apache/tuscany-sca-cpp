@@ -21,8 +21,8 @@
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 # Setup
-../../components/cache/memcached-start 11212
-../../components/cache/memcached-start 11213
+../../components/cache/memcached-start tmp 11212
+../../components/cache/memcached-start tmp 11213
 
 ../../modules/http/ssl-ca-conf tmp localhost
 ../../modules/http/ssl-cert-conf tmp localhost

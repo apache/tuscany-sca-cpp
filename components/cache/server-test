@@ -27,12 +27,12 @@ SCAContribution `pwd`/
 SCAComposite cache.composite
 EOF
 
-./memcached-start 11211
-./memcached-start 11212
-./memcached-start 11213
-./memcached-start 11411
-./memcached-start 11412
-./memcached-start 11413
+./memcached-start tmp 11211
+./memcached-start tmp 11212
+./memcached-start tmp 11213
+./memcached-start tmp 11411
+./memcached-start tmp 11412
+./memcached-start tmp 11413
 ../../modules/http/httpd-start tmp
 sleep 2
 
@@ -42,11 +42,11 @@ rc=$?
 
 # Cleanup
 ../../modules/http/httpd-stop tmp
-./memcached-stop 11211
-./memcached-stop 11212
-./memcached-stop 11213
-./memcached-stop 11411
-./memcached-stop 11412
-./memcached-stop 11413
+./memcached-stop tmp 11211
+./memcached-stop tmp 11212
+./memcached-stop tmp 11213
+./memcached-stop tmp 11411
+./memcached-stop tmp 11412
+./memcached-stop tmp 11413
 sleep 2
 exit $rc

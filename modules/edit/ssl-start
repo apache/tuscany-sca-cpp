@@ -36,8 +36,8 @@ if [ -x ../../components/log/scribe-cat ]; then
 fi
 
 # Start memcached
-../../components/cache/memcached-start 11211
-../../components/cache/memcached-start 11212
+../../components/cache/memcached-start tmp 11211
+../../components/cache/memcached-start tmp 11212
 
 # Configure server
 ../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs

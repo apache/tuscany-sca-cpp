@@ -56,11 +56,11 @@ sleep 1
 
 # Start three memcached servers
 ../../modules/http/tunnel-ssl-conf tmp/tunnel 11211 localhost 563 11411
-../../components/cache/memcached-start 127.0.0.1:11411
+../../components/cache/memcached-start tmp 127.0.0.1:11411
 ../../modules/http/tunnel-ssl-conf tmp/tunnel 11212 localhost 563 11412
-../../components/cache/memcached-start 127.0.0.1:11412
+../../components/cache/memcached-start tmp 127.0.0.1:11412
 ../../modules/http/tunnel-ssl-conf tmp/tunnel 11213 localhost 563 11413
-../../components/cache/memcached-start 127.0.0.1:11413
+../../components/cache/memcached-start tmp 127.0.0.1:11413
 ../../modules/http/httpd-restart tmp/tunnel
 sleep 1
 

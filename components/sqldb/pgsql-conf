@@ -45,9 +45,11 @@ else
     mkdir -p $root/logs
     pgsql_log="cat >>$root/logs/postgresql"
 fi
+mkdir -p $root/sqldb
+echo $pgsql_log >$root/sqldb/logger
 
 if [ ! -f $root/sqldb/data/postgresql.conf ]; then
-    $pgsql_prefix/bin/pg_ctl init -D $root/sqldb/data 2>&1 | $pgsql_log
+    $pgsql_prefix/bin/pg_ctl init -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
     cp $root/sqldb/data/postgresql.conf $root/sqldb/data/postgresql-init.conf
     cp $root/sqldb/data/pg_hba.conf $root/sqldb/data/pg_hba-init.conf
 fi
@@ -96,7 +98,7 @@ host    replication     all             samenet                 trust
 EOF
 
 # Create the db
-($pgsql_prefix/bin/pg_ctl start -W -D $root/sqldb/data 2>&1 | $pgsql_log)&
+($pgsql_prefix/bin/pg_ctl start -W -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
 sti=0
 while [ $sti -ne 30 ]; do
     st=`$pgsql_prefix/bin/pg_ctl status -D $root/sqldb/data | grep 'server is running'`
@@ -107,8 +109,8 @@ while [ $sti -ne 30 ]; do
     sti=$((sti+1))
 done
 
-$pgsql_prefix/bin/createdb -h localhost -p $port db 2>&1 | $pgsql_log
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | $pgsql_log
+$pgsql_prefix/bin/createdb -h localhost -p $port db 2>&1 | sh $root/sqldb/logger
+$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
 
 # Generate database backup script
 mkdir -p $root/sqldb/scripts

@@ -54,6 +54,8 @@ else
     mkdir -p $root/logs
     pgsql_log="cat >>$root/logs/postgresql"
 fi
+mkdir -p $root/sqldb
+echo $pgsql_log >$root/sqldb/logger
 
 mkdir -p $root/sqldb/data
 chmod 700 $root/sqldb/data
@@ -61,7 +63,7 @@ mkdir -p $root/sqldb/archive
 
 # Initialize from a backup of the master
 if [ ! -f $root/sqldb/data/postgresql.conf ]; then
-    (wget http://$mhost:$mhttpport/pgsql-backup -O - | tar -C $root/sqldb -xz) 2>&1 | $pgsql_log
+    (wget http://$mhost:$mhttpport/pgsql-backup -O - | tar -C $root/sqldb -xz) 2>&1 | sh $root/sqldb/logger
     rm -rf $root/sqldb/data/postmaster.pid $root/sqldb/data/pg_xlog
     mkdir -p $root/sqldb/data/pg_xlog/archive_status
     chmod 700 $root/sqldb/data/pg_xlog/archive_status
