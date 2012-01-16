@@ -64,4 +64,35 @@
         </service>
     </component>     
 
+    <component name="partitioner">
+        <implementation.cpp path="." library="libpartitioner"/>
+        <service name="partitioner">
+            <binding.http uri="partitioner"/>
+        </service>
+        <reference name="selector" target="selector"/>
+        <reference name="partition" target="partition1"/>
+        <reference name="partition" target="partition2"/>
+    </component>
+
+    <component name="selector">
+        <implementation.scheme script="select-test.scm"/>
+        <service name="selector">
+            <binding.http uri="selector"/>
+        </service>
+    </component>     
+
+    <component name="partition1">
+        <implementation.scheme script="partition1-test.scm"/>
+        <service name="partition1">
+            <binding.http uri="partition1"/>
+        </service>
+    </component>     
+
+    <component name="partition2">
+        <implementation.scheme script="partition2-test.scm"/>
+        <service name="partition2">
+            <binding.http uri="partition2"/>
+        </service>
+    </component>     
+
 </composite>

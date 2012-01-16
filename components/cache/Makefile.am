@@ -25,10 +25,10 @@ comp_DATA = memcached.prefix
 memcached.prefix: $(top_builddir)/config.status
 	echo ${MEMCACHED_PREFIX} >memcached.prefix
 
-EXTRA_DIST = cache.composite memcache.componentType datacache.componentType memocache.componentType *.scm
+EXTRA_DIST = cache.composite memcache.componentType datacache.componentType memocache.componentType partitioner.componentType *.scm
 
-comp_LTLIBRARIES = libmemcache.la libdatacache.la libmemocache.la
-noinst_DATA = libmemcache${libsuffix} libdatacache${libsuffix} libmemocache${libsuffix}
+comp_LTLIBRARIES = libmemcache.la libdatacache.la libmemocache.la libpartitioner.la
+noinst_DATA = libmemcache${libsuffix} libdatacache${libsuffix} libmemocache${libsuffix} libpartitioner${libsuffix}
 
 libmemcache_la_SOURCES = memcache.cpp
 libmemcache${libsuffix}:
@@ -41,6 +41,10 @@ libdatacache${libsuffix}:
 libmemocache_la_SOURCES = memocache.cpp
 libmemocache${libsuffix}:
 	ln -s .libs/libmemocache${libsuffix}
+
+libpartitioner_la_SOURCES = partitioner.cpp
+libpartitioner${libsuffix}:
+	ln -s .libs/libpartitioner${libsuffix}
 
 memcache_test_SOURCES = memcache-test.cpp
 memcache_test_LDFLAGS = -lxml2

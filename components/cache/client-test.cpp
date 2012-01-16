@@ -39,6 +39,8 @@ namespace cache {
 const string memcacheuri("http://localhost:8090/memcache");
 const string datacacheuri("http://localhost:8090/datacache");
 const string memocacheuri("http://localhost:8090/memocache");
+const string partition1uri("http://localhost:8090/partitioner/a");
+const string partition2uri("http://localhost:8090/partitioner/b");
 
 bool testCache(const string& uri) {
     http::CURLSession cs("", "", "", "");
@@ -114,6 +116,20 @@ bool testMemocache() {
     return true;
 }
 
+bool testPartitioner() {
+    http::CURLSession cs("", "", "", "");
+
+    const failable<value> res1 = http::get(partition1uri, cs);
+    assert(hasContent(res1));
+    assert(cadr<value>(content(res1)) == string("1"));
+
+    const failable<value> res2 = http::get(partition2uri, cs);
+    assert(hasContent(res2));
+    assert(cadr<value>(content(res2)) == string("2"));
+
+    return true;
+}
+
 struct getLoop {
     const string path;
     const value entry;
@@ -157,6 +173,7 @@ int main() {
     tuscany::cache::testMemcache();
     tuscany::cache::testDatacache();
     tuscany::cache::testMemocache();
+    tuscany::cache::testPartitioner();
     tuscany::cache::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;

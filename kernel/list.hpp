@@ -362,17 +362,45 @@ template<typename T> const T cadddddddr(const list<T>& p) {
 }
 
 /**
- * Returns the cdr of a cdr of a list.
+ * Returns a list of elements from the 3rd to the end of a list.
  */
 template<typename T> const list<T> cddr(const list<T>& p) {
     return cdr(cdr(p));
 }
 
 /**
- * Returns the cdr of a cdr of the cdr of a list.
+ * Returns a list of elements from the 4th to the end of a list.
  */
 template<typename T> const list<T> cdddr(const list<T>& p) {
     return cdr(cdr(cdr(p)));
+}
+
+/**
+ * Returns a list of elements from the 5th to the end of a list.
+ */
+template<typename T> const list<T> cddddr(const list<T>& p) {
+    return cdr(cdr(cdr(cdr(p))));
+}
+
+/**
+ * Returns a list of elements from the 6th to the end of a list.
+ */
+template<typename T> const list<T> cdddddr(const list<T>& p) {
+    return cdr(cdr(cdr(cdr(cdr(p)))));
+}
+
+/**
+ * Returns a list of elements from the 7th to the end of a list.
+ */
+template<typename T> const list<T> cddddddr(const list<T>& p) {
+    return cdr(cdr(cdr(cdr(cdr(cdr(p))))));
+}
+
+/**
+ * Returns a list of elements from the 8th to the end of a list.
+ */
+template<typename T> const list<T> cdddddddr(const list<T>& p) {
+    return cdr(cdr(cdr(cdr(cdr(cdr(cdr(p)))))));
 }
 
 /**
