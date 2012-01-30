@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/httpd-conf tmp example.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
 ../../modules/http/vhost-conf tmp domains htdocs
 ../../modules/server/server-conf tmp
@@ -28,7 +28,7 @@ SCAContribution `pwd`/shared/
 SCAComposite shared.composite
 
 # Configure SCA Composite for mass dynamic virtual hosting
-SCAVirtualDomain sca-store.com
+SCAVirtualDomain example.com
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
 

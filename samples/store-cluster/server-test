@@ -18,7 +18,7 @@
 #  under the License.
 
 # For this test to work, add the test domain to your etc/hosts as follows:
-# 127.0.0.1 sca-store.com joe.sca-store.com joe.sca-store.com
+# 127.0.0.1 example.com joe.example.com joe.example.com
 
 echo "Testing..."
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
@@ -29,24 +29,24 @@ curl_prefix=`cat $here/../../modules/http/curl.prefix`
 sleep 2
 
 # Test HTTP GET
-$curl_prefix/bin/curl http://joe.sca-store.com/ 2>/dev/null >tmp/index.html
+$curl_prefix/bin/curl http://joe.example.com/ 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/domains/joe/index.html
 rc=$?
 
 # Test Catalog
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://joe.sca-store.com/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @../store-cpp/htdocs/test/items-request.txt >tmp/items-result.txt 2>/dev/null
+    $curl_prefix/bin/curl http://joe.example.com/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @../store-cpp/htdocs/test/items-request.txt >tmp/items-result.txt 2>/dev/null
     diff tmp/items-result.txt ../store-cpp/htdocs/test/items-result.txt
     rc=$?
 fi
 
 # Test Shopping Cart
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://joe.sca-store.com/references/Store/shoppingCart -X POST -H "Content-type: application/atom+xml" --data @../store-cpp/htdocs/test/shopping-cart-entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://joe.example.com/references/Store/shoppingCart -X POST -H "Content-type: application/atom+xml" --data @../store-cpp/htdocs/test/shopping-cart-entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://joe.sca-store.com/references/Store/shoppingCart >tmp/shopping-cart-feed.xml 2>/dev/null
+    $curl_prefix/bin/curl http://joe.example.com/references/Store/shoppingCart >tmp/shopping-cart-feed.xml 2>/dev/null
     grep "3.55" tmp/shopping-cart-feed.xml >/dev/null
     rc=$?
 fi

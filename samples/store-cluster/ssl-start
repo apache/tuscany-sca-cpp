@@ -34,10 +34,10 @@ sudo ../../ubuntu/ip-redirect-all 119 8119
 sudo ../../ubuntu/ip-redirect-all 563 8563
 
 # Generate SSL certificates
-../../modules/http/ssl-ca-conf tmp/ssl sca-store.com
+../../modules/http/ssl-ca-conf tmp/ssl example.com
 ../../modules/http/ssl-cert-conf tmp/ssl localhost server
-../../modules/http/ssl-cert-conf tmp/ssl *.sca-store.com vhost
-../../modules/http/ssl-cert-conf tmp/ssl sca-store.com proxy
+../../modules/http/ssl-cert-conf tmp/ssl *.example.com vhost
+../../modules/http/ssl-cert-conf tmp/ssl example.com proxy
 ../../modules/http/ssl-cert-conf tmp/ssl localhost tunnel
 
 # Start an SSL tunnel

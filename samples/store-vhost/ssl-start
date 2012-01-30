@@ -18,12 +18,12 @@
 #  under the License.
 
 # For this sample to work, add the sample domain to your /etc/hosts as follows:
-# 127.0.0.1 sca-store.com jane.sca-store.com joe.sca-store.com
+# 127.0.0.1 example.com jane.example.com joe.example.com
 
-../../modules/http/ssl-ca-conf tmp sca-store.com
-../../modules/http/ssl-cert-conf tmp sca-store.com server
-../../modules/http/ssl-cert-conf tmp *.sca-store.com vhost
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/ssl-ca-conf tmp example.com
+../../modules/http/ssl-cert-conf tmp example.com server
+../../modules/http/ssl-cert-conf tmp *.example.com vhost
+../../modules/http/httpd-conf tmp example.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
 ../../modules/http/vhost-conf tmp domains htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
@@ -38,7 +38,7 @@ SCAContribution `pwd`/shared/
 SCAComposite shared.composite
 
 # Configure SCA Composite for mass dynamic virtual Hosting
-SCAVirtualDomain sca-store.com
+SCAVirtualDomain example.com
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
 

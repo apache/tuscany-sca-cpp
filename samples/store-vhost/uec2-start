@@ -22,7 +22,7 @@ if [ "$1" != "" ]; then
     host=$1
 else
     # Default to dummy test domain
-    host="sca-store.com"
+    host="example.com"
 fi
 
 # Ports 80, 443, 444, 8090, 8453, 8454 need to be open
