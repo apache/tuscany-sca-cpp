@@ -568,6 +568,18 @@ struct hostPropProxy {
     }
 };
 
+struct appPropProxy {
+    const value v;
+    appPropProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        const char* n = apr_table_get(currentRequest->headers_in, "X-Request-AppName");
+        const value a = n != NULL? value(string(n)) : v;
+        debug(a, "modeval::appPropProxy::value");
+        return a;
+    }
+};
+
 struct pathPropProxy {
     pathPropProxy(unused const value& v) {
     }
@@ -616,6 +628,8 @@ struct userPropProxy {
 const value mkpropProxy(const value& prop) {
     const value n = scdl::name(prop);
     const value v = elementHasValue(prop)? elementValue(prop):value(string(""));
+    if (n == "app")
+        return lambda<value(const list<value>&)>(appPropProxy(v));
     if (n == "host")
         return lambda<value(const list<value>&)>(hostPropProxy(v));
     if (n == "path")
@@ -821,7 +835,12 @@ const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_
     // Handle a request targeting a virtual host or virtual app
     if (hasVirtualCompositeConf(sc)) {
         if (hasVirtualDomainConf(sc) && httpd::isVirtualHostRequest(sc.server, sc.virtualHostDomain, r)) {
-            ServerConf vsc(r->pool, sc, http::subDomain(httpd::hostName(r)));
+
+            // Determine the app name from the host sub-domain name, and
+            // store it in a header
+            const string app = http::subDomain(httpd::hostName(r));
+            apr_table_setn(r->headers_in, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
+            ServerConf vsc(r->pool, sc, app);
             if (!hasContent(virtualHostConfig(vsc, sc, r)))
                 return HTTP_INTERNAL_SERVER_ERROR;
             const int rc = handleRequest(vsc, rpath, r);
@@ -831,11 +850,16 @@ const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_
 
         const value c = car(rpath);
         if (c != string("components") && c != string("c")) {
-            const string cp = sc.virtualHostContributionPath + string(c) + "/" + sc.virtualHostCompositeName;
+
+            // Determine the app name from the request URI path
+            const string app = string(c);
+            const string cp = sc.virtualHostContributionPath + app + "/" + sc.virtualHostCompositeName;
             struct stat st;
             const int s = stat(c_str(cp), &st);
             if (s != -1) {
-                ServerConf vsc(r->pool, sc, string(c));
+                // Store the app name in a header
+                apr_table_setn(r->headers_in, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
+                ServerConf vsc(r->pool, sc, app);
                 if (!hasContent(virtualHostConfig(vsc, sc, r)))
                     return HTTP_INTERNAL_SERVER_ERROR;
                 const int rc = handleRequest(vsc, cdr(rpath), r);
