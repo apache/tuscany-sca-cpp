@@ -15,24 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-ACLOCAL_AMFLAGS = -I m4
+# Accounts collection implementation
+from util import *
 
-SUBDIRS = etc kernel modules components hosting samples doc macos ubuntu
+# Convert a particular user id to an account id
+def accountid(user):
+    return ("'accounts", "'" + user.id(), "'user.account")
 
-datadir=$(prefix)
-dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE NEWS
-nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-EXTRA_DIST = INSTALL bootstrap
+# Get the current user's account
+def get(id, user, cache):
+    account = cache.get(accountid(user))
+    if isNil(account) or account is None:
+        return ()
+    return account
 
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
-	rm -rf $(distdir)/.git
+# Update the user's account
+def put(id, account, user, cache):
+    return cache.put(accountid(user), account)
 
-bindist: install
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	

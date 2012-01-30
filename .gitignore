@@ -143,8 +143,8 @@ json-value
 value-json
 element-value
 value-element
-modules/edit/apps/*/nuvem
-modules/edit/apps/*/lib
+hosting/server/data/apps/*/nuvem
+hosting/server/data/apps/*/lib
 chat-send
 opencl-shell
 opencl-test

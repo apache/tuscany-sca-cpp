@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+ <service name="comment1" promote="comment1"/>
+ <service name="start1" promote="start1"/>
+ <component x="10" y="10" name="comment1" title="{propval}" color="white">
+  <implementation.python script="nuvem/comment.py"/>
+  <service name="comment" visible="false"/>
+  <property>Change this example to do what you want</property>
+ </component>
+ <component x="80" y="40" name="item1" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="user1" name="value"/>
+  <property>me</property>
+ </component>
+ <component x="70" y="70" name="item2" title="{propval}:" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="now1" name="value"/>
+  <property>time</property>
+ </component>
+ <component x="50" y="40" name="list21" title="list" color="yellow1">
+  <implementation.python script="nuvem/pair.py"/>
+  <service name="list2"/>
+  <reference target="item1" name="first"/>
+  <reference target="item2" name="second"/>
+ </component>
+ <component x="120" y="70" name="now1" title="now" color="orange1">
+  <implementation.python script="nuvem/now.py"/>
+  <service name="now"/>
+  <reference name="format"/>
+ </component>
+ <component x="10" y="50" name="start1" title="start" color="green1">
+  <implementation.python script="nuvem/start.py"/>
+  <service name="start" visible="false">
+   <binding.http uri="start"/>
+  </service>
+  <reference target="list21" name="content"/>
+ </component>
+ <component name="user1" title="user" color="green1">
+  <implementation.python script="nuvem/user.py"/>
+  <service name="user"/>
+  <property name="user" visible="false"/>
+ </component>
+</composite>

@@ -32,7 +32,7 @@ EOF
 sleep 2
 
 # Test
-./client-test #2>/dev/null
+./client-test 2>/dev/null
 rc=$?
 
 # Cleanup

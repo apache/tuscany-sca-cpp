@@ -15,24 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = server
 
-SUBDIRS = etc kernel modules components hosting samples doc macos ubuntu
-
-datadir=$(prefix)
-dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE NEWS
-nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-EXTRA_DIST = INSTALL bootstrap
-
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
-	rm -rf $(distdir)/.git
-
-bindist: install
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	

@@ -1034,7 +1034,6 @@ AC_CONFIG_FILES([Makefile
                  modules/openid/Makefile
                  modules/oauth/Makefile
                  modules/wsgi/Makefile
-                 modules/edit/Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/log/Makefile
@@ -1045,6 +1044,8 @@ AC_CONFIG_FILES([Makefile
                  components/queue/Makefile
                  components/sqldb/Makefile
                  components/webservice/Makefile
+                 hosting/Makefile
+                 hosting/server/Makefile
                  samples/Makefile
                  samples/store-scheme/Makefile
                  samples/store-cpp/Makefile

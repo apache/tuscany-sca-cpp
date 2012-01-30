@@ -25,18 +25,13 @@ moddir = $(prefix)/modules/server
 
 EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.html htdocs/test/*.xml htdocs/test/*.txt
 
-mod_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-noinst_DATA = libmod_tuscany_eval${libsuffix} libmod_tuscany_wiring${libsuffix}
+mod_LTLIBRARIES = libmod_tuscany_eval.la
+noinst_DATA = libmod_tuscany_eval${libsuffix}
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
 libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 libmod_tuscany_eval${libsuffix}:
 	ln -s .libs/libmod_tuscany_eval${libsuffix}
-
-libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
-libmod_tuscany_wiring_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_wiring${libsuffix}:
-	ln -s .libs/libmod_tuscany_wiring${libsuffix}
 
 noinst_test_LTLIBRARIES = libimpl-test.la
 noinst_testdir = `pwd`/tmp

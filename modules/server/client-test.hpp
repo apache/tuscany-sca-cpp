@@ -36,7 +36,7 @@
 namespace tuscany {
 namespace server {
 
-string testURI = "http://localhost:8090/test";
+string testURI = "http://localhost:8090/scheme";
 bool testBlobs = true;
 
 ostream* curlWriter(const string& s, ostream* os) {

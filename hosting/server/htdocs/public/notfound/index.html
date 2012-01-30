@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<html>
+<head>
+<title>Page not found</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<base href="/public/notfound/"/>
+<script type="text/javascript">
+
+window.appcache = {};
+
+/**
+ * Get and cache a resource.
+ */
+appcache.get = function(uri) {
+    var h = uri.indexOf('#');
+    var u = h == -1? uri : uri.substring(0, h);
+
+    // Get resource from local storage first
+    var item = localStorage.getItem(u);
+    if (item != null && item != '')
+        return item;
+
+    // Get resource from network
+    var http = new XMLHttpRequest();
+    http.open("GET", u, false);
+    http.send(null);
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+            if (log) log('http error', u, 'X-Login');
+            return null;
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+            if (log) log('http error', u, 'No-Content');
+            return null;
+        }
+        localStorage.setItem(u, http.responseText);
+        return http.responseText;
+    }
+    if (log) log('http error', u, http.status, http.statusText);
+    return null;
+};
+
+// Load Javascript and CSS
+(function() {
+    var bootjs = document.createElement('script');
+    bootjs.type = 'text/javascript';
+    bootjs.text = appcache.get('/all-min.js');
+    document.head.appendChild(bootjs);
+    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+})();
+
+</script>
+</head>
+<body class="delayed" onload="onload();">
+<div id="bodydiv" class="mainbodydiv">
+
+<div id="headdiv" class="hsection">
+<script type="text/javascript">
+(function() {
+$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
+})();
+</script>
+</div>
+
+<div id="menu"></div>
+
+<div id="content" class="viewloaded3d">
+
+<table style="width: 100%;">
+<tr><td><h2><span id="h1"></span></h2></td></tr>
+</table>
+
+<div style="margin-left: auto; margin-right: auto; text-align: center;">
+<div class="hd2">Sorry, that page was not found.</div>
+<div>You may have clicked an expired link or mistyped the address.</div>
+</div>
+
+</div>
+
+<script type="text/javascript">
+
+// Set page title
+$('h1').innerHTML = ui.hometitle(location.hostname);
+
+// Init div variables
+var mdiv = $('menu'); 
+var cdiv = $('content'); 
+
+/**
+ * Build and show the menu bar.
+ */
+function showmenu(mdiv) {
+    mdiv.innerHTML = ui.menubar(
+        mklist(ui.menu('Home', '/', '_view', false)),
+            mklist(ui.signedin()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false)));
+}
+
+showmenu(mdiv);
+cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
+
+/**
+ * Log the current user out.
+ */
+function logout() {
+    // Clear session cookie and user-specific local storage entries
+    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = reset;
+    localStorage.removeItem('/r/EditWidget/accounts');
+    localStorage.removeItem('/r/EditWidget/dashboards');
+    //localStorage.clear();
+    document.location = '/login/';
+    return true;
+}
+
+/**
+ * Handle orientation change.
+ */
+document.body.onorientationchange = function(e) {
+    //log('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
+
+/**
+ * Load post processing.
+ */
+function onload() {
+    //log('onload');
+
+    // Show the page
+    document.body.style.visibility = 'visible';
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+    return true;
+}
+
+</script>
+
+<div id="footdiv" class="fsection">
+</div>
+
+</div>
+</body>
+</html>

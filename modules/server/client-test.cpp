@@ -29,7 +29,7 @@
 
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
-    tuscany::server::testURI = "http://localhost:8090/test";
+    tuscany::server::testURI = "http://localhost:8090/scheme";
 
     tuscany::server::testServer();
 

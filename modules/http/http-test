@@ -24,7 +24,7 @@
 sleep 2
 
 # Test
-./curl-test
+./curl-test 2>/dev/null
 rc=$?
 
 # Cleanup

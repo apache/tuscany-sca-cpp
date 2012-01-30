@@ -23,8 +23,8 @@
         
     <component name="scheme-test">
         <implementation.scheme script="server-test.scm"/>
-        <service name="test">
-            <binding.http uri="test"/>
+        <service name="scheme">
+            <binding.http uri="scheme"/>
         </service>
     </component>     
 

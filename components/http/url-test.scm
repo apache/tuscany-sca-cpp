@@ -18,6 +18,6 @@
 ; URL test case
 
 (define (get id)
-    "http://localhost:8090/test"
+    "http://localhost:8090/scheme"
 )
 

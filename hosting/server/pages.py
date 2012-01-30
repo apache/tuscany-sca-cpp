@@ -15,24 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-ACLOCAL_AMFLAGS = -I m4
+# App pages collection implementation
+from util import *
 
-SUBDIRS = etc kernel modules components hosting samples doc macos ubuntu
+# Convert an id to an app id
+def appid(id):
+    return ("'apps", "'" + car(id), "'htdocs", "'app.html")
 
-datadir=$(prefix)
-dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE NEWS
-nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-EXTRA_DIST = INSTALL bootstrap
+# Put an app page into the apps db
+def put(id, app, cache):
+    xhtml = cdr(cadddr(car(app)))
+    cache.put(appid(id), xhtml)
+    return True
 
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
-	rm -rf $(distdir)/.git
+# Get an app page from the apps db
+def get(id, cache):
+    if isNil(id):
+        return (("'feed", ("'title", "Pages"), ("'id", "pages")),)
+    xhtml = cache.get(appid(id))
+    if isNil(xhtml) or xhtml is None:
+        return (("'entry", ("'title", car(id)), ("'id", car(id))),)
+    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(xhtml))),)
 
-bindist: install
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	
+# Delete an app page from the apps db
+def delete(id, cache):
+    cache.delete(appid(id))
+    return True
+

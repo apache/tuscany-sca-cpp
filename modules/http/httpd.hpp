@@ -205,7 +205,7 @@ const string serverName(request_rec* r, const string& def = "localhost") {
 /**
  * Return true if a request is targeting a virtual host.
  */
-const bool isVirtualHostRequest(const server_rec* s, const string& d, request_rec* r) {
+const bool isVhostRequest(const server_rec* s, const string& d, request_rec* r) {
     const string rh = hostName(r);
     return rh != hostName(s) && http::topDomain(rh) == d;
 }

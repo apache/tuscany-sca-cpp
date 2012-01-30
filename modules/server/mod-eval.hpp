@@ -52,50 +52,61 @@ namespace server {
 namespace modeval {
 
 /**
+ * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
+ */
+const bool useModProxy = true;
+
+/**
  * Server configuration.
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
     }
 
-    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), contributionPath(ssc.virtualHostContributionPath + name + "/"), compositeName(ssc.virtualHostCompositeName), virtualHostDomain(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(ssc.ca), cert(ssc.cert), key(ssc.key) {
+    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), vhostName(name), compositeName(ssc.vhostCompositeName), ca(ssc.ca), cert(ssc.cert), key(ssc.key), vhostContributor(ssc.vhostContributor) {
+        contributionPath = length(ssc.vhostContributionPath) != 0? ssc.vhostContributionPath + name + "/" : ssc.contributionPath;
     }
 
     const gc_pool p;
     server_rec* server;
     lambda<value(const list<value>&)> lifecycle;
+    string vhostName;
     string contributionPath;
     string compositeName;
-    string virtualHostDomain;
-    string virtualHostContributionPath;
-    string virtualHostCompositeName;
+    string vhostDomain;
+    string vhostContributionPath;
+    string vhostCompositeName;
+    string vhostContributorName;
     string ca;
     string cert;
     string key;
+    list<value> references;
+    list<value> services;
     list<value> implementations;
     list<value> implTree;
+    value vhostContributor;
 };
 
 /**
- * Return true if a server contains a composite configuration.
+ * Return true if a server contains a contribution configuration.
  */
-const bool hasCompositeConf(const ServerConf& sc) {
-    return sc.contributionPath != "" && sc.compositeName != "";
+const bool hasContributionConf(const ServerConf& sc) {
+    return length(sc.contributionPath) != 0;
 }
 
 /**
  * Return true if a server contains a virtual host domain configuration.
  */
-const bool hasVirtualDomainConf(const ServerConf& sc) {
-    return sc.virtualHostDomain != "";
+const bool hasVhostDomainConf(const ServerConf& sc) {
+    return length(sc.vhostDomain) != 0;
 }
 
 /**
- * Return true if a server contains a virtual host composite configuration.
+ * Return true if a server contains a virtual host contribution configuration.
  */
-const bool hasVirtualCompositeConf(const ServerConf& sc) {
-    return sc.virtualHostContributionPath != "" && sc.virtualHostCompositeName != "";
+const bool hasVhostContributionConf(const ServerConf& sc) {
+    return length(sc.vhostContributionPath) != 0 || length(sc.vhostContributorName) != 0;
 }
 
 /**
@@ -127,262 +138,6 @@ public:
         currentRequest = NULL;
     }
 };
-
-/**
- * Handle an HTTP GET.
- */
-const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    debug(r->uri, "modeval::get::uri");
-
-    // Inspect the query string
-    const list<list<value> > args = httpd::queryArgs(r);
-    const list<value> ia = assoc(value("id"), args);
-    const list<value> ma = assoc(value("method"), args);
-
-    // Evaluate a JSON-RPC request and return a JSON result
-    if (!isNil(ia) && !isNil(ma)) {
-
-        // Extract the request id, method and params
-        const value id = cadr(ia);
-        const value func = c_str(json::funcName(string(cadr(ma))));
-
-        // Apply the requested function
-        const failable<value> val = failableResult(impl(cons(func, json::queryParams(args))));
-        if (!hasContent(val))
-            return mkfailure<int>(reason(val));
-
-        // Return JSON result
-        js::JSContext cx;
-        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
-    }
-
-    // Evaluate the GET expression
-    const list<value> params(append<value>(cddr(rpath), mkvalues(args)));
-    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
-    if (!hasContent(val))
-        return mkfailure<int>(reason(val));
-    const value c = content(val);
-    debug(c, "modeval::get::content");
-
-    // Check if the client requested a specific format
-    const list<value> fmt = assoc<value>("format", args);
-
-    // Write as a scheme value if requested by the client
-    if (!isNil(fmt) && cadr(fmt) == "scheme")
-        return httpd::writeResult(mklist<string>(scheme::writeValue(c)), "text/plain; charset=utf-8", r);
-
-    // Write a simple value as a JSON value
-    if (!isList(c)) {
-        js::JSContext cx;
-        if (isSymbol(c)) {
-            const list<value> lc = mklist<value>(mklist<value>("name", value(string(c))));
-            debug(lc, "modeval::get::symbol");
-            return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
-        }
-        const list<value> lc = mklist<value>(mklist<value>("value", c));
-        debug(lc, "modeval::get::value");
-        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
-    }
-
-    // Write an empty list as a JSON empty value
-    if (isNil((list<value>)c)) {
-        js::JSContext cx;
-        debug(list<value>(), "modeval::get::empty");
-        return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json; charset=utf-8", r);
-    }
-
-    // Write content-type / content-list pair
-    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
-        return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
-
-    // Write an assoc value as a JSON result
-    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
-        js::JSContext cx;
-        const list<value> lc = mklist<value>(c);
-        debug(lc, "modeval::get::assoc");
-        debug(valuesToElements(lc), "modeval::get::assoc::element");
-        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
-    }
-
-    // Write value as JSON if requested by the client
-    if (!isNil(fmt) && cadr(fmt) == "json") {
-        js::JSContext cx;
-        return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json; charset=utf-8", r);
-    }
-
-    // Convert list of values to element values
-    const list<value> e = valuesToElements(c);
-    debug(e, "modeval::get::elements");
-
-    // Write an ATOM feed or entry
-    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
-        const list<value> el = car<value>(e);
-        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
-            if (cadr<value>(el) == atom::feed)
-                return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8", r);
-            if (cadr<value>(el) == atom::entry)
-                return httpd::writeResult(atom::writeATOMEntry(e), "application/atom+xml; charset=utf-8", r);
-        }
-    }
-
-    // Write any other compound value as a JSON value
-    js::JSContext cx;
-    return httpd::writeResult(json::writeJSON(e, cx), "application/json; charset=utf-8", r);
-}
-
-/**
- * Handle an HTTP POST.
- */
-const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    debug(r->uri, "modeval::post::url");
-
-    // Evaluate a JSON-RPC request and return a JSON result
-    const string ct = httpd::contentType(r);
-    if (contains(ct, "application/json-rpc") || contains(ct, "text/plain") || contains(ct, "application/x-www-form-urlencoded")) {
-
-        // Read the JSON request
-        const int rc = httpd::setupReadPolicy(r);
-        if(rc != OK)
-            return rc;
-        const list<string> ls = httpd::read(r);
-        debug(ls, "modeval::post::input");
-        js::JSContext cx;
-        const list<value> json = elementsToValues(content(json::readJSON(ls, cx)));
-        const list<list<value> > args = httpd::postArgs(json);
-
-        // Extract the request id, method and params
-        const value id = cadr(assoc(value("id"), args));
-        const value func = c_str(json::funcName(cadr(assoc(value("method"), args))));
-        const list<value> params = (list<value>)cadr(assoc(value("params"), args));
-
-        // Evaluate the request expression
-        const failable<value> val = failableResult(impl(cons<value>(func, params)));
-        if (!hasContent(val))
-            return mkfailure<int>(reason(val));
-
-        // Return JSON result
-        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
-    }
-
-    // Evaluate an ATOM POST request and return the location of the corresponding created resource
-    if (contains(ct, "application/atom+xml")) {
-
-        // Read the ATOM entry
-        const int rc = httpd::setupReadPolicy(r);
-        if(rc != OK)
-            return rc;
-        const list<string> ls = httpd::read(r);
-        debug(ls, "modeval::post::input");
-        const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
-
-        // Evaluate the POST expression
-        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), entry))));
-        if (!hasContent(val))
-            return mkfailure<int>(reason(val));
-
-        // Return the created resource location
-        debug(content(val), "modeval::post::location");
-        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(httpd::url(r->uri, content(val), r))));
-        r->status = HTTP_CREATED;
-        return OK;
-    }
-
-    // Unknown content type, wrap the HTTP request struct in a value and pass it to
-    // the component implementation function
-    const failable<value> val = failableResult(impl(cons<value>("handle", mklist<value>(httpd::requestValue(r)))));
-    if (!hasContent(val))
-        return mkfailure<int>(reason(val));
-    return (int)content(val);
-}
-
-/**
- * Handle an HTTP PUT.
- */
-const failable<int> put(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    debug(r->uri, "modeval::put::url");
-
-    // Read the ATOM entry
-    const int rc = httpd::setupReadPolicy(r);
-    if(rc != OK)
-        return rc;
-    const list<string> ls = httpd::read(r);
-    debug(ls, "modeval::put::input");
-    const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
-
-    // Evaluate the PUT expression and update the corresponding resource
-    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), entry))));
-    if (!hasContent(val))
-        return mkfailure<int>(reason(val));
-    if (val == value(false))
-        return HTTP_NOT_FOUND;
-    return OK;
-}
-
-/**
- * Handle an HTTP DELETE.
- */
-const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    debug(r->uri, "modeval::delete::url");
-
-    // Evaluate an ATOM delete request
-    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(rpath)))));
-    if (!hasContent(val))
-        return mkfailure<int>(reason(val));
-    if (val == value(false))
-        return HTTP_NOT_FOUND;
-    return OK;
-}
-
-/**
- * Translate a component request.
- */
-const int translateRequest(const ServerConf& sc, const list<value>& rpath, request_rec *r) {
-    debug(rpath, "modeval::translateRequest::path");
-    if (isNil(rpath))
-        return DECLINED;
-
-    // Translate a component request
-    const value c = car(rpath);
-    if (c == string("components") || c == string("c")) {
-        r->handler = "mod_tuscany_eval";
-        return OK;
-    }
-
-    // Translate a request targeting a virtual host or virtual app
-    if (hasVirtualCompositeConf(sc) && !isNil(cdr(rpath))) {
-        const string cp = sc.virtualHostContributionPath + string(c) + "/" + sc.virtualHostCompositeName;
-        struct stat st;
-        const int s = stat(c_str(cp), &st);
-        if (s != -1) {
-            const value d = cadr(rpath);
-            if (d == string("components") || d == string("c")) {
-                r->handler = "mod_tuscany_eval";
-                return OK;
-            }
-        }
-    }
-
-    return DECLINED;
-}
-
-/**
- * Translate a component request.
- */
-int translate(request_rec *r) {
-    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
-        return DECLINED;
-
-    // Create a scoped memory pool
-    gc_scoped_pool pool(r->pool);
-
-    httpdDebugRequest(r, "modeval::translate::input");
-
-    // Get the server configuration
-    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
-
-    // Translate the request
-    return translateRequest(sc, pathValues(r->uri), r);
-}
 
 /**
  * Make an HTTP proxy lambda to a component reference.
@@ -573,7 +328,7 @@ struct appPropProxy {
     appPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const char* n = apr_table_get(currentRequest->headers_in, "X-Request-AppName");
+        const char* n = apr_table_get(currentRequest->notes, "X-Request-AppName");
         const value a = n != NULL? value(string(n)) : v;
         debug(a, "modeval::appPropProxy::value");
         return a;
@@ -584,7 +339,7 @@ struct pathPropProxy {
     pathPropProxy(unused const value& v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const char* u = apr_table_get(currentRequest->headers_in, "X-Request-URI");
+        const char* u = apr_table_get(currentRequest->notes, "X-Request-URI");
         const value v = u != NULL? pathValues(string(u)) : list<value>();
         debug(v, "modeval::pathPropProxy::value");
         return v;
@@ -743,21 +498,79 @@ const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const 
 }
 
 /**
+ * Return a list of component-name + references pairs. The references are
+ * arranged in trees of reference-name + reference-target pairs.
+ */
+const list<value> componentReferenceToTargetTree(const value& c) {
+    return mklist<value>(scdl::name(c), mkbtree(sort(scdl::referenceToTargetAssoc(scdl::references(c)))));
+}
+
+const list<value> componentReferenceToTargetAssoc(const list<value>& c) {
+    if (isNil(c))
+        return c;
+    return cons<value>(componentReferenceToTargetTree(car(c)), componentReferenceToTargetAssoc(cdr(c)));
+}
+
+/**
+ * Return a list of service-URI-path + component-name pairs. Service-URI-paths are
+ * represented as lists of URI path fragments.
+ */
+const list<value> defaultBindingURI(const string& cn, const string& sn) {
+    return mklist<value>(cn, sn);
+}
+
+const list<value> bindingToComponentAssoc(const string& cn, const string& sn, const list<value>& b) {
+    if (isNil(b))
+        return b;
+    const value uri(scdl::uri(car(b)));
+    if (isNil(uri))
+        return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
+    return cons<value>(mklist<value>(pathValues(c_str(string(uri))), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
+}
+
+const list<value> serviceToComponentAssoc(const string& cn, const list<value>& s) {
+    if (isNil(s))
+        return s;
+    const string sn(scdl::name(car(s)));
+    const list<value> btoc(bindingToComponentAssoc(cn, sn, scdl::bindings(car(s))));
+    if (isNil(btoc))
+        return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), serviceToComponentAssoc(cn, cdr(s)));
+    return append<value>(btoc, serviceToComponentAssoc(cn, cdr(s)));
+}
+
+const list<value> uriToComponentAssoc(const list<value>& c) {
+    if (isNil(c))
+        return c;
+    return append<value>(serviceToComponentAssoc(scdl::name(car(c)), scdl::services(car(c))), uriToComponentAssoc(cdr(c)));
+}
+
+/**
  * Configure the components declared in the deployed composite.
  */
 const failable<bool> confComponents(ServerConf& sc) {
-    if (!hasCompositeConf(sc))
+    if (!hasContributionConf(sc))
         return false;
     debug(sc.contributionPath, "modeval::confComponents::contributionPath");
+    debug(sc.contributionPath, "modeval::confComponents::contributorName");
     debug(sc.compositeName, "modeval::confComponents::compositeName");
     if (sc.ca != "") debug(sc.ca, "modeval::confComponents::sslCA");
     if (sc.cert != "") debug(sc.cert, "modeval::confComponents::sslCert");
     if (sc.key != "") debug(sc.key, "modeval::confComponents::sslKey");
 
-    // Read the components and get their implementation lambda functions
+    // Read the components and get their services, references and implementation
+    // lambda functions
     const failable<list<value> > comps = readComponents(scdl::resourcePath(sc.contributionPath, sc.compositeName));
     if (!hasContent(comps))
         return mkfailure<bool>(reason(comps));
+
+    const list<value> refs = componentReferenceToTargetAssoc(content(comps));
+    debug(refs, "modeval::confComponents::references");
+    sc.references = mkbtree(sort(refs));
+
+    const list<value> svcs = uriToComponentAssoc(content(comps));
+    debug(svcs, "modeval::confComponents::services");
+    sc.services = mkbtree(sort(svcs));
+
     sc.implementations = componentToImplementationAssoc(sc, content(comps));
     debug(sc.implementations, "modeval::confComponents::implementations");
     return true;
@@ -781,18 +594,33 @@ const failable<bool> startComponents(ServerConf& sc) {
 /**
  * Configure and start the components deployed in a virtual host.
  */
-const failable<bool> virtualHostConfig(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
-    debug(httpd::serverName(ssc.server), "modeval::virtualHostConfig::serverName");
-    debug(httpd::serverName(r), "modeval::virtualHostConfig::virtualHostName");
-    debug(ssc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
-    debug(sc.contributionPath, "modeval::virtualHostConfig::contributionPath");
-
-    // Chdir to the virtual host's contribution
-    if (chdir(c_str(sc.contributionPath)) != 0)
-        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
+const failable<bool> vhostConfig(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
+    debug(httpd::serverName(ssc.server), "modeval::vhostConfig::serverName");
+    debug(httpd::serverName(r), "modeval::vhostConfig::vhostName");
+    debug(ssc.vhostContributionPath, "modeval::vhostConfig::vhostContributionPath");
+    debug(sc.contributionPath, "modeval::vhostConfig::contributionPath");
 
     // Configure the deployed components
     const failable<bool> cr = confComponents(sc);
+    if (!hasContent(cr))
+        return cr;
+
+    // Store the virtual host configuration in the request config
+
+    return true;
+}
+
+/**
+ * Start the components deployed in a virtual host.
+ */
+const failable<bool> vhostStart(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
+    debug(httpd::serverName(ssc.server), "modeval::vhostStart::serverName");
+    debug(httpd::serverName(r), "modeval::vhostStart::vhostName");
+    debug(ssc.vhostContributionPath, "modeval::vhostStart::vhostContributionPath");
+    debug(sc.contributionPath, "modeval::vhostStart::contributionPath");
+
+    // Configure the components deployed in a virtual host
+    const failable<bool> cr = vhostConfig(sc, ssc, r);
     if (!hasContent(cr))
         return cr;
 
@@ -808,20 +636,438 @@ const failable<bool> virtualHostConfig(ServerConf& sc, const ServerConf& ssc, re
 }
 
 /**
- * Cleanup a virtual host.
+ * Stop a virtual host.
  */
-const failable<bool> virtualHostCleanup(const ServerConf& sc, const ServerConf& ssc) {
-    if (!hasCompositeConf(sc))
+const failable<bool> vhostStop(const ServerConf& sc, unused const ServerConf& ssc) {
+    if (!hasContributionConf(sc))
         return true;
-    debug("modeval::virtualHostCleanup");
+    debug("modeval::vhostStop");
 
     // Stop the component implementations
     applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
 
-    // Chdir back to the main server's contribution
-    if (chdir(c_str(ssc.contributionPath)) != 0)
-        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + ssc.contributionPath);
     return true;
+}
+
+/**
+ * Handle an HTTP GET.
+ */
+const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
+    debug(r->uri, "modeval::get::uri");
+
+    // Inspect the query string
+    const list<list<value> > args = httpd::queryArgs(r);
+    const list<value> ia = assoc(value("id"), args);
+    const list<value> ma = assoc(value("method"), args);
+
+    // Evaluate a JSON-RPC request and return a JSON result
+    if (!isNil(ia) && !isNil(ma)) {
+
+        // Extract the request id, method and params
+        const value id = cadr(ia);
+        const value func = c_str(json::funcName(string(cadr(ma))));
+
+        // Apply the requested function
+        const failable<value> val = failableResult(impl(cons(func, json::queryParams(args))));
+        if (!hasContent(val))
+            return mkfailure<int>(reason(val));
+
+        // Return JSON result
+        js::JSContext cx;
+        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
+    }
+
+    // Evaluate the GET expression
+    const list<value> params(append<value>(cddr(rpath), mkvalues(args)));
+    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
+    if (!hasContent(val))
+        return mkfailure<int>(reason(val));
+    const value c = content(val);
+    debug(c, "modeval::get::content");
+
+    // Check if the client requested a specific format
+    const list<value> fmt = assoc<value>("format", args);
+
+    // Write as a scheme value if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "scheme")
+        return httpd::writeResult(mklist<string>(scheme::writeValue(c)), "text/plain; charset=utf-8", r);
+
+    // Write a simple value as a JSON value
+    if (!isList(c)) {
+        js::JSContext cx;
+        if (isSymbol(c)) {
+            const list<value> lc = mklist<value>(mklist<value>("name", value(string(c))));
+            debug(lc, "modeval::get::symbol");
+            return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
+        }
+        const list<value> lc = mklist<value>(mklist<value>("value", c));
+        debug(lc, "modeval::get::value");
+        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
+    }
+
+    // Write an empty list as a JSON empty value
+    if (isNil((list<value>)c)) {
+        js::JSContext cx;
+        debug(list<value>(), "modeval::get::empty");
+        return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json; charset=utf-8", r);
+    }
+
+    // Write content-type / content-list pair
+    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
+        return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
+
+    // Write an assoc value as a JSON result
+    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
+        js::JSContext cx;
+        const list<value> lc = mklist<value>(c);
+        debug(lc, "modeval::get::assoc");
+        debug(valuesToElements(lc), "modeval::get::assoc::element");
+        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
+    }
+
+    // Write value as JSON if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "json") {
+        js::JSContext cx;
+        return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json; charset=utf-8", r);
+    }
+
+    // Convert list of values to element values
+    const list<value> e = valuesToElements(c);
+    debug(e, "modeval::get::elements");
+
+    // Write an ATOM feed or entry
+    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
+        const list<value> el = car<value>(e);
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
+            if (cadr<value>(el) == atom::feed)
+                return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8", r);
+            if (cadr<value>(el) == atom::entry)
+                return httpd::writeResult(atom::writeATOMEntry(e), "application/atom+xml; charset=utf-8", r);
+        }
+    }
+
+    // Write any other compound value as a JSON value
+    js::JSContext cx;
+    return httpd::writeResult(json::writeJSON(e, cx), "application/json; charset=utf-8", r);
+}
+
+/**
+ * Handle an HTTP POST.
+ */
+const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
+    debug(r->uri, "modeval::post::uri");
+
+    // Evaluate a JSON-RPC request and return a JSON result
+    const string ct = httpd::contentType(r);
+    if (contains(ct, "application/json-rpc") || contains(ct, "text/plain") || contains(ct, "application/x-www-form-urlencoded")) {
+
+        // Read the JSON request
+        const int rc = httpd::setupReadPolicy(r);
+        if(rc != OK)
+            return rc;
+        const list<string> ls = httpd::read(r);
+        debug(ls, "modeval::post::input");
+        js::JSContext cx;
+        const list<value> json = elementsToValues(content(json::readJSON(ls, cx)));
+        const list<list<value> > args = httpd::postArgs(json);
+
+        // Extract the request id, method and params
+        const value id = cadr(assoc(value("id"), args));
+        const value func = c_str(json::funcName(cadr(assoc(value("method"), args))));
+        const list<value> params = (list<value>)cadr(assoc(value("params"), args));
+
+        // Evaluate the request expression
+        const failable<value> val = failableResult(impl(cons<value>(func, params)));
+        if (!hasContent(val))
+            return mkfailure<int>(reason(val));
+
+        // Return JSON result
+        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
+    }
+
+    // Evaluate an ATOM POST request and return the location of the corresponding created resource
+    if (contains(ct, "application/atom+xml")) {
+
+        // Read the ATOM entry
+        const int rc = httpd::setupReadPolicy(r);
+        if(rc != OK)
+            return rc;
+        const list<string> ls = httpd::read(r);
+        debug(ls, "modeval::post::input");
+        const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
+
+        // Evaluate the POST expression
+        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), entry))));
+        if (!hasContent(val))
+            return mkfailure<int>(reason(val));
+
+        // Return the created resource location
+        debug(content(val), "modeval::post::location");
+        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(httpd::url(r->uri, content(val), r))));
+        r->status = HTTP_CREATED;
+        return OK;
+    }
+
+    // Unknown content type, wrap the HTTP request struct in a value and pass it to
+    // the component implementation function
+    const failable<value> val = failableResult(impl(cons<value>("handle", mklist<value>(httpd::requestValue(r)))));
+    if (!hasContent(val))
+        return mkfailure<int>(reason(val));
+    return (int)content(val);
+}
+
+/**
+ * Handle an HTTP PUT.
+ */
+const failable<int> put(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
+    debug(r->uri, "modeval::put::uri");
+
+    // Read the ATOM entry
+    const int rc = httpd::setupReadPolicy(r);
+    if(rc != OK)
+        return rc;
+    const list<string> ls = httpd::read(r);
+    debug(ls, "modeval::put::input");
+    const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
+
+    // Evaluate the PUT expression and update the corresponding resource
+    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), entry))));
+    if (!hasContent(val))
+        return mkfailure<int>(reason(val));
+    if (val == value(false))
+        return HTTP_NOT_FOUND;
+    return OK;
+}
+
+/**
+ * Handle an HTTP DELETE.
+ */
+const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<value(const list<value>&)>& impl) {
+    debug(r->uri, "modeval::delete::uri");
+
+    // Evaluate an ATOM delete request
+    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(rpath)))));
+    if (!hasContent(val))
+        return mkfailure<int>(reason(val));
+    if (val == value(false))
+        return HTTP_NOT_FOUND;
+    return OK;
+}
+
+/**
+ * Route a /references/component-name/reference-name request,
+ * to the target of the component reference.
+ */
+int translateReference(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
+    httpdDebugRequest(r, "modeval::translateReference::input");
+    debug(r->uri, "modeval::translateReference::uri");
+    debug(apath, "modeval::translateReference::apath");
+    debug(rpath, "modeval::translateReference::rpath");
+
+    // Find the requested component
+    if (isNil(cdr(rpath)))
+        return HTTP_NOT_FOUND;
+    const list<value> comp(assoctree(cadr(rpath), sc.references));
+    if (isNil(comp))
+        return HTTP_NOT_FOUND;
+
+    // Find the requested reference and target configuration
+    const list<value> ref(assoctree<value>(caddr(rpath), cadr(comp)));
+    if (isNil(ref))
+        return HTTP_NOT_FOUND;
+    const string target(cadr(ref));
+    debug(target, "modeval::translateReference::target");
+
+    // Route to an absolute target URI using mod_proxy or an HTTP client redirect
+    const list<value> pathInfo = cdddr(rpath);
+    if (http::isAbsolute(target)) {
+        if (useModProxy) {
+            // Build proxy URI
+            string turi = target + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
+            const string proxy(string("proxy:") + turi);
+            debug(proxy, "modeval::translateReference::proxy");
+            r->filename = apr_pstrdup(r->pool, c_str(proxy));
+            r->proxyreq = PROXYREQ_REVERSE;
+            r->handler = "proxy-server";
+            apr_table_setn(r->notes, "proxy-nocanon", "1");
+            return OK;
+        }
+
+        debug(target, "modeval::translateReference::location");
+        r->handler = "mod_tuscany_eval";
+        return httpd::externalRedirect(target, r);
+    }
+
+    // Route to a relative target URI using a local internal redirect
+    // /components/, target component name and request path info
+    const value tname = substr(target, 0, find(target, '/'));
+    const string redir = path(append(apath, cons<value>(string("c"), cons(tname, pathInfo))));
+    debug(redir, "modeval::translateReference::redirect");
+    r->uri = apr_pstrdup(r->pool, c_str(redir));
+    r->handler = "mod_tuscany_eval";
+    return OK;
+}
+
+/**
+ * Find a leaf matching a request path in a tree of URI paths.
+ */
+const int matchPath(const list<value>& k, const list<value>& p) {
+    if (isNil(p))
+        return true;
+    if (isNil(k))
+        return false;
+    if (car(k) != car(p))
+        return false;
+    return matchPath(cdr(k), cdr(p));
+}
+
+const list<value> assocPath(const value& k, const list<value>& tree) {
+    if (isNil(tree))
+        return tree;
+    if (matchPath(k, car<value>(car(tree))))
+        return car(tree);
+    if (k < car<value>(car(tree)))
+        return assocPath(k, cadr(tree));
+    return assocPath(k, caddr(tree));
+}
+
+/**
+ * Route a service request to the component providing the requested service.
+ */
+int translateService(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
+    httpdDebugRequest(r, "modeval::translateService::input");
+    debug(r->uri, "modeval::translateService::uri");
+
+    // Find the requested component
+    debug(sc.services, "modeval::translateService::services");
+    const list<value> svc(assocPath(rpath, sc.services));
+    if (isNil(svc))
+        return DECLINED;
+    debug(svc, "modeval::translateService::service");
+
+    // Build a component-name + path-info URI
+    const list<value> target(append(apath, cons<value>(string("c"), cons<value>(cadr(svc), httpd::pathInfo(rpath, car(svc))))));
+    debug(target, "modeval::translateService::target");
+
+    // Dispatch to the target component using a local internal redirect
+    const string redir(path(target));
+    debug(redir, "modeval::translateService::redirect");
+    r->uri = apr_pstrdup(r->pool, c_str(redir));
+    r->handler = "mod_tuscany_eval";
+    return OK;
+}
+
+/**
+ * Translate a request to the target app and component.
+ */
+const int translateRequest(const ServerConf& sc, request_rec* r, const list<value>& rpath, const list<value>& apath) {
+    debug(apath, "modeval::translateRequest::apath");
+    debug(rpath, "modeval::translateRequest::rpath");
+    if (isNil(apath) && isNil(rpath))
+        return DECLINED;
+
+    if (!isNil(rpath)) {
+
+        // If the request is targeting a virtual host, use the corresponding
+        // virtual host configuration
+        if (isNil(apath)) {
+            if (hasVhostDomainConf(sc) && hasVhostContributionConf(sc) && httpd::isVhostRequest(sc.server, sc.vhostDomain, r)) {
+                const string aname = httpd::hostName(r);
+                ServerConf vsc(r->pool, sc, aname);
+                if (!hasContent(vhostConfig(vsc, sc, r)))
+                    return DECLINED;
+                return translateRequest(vsc, r, rpath, mklist<value>(aname));
+            }
+        }
+
+        // Let default handler handle a resource request
+        const value prefix = car(rpath);
+        if (prefix == string("vhosts") || prefix == string("v"))
+            return DECLINED;
+
+        // Let our handler handle a component request
+        if (prefix == string("components") || prefix == string("c")) {
+            r->handler = "mod_tuscany_eval";
+            return OK;
+        }
+
+        // Translate a component reference request
+        if (prefix == string("references") || prefix == string("r"))
+            return translateReference(sc, r, rpath, apath);
+
+        // Attempt to translate the request to a service request
+        if (translateService(sc, r, rpath, apath) == OK)
+            return OK;
+
+        // Attempt to map the request to an actual file
+        if (isNil(apath)) {
+            const failable<request_rec*, int> fnr = httpd::internalSubRequest(r->uri, r);
+            if (!hasContent(fnr))
+                return HTTP_INTERNAL_SERVER_ERROR;
+            request_rec* nr = content(fnr);
+            nr->uri = r->filename;
+            const int tr = ap_core_translate(nr);
+            if (tr != OK)
+                return tr;
+            if (ap_directory_walk(nr) == OK && ap_file_walk(nr) == OK && nr->finfo.filetype != APR_NOFILE) {
+                debug(nr->filename, "modeval::translateRequest::file");
+                return DECLINED;
+            }
+
+            // If the request is targeting a virtual app, use the corresponding
+            // virtual host configuration
+            if (hasVhostContributionConf(sc)) {
+                const string cp = sc.vhostContributionPath + string(prefix) + "/" + sc.vhostCompositeName;
+                ServerConf vsc(r->pool, sc, string(prefix));
+                if (!hasContent(vhostConfig(vsc, sc, r)))
+                    return DECLINED;
+                return translateRequest(vsc, r, cdr(rpath), mklist<value>(car(rpath)));
+            }
+        }
+    }
+
+    // If we're in a virtual app and the request didn't match a service,
+    // reference or component, redirect it to /v/<uri>. This will allow
+    // mapping to the actual app resources using HTTPD aliases.
+    if (!isNil(apath)) {
+        if (isNil(rpath) && r->uri[strlen(r->uri) -1] != '/') {
+
+            // Make sure a document root request ends with a '/', using
+            // an external redirect
+            const string target = string(r->uri) + string("/") + (r->args != NULL? string("?") + r->args : string(""));;
+            debug(target, "modeval::translateRequest::location");
+            r->handler = "mod_tuscany_eval";
+            return httpd::externalRedirect(target, r);
+        }
+
+        // Do an internal redirect to /v/<uri>
+        const string redir = string("/redirect:") + string("/v") + string(r->uri);
+        debug(redir, "modeval::translateRequest::redirect");
+        r->filename = apr_pstrdup(r->pool, c_str(redir));
+        r->handler = "mod_tuscany_eval";
+        return OK;
+    }
+
+    return DECLINED;
+}
+
+/**
+ * Translate a request.
+ */
+int translate(request_rec *r) {
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+        return DECLINED;
+
+    // Create a scoped memory pool
+    gc_scoped_pool pool(r->pool);
+
+    httpdDebugRequest(r, "modeval::translate::input");
+
+    // Get the server configuration
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
+
+    // Translate the request
+    return translateRequest(sc, r, pathValues(r->uri), list<value>());
 }
 
 /**
@@ -832,45 +1078,44 @@ const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_
     if (isNil(cdr(rpath)))
         return HTTP_NOT_FOUND;
 
-    // Handle a request targeting a virtual host or virtual app
-    if (hasVirtualCompositeConf(sc)) {
-        if (hasVirtualDomainConf(sc) && httpd::isVirtualHostRequest(sc.server, sc.virtualHostDomain, r)) {
+    if (hasVhostContributionConf(sc)) {
+
+        // Handle a request targeting a component in a virtual host
+        if (hasVhostDomainConf(sc) && httpd::isVhostRequest(sc.server, sc.vhostDomain, r)) {
 
             // Determine the app name from the host sub-domain name, and
-            // store it in a header
+            // store it in a request note
             const string app = http::subDomain(httpd::hostName(r));
-            apr_table_setn(r->headers_in, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
+            apr_table_setn(r->notes, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
             ServerConf vsc(r->pool, sc, app);
-            if (!hasContent(virtualHostConfig(vsc, sc, r)))
+            if (!hasContent(vhostStart(vsc, sc, r)))
                 return HTTP_INTERNAL_SERVER_ERROR;
             const int rc = handleRequest(vsc, rpath, r);
-            virtualHostCleanup(vsc, sc);
+            vhostStop(vsc, sc);
             return rc;
         }
 
+        // Handle a request targeting a component in a virtual app
         const value c = car(rpath);
         if (c != string("components") && c != string("c")) {
 
-            // Determine the app name from the request URI path
+            // Determine the app name from the request URI path and
+            // store it in a request note
             const string app = string(c);
-            const string cp = sc.virtualHostContributionPath + app + "/" + sc.virtualHostCompositeName;
-            struct stat st;
-            const int s = stat(c_str(cp), &st);
-            if (s != -1) {
-                // Store the app name in a header
-                apr_table_setn(r->headers_in, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
-                ServerConf vsc(r->pool, sc, app);
-                if (!hasContent(virtualHostConfig(vsc, sc, r)))
-                    return HTTP_INTERNAL_SERVER_ERROR;
-                const int rc = handleRequest(vsc, cdr(rpath), r);
-                virtualHostCleanup(vsc, sc);
-                return rc;
-            }
+            const string cp = sc.vhostContributionPath + app + "/" + sc.vhostCompositeName;
+            apr_table_setn(r->notes, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
+
+            ServerConf vsc(r->pool, sc, app);
+            if (!hasContent(vhostStart(vsc, sc, r)))
+                return HTTP_INTERNAL_SERVER_ERROR;
+            const int rc = handleRequest(vsc, cdr(rpath), r);
+            vhostStop(vsc, sc);
+            return rc;
         }
     }
 
-    // Store the request uri path in a header
-    apr_table_setn(r->headers_in, "X-Request-URI", apr_pstrdup(r->pool, c_str(path(rpath))));
+    // Store the request uri path in a request note
+    apr_table_setn(r->notes, "X-Request-URI", apr_pstrdup(r->pool, c_str(path(rpath))));
 
     // Get the component implementation lambda
     const list<value> impl(assoctree<value>(cadr(rpath), sc.implTree));
@@ -903,11 +1148,20 @@ int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
 
-    // Create a scoped memory pool
-    gc_scoped_pool pool(r->pool);
+    // Nothing to do for an external redirect
+    if (r->status == HTTP_MOVED_TEMPORARILY)
+        return OK;
 
+    // Handle an internal redirect as directed by the translate hook
+    if (r->filename != NULL && !strncmp(r->filename, "/redirect:", 10)) {
+        if (r->args == NULL)
+            return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
+        return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);
+    }
+
+
+    // Create a scope for the current request
     ScopedRequest sr(r);
-    httpdDebugRequest(r, "modeval::handler::input");
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
@@ -946,16 +1200,21 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
     sc.lifecycle = mainsc.lifecycle;
+    sc.vhostName = mainsc.vhostName;
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
-    sc.virtualHostDomain = mainsc.virtualHostDomain;
-    sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
-    sc.virtualHostCompositeName = mainsc.virtualHostCompositeName;
+    sc.vhostDomain = mainsc.vhostDomain;
+    sc.vhostContributionPath = mainsc.vhostContributionPath;
+    sc.vhostCompositeName = mainsc.vhostCompositeName;
+    sc.vhostContributorName = mainsc.vhostContributorName;
     if (sc.ca == "") sc.ca = mainsc.ca;
     if (sc.cert == "") sc.cert = mainsc.cert;
     if (sc.key == "") sc.key = mainsc.key;
+    sc.references = mainsc.references;
+    sc.services = mainsc.services;
     sc.implementations = mainsc.implementations;
     sc.implTree = mainsc.implTree;
+    sc.vhostContributor = mainsc.vhostContributor;
     return postConfigMerge(mainsc, s->next);
 }
 
@@ -964,7 +1223,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
 
     gc_scoped_pool pool(p);
 
-    // Get the server configuration and determine the wiring server name
+    // Get the server configuration and determine the server name
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfig::serverName");
 
@@ -1037,6 +1296,10 @@ void childInit(apr_pool_t* p, server_rec* s) {
     // Store the implementation lambda functions in a tree for fast retrieval
     sc.implTree = mkbtree(sort(sc.implementations));
 
+    // Create a proxy for the vhost contributor if needed
+    if (length(sc.vhostContributorName) != 0) 
+        sc.vhostContributor = mkimplProxy(sc, sc.vhostContributorName);
+
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
 
@@ -1062,19 +1325,25 @@ const char* confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
 const char* confVirtualDomain(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.virtualHostDomain = arg;
+    sc.vhostDomain = arg;
     return NULL;
 }
 const char* confVirtualContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.virtualHostContributionPath = arg;
+    sc.vhostContributionPath = arg;
+    return NULL;
+}
+const char* confVirtualContributor(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.vhostContributorName = arg;
     return NULL;
 }
 const char* confVirtualComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.virtualHostCompositeName = arg;
+    sc.vhostCompositeName = arg;
     return NULL;
 }
 const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
@@ -1108,7 +1377,8 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     AP_INIT_TAKE1("SCAVirtualDomain", (const char*(*)())confVirtualDomain, NULL, RSRC_CONF, "SCA virtual host domain"),
-    AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
+    AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution path"),
+    AP_INIT_TAKE1("SCAVirtualContributor", (const char*(*)())confVirtualContributor, NULL, RSRC_CONF, "SCA virtual host contributor component"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
     AP_INIT_TAKE1("SCAWiringSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SCA wiring SSL CA certificate file"),
@@ -1122,7 +1392,7 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_translate_name(translate, NULL, NULL, APR_HOOK_FIRST);
+    ap_hook_translate_name(translate, NULL, NULL, APR_HOOK_LAST);
 }
 
 }

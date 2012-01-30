@@ -15,24 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-ACLOCAL_AMFLAGS = -I m4
+# App composites collection implementation
+from util import *
 
-SUBDIRS = etc kernel modules components hosting samples doc macos ubuntu
+# Get the database to use for a particular key
+def get(id, db1, db2):
+    if isNil(id):
+        return db1
+    if cadr(id)[0:1].lower() < 'm':
+        return db1
+    return db2
 
-datadir=$(prefix)
-dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE NEWS
-nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-EXTRA_DIST = INSTALL bootstrap
-
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
-	rm -rf $(distdir)/.git
-
-bindist: install
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	
