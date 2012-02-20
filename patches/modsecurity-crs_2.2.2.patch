@@ -6,3 +6,9 @@
 ---
 > #SecRule ARGS "(?:ft|htt)ps?.*\?+$" \
 > #        "phase:2,rev:'2.2.2',t:none,t:htmlEntityDecode,t:lowercase,capture,ctl:auditLogParts=+E,block,status:501,msg:'Remote File Inclusion Attack',id:'950119',severity:'2',setvar:'tx.msg=%{rule.msg}',setvar:tx.anomaly_score=+%{tx.critical_anomaly_score},setvar:tx.rfi_score=+%{tx.critical_anomaly_score},setvar:tx.%{rule.id}-WEB_ATTACK/RFI-%{matched_var_name}=%{tx.0}"
+--- base_rules/modsecurity_crs_50_outbound.conf
++++ base_rules/modsecurity_crs_50_outbound.conf
+39c39
+< SecRule RESPONSE_BODY "\<\%" "phase:4,rev:'2.2.2',chain,t:none,capture,ctl:auditLogParts=+E,block,msg:'ASP/JSP source code leakage',id:'970903',tag:'LEAKAGE/SOURCE_CODE_ASP_JSP',tag:'WASCTC/WASC-13',tag:'OWASP_TOP_10/A6',tag:'PCI/6.5.6',severity:'3'"
+---
+> #SecRule RESPONSE_BODY "\<\%" "phase:4,rev:'2.2.2',chain,t:none,capture,ctl:auditLogParts=+E,block,msg:'ASP/JSP source code leakage',id:'970903',tag:'LEAKAGE/SOURCE_CODE_ASP_JSP',tag:'WASCTC/WASC-13',tag:'OWASP_TOP_10/A6',tag:'PCI/6.5.6',severity:'3'"

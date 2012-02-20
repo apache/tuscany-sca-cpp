@@ -44,9 +44,17 @@ NameVirtualHost $vhost
 <VirtualHost $vhost>
 ServerName http://vhost.$host:$pport
 ServerAlias *.$host
-VirtualDocumentRoot $vroot/%1/$vhtdocs/
+
+# Map /v/<app-name>/<path> to vroot/<app-name>/vhtdocs/<path>
+AliasMatch /v/([^/]+)(.*)$ $vroot/\$1/$vhtdocs/\$2
 
 Include conf/dvhost.conf
+
+# Configure authentication
+Include conf/noauth.conf
+Include conf/auth.conf
+Include conf/pubauth.conf
+
 </VirtualHost>
 
 EOF

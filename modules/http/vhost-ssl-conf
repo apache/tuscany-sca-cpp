@@ -49,8 +49,16 @@ NameVirtualHost $sslvhost
 <VirtualHost $sslvhost>
 ServerName https://vhost.$host:$sslpport
 ServerAlias *.$host
-VirtualDocumentRoot $vroot/%1/$vhtdocs/
+
+# Map /v/<app-name>/<path> to vroot/<app-name>/vhtdocs/<path>
+AliasMatch /v/([^/]+)(.*)$ $vroot/\$1/$vhtdocs/\$2
 
 Include conf/dvhost-ssl.conf
+
+# Configure authentication
+Include conf/noauth-ssl.conf
+Include conf/auth-ssl.conf
+Include conf/pubauth-ssl.conf
+
 </VirtualHost>
 
