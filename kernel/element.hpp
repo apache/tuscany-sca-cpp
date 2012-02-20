@@ -200,7 +200,7 @@ const value valueToElement(const value& t) {
         // Convert a single value to an attribute or an element
         if (!isList(v)) {
             if (substr(n, 0, 1) == atsign)
-                return mklist<value>(attribute, substr(n, 1), v);
+                return mklist<value>(attribute, c_str(substr(n, 1)), v);
             return mklist(element, n, v);
         }
 

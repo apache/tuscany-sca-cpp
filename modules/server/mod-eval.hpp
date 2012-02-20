@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more provider license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
@@ -52,62 +52,97 @@ namespace server {
 namespace modeval {
 
 /**
- * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
+ * SSL certificate configuration.
  */
-const bool useModProxy = true;
+class SSLConf {
+public:
+    SSLConf() {
+    }
+
+    string ca;
+    string cert;
+    string key;
+};
+
+/**
+ * Virtual host configuration.
+ */
+class VhostConf {
+public:
+    VhostConf() {
+    }
+
+    string domain;
+    string contribPath;
+    string composName;
+    string providerName;
+    value provider;
+};
+
+/**
+ * Contribution configuration.
+ */
+class ContribConf {
+public:
+    ContribConf() {
+    }
+
+    string contribPath;
+    string composName;
+};
+
+/**
+ * Composite assocs.
+ */
+class Composite {
+public:
+    Composite() {
+    }
+
+    Composite(const list<value>& refs, const list<value>& svcs, const list<value>& impls) : refs(refs), svcs(svcs), impls(impls) {
+    }
+
+    list<value> refs;
+    list<value> svcs;
+    list<value> impls;
+};
 
 /**
  * Server configuration.
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
+    ServerConf() {
     }
 
-    ServerConf(apr_pool_t* p, const ServerConf& ssc, const string& name) : p(p), server(ssc.server), lifecycle(ssc.lifecycle), vhostName(name), compositeName(ssc.vhostCompositeName), ca(ssc.ca), cert(ssc.cert), key(ssc.key), vhostContributor(ssc.vhostContributor) {
-        contributionPath = length(ssc.vhostContributionPath) != 0? ssc.vhostContributionPath + name + "/" : ssc.contributionPath;
+    ServerConf(apr_pool_t* p, const server_rec* s) : p(p), server(s) {
     }
 
     const gc_pool p;
-    server_rec* server;
+    const server_rec* server;
     lambda<value(const list<value>&)> lifecycle;
-    string vhostName;
-    string contributionPath;
-    string compositeName;
-    string vhostDomain;
-    string vhostContributionPath;
-    string vhostCompositeName;
-    string vhostContributorName;
-    string ca;
-    string cert;
-    string key;
-    list<value> references;
-    list<value> services;
-    list<value> implementations;
-    list<value> implTree;
-    value vhostContributor;
+    ContribConf contribc;
+    SSLConf sslc;
+    VhostConf vhostc;
+    Composite compos;
 };
 
 /**
- * Return true if a server contains a contribution configuration.
+ * Request configuration.
  */
-const bool hasContributionConf(const ServerConf& sc) {
-    return length(sc.contributionPath) != 0;
-}
+class RequestConf {
+public:
+    RequestConf(apr_pool_t* p, const request_rec* r) : p(p), request(r), vhost(false), valias(false) {
+    }
 
-/**
- * Return true if a server contains a virtual host domain configuration.
- */
-const bool hasVhostDomainConf(const ServerConf& sc) {
-    return length(sc.vhostDomain) != 0;
-}
-
-/**
- * Return true if a server contains a virtual host contribution configuration.
- */
-const bool hasVhostContributionConf(const ServerConf& sc) {
-    return length(sc.vhostContributionPath) != 0 || length(sc.vhostContributorName) != 0;
-}
+    const gc_pool p;
+    const request_rec* request;
+    bool vhost;
+    bool valias;
+    list<value> rpath;
+    list<value> vpath;
+    list<value> impls;
+};
 
 /**
  * Convert a result represented as a content + failure pair to a
@@ -140,20 +175,11 @@ public:
 };
 
 /**
- * Make an HTTP proxy lambda to a component reference.
- */
-const value mkhttpProxy(const ServerConf& sc, const string& ref, const string& base) {
-    const string uri = base + ref;
-    debug(uri, "modeval::mkhttpProxy::uri");
-    return lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, "", sc.p));
-}
-
-/**
  * Make an HTTP proxy lambda to an absolute URI
  */
-const value mkhttpProxy(const ServerConf& sc, const string& uri) {
+const value mkhttpProxy(const string& uri, const gc_pool& p) {
     debug(uri, "modeval::mkhttpProxy::uri");
-    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", sc.p));
+    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", p));
 }
 
 /**
@@ -161,13 +187,14 @@ const value mkhttpProxy(const ServerConf& sc, const string& uri) {
  */
 class implProxy {
 public:
-    implProxy(const ServerConf& sc, const value& name) : sc(sc), name(name) {
+    implProxy(const value& name, const list<value>& impls, const SSLConf& sslc) : name(name), impls(impls), sslc(sslc) {
     }
 
     const value callImpl(const value& cname, const list<value>& aparams) const {
+        debug(impls, "modeval::implProxy::callImpl::impls");
 
         // Lookup the component implementation
-        const list<value> impl(assoctree<value>(cname, sc.implTree));
+        const list<value> impl(assoctree<value>(cname, impls));
         if (isNil(impl))
             return mkfailure<value>(string("Couldn't find component implementation: ") + cname);
 
@@ -202,19 +229,19 @@ public:
                     ostringstream appuri;
                     appuri << httpd::scheme(currentRequest) << "://" << substr(uri, 6) << "." << http::topDomain(httpd::hostName(currentRequest)) << ":" << httpd::port(currentRequest) << "/";
                     debug(str(appuri), "modeval::implProxy::httpproxy::appuri");
-                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(str(appuri), sc.ca, sc.cert, sc.key, httpd::cookie(currentRequest), p));
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(str(appuri), sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), p));
                     return px(aparams);
                 }
                 
-                // Pass our certificate and the cookie from the current request
+                // Pass our SSL certificate and the cookie from the current request
                 // only if the target is in the same top level domain
                 if (http::topDomain(http::hostName(uri, p)) == http::topDomain(httpd::hostName(currentRequest))) {
                     debug(uri, "modeval::implProxy::httpproxy::samedomain");
-                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, httpd::cookie(currentRequest), p));
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), p));
                     return px(aparams);
                 }
 
-                // No certificate or cookie on a cross domain call
+                // No SSL certificate or cookie on a cross domain call
                 debug(uri, "modeval::implProxy::httpproxy::crossdomain");
                 const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", p));
                 return px(aparams);
@@ -229,13 +256,14 @@ public:
     }
 
 private:
-    const ServerConf& sc;
     const value name;
+    const list<value>& impls;
+    const SSLConf& sslc;
 };
 
-const value mkimplProxy(const ServerConf& sc, const value& name) {
+const value mkimplProxy(const value& name, const list<value>& impls, const SSLConf& sslc) {
     debug(name, "modeval::implProxy::impl");
-    return lambda<value(const list<value>&)>(implProxy(sc, name));
+    return lambda<value(const list<value>&)>(implProxy(name, impls, sslc));
 }
 
 /**
@@ -275,7 +303,7 @@ const value mkunwiredProxy(const string& ref) {
 /**
  * Convert a list of component references to a list of proxy lambdas.
  */
-const value mkrefProxy(const ServerConf& sc, const value& ref) {
+const value mkrefProxy(const value& ref, const list<value>& impls, const SSLConf& sslc, const gc_pool& p) {
     const value target = scdl::target(ref);
     const bool wbyimpl = scdl::wiredByImpl(ref);
     debug(ref, "modeval::mkrefProxy::ref");
@@ -284,18 +312,18 @@ const value mkrefProxy(const ServerConf& sc, const value& ref) {
 
     // Use an HTTP proxy or an internal proxy to the component implementation
     if (wbyimpl)
-        return mkimplProxy(sc, value());
+        return mkimplProxy(value(), impls, sslc);
     if (isNil(target))
         return mkunwiredProxy(scdl::name(ref));
     if (http::isAbsolute(target))
-        return mkhttpProxy(sc, target);
-    return mkimplProxy(sc, car(pathValues(target)));
+        return mkhttpProxy(target, p);
+    return mkimplProxy(car(pathValues(target)), impls, sslc);
 }
 
-const list<value> refProxies(const ServerConf& sc, const list<value>& refs) {
+const list<value> refProxies(const list<value>& refs, const list<value>& impls, const SSLConf& sslc, const gc_pool& p) {
     if (isNil(refs))
         return refs;
-    return cons(mkrefProxy(sc, car(refs)), refProxies(sc, cdr(refs)));
+    return cons(mkrefProxy(car(refs), impls, sslc, p), refProxies(cdr(refs), impls, sslc, p));
 }
 
 /**
@@ -328,8 +356,8 @@ struct appPropProxy {
     appPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const char* n = apr_table_get(currentRequest->notes, "X-Request-AppName");
-        const value a = n != NULL? value(string(n)) : v;
+        const RequestConf& reqc = httpd::requestConf<RequestConf>(currentRequest, &mod_tuscany_eval);
+        const value a = isNil(reqc.vpath)? v : car(reqc.vpath);
         debug(a, "modeval::appPropProxy::value");
         return a;
     }
@@ -339,8 +367,8 @@ struct pathPropProxy {
     pathPropProxy(unused const value& v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const char* u = apr_table_get(currentRequest->notes, "X-Request-URI");
-        const value v = u != NULL? pathValues(string(u)) : list<value>();
+        const RequestConf& reqc = httpd::requestConf<RequestConf>(currentRequest, &mod_tuscany_eval);
+        const value v = reqc.rpath; 
         debug(v, "modeval::pathPropProxy::value");
         return v;
     }
@@ -433,7 +461,7 @@ struct implementationFailure {
     }
 };
 
-const value evalComponent(ServerConf& sc, const value& comp) {
+const value evalComponent(const string& contribPath, const value& comp, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
     extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle);
 
     const value impl = scdl::implementation(comp);
@@ -441,13 +469,13 @@ const value evalComponent(ServerConf& sc, const value& comp) {
     debug(impl, "modeval::evalComponent::impl");
 
     // Convert component references to configured proxy lambdas
-    const list<value> rpx(refProxies(sc, scdl::references(comp)));
+    const list<value> rpx(refProxies(scdl::references(comp), impls, sslc, p));
 
     // Convert component properties to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
 
     // Evaluate the component implementation and convert it to an applicable lambda function
-    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(sc.contributionPath, impl, append(rpx, ppx), sc.lifecycle));
+    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(contribPath, impl, append(rpx, ppx), lifecycle));
     if (!hasContent(cimpl))
         return lambda<value(const list<value>&)>(implementationFailure(reason(cimpl)));
     return content(cimpl);
@@ -456,10 +484,12 @@ const value evalComponent(ServerConf& sc, const value& comp) {
 /**
  * Return a list of component-name + configured-implementation pairs.
  */
-const list<value> componentToImplementationAssoc(ServerConf& sc, const list<value>& c) {
+const list<value> componentToImplementationAssoc(const list<value>& c, const string& contribPath, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
     if (isNil(c))
         return c;
-    return cons<value>(mklist<value>(scdl::name(car(c)), evalComponent(sc, car(c))), componentToImplementationAssoc(sc, cdr(c)));
+    return cons<value>(mklist<value>(scdl::name(car(c)),
+                evalComponent(contribPath, car(c), impls, lifecycle, sslc, p)),
+                    componentToImplementationAssoc(cdr(c), contribPath, impls, lifecycle, sslc, p));
 }
 
 /**
@@ -470,6 +500,22 @@ const failable<list<value> > readComponents(const string& path) {
     if (fail(is))
         return mkfailure<list<value> >(string("Could not read composite: ") + path);
     return scdl::components(readXML(streamList(is)));
+}
+
+/**
+ * Get the components returned by a provider.
+ */
+const failable<list<value> > getComponents(const lambda<value(const list<value>&)>& provider, const string& name) {
+    const failable<value> val = failableResult(provider(cons<value>("get", mklist<value>(mklist<value>(name)))));
+    if (!hasContent(val))
+        return mkfailure<list<value> >(reason(val));
+    const list<value> c = assoc<value>(value("content"), (list<list<value> >)cdr<value>(content(val)));
+    if (isNil(c))
+        return mkfailure<list<value> >(string("Could not get composite: ") + name);
+    const failable<list<string> > x = writeXML(car<value>(valuesToElements(mklist<value>(mklist<value>(cadr(c))))));
+    if (!hasContent(x))
+        return mkfailure<list<value> >(reason(x));
+    return scdl::components(readXML(content(x)));
 }
 
 /**
@@ -547,105 +593,56 @@ const list<value> uriToComponentAssoc(const list<value>& c) {
 /**
  * Configure the components declared in the deployed composite.
  */
-const failable<bool> confComponents(ServerConf& sc) {
-    if (!hasContributionConf(sc))
-        return false;
-    debug(sc.contributionPath, "modeval::confComponents::contributionPath");
-    debug(sc.contributionPath, "modeval::confComponents::contributorName");
-    debug(sc.compositeName, "modeval::confComponents::compositeName");
-    if (sc.ca != "") debug(sc.ca, "modeval::confComponents::sslCA");
-    if (sc.cert != "") debug(sc.cert, "modeval::confComponents::sslCert");
-    if (sc.key != "") debug(sc.key, "modeval::confComponents::sslKey");
+const failable<Composite> confComponents(const string& contribPath, const string& composName, const value& provider, const string& vhost, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
+    debug(contribPath, "modeval::confComponents::contribPath");
+    debug(composName, "modeval::confComponents::composName");
+    debug(provider, "modeval::confComponents::provider");
+    debug(vhost, "modeval::confComponents::vhost");
+    debug(impls, "modeval::confComponents::impls");
 
-    // Read the components and get their services, references and implementation
-    // lambda functions
-    const failable<list<value> > comps = readComponents(scdl::resourcePath(sc.contributionPath, sc.compositeName));
-    if (!hasContent(comps))
-        return mkfailure<bool>(reason(comps));
+    const failable<list<value> > fcomps = isNil(provider)?
+        readComponents(scdl::resourcePath(length(vhost) != 0? contribPath + vhost + "/" : contribPath, composName)) :
+        getComponents(provider, vhost);
+    if (!hasContent(fcomps))
+        return mkfailure<Composite>(reason(fcomps));
 
-    const list<value> refs = componentReferenceToTargetAssoc(content(comps));
-    debug(refs, "modeval::confComponents::references");
-    sc.references = mkbtree(sort(refs));
+    const list<value> comps = content(fcomps);
+    debug(comps, "modeval::confComponents::comps");
 
-    const list<value> svcs = uriToComponentAssoc(content(comps));
-    debug(svcs, "modeval::confComponents::services");
-    sc.services = mkbtree(sort(svcs));
+    const list<value> refs = mkbtree(sort(componentReferenceToTargetAssoc(comps)));
+    debug(flatten(refs), "modeval::confComponents::refs");
 
-    sc.implementations = componentToImplementationAssoc(sc, content(comps));
-    debug(sc.implementations, "modeval::confComponents::implementations");
-    return true;
+    const list<value> svcs = mkbtree(sort(uriToComponentAssoc(comps)));
+    debug(flatten(svcs), "modeval::confComponents::svcs");
+
+    const list<value> cimpls = mkbtree(sort(componentToImplementationAssoc(comps,
+                    isNil(provider)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
+                    impls, lifecycle, sslc, p)));
+    debug(flatten(cimpls), "modeval::confComponents::impls");
+
+    return Composite(refs, svcs, cimpls);
 }
 
 /**
- * Start the components declared in the deployed composite.
+ * Start the components declared in a composite.
  */
-const failable<bool> startComponents(ServerConf& sc) {
+const failable<list<value> > startComponents(const list<value>& impls) {
+    debug(flatten(impls), "modeval::startComponents::impls");
+    const failable<list<value> > fsimpls = applyLifecycleExpr(flatten(impls), mklist<value>("start"));
+    if (!hasContent(fsimpls))
+        return mkfailure<list<value> >(reason(fsimpls));
 
-    // Start the components and record the returned implementation lambda functions
-    debug(sc.implementations, "modeval::startComponents::start");
-    const failable<list<value> > impls = applyLifecycleExpr(sc.implementations, mklist<value>("start"));
-    if (!hasContent(impls))
-        return mkfailure<bool>(reason(impls));
-    sc.implementations = content(impls);
-    debug(sc.implementations, "modeval::startComponents::implementations");
-    return true;
+    const list<value> simpls = content(fsimpls);
+    debug(impls, "modeval::startComponents::simpls");
+    return mkbtree(sort(simpls));
 }
 
 /**
- * Configure and start the components deployed in a virtual host.
+ * Stop the components declared in a composite.
  */
-const failable<bool> vhostConfig(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
-    debug(httpd::serverName(ssc.server), "modeval::vhostConfig::serverName");
-    debug(httpd::serverName(r), "modeval::vhostConfig::vhostName");
-    debug(ssc.vhostContributionPath, "modeval::vhostConfig::vhostContributionPath");
-    debug(sc.contributionPath, "modeval::vhostConfig::contributionPath");
-
-    // Configure the deployed components
-    const failable<bool> cr = confComponents(sc);
-    if (!hasContent(cr))
-        return cr;
-
-    // Store the virtual host configuration in the request config
-
-    return true;
-}
-
-/**
- * Start the components deployed in a virtual host.
- */
-const failable<bool> vhostStart(ServerConf& sc, const ServerConf& ssc, request_rec* r) {
-    debug(httpd::serverName(ssc.server), "modeval::vhostStart::serverName");
-    debug(httpd::serverName(r), "modeval::vhostStart::vhostName");
-    debug(ssc.vhostContributionPath, "modeval::vhostStart::vhostContributionPath");
-    debug(sc.contributionPath, "modeval::vhostStart::contributionPath");
-
-    // Configure the components deployed in a virtual host
-    const failable<bool> cr = vhostConfig(sc, ssc, r);
-    if (!hasContent(cr))
-        return cr;
-
-    // Start the configured components
-    const failable<bool> sr = startComponents(sc);
-    if (!hasContent(sr))
-        return sr;
-
-    // Store the implementation lambda functions (from both the virtual host and the
-    // main server) in a tree for fast retrieval
-    sc.implTree = mkbtree(sort(append(sc.implementations, ssc.implementations)));
-    return true;
-}
-
-/**
- * Stop a virtual host.
- */
-const failable<bool> vhostStop(const ServerConf& sc, unused const ServerConf& ssc) {
-    if (!hasContributionConf(sc))
-        return true;
-    debug("modeval::vhostStop");
-
-    // Stop the component implementations
-    applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
-
+const failable<bool> stopComponents(const list<value>& simpls) {
+    debug(flatten(simpls), "modeval::stopComponents::simpls");
+    applyLifecycleExpr(flatten(simpls), mklist<value>("stop"));
     return true;
 }
 
@@ -678,7 +675,7 @@ const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<v
     }
 
     // Evaluate the GET expression
-    const list<value> params(append<value>(cddr(rpath), mkvalues(args)));
+    const list<value> params(cddr(rpath));
     const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
@@ -794,10 +791,10 @@ const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<
             return rc;
         const list<string> ls = httpd::read(r);
         debug(ls, "modeval::post::input");
-        const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
+        const value aval = elementsToValues(content(atom::isATOMEntry(ls)? atom::readATOMEntry(ls) : atom::readATOMFeed(ls)));
 
         // Evaluate the POST expression
-        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), entry))));
+        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), aval))));
         if (!hasContent(val))
             return mkfailure<int>(reason(val));
 
@@ -828,10 +825,10 @@ const failable<int> put(const list<value>& rpath, request_rec* r, const lambda<v
         return rc;
     const list<string> ls = httpd::read(r);
     debug(ls, "modeval::put::input");
-    const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
+    const value aval = elementsToValues(content(atom::isATOMEntry(ls)? atom::readATOMEntry(ls) : atom::readATOMFeed(ls)));
 
     // Evaluate the PUT expression and update the corresponding resource
-    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), entry))));
+    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), aval))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     if (val == value(false))
@@ -855,57 +852,83 @@ const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<v
 }
 
 /**
- * Route a /references/component-name/reference-name request,
- * to the target of the component reference.
+ * Proceed to handle a service component request.
  */
-int translateReference(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
-    httpdDebugRequest(r, "modeval::translateReference::input");
-    debug(r->uri, "modeval::translateReference::uri");
-    debug(apath, "modeval::translateReference::apath");
-    debug(rpath, "modeval::translateReference::rpath");
+int proceedToHandler(request_rec* r, const bool valias, const list<value>& rpath, const list<value>& vpath, const list<value>& impls) {
+    r->handler = "mod_tuscany_eval";
+    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:") + r->uri));
+
+    // Store the selected vhost, path and composite in the request
+    RequestConf& reqc = httpd::requestConf<RequestConf>(r, &mod_tuscany_eval);
+    reqc.valias = valias;
+    reqc.rpath = rpath;
+    reqc.vpath = vpath;
+    reqc.impls = impls;
+    return OK;
+}
+
+/**
+ * Route a component request to the specified component.
+ */
+int translateComponent(request_rec *r, const list<value>& rpath, const list<value>& vpath, const list<value>& impls) {
+    debug(rpath, "modeval::translateComponent::rpath");
+    debug(flatten(impls), "modeval::translateComponent::impls");
 
     // Find the requested component
     if (isNil(cdr(rpath)))
         return HTTP_NOT_FOUND;
-    const list<value> comp(assoctree(cadr(rpath), sc.references));
+    const list<value> impl(assoctree(cadr(rpath), impls));
+    if (isNil(impl))
+        return HTTP_NOT_FOUND;
+    debug(impl, "modeval::translateComponent::impl");
+
+    return proceedToHandler(r, false, rpath, vpath, impls);;
+}
+
+/**
+ * Route a /references/component-name/reference-name request,
+ * to the target of the component reference.
+ */
+int translateReference(request_rec *r, const list<value>& rpath, const list<value>& vpath, const list<value>& refs, const list<value>& impls) {
+    debug(rpath, "modeval::translateReference::rpath");
+    debug(flatten(refs), "modeval::translateReference::refs");
+
+    // Find the requested component
+    if (isNil(cdr(rpath)))
+        return HTTP_NOT_FOUND;
+    const list<value> comp(assoctree(cadr(rpath), refs));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
+    debug(comp, "modeval::translateReference::comp");
 
     // Find the requested reference and target configuration
     const list<value> ref(assoctree<value>(caddr(rpath), cadr(comp)));
     if (isNil(ref))
         return HTTP_NOT_FOUND;
+    debug(ref, "modeval::translateReference::ref");
+
     const string target(cadr(ref));
     debug(target, "modeval::translateReference::target");
 
     // Route to an absolute target URI using mod_proxy or an HTTP client redirect
     const list<value> pathInfo = cdddr(rpath);
     if (http::isAbsolute(target)) {
-        if (useModProxy) {
-            // Build proxy URI
-            string turi = target + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
-            const string proxy(string("proxy:") + turi);
-            debug(proxy, "modeval::translateReference::proxy");
-            r->filename = apr_pstrdup(r->pool, c_str(proxy));
-            r->proxyreq = PROXYREQ_REVERSE;
-            r->handler = "proxy-server";
-            apr_table_setn(r->notes, "proxy-nocanon", "1");
-            return OK;
-        }
-
-        debug(target, "modeval::translateReference::location");
-        r->handler = "mod_tuscany_eval";
-        return httpd::externalRedirect(target, r);
+        string turi = target + path(pathInfo) + (r->args != NULL? string("?") + string(r->args) : string(""));
+        const string proxy(string("proxy:") + turi);
+        debug(proxy, "modeval::translateReference::proxy");
+        r->filename = apr_pstrdup(r->pool, c_str(proxy));
+        r->proxyreq = PROXYREQ_REVERSE;
+        r->handler = "proxy-server";
+        apr_table_setn(r->notes, "proxy-nocanon", "1");
+        return OK;
     }
 
     // Route to a relative target URI using a local internal redirect
-    // /components/, target component name and request path info
+    // / c / target component name / request path info
     const value tname = substr(target, 0, find(target, '/'));
-    const string redir = path(append(apath, cons<value>(string("c"), cons(tname, pathInfo))));
+    const list<value> redir = cons<value>(string("c"), cons(tname, pathInfo));
     debug(redir, "modeval::translateReference::redirect");
-    r->uri = apr_pstrdup(r->pool, c_str(redir));
-    r->handler = "mod_tuscany_eval";
-    return OK;
+    return proceedToHandler(r, false, redir, vpath, impls);;
 }
 
 /**
@@ -934,121 +957,80 @@ const list<value> assocPath(const value& k, const list<value>& tree) {
 /**
  * Route a service request to the component providing the requested service.
  */
-int translateService(const ServerConf& sc, request_rec *r, const list<value>& rpath, const list<value>& apath) {
-    httpdDebugRequest(r, "modeval::translateService::input");
-    debug(r->uri, "modeval::translateService::uri");
+int translateService(request_rec *r, const list<value>& rpath, const list<value>& vpath, const list<value>& svcs, const list<value>& impls) {
+    debug(rpath, "modeval::translateService::rpath");
+    debug(flatten(svcs), "modeval::translateService::svcs");
 
     // Find the requested component
-    debug(sc.services, "modeval::translateService::services");
-    const list<value> svc(assocPath(rpath, sc.services));
+    if (isNil(rpath))
+        return HTTP_NOT_FOUND;
+    const list<value> svc(assocPath(rpath, svcs));
     if (isNil(svc))
         return DECLINED;
-    debug(svc, "modeval::translateService::service");
-
-    // Build a component-name + path-info URI
-    const list<value> target(append(apath, cons<value>(string("c"), cons<value>(cadr(svc), httpd::pathInfo(rpath, car(svc))))));
-    debug(target, "modeval::translateService::target");
+    debug(svc, "modeval::translateService::svc");
 
     // Dispatch to the target component using a local internal redirect
-    const string redir(path(target));
+    // / c / target component name / request path info
+    const list<value> redir = cons<value>(string("c"), cons<value>(cadr(svc), httpd::pathInfo(rpath, car(svc))));
     debug(redir, "modeval::translateService::redirect");
-    r->uri = apr_pstrdup(r->pool, c_str(redir));
-    r->handler = "mod_tuscany_eval";
-    return OK;
+    return proceedToHandler(r, false, redir, vpath, impls);
 }
 
 /**
  * Translate a request to the target app and component.
  */
-const int translateRequest(const ServerConf& sc, request_rec* r, const list<value>& rpath, const list<value>& apath) {
-    debug(apath, "modeval::translateRequest::apath");
+const int translateRequest(request_rec* r, const list<value>& rpath, const list<value>& vpath, const list<value>& refs, const list<value>& svcs, const list<value>& impls) {
+    debug(vpath, "modeval::translateRequest::vpath");
     debug(rpath, "modeval::translateRequest::rpath");
-    if (isNil(apath) && isNil(rpath))
-        return DECLINED;
+    const string prefix = isNil(rpath)? "" : car(rpath);
 
-    if (!isNil(rpath)) {
+    // Translate a component request
+    if ((prefix == string("components") || prefix == string("c")) && translateComponent(r, rpath, vpath, impls) == OK)
+        return OK;
 
-        // If the request is targeting a virtual host, use the corresponding
-        // virtual host configuration
-        if (isNil(apath)) {
-            if (hasVhostDomainConf(sc) && hasVhostContributionConf(sc) && httpd::isVhostRequest(sc.server, sc.vhostDomain, r)) {
-                const string aname = httpd::hostName(r);
-                ServerConf vsc(r->pool, sc, aname);
-                if (!hasContent(vhostConfig(vsc, sc, r)))
-                    return DECLINED;
-                return translateRequest(vsc, r, rpath, mklist<value>(aname));
-            }
-        }
+    // Translate a component reference request
+    if ((prefix == string("references") || prefix == string("r")) && translateReference(r, rpath, vpath, refs, impls) == OK)
+        return OK;
 
-        // Let default handler handle a resource request
-        const value prefix = car(rpath);
-        if (prefix == string("vhosts") || prefix == string("v"))
+    // Attempt to translate the request to a service request
+    if (translateService(r, rpath, vpath, svcs, impls) == OK)
+        return OK;
+
+    // Attempt to map a request targeting the main host to an actual file
+    if (isNil(vpath)) {
+        const failable<request_rec*, int> fnr = httpd::internalSubRequest(r->uri, r);
+        if (!hasContent(fnr))
+            return HTTP_INTERNAL_SERVER_ERROR;
+        request_rec* nr = content(fnr);
+        nr->uri = r->filename;
+        const int tr = ap_core_translate(nr);
+        if (tr != OK)
+            return tr;
+        if (ap_directory_walk(nr) == OK && ap_file_walk(nr) == OK && nr->finfo.filetype != APR_NOFILE) {
+
+            // Found the target file, let the default handler serve it
+            debug(nr->filename, "modeval::translateRequest::file");
             return DECLINED;
-
-        // Let our handler handle a component request
-        if (prefix == string("components") || prefix == string("c")) {
-            r->handler = "mod_tuscany_eval";
-            return OK;
         }
+    } else {
 
-        // Translate a component reference request
-        if (prefix == string("references") || prefix == string("r"))
-            return translateReference(sc, r, rpath, apath);
-
-        // Attempt to translate the request to a service request
-        if (translateService(sc, r, rpath, apath) == OK)
-            return OK;
-
-        // Attempt to map the request to an actual file
-        if (isNil(apath)) {
-            const failable<request_rec*, int> fnr = httpd::internalSubRequest(r->uri, r);
-            if (!hasContent(fnr))
-                return HTTP_INTERNAL_SERVER_ERROR;
-            request_rec* nr = content(fnr);
-            nr->uri = r->filename;
-            const int tr = ap_core_translate(nr);
-            if (tr != OK)
-                return tr;
-            if (ap_directory_walk(nr) == OK && ap_file_walk(nr) == OK && nr->finfo.filetype != APR_NOFILE) {
-                debug(nr->filename, "modeval::translateRequest::file");
-                return DECLINED;
-            }
-
-            // If the request is targeting a virtual app, use the corresponding
-            // virtual host configuration
-            if (hasVhostContributionConf(sc)) {
-                const string cp = sc.vhostContributionPath + string(prefix) + "/" + sc.vhostCompositeName;
-                ServerConf vsc(r->pool, sc, string(prefix));
-                if (!hasContent(vhostConfig(vsc, sc, r)))
-                    return DECLINED;
-                return translateRequest(vsc, r, cdr(rpath), mklist<value>(car(rpath)));
-            }
-        }
-    }
-
-    // If we're in a virtual app and the request didn't match a service,
-    // reference or component, redirect it to /v/<uri>. This will allow
-    // mapping to the actual app resources using HTTPD aliases.
-    if (!isNil(apath)) {
-        if (isNil(rpath) && r->uri[strlen(r->uri) -1] != '/') {
-
-            // Make sure a document root request ends with a '/', using
-            // an external redirect
-            const string target = string(r->uri) + string("/") + (r->args != NULL? string("?") + r->args : string(""));;
+        // Make sure a document root request ends with a '/' using
+        // an external redirect
+        if (isNil(rpath) && r->uri[strlen(r->uri) - 1] != '/') {
+            const string target = string(r->uri) + string("/") + (r->args != NULL? string("?") + string(r->args) : string(""));
             debug(target, "modeval::translateRequest::location");
             r->handler = "mod_tuscany_eval";
             return httpd::externalRedirect(target, r);
         }
 
-        // Do an internal redirect to /v/<uri>
-        const string redir = string("/redirect:") + string("/v") + string(r->uri);
-        debug(redir, "modeval::translateRequest::redirect");
-        r->filename = apr_pstrdup(r->pool, c_str(redir));
-        r->handler = "mod_tuscany_eval";
-        return OK;
+        // If the request didn't match a service, reference or component,
+        // redirect it to / v / app / path. This will allow mapping to
+        // the actual app resource using HTTPD aliases.
+        debug(true, "modeval::translateRequest::valias");
+        return proceedToHandler(r, true, rpath, vpath, impls);
     }
 
-    return DECLINED;
+    return HTTP_NOT_FOUND;
 }
 
 /**
@@ -1066,59 +1048,63 @@ int translate(request_rec *r) {
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
 
-    // Translate the request
-    return translateRequest(sc, r, pathValues(r->uri), list<value>());
+    // Parse the request path
+    const list<value> rpath = pathValues(r->uri);
+
+    // Let default handler handle a resource request
+    const string prefix = isNil(rpath)? "" : car(rpath);
+    if (prefix == string("vhosts") || prefix == string("v"))
+        return DECLINED;
+
+    // Get the request configuration
+    RequestConf& reqc = httpd::requestConf<RequestConf>(r, &mod_tuscany_eval);
+
+    // If the request is targeting a virtual host, configure the components
+    // in that virtual host
+    if (length(sc.vhostc.domain) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.provider)) && httpd::isVhostRequest(sc.server, sc.vhostc.domain, r)) {
+        const string vname = http::subDomain(httpd::hostName(r));
+        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.provider, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.p);
+        if (!hasContent(fvcompos))
+            return DECLINED;
+        const Composite vcompos = content(fvcompos);
+
+        // Flag the request as virtual host based
+        reqc.vhost = true;
+
+        // Translate the request
+        reqc.impls = vcompos.impls;
+        return translateRequest(r, rpath, mklist<value>(vname), vcompos.refs, vcompos.svcs, reqc.impls);
+    }
+
+    // Translate a request targeting the main host
+    const int rc = translateRequest(r, rpath, list<value>(), sc.compos.refs, sc.compos.svcs, sc.compos.impls);
+    if (rc != HTTP_NOT_FOUND)
+        return rc;
+
+    // Attempt to map the first segment of the request path to a virtual host
+    if (length(prefix) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.provider))) {
+        const string vname = prefix;
+        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.provider, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.p);
+        if (!hasContent(fvcompos))
+            return DECLINED;
+        const Composite vcompos = content(fvcompos);
+
+        // Translate the request
+        reqc.impls = vcompos.impls;
+        return translateRequest(r, cdr(rpath), mklist<value>(vname), vcompos.refs, vcompos.svcs, reqc.impls);
+    }
+
+    return DECLINED;
 }
 
 /**
  * Handle a component request.
  */
-const int handleRequest(const ServerConf& sc, const list<value>& rpath, request_rec *r) {
+const int handleRequest(const list<value>& rpath, request_rec *r, const list<value>& impls) {
     debug(rpath, "modeval::handleRequest::path");
-    if (isNil(cdr(rpath)))
-        return HTTP_NOT_FOUND;
-
-    if (hasVhostContributionConf(sc)) {
-
-        // Handle a request targeting a component in a virtual host
-        if (hasVhostDomainConf(sc) && httpd::isVhostRequest(sc.server, sc.vhostDomain, r)) {
-
-            // Determine the app name from the host sub-domain name, and
-            // store it in a request note
-            const string app = http::subDomain(httpd::hostName(r));
-            apr_table_setn(r->notes, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
-            ServerConf vsc(r->pool, sc, app);
-            if (!hasContent(vhostStart(vsc, sc, r)))
-                return HTTP_INTERNAL_SERVER_ERROR;
-            const int rc = handleRequest(vsc, rpath, r);
-            vhostStop(vsc, sc);
-            return rc;
-        }
-
-        // Handle a request targeting a component in a virtual app
-        const value c = car(rpath);
-        if (c != string("components") && c != string("c")) {
-
-            // Determine the app name from the request URI path and
-            // store it in a request note
-            const string app = string(c);
-            const string cp = sc.vhostContributionPath + app + "/" + sc.vhostCompositeName;
-            apr_table_setn(r->notes, "X-Request-AppName", apr_pstrdup(r->pool, c_str(app)));
-
-            ServerConf vsc(r->pool, sc, app);
-            if (!hasContent(vhostStart(vsc, sc, r)))
-                return HTTP_INTERNAL_SERVER_ERROR;
-            const int rc = handleRequest(vsc, cdr(rpath), r);
-            vhostStop(vsc, sc);
-            return rc;
-        }
-    }
-
-    // Store the request uri path in a request note
-    apr_table_setn(r->notes, "X-Request-URI", apr_pstrdup(r->pool, c_str(path(rpath))));
 
     // Get the component implementation lambda
-    const list<value> impl(assoctree<value>(cadr(rpath), sc.implTree));
+    const list<value> impl(assoctree<value>(cadr(rpath), impls));
     if (isNil(impl)) {
         mkfailure<int>(string("Couldn't find component implementation: ") + cadr(rpath));
         return HTTP_NOT_FOUND;
@@ -1152,22 +1138,49 @@ int handler(request_rec *r) {
     if (r->status == HTTP_MOVED_TEMPORARILY)
         return OK;
 
-    // Handle an internal redirect as directed by the translate hook
-    if (r->filename != NULL && !strncmp(r->filename, "/redirect:", 10)) {
-        if (r->args == NULL)
-            return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
-        return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);
-    }
-
-
-    // Create a scope for the current request
+    // Create a scoped memory pool and a scope for the current request
+    gc_scoped_pool pool(r->pool);
     ScopedRequest sr(r);
+
+    httpdDebugRequest(r, "modeval::handler::input");
+
+    // Get the request configuration
+    RequestConf& reqc = httpd::requestConf<RequestConf>(r, &mod_tuscany_eval);
+
+    // Handle an internal redirect as directed by the translate hook
+    if (reqc.valias) {
+        const string redir = path(cons<value>(string("v"), reqc.vhost? reqc.vpath : list<value>())) + string(r->uri) + (r->args != NULL? string("?") + string(r->args) : string(""));
+        debug(redir, "modeval::handler::internalredirect");
+        return httpd::internalRedirect(redir, r);
+    }
+    if (isNil(reqc.rpath))
+        return HTTP_NOT_FOUND;
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
 
-    // Handle the request
-    return handleRequest(sc, pathValues(r->uri), r);
+    // Handle a request targeting a component in a virtual host
+    if (!isNil(reqc.vpath)) {
+
+        // Start the components in the virtual host
+        const failable<list<value> > fsimpls = startComponents(reqc.impls);
+        if (!hasContent(fsimpls))
+            return HTTP_INTERNAL_SERVER_ERROR;
+        const list<value> simpls = content(fsimpls);
+
+        // Merge the components in the virtual host with the components in the main host
+        reqc.impls = mkbtree(sort(append(flatten(sc.compos.impls), flatten(simpls))));
+
+        // Handle the request against the running components
+        const int rc = handleRequest(reqc.rpath, r, reqc.impls);
+
+        // Stop the components in the virtual host
+        stopComponents(simpls);
+        return rc;
+    }
+
+    // Handle a request targeting a component in the main host
+    return handleRequest(reqc.rpath, r, sc.compos.impls);
 }
 
 /**
@@ -1179,7 +1192,7 @@ apr_status_t serverCleanup(void* v) {
     debug("modeval::serverCleanup");
 
     // Stop the component implementations
-    applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
+    stopComponents(sc.compos.impls);
 
     // Call the module lifecycle function
     if (isNil(sc.lifecycle))
@@ -1200,21 +1213,12 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
     sc.lifecycle = mainsc.lifecycle;
-    sc.vhostName = mainsc.vhostName;
-    sc.contributionPath = mainsc.contributionPath;
-    sc.compositeName = mainsc.compositeName;
-    sc.vhostDomain = mainsc.vhostDomain;
-    sc.vhostContributionPath = mainsc.vhostContributionPath;
-    sc.vhostCompositeName = mainsc.vhostCompositeName;
-    sc.vhostContributorName = mainsc.vhostContributorName;
-    if (sc.ca == "") sc.ca = mainsc.ca;
-    if (sc.cert == "") sc.cert = mainsc.cert;
-    if (sc.key == "") sc.key = mainsc.key;
-    sc.references = mainsc.references;
-    sc.services = mainsc.services;
-    sc.implementations = mainsc.implementations;
-    sc.implTree = mainsc.implTree;
-    sc.vhostContributor = mainsc.vhostContributor;
+    sc.contribc = mainsc.contribc;
+    sc.vhostc = mainsc.vhostc;
+    if (sc.sslc.ca == "") sc.sslc.ca = mainsc.sslc.ca;
+    if (sc.sslc.cert == "") sc.sslc.cert = mainsc.sslc.cert;
+    if (sc.sslc.key == "") sc.sslc.key = mainsc.sslc.key;
+    sc.compos = mainsc.compos;
     return postConfigMerge(mainsc, s->next);
 }
 
@@ -1226,6 +1230,8 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Get the server configuration and determine the server name
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfig::serverName");
+    debug(sc.contribc.contribPath, "modeval::postConfig::contribPath");
+    debug(sc.contribc.composName, "modeval::postConfig::composName");
 
     // Count the calls to post config
     const string k("tuscany::modeval::postConfig");
@@ -1239,8 +1245,8 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
 
     if (count == 1) {
         // Chdir to the deployed contribution
-        if (chdir(c_str(sc.contributionPath)) != 0) {
-            mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
+        if (chdir(c_str(sc.contribc.contribPath)) != 0) {
+            mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contribc.contribPath);
             return -1;
         }
 
@@ -1261,11 +1267,12 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     }
 
     // Configure the deployed components
-    const failable<bool> res = confComponents(sc);
-    if (!hasContent(res)) {
+    const failable<Composite> compos = confComponents(sc.contribc.contribPath, sc.contribc.composName, value(), "", sc.compos.impls, sc.lifecycle, sc.sslc, sc.p);
+    if (!hasContent(compos)) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         return -1;
     }
+    sc.compos = content(compos);
 
     // Register a cleanup callback, called when the server is stopped or restarted
     apr_pool_pre_cleanup_register(p, (void*)&sc, serverCleanup);
@@ -1287,18 +1294,16 @@ void childInit(apr_pool_t* p, server_rec* s) {
     ServerConf& sc = *psc;
 
     // Start the components in the child process
-    const failable<bool> res = startComponents(sc);
-    if (!hasContent(res)) {
+    const failable<list<value> > fsimpls = startComponents(sc.compos.impls);
+    if (!hasContent(fsimpls)) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
+    sc.compos.impls = content(fsimpls);
     
-    // Store the implementation lambda functions in a tree for fast retrieval
-    sc.implTree = mkbtree(sort(sc.implementations));
-
-    // Create a proxy for the vhost contributor if needed
-    if (length(sc.vhostContributorName) != 0) 
-        sc.vhostContributor = mkimplProxy(sc, sc.vhostContributorName);
+    // Create a proxy for the vhost provider if needed
+    if (length(sc.vhostc.providerName) != 0) 
+        sc.vhostc.provider = mkimplProxy(sc.vhostc.providerName, sc.compos.impls, sc.sslc);
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
@@ -1313,55 +1318,55 @@ void childInit(apr_pool_t* p, server_rec* s) {
 const char* confContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.contributionPath = arg;
+    sc.contribc.contribPath = arg;
     return NULL;
 }
 const char* confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.compositeName = arg;
+    sc.contribc.composName = arg;
     return NULL;
 }
 const char* confVirtualDomain(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.vhostDomain = arg;
+    sc.vhostc.domain = arg;
     return NULL;
 }
 const char* confVirtualContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.vhostContributionPath = arg;
+    sc.vhostc.contribPath = arg;
     return NULL;
 }
-const char* confVirtualContributor(cmd_parms *cmd, unused void *c, const char *arg) {
+const char* confVirtualprovider(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.vhostContributorName = arg;
+    sc.vhostc.providerName = arg;
     return NULL;
 }
 const char* confVirtualComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.vhostCompositeName = arg;
+    sc.vhostc.composName = arg;
     return NULL;
 }
 const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.ca = arg;
+    sc.sslc.ca = arg;
     return NULL;
 }
 const char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.cert = arg;
+    sc.sslc.cert = arg;
     return NULL;
 }
 const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.key = arg;
+    sc.sslc.key = arg;
     return NULL;
 }
 const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, const char *value) {
@@ -1378,7 +1383,7 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     AP_INIT_TAKE1("SCAVirtualDomain", (const char*(*)())confVirtualDomain, NULL, RSRC_CONF, "SCA virtual host domain"),
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution path"),
-    AP_INIT_TAKE1("SCAVirtualContributor", (const char*(*)())confVirtualContributor, NULL, RSRC_CONF, "SCA virtual host contributor component"),
+    AP_INIT_TAKE1("SCAVirtualContributor", (const char*(*)())confVirtualprovider, NULL, RSRC_CONF, "SCA virtual host provider component"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
     AP_INIT_TAKE1("SCAWiringSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SCA wiring SSL CA certificate file"),

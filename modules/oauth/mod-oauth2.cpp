@@ -124,7 +124,7 @@ const failable<int> authenticated(const list<list<value> >& attrs, const list<li
 /**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
+const failable<int> authorize(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> auth = assoc<value>("mod_oauth2_authorize", args);
     if (isNil(auth) || isNil(cdr(auth)))
@@ -146,7 +146,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     debug(redir, "modoauth2::authorize::redir");
 
     // Lookup client app configuration
-    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
+    const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + cadr(cid));
     list<value> appkey = cadr(app);
@@ -171,7 +171,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const list<value>
 /**
  * Handle an access_token request.
  */
-const failable<int> access_token(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
+const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const perthread_ptr<http::CURLSession>& cs, const memcache::MemCached& mc) {
     // Extract access_token URI, client ID and authorization code
     const list<value> tok = assoc<value>("mod_oauth2_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
@@ -187,7 +187,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>("Missing code parameter");
 
     // Lookup client app configuration
-    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
+    const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + cadr(cid));
     list<value> appkey = cadr(app);
@@ -201,7 +201,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code);
     const string turi = httpd::unescape(cadr(tok)) + string("?") + http::queryString(targs);
     debug(turi, "modoauth2::access_token::tokenuri");
-    const failable<value> tr = http::get(turi, *(sc.cs));
+    const failable<value> tr = http::get(turi, *(cs));
     if (!hasContent(tr))
         return mkfailure<int>(reason(tr));
     debug(tr, "modoauth2::access_token::response");
@@ -215,7 +215,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + http::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
-    const failable<value> profres = http::get(iuri, *(sc.cs));
+    const failable<value> profres = http::get(iuri, *(cs));
     if (!hasContent(profres))
         return mkfailure<int>("Couldn't retrieve user info");
     debug(content(profres), "modoauth2::access_token::info");
@@ -227,7 +227,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth2_") + mkrand();
-    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
+    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), mc);
     if (!hasContent(prc))
         return mkfailure<int>(reason(prc));
 
@@ -288,13 +288,13 @@ static int checkAuthn(request_rec *r) {
     // Handle OAuth authorize request step
     if (step == "authorize") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(authorize(args, r, sc));
+        return httpd::reportStatus(authorize(args, r, sc.appkeys));
     }
 
     // Handle OAuth access_token request step
     if (step == "access_token") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(access_token(args, r, sc));
+        return httpd::reportStatus(accessToken(args, r, sc.appkeys, sc.cs, sc.mc));
     }
 
     // Redirect to the login page

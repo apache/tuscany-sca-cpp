@@ -120,6 +120,22 @@ template<typename C> C& dirConf(const void* c) {
 }
 
 /**
+ * Returns a request-scoped module configuration.
+ */
+template<typename C> C& makeRequestConf(const request_rec* r, const module* mod) {
+    C* c = new (gc_new<C>(r->pool)) C(r->pool, r);
+    ap_set_module_config(r->request_config, mod, c);
+    return *c;
+}
+
+template<typename C> C& requestConf(const request_rec* r, const module* mod) {
+    C* c = (C*)ap_get_module_config(r->request_config, mod);
+    if (c == NULL)
+        return makeRequestConf<C>(r, mod);
+    return *c;
+}
+
+/**
  * Return the host name for a server.
  */
 const string hostName(const server_rec* s, const string& def = "localhost") {
@@ -422,17 +438,6 @@ const int reportStatus(const failable<int>& rc) {
     if (!hasContent(rc))
         return HTTP_INTERNAL_SERVER_ERROR;
     return content(rc);
-}
-
-/**
- * Construct a redirect URI.
- */
-const string redirectURI(const string& file, const string& pi) {
-    return file + pi;
-}
-
-const string redirectURI(const string& file, const string& pi, const string& args) {
-    return file + pi + "?" + args;
 }
 
 /**

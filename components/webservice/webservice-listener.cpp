@@ -67,9 +67,7 @@ const failable<value> handle(const list<value>& params) {
     cout << "relay: " << &relay << endl;
 
     // Redirect HTTPD request to Mod-axis2
-    if (r->args == NULL)
-        return redirectToAxis2(httpd::redirectURI("/axis2", string(r->uri)), r, relay);
-    return redirectToAxis2(httpd::redirectURI("/axis2", string(r->uri), string(r->args)), r, relay);
+    return redirectToAxis2(string("/axis2") + r->uri + r->args != NULL? string("?") + r->args : string(""), r, relay);
 }
 
 }

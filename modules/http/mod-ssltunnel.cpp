@@ -78,7 +78,7 @@ int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
     if (s == NULL)
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
-    debug(httpd::serverName(s), "modwiring::postConfigMerge::serverName");
+    debug(httpd::serverName(s), "modssltunnel::postConfigMerge::serverName");
 
     // Merge configuration from main server
     if (length(sc.ca) == 0 && length(mainsc.ca) !=0)
@@ -105,7 +105,7 @@ int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
 int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
     gc_scoped_pool pool(p);
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
-    debug(httpd::serverName(s), "modwiring::postConfig::serverName");
+    debug(httpd::serverName(s), "modssltunnel::postConfig::serverName");
 
     // Register the SSLTUNNEL method
     M_SSLTUNNEL = ap_method_register(p, "SSLTUNNEL");

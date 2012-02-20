@@ -172,7 +172,7 @@ const list<string> sign(const string& verb, const string& uri, const list<value>
 /**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
+const failable<int> authorize(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const memcache::MemCached& mc) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> req = assoc<value>("mod_oauth1_request_token", args);
     if (isNil(req) || isNil(cdr(req)))
@@ -196,7 +196,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     debug(redir, "modoauth1::authorize::redir");
 
     // Lookup client app configuration
-    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
+    const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + cadr(cid));
     list<value> appkey = cadr(app);
@@ -230,7 +230,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
         return mkfailure<int>("Couldn't retrieve oauth_token_secret");
 
     // Store the request token in memcached
-    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth1Token", cadr(tv)), cadr(sv), sc.mc);
+    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth1Token", cadr(tv)), cadr(sv), mc);
     if (!hasContent(prc))
         return mkfailure<int>(reason(prc));
 
@@ -294,7 +294,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
 /**
  * Handle an access_token request.
  */
-const failable<int> access_token(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
+const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const memcache::MemCached& mc) {
     // Extract access_token URI, client ID and verification code
     const list<value> tok = assoc<value>("mod_oauth1_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
@@ -313,13 +313,13 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>("Missing oauth_verifier parameter");
 
     // Lookup client app configuration
-    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
+    const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + cadr(cid));
     list<value> appkey = cadr(app);
 
     // Retrieve the request token from memcached
-    const failable<value> sv = memcache::get(mklist<value>("tuscanyOAuth1Token", cadr(tv)), sc.mc);
+    const failable<value> sv = memcache::get(mklist<value>("tuscanyOAuth1Token", cadr(tv)), mc);
     if (!hasContent(sv))
         return mkfailure<int>(reason(sv));
 
@@ -372,7 +372,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth1_") + mkrand();
-    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
+    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), mc);
     if (!hasContent(prc))
         return mkfailure<int>(reason(prc));
 
@@ -433,13 +433,13 @@ static int checkAuthn(request_rec *r) {
     // Handle OAuth authorize request step
     if (step == "authorize") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(authorize(args, r, sc));
+        return httpd::reportStatus(authorize(args, r, sc.appkeys, sc.mc));
     }
 
     // Handle OAuth access_token request step
     if (step == "access_token") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(access_token(args, r, sc));
+        return httpd::reportStatus(accessToken(args, r, sc.appkeys, sc.mc));
     }
 
     // Redirect to the login page
