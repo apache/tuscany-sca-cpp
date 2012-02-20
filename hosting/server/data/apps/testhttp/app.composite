@@ -146,7 +146,7 @@
  <component name="name" title="" color="orange1">
   <implementation.python script="nuvem/name.py"/>
   <service name="name"/>
-  <property>https://testhttp.sca-store.com:8453/components/property</property>
+  <property>https://testhttp.example.com:8453/components/property</property>
  </component>
  <component x="630" y="350" name="name1" title="" color="orange1">
   <implementation.python script="nuvem/name.py"/>

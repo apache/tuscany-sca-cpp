@@ -20,7 +20,7 @@ from util import *
 
 # Convert an id to an app id
 def appid(id):
-    return ("'apps", "'" + car(id), "'htdocs", "'app.html")
+    return ("apps", car(id), "htdocs", "app.html")
 
 # Put an app page into the apps db
 def put(id, app, cache):

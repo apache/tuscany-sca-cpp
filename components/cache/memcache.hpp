@@ -63,7 +63,7 @@ public:
     MemCached(const list<string>& servers) : owner(true) {
         debug(servers, "memcache::memcached::servers");
         apr_pool_create(&pool, NULL);
-        apr_memcache_create(pool, 1, 0, &mc);
+        apr_memcache_create(pool, (apr_uint16_t)length(servers), 0, &mc);
         addServers(servers);
     }
 

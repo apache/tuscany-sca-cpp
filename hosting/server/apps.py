@@ -21,17 +21,7 @@ from util import *
 
 # Convert an id to an app id
 def appid(id):
-    return ("'apps", "'" + car(id), "'app.stats")
-
-# Link implementation resources into an app
-def mkapplink(id):
-    try:
-        os.symlink('../../../../../../nuvem/nuvem-parallel/nuvem', 'data/apps/' + car(id) + '/nuvem')
-        os.symlink('../../../../../components', 'data/apps/' + car(id) + '/lib')
-        os.mkdir('data/apps/' + car(id) + '/htdocs')
-    except:
-        pass
-    return True
+    return ("apps", car(id), "app.stats")
 
 # Put an app into the apps db
 def put(id, app, cache, store, composites, pages):
@@ -41,12 +31,10 @@ def put(id, app, cache, store, composites, pages):
     # Update app in apps db
     if car(id) == eid:
         cache.put(appid(id), appentry)
-        mkapplink(id)
         return True
 
     # Clone an app's composite and page
     cache.put(appid(id), appentry)
-    mkapplink(id)
     composites.put(id, composites.get((eid,)))
     pages.put(id, pages.get((eid,)))
     return True

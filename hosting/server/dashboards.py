@@ -20,14 +20,18 @@ from util import *
 
 # Convert a particular user id to a dashboard id
 def dashboardid(user):
-    return ("'dashboards", "'" + user.id(), "'user.apps")
+    return ("dashboards", user.id(), "user.apps")
 
 # Get a dashboard from the cache
 def getdashboard(id, cache):
-    dashboard = cache.get(id)
-    if isNil(dashboard) or dashboard is None:
+    val = cache.get(id)
+    if isNil(val) or val is None:
         return ()
-    return dashboard
+    return cdddr(car(val))
+
+# Put a dashboard into the cache
+def putdashboard(id, dashboard, cache):
+    val = ((("'feed", ("'title", "Your Apps"), ("'id", cadr(id))) + dashboard),)
 
 # Put an app into the user's dashboard
 def put(id, app, user, cache, apps):
@@ -40,7 +44,7 @@ def put(id, app, user, cache, apps):
 
     appentry = (("'entry", cadr(car(app)), ("'id", car(id))),)
     dashboard = putapp(appentry, getdashboard(dashboardid(user), cache))
-    cache.put(dashboardid(user), dashboard)
+    putdashboard(dashboardid(user), dashboard, cache)
 
     # Update app in app repository
     apps.put(id, app);
@@ -72,7 +76,7 @@ def delete(id, user, cache, apps):
         return cons(car(dashboard), deleteapp(id, cdr(dashboard)))
 
     dashboard = deleteapp(id, getdashboard(dashboardid(user), cache))
-    cache.put(dashboardid(user), dashboard)
+    putdashboard(dashboardid(user), dashboard, cache)
 
     # Delete app from app repository
     apps.delete(id);

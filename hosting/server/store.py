@@ -20,14 +20,18 @@ from util import *
 
 # Convert a particular store tag to a store id
 def storeid(tag):
-    return ("'store", "'" + tag, "'store.apps")
+    return ("store", tag, "store.apps")
 
 # Get a store from the cache
 def getstore(id, cache):
-    store = cache.get(id)
-    if isNil(store) or store is None:
+    val = cache.get(id)
+    if isNil(val) or val is None:
         return ()
-    return store
+    return cdddr(car(val))
+
+# Put a store into the cache
+def putstore(id, store, cache):
+    val = ((("'feed", ("'title", "App Store"), ("'id", cadr(id))) + store),)
 
 # Put an app into a store
 def put(key, app, cache):
@@ -40,7 +44,7 @@ def put(key, app, cache):
 
     tag = car(key)
     store = putapp(app, getstore(storeid(tag), cache))
-    cache.put(storeid(tag), store)
+    putstore(storeid(tag), store, cache)
     return True
 
 # Get apps from a store
@@ -75,6 +79,6 @@ def delete(key, cache):
         return cons(car(store), deleteapp(id, cdr(store)))
 
     store = deleteapp(id, getstore(storeid(tag), cache))
-    cache.put(storeid(tag), store)
+    putstore(storeid(tag), store, cache)
     return True
 

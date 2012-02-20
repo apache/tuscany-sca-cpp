@@ -93,7 +93,7 @@
  <component name="text" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
-  <property>http://sca-store.com/</property>
+  <property>http://example.com/</property>
  </component>
  <component x="400" y="10" name="text1" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>

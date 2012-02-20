@@ -123,7 +123,7 @@
  <component name="name2" title="" color="orange1">
   <implementation.python script="nuvem/name.py"/>
   <service name="name"/>
-  <property>https://testhttp.sca-store.com:8453/components/property</property>
+  <property>https://testhttp.example.com:8453/components/property</property>
  </component>
  <component name="number" title="#" color="orange1">
   <implementation.python script="nuvem/number.py"/>
@@ -182,7 +182,7 @@
  <component name="text5" title=" '{propval}'" color="orange1">
   <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
-  <property>https://testhttp.sca-store.com:8453/components/property</property>
+  <property>https://testhttp.example.com:8453/components/property</property>
  </component>
  <component x="13" y="58" name="timer3" title="timer" color="green1">
   <implementation.python script="nuvem/timer.py"/>

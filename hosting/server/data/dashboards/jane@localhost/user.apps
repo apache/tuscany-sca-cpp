@@ -1,1 +1,1 @@
-((entry (title "An empty test app") (id "test")))
+((feed (title "Your Apps") (id "jane@localhost") (entry (title "An empty test app") (id "test"))))

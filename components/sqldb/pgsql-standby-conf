@@ -63,7 +63,7 @@ mkdir -p $root/sqldb/archive
 
 # Initialize from a backup of the master
 if [ ! -f $root/sqldb/data/postgresql.conf ]; then
-    (wget http://$mhost:$mhttpport/pgsql-backup -O - | tar -C $root/sqldb -xz) 2>&1 | sh $root/sqldb/logger
+    (curl -L http://$mhost:$mhttpport/pgsql-backup | tar -C $root/sqldb -xz) 2>&1 | sh $root/sqldb/logger
     rm -rf $root/sqldb/data/postmaster.pid $root/sqldb/data/pg_xlog
     mkdir -p $root/sqldb/data/pg_xlog/archive_status
     chmod 700 $root/sqldb/data/pg_xlog/archive_status
@@ -104,7 +104,7 @@ primary_conninfo = 'host=$mhost port=$mport'
 # Failover
 trigger_file = '$root/sqldb/failover'
 
-restore_command = 'wget http://$mhost:$mhttpport/pgsql-archive/%f -O "%p"'
+restore_command = 'curl http://$mhost:$mhttpport/pgsql-archive/%f -o "%p"'
 
 EOF
 

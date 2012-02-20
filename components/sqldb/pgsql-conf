@@ -98,7 +98,7 @@ host    replication     all             samenet                 trust
 EOF
 
 # Create the db
-$pgsql_prefix/bin/pg_ctl start -W -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
+($pgsql_prefix/bin/pg_ctl start -W -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger)&
 sti=0
 while [ $sti -ne 30 ]; do
     st=`$pgsql_prefix/bin/pg_ctl status -D $root/sqldb/data | grep 'server is running'`

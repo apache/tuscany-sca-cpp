@@ -20,7 +20,7 @@ from util import *
 
 # Convert a particular user id to an account id
 def accountid(user):
-    return ("'accounts", "'" + user.id(), "'user.account")
+    return ("accounts", user.id(), "user.account")
 
 # Get the current user's account
 def get(id, user, cache):

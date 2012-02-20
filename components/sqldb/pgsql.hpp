@@ -231,7 +231,9 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
         return mkfailure<value>(string("Couldn't execute select postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
     if (PQntuples(r) < 1) {
         PQclear(r);
-        return mkfailure<value>(string("Couldn't get postgresql entry: ") + PQerrorMessage(pgsql.conn));
+        ostringstream os;
+        os << "Couldn't get postgresql entry: " << key;
+        return mkfailure<value>(str(os));
     }
     const char* data = PQgetvalue(r, 0, 1);
     const value val(scheme::readValue(string(data)));

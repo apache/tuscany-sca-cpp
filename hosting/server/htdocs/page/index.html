@@ -872,7 +872,7 @@ function save(newxml) {
     savedpagexhtml = newxml;
 
     // Update the page ATOM entry
-    var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
+    var entry = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<entry xmlns="http://www.w3.org/2005/Atom">' +
         '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
         newxml + '</content></entry>';
 

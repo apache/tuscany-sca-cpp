@@ -634,7 +634,7 @@ const failable<list<list<string> > > contentRequest(const value& c, unused const
     if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
         return writeRequest(convertValues<string>(cadr<value>(c)), car<value>(c));
 
-    // Write an assoc value as a JSON result
+    // Write an assoc value as JSON
     if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
         js::JSContext cx;
         const list<value> lc = mklist<value>(c);
@@ -888,7 +888,7 @@ const string queryString(const list<list<value> > args) {
  * Filter path segment in a list of arguments.
  */
 const bool filterPath(const value& arg) {
-    return isString(arg);
+    return isString(arg) || isSymbol(arg);
 }
 
 /**
@@ -914,11 +914,13 @@ struct proxy {
     }
     
     const value operator()(const list<value>& args) const {
+        debug(args, "http::proxy::args");
         const value fun = car(args);
         if (fun == "get") {
             const list<value> lp = filter<value>(filterPath, cadr(args));
-            debug(lp, "http::queryString::arg");
+            debug(lp, "http::proxy::path");
             const list<value> lq = map<value, value>(escapeQuery, filter<value>(filterQuery, cadr(args)));
+            debug(lp, "http::proxy::query");
             const value p = path(lp);
             const value q = queryString(lq);
             const failable<value> val = get(uri + p + (q != ""? string("?") + q : string("")), cs);

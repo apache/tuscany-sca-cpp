@@ -19,10 +19,10 @@
 from util import *
 
 # Get the database to use for a particular key
-def get(id, db1, db2):
+def get(id, db):
     if isNil(id):
-        return db1
+        return db[0]
     if cadr(id)[0:1].lower() < 'm':
-        return db1
-    return db2
+        return db[0]
+    return db[1]
 

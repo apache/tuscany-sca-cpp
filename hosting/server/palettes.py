@@ -20,7 +20,7 @@ from util import *
 
 # Convert an id to a palette id
 def paletteid(id):
-    return ("'palettes", "'" + car(id), "'palette.composite")
+    return ("palettes", car(id), "palette.composite")
 
 # Put a palette into the palettes db
 def put(id, palette, cache):
