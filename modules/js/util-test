@@ -21,7 +21,7 @@
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 echo "Testing..."
-cat htdocs/util.js htdocs/elemutil.js htdocs/jsonutil.js json-test.js | ./js-eval 2>/dev/null 1>&2
+cat htdocs/util.js htdocs/elemutil.js htdocs/jsonutil.js json-test.js | ./js-shell 2>/dev/null 1>&2
 rc=$?
 if [ "$rc" = "0" ]; then
     echo "OK"

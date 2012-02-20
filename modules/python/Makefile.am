@@ -50,7 +50,8 @@ client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 dist_noinst_SCRIPTS = server-test wiring-test
-noinst_PROGRAMS = python-test python-shell client-test
+noinst_PROGRAMS = python-test client-test
+mod_PROGRAMS = python-shell
 TESTS = python-test server-test
 
 endif

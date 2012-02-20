@@ -108,8 +108,8 @@ parallel-test
 xml-test
 xsd-test
 atom-test
-eval-test
-eval-shell
+scheme-test
+scheme-shell
 json-test
 client-test
 memcache-test
@@ -133,7 +133,7 @@ curl-connect
 rss-test
 scribe-cat
 js-test
-js-eval
+js-shell
 file-test
 test-start*
 test-stop*
@@ -143,6 +143,8 @@ json-value
 value-json
 element-value
 value-element
+hosting/server/nuvem
+hosting/server/lib
 hosting/server/data/apps/*/nuvem
 hosting/server/data/apps/*/lib
 chat-send

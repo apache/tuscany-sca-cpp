@@ -37,9 +37,10 @@ EXTRA_DIST = htdocs/*.js htdocs/*.css htdocs/all.js
 js_test_SOURCES = js-test.cpp
 js_test_LDFLAGS = -lmozjs 
 
-js_eval_SOURCES = js-eval.cpp
-js_eval_LDFLAGS = -lmozjs 
+js_shell_SOURCES = js-shell.cpp
+js_shell_LDFLAGS = -lmozjs 
 
-noinst_PROGRAMS = js-test js-eval
+noinst_PROGRAMS = js-test
+mod_PROGRAMS = js-shell
 dist_noinst_SCRIPTS = util-test
 TESTS = js-test util-test

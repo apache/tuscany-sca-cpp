@@ -18,9 +18,11 @@
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/scheme
 
-eval_test_SOURCES = eval-test.cpp
+moddir = $(prefix)/modules/scheme
 
-eval_shell_SOURCES = eval-shell.cpp
+scheme_test_SOURCES = scheme-test.cpp
+
+scheme_shell_SOURCES = scheme-shell.cpp
 
 value_element_SOURCES = value-element.cpp
 value_element_LDFLAGS = 
@@ -40,5 +42,6 @@ json_value_LDFLAGS = -lmozjs
 value_json_SOURCES = value-json.cpp
 value_json_LDFLAGS = -lmozjs 
 
-noinst_PROGRAMS = eval-test eval-shell element-value value-element xml-value value-xml json-value value-json
-TESTS = eval-test
+noinst_PROGRAMS = scheme-test
+mod_PROGRAMS = scheme-shell element-value value-element xml-value value-xml json-value value-json
+TESTS = scheme-test

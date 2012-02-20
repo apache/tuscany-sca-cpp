@@ -51,7 +51,8 @@ client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 dist_noinst_SCRIPTS = server-test
-noinst_PROGRAMS = opencl-test opencl-shell client-test
+noinst_PROGRAMS = opencl-test client-test
+mod_PROGRAMS = opencl-shell
 TESTS = opencl-test
 
 endif
