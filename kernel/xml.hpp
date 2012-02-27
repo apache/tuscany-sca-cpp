@@ -51,12 +51,11 @@ class XMLParser {
 public:
     XMLParser() {
         debug("xml::XMLParser");
-        xmlMemSetup(gc_free, gc_malloc, gc_realloc, gc_strdup);
+        xmlMemSetup(gc_pool_free, gc_pool_malloc, gc_pool_realloc, gc_pool_strdup);
         xmlInitParser();
     }
 
     ~XMLParser() {
-        debug("xml::~XMLParser");
     }
 } xmlParser;
 
@@ -80,7 +79,6 @@ public:
     }
 
     ~XMLReader() {
-        debug("xml::~XMLReader");
         if (!owner)
             return;
         xmlTextReaderClose(xml);

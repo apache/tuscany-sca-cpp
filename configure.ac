@@ -123,7 +123,6 @@ if test "${want_maintainer_mode}" = "true"; then
   else
     cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion"
   fi
-  ldflags="${ldflags} -pg"
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
 else
@@ -156,6 +155,47 @@ if test "${want_profiling}" = "true"; then
   AC_DEFINE([WANT_PROFILING], 1, [compile with profiling])
 else
   AM_CONDITIONAL([WANT_PROFILING], false)
+fi
+
+# Enable memory checking with electric fence.
+AC_MSG_CHECKING([whether to enable electric fence])
+AC_ARG_ENABLE(efence, [AS_HELP_STRING([--enable-efence], [link with electric fence [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_efence=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_efence}" = "true"; then
+  ldflags="${ldflags} -lefence"
+  AM_CONDITIONAL([WANT_EFENCE], true)
+  AC_DEFINE([WANT_EFENCE], 1, [link with electric fence])
+else
+  AM_CONDITIONAL([WANT_EFENCE], false)
+fi
+
+# Enable usage of mmap for memory allocation.
+AC_MSG_CHECKING([whether to use mmap for memory allocation])
+AC_ARG_ENABLE(malloc-mmap, [AS_HELP_STRING([--enable-malloc-mmap], [use mmap for memory allocation [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_malloc_mmap=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_efence}" = "true"; then
+  AM_CONDITIONAL([WANT_MALLOC_MMAP], true)
+  AC_DEFINE([WANT_MALLOC_MMAP], 1, [use mmap for memory allocation])
+else
+  AM_CONDITIONAL([WANT_MALLOC_MMAP], false)
 fi
 
 # Enable multi-threading support.

@@ -96,7 +96,6 @@ public:
     }
 
     ~PythonRuntime() {
-        debug("python::~pythonruntime");
     }
 
 private:

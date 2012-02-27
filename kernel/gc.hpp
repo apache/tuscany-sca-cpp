@@ -26,6 +26,10 @@
  * Garbage collected memory management, using APR memory pools.
  */
 
+#ifdef WANT_MALLOC_MMAP
+#include <sys/mman.h>
+#include <malloc.h>
+#endif
 #include <stdlib.h>
 #include <apr_general.h>
 #include <apr_pools.h>
@@ -112,6 +116,16 @@ public:
 };
 
 /**
+ * Initialize APR.
+ */
+class gc_apr_context_t {
+public:
+    gc_apr_context_t() {
+        apr_initialize();
+    }
+} gc_apr_context;
+
+/**
  * Garbage collected APR memory pool.
  */
 class gc_pool {
@@ -161,19 +175,11 @@ apr_pool_t* pool(const gc_pool& pool) {
  * Destroy a memory pool.
  */
 const bool destroy(const gc_pool& p) {
+    if (pool(p) == NULL)
+        return false;
     apr_pool_destroy(pool(p));
     return true;
 }
-
-/**
- * Initialize APR.
- */
-class gc_apr_context_t {
-public:
-    gc_apr_context_t() {
-        apr_initialize();
-    }
-} gc_apr_context;
 
 /**
  * Maintain a stack of memory pools.
@@ -273,7 +279,7 @@ private:
  * register a cleanup callback for it.
  */
 template<typename T> apr_status_t gc_pool_cleanup(void* v) {
-    T* t = static_cast<T*>(v);
+    T* t = (T*)v;
     t->~T();
     return APR_SUCCESS;
 }
@@ -282,7 +288,7 @@ template<typename T> T* gc_new(apr_pool_t* p) {
     void* gc_new_ptr = apr_palloc(p, sizeof(T));
     assertOrFail(gc_new_ptr != NULL);
     apr_pool_cleanup_register(p, gc_new_ptr, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
-    return static_cast<T*>(gc_new_ptr);
+    return (T*)(gc_new_ptr);
 }
 
 template<typename T> T* gc_new(const gc_pool& p) {
@@ -334,42 +340,112 @@ char* gc_cnew(size_t n) {
 /**
  * Pool based equivalent of the standard malloc function.
  */
-void* gc_malloc(size_t n) {
-    size_t* gc_malloc_ptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
-    assertOrFail(gc_malloc_ptr != NULL);
-    *gc_malloc_ptr = n;
-    return gc_malloc_ptr + 1;
+void* gc_pool_malloc(size_t n) {
+    size_t* ptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
+    assertOrFail(ptr != NULL);
+    *ptr = n;
+    return ptr + 1;
 }
 
 /**
  * Pool based equivalent of the standard realloc function.
  */
-void* gc_realloc(void* ptr, size_t n) {
+void* gc_pool_realloc(void* ptr, size_t n) {
     size_t size = *(static_cast<size_t*>(ptr) - 1);
-    size_t* gc_realloc_ptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
-    assertOrFail(gc_realloc_ptr != NULL);
-    *gc_realloc_ptr = n;
-    memcpy(gc_realloc_ptr + 1, ptr, size < n? size : n);
-    return gc_realloc_ptr + 1;
+    size_t* rptr = static_cast<size_t*>(apr_palloc(gc_current_pool(), sizeof(size_t) + n));
+    assertOrFail(rptr != NULL);
+    *rptr = n;
+    memcpy(rptr + 1, ptr, size < n? size : n);
+    return rptr + 1;
 }
 
 /**
  * Pool based equivalent of the standard free function.
  */
-void gc_free(unused void* ptr) {
+void gc_pool_free(unused void* ptr) {
     // Memory allocated from a pool is freed when the pool is freed
 }
 
 /**
  * Pool based equivalent of the standard strdup function.
  */
-char* gc_strdup(const char* str) {
-    char* gc_strdup_ptr = static_cast<char*>(gc_malloc(strlen(str) + 1));
-    assertOrFail(gc_strdup_ptr != NULL);
-    strcpy(gc_strdup_ptr, str);
-    return gc_strdup_ptr;
+char* gc_pool_strdup(const char* str) {
+    char* dptr = static_cast<char*>(gc_pool_malloc(strlen(str) + 1));
+    assertOrFail(dptr != NULL);
+    strcpy(dptr, str);
+    return dptr;
 }
 
+#ifdef WANT_MALLOC_MMAP
+
+/**
+ * Mmap based memory allocation functions.
+ */
+
+/**
+ * Mmap based equivalent of the standard malloc function.
+ */
+void* gc_mmap_malloc(size_t n, unused const void* caller) {
+    //printf("gc_mmap_malloc %d", n);
+    size_t* ptr = static_cast<size_t*>(mmap(NULL, sizeof(size_t) + n, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0));
+    assertOrFail(ptr != NULL);
+    *ptr = n;
+    //printf(" %p\n", ptr + 1);
+    return ptr + 1;
 }
+
+/**
+ * Mmap based equivalent of the standard realloc function.
+ */
+void* gc_mmap_realloc(void* ptr, size_t n, const void* caller) {
+    if (ptr == NULL)
+        return gc_mmap_malloc(n, caller);;
+    //printf("gc_mmap_realloc %p %d", ptr, n);
+    size_t size = *(static_cast<size_t*>(ptr) - 1);
+    size_t* rptr = static_cast<size_t*>(mremap(static_cast<size_t*>(ptr) - 1, sizeof(size_t) + size, sizeof(size_t) + n, MREMAP_MAYMOVE, NULL));
+    assertOrFail(rptr != NULL);
+    *rptr = n;
+    //printf(" %p\n", rptr + 1);
+    return rptr + 1;
+}
+
+/**
+ * Mmap based equivalent of the standard free function.
+ */
+void gc_mmap_free(void* ptr, unused const void* caller) {
+    //printf("gc_mmap_free %p\n", ptr);
+    if (ptr == NULL)
+        return;
+    size_t size = *(static_cast<size_t*>(ptr) - 1);
+    munmap(static_cast<size_t*>(ptr) - 1, sizeof(size_t) + size);
+}
+
+/**
+ * Mmap based equivalent of the standard memalign function.
+ */
+void* gc_mmap_memalign(unused size_t alignment, size_t n, unused const void* caller) {
+    //printf("gc_mmap_memalign %d %d\n", alignment, n);
+    return gc_mmap_malloc(n, caller);
+}
+
+/**
+ * Install the mmap based memory allocation functions.
+ */
+void gc_mmap_init_hook(void) {
+    __malloc_hook = gc_mmap_malloc;
+    __realloc_hook = gc_mmap_realloc;
+    __free_hook = gc_mmap_free;
+    __memalign_hook = gc_mmap_memalign;
+}
+                                          
+#endif
+
+}
+
+#ifdef WANT_MALLOC_MMAP
+
+void (*__malloc_initialize_hook)(void) = tuscany::gc_mmap_init_hook;
+
+#endif
 
 #endif /* tuscany_gc_hpp */

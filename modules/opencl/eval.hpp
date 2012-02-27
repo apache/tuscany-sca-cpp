@@ -222,7 +222,6 @@ public:
     }
 
     ~OpenCLContext() {
-        debug("opencl::~OpenCLContext");
         for (cl_uint i = 0; i < ndevs; i++) {
             if (cq[i] != 0)
                 clReleaseCommandQueue(cq[i]);

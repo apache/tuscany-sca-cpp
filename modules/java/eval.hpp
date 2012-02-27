@@ -153,7 +153,6 @@ public:
     }
 
     ~JavaRuntime() {
-        debug("java::~javaruntime");
     }
 
     JavaVM* jvm;

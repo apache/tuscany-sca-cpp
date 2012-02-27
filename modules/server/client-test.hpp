@@ -85,8 +85,9 @@ const bool testGetPerf() {
 const bool testEval() {
     gc_scoped_pool pool;
     http::CURLSession ch("", "", "", "");
-    const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), testURI, ch));
-    assert(val == string("Hello"));
+    const failable<value> r = http::evalExpr(mklist<value>(string("echo"), string("Hello")), testURI, ch);
+    assert(hasContent(r));
+    assert(content(r) == string("Hello"));
     return true;
 }
 
@@ -96,8 +97,9 @@ struct evalLoop {
     evalLoop(const string& uri, http::CURLSession& ch) : uri(uri), ch(ch) {
     }
     const bool operator()() const {
-        const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), uri, ch));
-        assert(val == string("Hello"));
+        const failable<value> r = http::evalExpr(mklist<value>(string("echo"), string("Hello")), uri, ch);
+        assert(hasContent(r));
+        assert(content(r) == string("Hello"));
         return true;
     }
 };
@@ -111,8 +113,9 @@ struct blobEvalLoop {
     blobEvalLoop(const string& uri, http::CURLSession& ch) : uri(uri), ch(ch) {
     }
     const bool operator()() const {
-        const value val = content(http::evalExpr(mklist<value>(string("echo"), blobs), uri, ch));
-        assert(val == blobs);
+        const failable<value> r = content(http::evalExpr(mklist<value>(string("echo"), blobs), uri, ch));
+        assert(hasContent(r));
+        assert(content(r) == blobs);
         return true;
     }
 };
@@ -227,12 +230,12 @@ const bool checkPost(const list<future<bool> >& r) {
 
 struct postThreadLoop {
     const lambda<bool()> l;
+    worker& w;
     const int threads;
-    const gc_ptr<worker> w;
-    postThreadLoop(const lambda<bool()>& l, const int threads) : l(l), threads(threads), w(new (gc_new<worker>()) worker(threads)) {
+    postThreadLoop(const lambda<bool()>& l, worker& w, const int threads) : l(l), w(w), threads(threads) {
     }
     const bool operator()() const {
-        list<future<bool> > r = startPost(*w, threads, l);
+        list<future<bool> > r = startPost(w, threads, l);
         checkPost(r);
         return true;
     }
@@ -242,6 +245,7 @@ const bool testPostThreadPerf() {
     gc_scoped_pool pool;
     const int count = 50;
     const int threads = 10;
+    worker w(threads);
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item"
             + (list<value>() + "name" + string("Apple"))
@@ -252,7 +256,7 @@ const bool testPostThreadPerf() {
             + i);
 
     const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postThread), testURI, count, val);
-    const lambda<bool()> ptl = postThreadLoop(pl, threads);
+    const lambda<bool()> ptl = postThreadLoop(pl, w, threads);
     double t = time(ptl, 0, 1) / (threads * count);
     cout << "ATOMPub POST thread test " << t << " ms" << endl;
 

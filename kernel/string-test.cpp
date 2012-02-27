@@ -153,7 +153,7 @@ bool testStringPerf() {
     memset(charBuffer, 'A', 16384);
     charBuffer[16384] = '\0';
 
-    const int count = 100000;
+    const int count = 10000;
     {
         const lambda<bool()> a16 = addStrings(16);
         cout << "string test " << time(a16, 5, count) << " ms" << endl;

@@ -123,7 +123,8 @@ bool testJSON() {
         istringstream is(str(wos));
         const list<string> il = streamList(is);
         const list<value> r = elementsToValues(content(readJSON(il, cx)));
-        assert(r == l);
+        const list<value> l2 = mklist<value>(list<value>() + "fruit" + (list<value>() + string("Apple") + string("Orange")));
+        assert(r == l2);
     }
     return true;
 }

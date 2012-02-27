@@ -103,7 +103,7 @@ struct poolAllocPerf {
 };
 
 bool testPoolAllocPerf() {
-    const int count = 100000;
+    const int count = 10000;
     const lambda<bool()> pl = poolAllocPerf(count);
     maxElements = 0;
     cout << "Memory pool alloc test " << (time(pl, 1, 1) / count) << " ms" << endl;
@@ -139,7 +139,7 @@ struct stdAllocPerf {
 };
 
 bool testStdAllocPerf() {
-    const int count = 100000;
+    const int count = 10000;
     const lambda<bool()> sl = stdAllocPerf(count);
     maxElements = 0;
     cout << "Memory standard alloc test " << (time(sl, 1, 1) / count) << " ms" << endl;
