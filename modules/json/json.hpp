@@ -122,7 +122,7 @@ template<typename R> const failable<R> writeJSON(const lambda<R(const string&, c
  * Convert a list of values to a list of strings representing a JSON document.
  */
 const failable<list<string> > writeJSON(const list<value>& l, const js::JSContext& cx) {
-    const failable<list<string> > ls = writeJSON<list<string>>(rcons<string>, list<string>(), l, cx);
+    const failable<list<string> > ls = writeJSON<list<string>>(rcons<string>, list<string>(), valuesToElements(elementsToValues(l)), cx);
     if (!hasContent(ls))
         return ls;
     return reverse(list<string>(content(ls)));

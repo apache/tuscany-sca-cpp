@@ -73,6 +73,35 @@ const string customerXML =
 " </account>\n"
 "</customer>\n";
 
+const string abcXML =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<a>\n"
+" <m>abc</m>\n"
+" <m>def</m>\n"
+" <m>xyz</m>\n"
+" <m>tuv</m>\n"
+"</a>\n";
+
+const string xyzXML =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<a>\n"
+" <m>\n"
+"  <id>123</id>\n"
+"  <name>abc</name>\n"
+" </m>\n"
+" <m>\n"
+"  <id>234</id>\n"
+"  <name>def</name>\n"
+" </m>\n"
+" <m>\n"
+"  <id>345</id>\n"
+"  <name>xyz</name>\n"
+" </m>\n"
+" <m>\n"
+"  <id>456</id>\n"
+"  <name>tuv</name>\n"
+" </m>\n"
+"</a>\n";
 
 const bool isName(const value& token) {
     return isTaggedList(token, attribute) && attributeName(token) == "name";
@@ -143,6 +172,24 @@ bool testElements() {
             writeXML<ostream*>(xmlWriter, &os, e);
             assert(str(os) == customerXML);
         }
+    }
+    {
+        istringstream is(abcXML);
+        const list<value> c = readXML(streamList(is));
+        const list<value> v = elementsToValues(c);
+        const list<value> e = valuesToElements(v);
+        ostringstream os;
+        writeXML<ostream*>(xmlWriter, &os, e);
+        assert(str(os) == abcXML);
+    }
+    {
+        istringstream is(xyzXML);
+        const list<value> c = readXML(streamList(is));
+        const list<value> v = elementsToValues(c);
+        const list<value> e = valuesToElements(v);
+        ostringstream os;
+        writeXML<ostream*>(xmlWriter, &os, e);
+        assert(str(os) == xyzXML);
     }
     {
         istringstream is(customerXML);

@@ -66,6 +66,13 @@ const string jsecho("{\n"
     " }\n"
     "}");
 
+const string jsarray("{\n"
+    " \"fruit\": [\n"
+    "  \"Apple\",\n"
+    "  \"Orange\"\n"
+    " ]\n"
+    "}");
+
 bool testJSON() {
     const js::JSContext cx;
 
@@ -101,6 +108,17 @@ bool testJSON() {
         ostringstream wos;
         write(content(writeJSON(valuesToElements(l), cx)), wos);
         assert(str(wos) == jsecho);
+
+        istringstream is(str(wos));
+        const list<string> il = streamList(is);
+        const list<value> r = elementsToValues(content(readJSON(il, cx)));
+        assert(r == l);
+    }
+    {
+        const list<value> l = mklist<value>((list<value>() + "fruit" + string("Apple")), (list<value>() + "fruit" + string("Orange")));
+        ostringstream wos;
+        write(content(writeJSON(valuesToElements(l), cx)), wos);
+        assert(str(wos) == jsarray);
 
         istringstream is(str(wos));
         const list<string> il = streamList(is);

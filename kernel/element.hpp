@@ -172,10 +172,10 @@ const list<value> elementToValueGroupValues(const value& v, const list<value>& l
     if (car<value>(car(l)) != car<value>(v))
         return cons(v, l);
     if (!elementToValueIsList(cadr<value>(car(l)))) {
-        const value g = mklist<value>(car<value>(v), mklist<value>(cdr<value>(v), cdr<value>(car(l))));
+        const value g = mklist<value>(car<value>(v), mklist<value>(isList(cadr<value>(v))? (value)cdr<value>(v) : cadr<value>(v), isList(cadr<value>(car(l)))? (value)cdr<value>(car(l)) : cadr<value>(car(l))));
         return elementToValueGroupValues(g, cdr(l));
     }
-    const value g = mklist<value>(car<value>(v), cons<value>(cdr<value>(v), (list<value>)cadr<value>(car(l))));
+    const value g = mklist<value>(car<value>(v), cons<value>(isList(cadr<value>(v))? (value)cdr<value>(v) : cadr<value>(v), (list<value>)cadr<value>(car(l))));
     return elementToValueGroupValues(g, cdr(l));
 
 }

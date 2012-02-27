@@ -253,7 +253,7 @@ const char* encoding = "UTF-8";
 const list<value> expandElementValues(const value& n, const list<value>& l) {
     if (isNil(l))
         return l;
-    return cons<value>(value(cons<value>(element, cons<value>(n, (list<value>)car(l)))), expandElementValues(n, cdr(l)));
+    return cons<value>(value(cons<value>(element, cons<value>(n, isList(car(l))? (list<value>)car(l) : mklist(car(l))))), expandElementValues(n, cdr(l)));
 }
 
 const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml) {
