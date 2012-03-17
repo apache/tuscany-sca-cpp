@@ -17,6 +17,7 @@ Chat: XMPP chat, using Apache Vysper and Libstrophe;
 Constdb: fast persistent store for mostly constant data, using TinyCDB;
 Filedb: key/value persistent store, using plain files;
 Http: HTTP client, using Libcurl;
+Smtp: SMTP client, using Libcurl;
 Kvdb: fast key/value persistent store, using LevelDB;
 Log: distributed logger, using Facebook Scribe;
 Queue: AMQP queuing, using Apache Qpid/C;
@@ -82,6 +83,7 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- kvdb             LevelDB key/value persistent store
  |   |   |-- log              Scribe logger
  |   |   |-- queue            AMQP message queue
+ |   |   |-- smtp             SMTP client
  |   |   |-- sqldb            PostgreSQL database
  |   |   |-- webservice       Axis2 Web service gateway
  |   |

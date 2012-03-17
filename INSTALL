@@ -89,8 +89,8 @@ XML:
 libxml2-2.7.7 (http://xmlsoft.org/)
 
 CURL:
-curl-7-19-5
-libcurl4-openssl-7.19.5
+curl-7-24.0
+libcurl4-openssl-7.24.0
 
 JSON:
 Mozilla SpiderMonkey libmozjs 1.8.5 and
@@ -168,6 +168,12 @@ To enable debugging and strict warning compile options, add:
 To enable gprof profiling, add:
 --enable-profiling
 
+To enable memory usage debugging using Electric Fence add:
+--enable-efence
+
+To enable memory usage debugging using mmap add:
+--enable-malloc-mmap
+
 To enable multi-threading (required by the Queue and Chat components and
 for running with the HTTPD worker or event multi-threaded MPMs):
 --enable-threads
@@ -225,7 +231,7 @@ dependencies installed under $build:
 --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin \
 --with-memcached=$build/memcached-1.4.7-bin \
 --with-tinycdb=$build/tinycdb-0.77-bin \
---with-curl=$build/curl-7.19.5-bin --with-libxml2=/usr \
+--with-curl=$build/curl-7.24.0-bin --with-libxml2=/usr \
 --with-js-include=$build/js-1.8.5-bin/include \
 --with-js-lib=$build/js-1.8.5-bin/lib \
 --enable-libcloud \
