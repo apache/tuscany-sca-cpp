@@ -17,7 +17,7 @@
 
 compdir=$(prefix)/components/http
 
-EXTRA_DIST = http.composite httpget.componentType httpdelete.componentType *.scm
+EXTRA_DIST = http.composite httpget.componentType httppost.componentType httpput.componentType httppatch.componentType httpdelete.componentType *.scm
 
 comp_LTLIBRARIES = libhttpget.la libhttpdelete.la libhttppost.la libhttpput.la libhttppatch.la
 noinst_DATA = libhttpget${libsuffix} libhttpdelete${libsuffix} libhttppost${libsuffix} libhttpput${libsuffix} libhttppatch${libsuffix}

@@ -22,8 +22,13 @@
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
-    <service name="httppatch"/>
+    <service name="smtppost"/>
     <reference name="url"/>
+    <reference name="user"/>
+    <reference name="password"/>
+    <reference name="from"/>
+    <reference name="to"/>
+    <reference name="subject"/>
     <reference name="content"/>
 
 </componentType>

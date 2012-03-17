@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat http smtp log constdb filedb queue sqldb webservice
+# Setup
+../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+../../modules/http/httpd-loglevel-conf tmp debug
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite smtp.composite
+EOF
 
+../../modules/http/httpd-start tmp
+sleep 2
+
+# Test
+./client-test #2>/dev/null
+rc=$?
+
+# Cleanup
+../../modules/http/httpd-stop tmp
+sleep 2
+exit $rc

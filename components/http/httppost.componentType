@@ -22,8 +22,8 @@
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
-    <service name="http"/>
+    <service name="httppost"/>
     <reference name="url"/>
     <reference name="content"/>
 
-</composite>
+</componentType>

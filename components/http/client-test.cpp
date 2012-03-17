@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test file database component.
+ * Test HTTP components.
  */
 
 #include <assert.h>

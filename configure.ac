@@ -1081,6 +1081,7 @@ AC_CONFIG_FILES([Makefile
                  components/constdb/Makefile
                  components/filedb/Makefile
                  components/http/Makefile
+                 components/smtp/Makefile
                  components/queue/Makefile
                  components/sqldb/Makefile
                  components/webservice/Makefile

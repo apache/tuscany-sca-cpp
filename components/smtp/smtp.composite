@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
+  name="smtp">
+        
+    <component name="smtppost">
+        <implementation.cpp path="." library="libsmtppost"/>
+        <service name="smtppost">
+            <binding.http uri="smtppost"/>
+        </service>
+        <reference name="url" target="url-test"/>
+        <reference name="user" target="user-test"/>
+        <reference name="password" target="password-test"/>
+        <reference name="from" target="from-test"/>
+        <reference name="to" target="to-test"/>
+        <reference name="subject" target="subject-test"/>
+        <reference name="content" target="content-test"/>
+    </component>
+
+    <component name="url-test">
+        <implementation.scheme script="url-test.scm"/>
+        <service name="url-test">
+            <binding.http uri="url-test"/>
+        </service>
+    </component>
+
+    <component name="password-test">
+        <implementation.scheme script="password-test.scm"/>
+        <service name="password-test">
+            <binding.http uri="password-test"/>
+        </service>
+    </component>
+
+    <component name="user-test">
+        <implementation.scheme script="user-test.scm"/>
+        <service name="user-test">
+            <binding.http uri="user-test"/>
+        </service>
+    </component>
+
+    <component name="from-test">
+        <implementation.scheme script="from-test.scm"/>
+        <service name="from-test">
+            <binding.http uri="from-test"/>
+        </service>
+    </component>
+
+    <component name="to-test">
+        <implementation.scheme script="to-test.scm"/>
+        <service name="to-test">
+            <binding.http uri="to-test"/>
+        </service>
+    </component>
+
+    <component name="subject-test">
+        <implementation.scheme script="subject-test.scm"/>
+        <service name="subject-test">
+            <binding.http uri="subject-test"/>
+        </service>
+    </component>
+
+    <component name="content-test">
+        <implementation.scheme script="content-test.scm"/>
+        <service name="content-test">
+            <binding.http uri="content-test"/>
+        </service>
+    </component>
+
+</composite>

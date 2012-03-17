@@ -15,5 +15,22 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat http smtp log constdb filedb queue sqldb webservice
+compdir=$(prefix)/components/smtp
+
+EXTRA_DIST = smtp.composite smtppost.componentType *.scm
+
+comp_LTLIBRARIES = libsmtppost.la
+noinst_DATA = libsmtppost${libsuffix}
+
+libsmtppost_la_SOURCES = smtppost.cpp
+libsmtppost_la_LDFLAGS = -lxml2 -lmozjs -curl
+libsmtppost${libsuffix}:
+	ln -s .libs/libsmtppost${libsuffix}
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+dist_noinst_SCRIPTS = server-test
+noinst_PROGRAMS = client-test
+#TESTS = server-test
 

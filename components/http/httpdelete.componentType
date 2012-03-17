@@ -22,7 +22,7 @@
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
-    <service name="http"/>
+    <service name="httpdelete"/>
     <reference name="url"/>
 
-</composite>
+</componentType>
