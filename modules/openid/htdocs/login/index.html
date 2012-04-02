@@ -55,9 +55,16 @@ if (typeof(openidReferrer()) == 'undefined') {
     document.location = '/';
 }
 
+function clearauthcookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    return true;
+}
+
 function submitSignin(w) {
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
+    clearauthcookie();
     document.signin.openid_identifier.value = w();
     document.signin.action = openidReferrer();
     document.signin.submit();

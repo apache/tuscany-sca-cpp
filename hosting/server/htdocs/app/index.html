@@ -74,8 +74,12 @@ appcache.get = function(uri) {
     document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 })();
 
+</script>
+
+<script type="text/javascript">
+
 // Redirect to login page if not signed in
-if (document.location.protocol == 'https:' && !ui.signedin())
+if (document.location.protocol == 'https:' && !hasauthcookie())
     document.location = '/login/';
 
 </script>

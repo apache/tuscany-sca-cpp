@@ -47,7 +47,7 @@ const char* cookieName(const char* cs) {
         return cs;
     return cookieName(cs + 1);
 }
-const maybe<string> sessionID(const list<string> c) {
+const maybe<string> sessionID(const list<string>& c, const string& key) {
     if (isNil(c))
         return maybe<string>();
     const string cn = cookieName(c_str(car(c)));
@@ -55,29 +55,29 @@ const maybe<string> sessionID(const list<string> c) {
     if (i < length(cn)) {
         const list<string> kv = mklist<string>(substr(cn, 0, i), substr(cn, i+1));
         if (!isNil(kv) && !isNil(cdr(kv))) {
-            if (car(kv) == "TuscanyOpenAuth")
+            if (car(kv) == key)
                 return cadr(kv);
         }
     }
-    return sessionID(cdr(c));
+    return sessionID(cdr(c), key);
 }
 
-const maybe<string> sessionID(const request_rec* r) {
+const maybe<string> sessionID(const request_rec* r, const string& key) {
     const string c = httpd::cookie(r);
     debug(c, "openauth::sessionid::cookies");
     if (length(c) == 0)
         return maybe<string>();
-    return sessionID(tokenize(";", c));
+    return sessionID(tokenize(";", c), key);
 }
 
 /**
  * Convert a session id to a cookie string.
  */
-const string cookie(const string& sid, const string& domain) {
+const string cookie(const string& key, const string& sid, const string& domain) {
     const time_t t = time(NULL) + 86400;
     char exp[32];
     strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = string("TuscanyOpenAuth=") + sid + "; expires=" + string(exp) + "; domain=." + domain + "; path=/";
+    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + domain + "; path=/";
     debug(c, "openauth::cookie");
     return c;
 }

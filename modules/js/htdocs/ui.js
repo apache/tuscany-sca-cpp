@@ -193,13 +193,6 @@ ui.windowtitle = function(host) {
 };
 
 /**
- * Return true if the session cookie contains signin information.
- */
-ui.signedin = function() {
-    return !isNil(document.cookie) && document.cookie.indexOf('TuscanyOpenAuth=') != -1;
-};
-
-/**
  * Convert a CSS position to a numeric position.
  */
 ui.numpos = function(p) {

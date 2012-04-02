@@ -58,7 +58,7 @@ AuthName "$host"
 Require valid-user
 AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
-AuthOpenIDCookieName TuscanyOpenAuth
+AuthOpenIDCookieName TuscanyOpenIDAuth
 AuthOpenIDLoginPage /login/
 AuthOpenIDAXAdd REMOTE_USER http://axschema.org/contact/email
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email

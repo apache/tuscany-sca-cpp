@@ -44,7 +44,7 @@ function queryParams() {
 function oauthReferrer() {
     r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
-        return r;
+        return '/';
     q = r.indexOf('?');
     if (q > 0)
         return r.substring(0, q);
@@ -55,38 +55,48 @@ if (typeof(oauthReferrer()) == 'undefined') {
     document.location = '/';
 }
 
+function clearauthcookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    return true;
+}
+
 function submitSignin2(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
-    document.signin2.mod_oauth2_authorize.value = parms[0];
-    document.signin2.mod_oauth2_access_token.value = parms[1];
-    document.signin2.mod_oauth2_client_id.value = parms[2];
-    document.signin2.mod_oauth2_info.value = parms[3];
-    document.signin2.action = oauthReferrer();
+    clearauthcookie();
+    document.signin2.oauth2_authorize.value = parms[0];
+    document.signin2.oauth2_access_token.value = parms[1];
+    document.signin2.oauth2_client_id.value = parms[2];
+    document.signin2.oauth2_info.value = parms[3];
+    document.signin2.oauth2_scope.value = parms[4];
+    document.signin2.oauth2_display.value = parms[5];
+    document.signin2.openauth_referrer.value = oauthReferrer();
+    document.signin2.action = '/oauth2/authorize/';
     document.signin2.submit();
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me', 'email', 'page'];
     return parms;
 }
 
 function withGithub() {
-    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'github.com', 'https://github.com/api/v2/json/user/show'];
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'github.com', 'https://github.com/api/v2/json/user/show', 'email', ''];
     return parms;
 }
 
 function submitSignin1(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
-    document.signin1.mod_oauth1_request_token.value = parms[0];
-    document.signin1.mod_oauth1_authorize.value = parms[1];
-    document.signin1.mod_oauth1_access_token.value = parms[2];
-    document.signin1.mod_oauth1_client_id.value = parms[3];
-    document.signin1.mod_oauth1_info.value = parms[4];
-    document.signin1.action = oauthReferrer();
+    clearauthcookie();
+    document.signin1.oauth1_request_token.value = parms[0];
+    document.signin1.oauth1_authorize.value = parms[1];
+    document.signin1.oauth1_access_token.value = parms[2];
+    document.signin1.oauth1_client_id.value = parms[3];
+    document.signin1.oauth1_info.value = parms[4];
+    document.signin1.openauth_referrer.value = oauthReferrer();
+    document.signin1.action = '/oauth1/authorize/';
     document.signin1.submit();
 }
 
@@ -109,20 +119,22 @@ function withTwitter() {
 </form>
 
 <form name="signin2" action="/" method="GET">
-<input type="hidden" name="mod_oauth2_authorize" value=""/>
-<input type="hidden" name="mod_oauth2_access_token" value=""/>
-<input type="hidden" name="mod_oauth2_client_id" value=""/>
-<input type="hidden" name="mod_oauth2_info" value=""/>
-<input type="hidden" name="mod_oauth2_step" value="authorize"/>
+<input type="hidden" name="oauth2_authorize" value=""/>
+<input type="hidden" name="oauth2_access_token" value=""/>
+<input type="hidden" name="oauth2_client_id" value=""/>
+<input type="hidden" name="oauth2_info" value=""/>
+<input type="hidden" name="oauth2_scope" value=""/>
+<input type="hidden" name="oauth2_display" value=""/>
+<input type="hidden" name="openauth_referrer" value=""/>
 </form>
 
 <form name="signin1" action="/" method="GET">
-<input type="hidden" name="mod_oauth1_request_token" value=""/>
-<input type="hidden" name="mod_oauth1_authorize" value=""/>
-<input type="hidden" name="mod_oauth1_access_token" value=""/>
-<input type="hidden" name="mod_oauth1_client_id" value=""/>
-<input type="hidden" name="mod_oauth1_info" value=""/>
-<input type="hidden" name="mod_oauth1_step" value="authorize"/>
+<input type="hidden" name="oauth1_request_token" value=""/>
+<input type="hidden" name="oauth1_authorize" value=""/>
+<input type="hidden" name="oauth1_access_token" value=""/>
+<input type="hidden" name="oauth1_client_id" value=""/>
+<input type="hidden" name="oauth1_info" value=""/>
+<input type="hidden" name="openauth_referrer" value=""/>
 </form>
 
 </body>

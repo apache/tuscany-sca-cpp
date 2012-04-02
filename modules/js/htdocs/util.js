@@ -334,6 +334,28 @@ function issubdomain(host) {
 }
 
 /**
+ * Return true if the document cookie contains auth information.
+ */
+function hasauthcookie() {
+    return !isNil(document.cookie) &&
+        (document.cookie.indexOf('TuscanyOpenAuth=') != -1 ||
+         document.cookie.indexOf('TuscanyOAuth1=') != -1 ||
+         document.cookie.indexOf('TuscanyOAuth2=') != -1 ||
+         document.cookie.indexOf('TuscanyOpenIDAuth=') != -1);
+}
+
+/**
+ * Clear auth information from the document cookie.
+ */
+function clearauthcookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    return true;
+}
+
+/**
  * Format a string like Python format.
  */
 function format() {

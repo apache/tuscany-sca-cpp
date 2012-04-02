@@ -44,14 +44,14 @@
 #include <http_connection.h>
 #include <http_request.h>
 // Ignore conversion warnings in HTTPD 2.3.15 header
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #ifndef IS_DARWIN
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 #endif
 #include <http_protocol.h>
 // Re-enable conversion warnings
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #ifndef IS_DARWIN
 #pragma GCC diagnostic warning "-Wconversion"
 #endif
@@ -259,6 +259,8 @@ const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
  * Convert a URI to an absolute URL.
  */
 const string url(const string& uri, request_rec* r) {
+    if (contains(uri, "://"))
+        return uri;
     ostringstream n;
     const string s = scheme(r);
     const string h = hostName(r, "localhost");
@@ -406,8 +408,8 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     const string ob(str(os));
 
     // Make sure browsers come back and check for updated dynamic content
-    // The actual header setup is configured in httpd-conf, based on the must-revalidate env variable
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "must-revalidate"), apr_pstrdup(r->pool, "true"));
+    apr_table_set(r->headers_out, "Cache-Control", "must-revalidate, max-age=0");
+    apr_table_set(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
 
     // Compute and return an Etag for the returned content
     const string etag(ap_md5_binary(r->pool, (const unsigned char*)c_str(ob), (int)length(ob)));
@@ -658,7 +660,7 @@ const void* userData(const string& k, const server_rec* s) {
     return v;
 }
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Debug log.
@@ -701,8 +703,6 @@ int debugNote(unused void* r, const char* key, const char* value) {
  * Log a request.
  */
 const bool debugRequest(request_rec* r, const string& msg) {
-    if (!isDebugLog())
-        return true;
     gc_scoped_pool();
     cdebug << msg << ":" << endl;
     cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
@@ -725,11 +725,11 @@ const bool debugRequest(request_rec* r, const string& msg) {
     return true;
 }
 
-#define httpdDebugRequest(r, msg) httpd::debugRequest(r, msg)
+#define debug_httpdRequest(r, msg) if (debug_islogging()) httpd::debugRequest(r, msg)
 
 #else
 
-#define httpdDebugRequest(r, msg)
+#define debug_httpdRequest(r, msg)
 
 #endif
 

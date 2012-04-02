@@ -33,12 +33,12 @@
 <form name="signout" action="/login" method="GET">
 <script type="text/javascript">
 function submitSignout() {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
-    document.cookie = reset;
+    clearauthcookie();
     document.signout.submit();
     return true;
 }
 </script>
 <input type="button" onclick="submitSignout()" value="Sign out"/>
 </form>
-</body></html>
+</body>
+</html>

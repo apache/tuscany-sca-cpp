@@ -32,8 +32,7 @@
 
 <script type="text/javascript">
 function submitFormSignin() {
-    var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
-    document.cookie = reset;
+    clearauthcookie();
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
 }

@@ -17,6 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# For this module to work, add the www.example.com domain to your /etc/hosts as follows:
+# 127.0.0.1 www.example.com
+
 # Test supporting both OpenID and OAuth in the same app
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
@@ -24,25 +27,25 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 ../../components/cache/memcached-start tmp 11212
 ../../components/cache/memcached-start tmp 11213
 
-../../modules/http/ssl-ca-conf tmp localhost
-../../modules/http/ssl-cert-conf tmp localhost
-../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/ssl-ca-conf tmp www.example.com
+../../modules/http/ssl-cert-conf tmp www.example.com
+../../modules/http/httpd-conf tmp www.example.com 8090 htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
 
+../openid/openid-conf tmp
+../openid/openid-step2-conf tmp
+../openid/openid-memcached-conf tmp www.example.com 11212
+../openid/openid-memcached-conf tmp www.example.com 11213
+
 ./oauth-conf tmp
-./oauth-memcached-conf tmp localhost 11212
-./oauth-memcached-conf tmp localhost 11213
+./oauth-memcached-conf tmp www.example.com 11212
+./oauth-memcached-conf tmp www.example.com 11213
 
 # Configure your app keys here
 ./oauth1-appkey-conf tmp twitter.com app2345 secret7890
 ./oauth1-appkey-conf tmp linkedin.com app3456 secret4567
 ./oauth2-appkey-conf tmp facebook.com app1234 secret6789
 ./oauth2-appkey-conf tmp github.com app5678 secret8901
-
-../openid/openid-conf tmp
-../openid/openid-step2-conf tmp
-../openid/openid-memcached-conf tmp localhost 11212
-../openid/openid-memcached-conf tmp localhost 11213
 
 ../http/open-auth-conf tmp
 ../http/passwd-auth-conf tmp foo foo
@@ -51,7 +54,7 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 # to the authorized user group
 ../../modules/http/group-auth-conf tmp foo
 ../../modules/http/group-auth-conf tmp 123456
-../../modules/http/group-auth-conf tmp https://www.google.com/accounts/o8/id?id=12345678
+../../modules/http/group-auth-conf tmp jane@example.com
 
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp

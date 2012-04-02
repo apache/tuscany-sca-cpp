@@ -52,6 +52,11 @@ namespace tuscany {
 namespace http {
 
 /**
+ * Enable CURL verbose debug log.
+ */
+//#define WANT_MAINTAINER_CURL_VERBOSE
+
+/**
  * CURL library runtime, one per process.
  */
 class CURLRuntime {
@@ -243,7 +248,7 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
     CURL* ch = handle(cs);
     curl_easy_reset(ch);
     curl_easy_setopt(ch, CURLOPT_USERAGENT, "libcurl/1.0");
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_CURL_VERBOSE
     curl_easy_setopt(ch, CURLOPT_VERBOSE, true);
 #endif
 
@@ -454,9 +459,9 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
 /**
  * Find and return a header.
  */
-const failable<string> header(const char* prefix, const list<string>& h) {
+const maybe<string> header(const char* prefix, const list<string>& h) {
     if (isNil(h))
-        return mkfailure<string>(string("Couldn't find header: ") + prefix);
+        return maybe<string>();
     const string s = car(h);
     if (find(s, prefix) != 0)
         return header(prefix, cdr(h));
@@ -467,8 +472,9 @@ const failable<string> header(const char* prefix, const list<string>& h) {
 /**
  * Find and return a location header.
  */
-const failable<string> location(const list<string>& h) {
-    return header("Location: ", h);
+const string location(const list<string>& h) {
+    const maybe<string> l = header("Location: ", h);
+    return hasContent(l)? content(l) : "";
 }
 
 /**
@@ -484,8 +490,9 @@ const value entryId(const failable<string> l) {
 /**
  * Find and return a content-type header.
  */
-const failable<string> contentType(const list<string>& h) {
-    return header("Content-Type: ", h);
+const string contentType(const list<string>& h) {
+    const maybe<string> ct = header("Content-Type: ", h);
+    return hasContent(ct)? content(ct) : "";
 }
 
 /**
@@ -516,44 +523,40 @@ const failable<value> getcontent(const string& url, const CURLSession& cs) {
 }
 
 /**
- * HTTP GET, return a list of values representing the resource at the given URL.
+ * Convert an HTTP content response to a value.
  */
-const failable<value> get(const string& url, const CURLSession& cs) {
-    debug(url, "http::get::url");
+const failable<value> responseValue(const list<list<string> > res) {
 
-    // Get the contents of the resource at the given URL
-    const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, cs);
-    if (!hasContent(res))
-        return mkfailure<value>(reason(res));
-    const string ct(content(contentType(car(content(res)))));
-    debug(ct, "http::get::contentType");
+    // Parse the returned content
+    const string ct = contentType(car(res));
+    debug(ct, "http::responseValue::contentType");
 
-    const list<string> ls(reverse(cadr(content(res))));
-    debug(ls, "http::get::content");
+    const list<string> ls(reverse(cadr(res)));
+    debug(ls, "http::responseValue::content");
 
     if (atom::isATOMEntry(ls)) {
         // Read an ATOM entry
         const value val(elementsToValues(content(atom::readATOMEntry(ls))));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
     if (contains(ct, "application/atom+xml") || atom::isATOMFeed(ls)) {
         // Read an ATOM feed
         const value val(elementsToValues(content(atom::readATOMFeed(ls))));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
     if (contains(ct, "application/rss+xml") || rss::isRSSFeed(ls)) {
         // Read an RSS feed
         const value val(elementsToValues(content(rss::readRSSFeed(ls))));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
     if (contains(ct, "text/javascript") || contains(ct, "application/json") || json::isJSON(ls)) {
         // Read a JSON document
         js::JSContext cx;
         const value val(json::jsonValues(content(json::readJSON(ls, cx))));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
     if (contains(ct, "application/x-javascript")) {
@@ -565,24 +568,39 @@ const failable<value> get(const string& url, const CURLSession& cs) {
         const size_t fp = find(s, '(');
         const size_t lp = find_last(s, ')');
         const list<string> jls = mklist<string>(substr(s, fp + 1, lp - (fp + 1)));
-        debug(jls, "http::get::javascript::content");
+        debug(jls, "http::responseValue::javascript::content");
 
         js::JSContext cx;
         const value val(json::jsonValues(content(json::readJSON(jls, cx))));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
     if (contains(ct, "text/xml") || contains(ct, "application/xml") || isXML(ls)) {
         // Read an XML document
         const value val(elementsToValues(readXML(ls)));
-        debug(val, "http::get::result");
+        debug(val, "http::responseValue::result");
         return val;
     }
 
     // Return the content type and a content list
     const value val(mklist<value>(ct, mkvalues(ls)));
-    debug(val, "http::get::result");
+    debug(val, "http::responseValue::result");
     return val;
+}
+
+/**
+ * HTTP GET, return a list of values representing the resource at the given URL.
+ */
+const failable<value> get(const string& url, const CURLSession& cs) {
+    debug(url, "http::get::url");
+
+    // Get the contents of the resource at the given URL
+    const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, cs);
+    if (!hasContent(res))
+        return mkfailure<value>(reason(res));
+
+    // Parse the returned content
+    return responseValue(content(res));
 }
 
 /**
@@ -686,9 +704,15 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
         return mkfailure<value>(reason(res));
 
     // Return the new entry id from the HTTP location header, if any
-    const value eid(entryId(location(car(content(res)))));
-    debug(eid, "http::post::result");
-    return eid;
+    const string loc = location(car(content(res)));
+    if (length(loc) != 0) {
+        const value eid(entryId(location(car(content(res)))));
+        debug(eid, "http::post::result");
+        return eid;
+    }
+
+    // Return the returned content
+    return responseValue(content(res));
 }
 
 /**

@@ -68,6 +68,7 @@ ServerName https://$host$sslpportsuffix
 <Location />
 RewriteEngine on
 RewriteCond %{HTTP_HOST} !^$host [NC]
+RewriteCond %{HTTP:X-Forwarded-Server} ^$ [NC]
 RewriteRule .* https://$host$sslpportsuffix%{REQUEST_URI} [R]
 </Location>
 

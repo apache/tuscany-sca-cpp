@@ -17,21 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# For this module to work, add the www.example.com domain to your /etc/hosts as follows:
+# 127.0.0.1 www.example.com
+
 # Setup
-../../ubuntu/ip-redirect-all 80 8090
-../../ubuntu/ip-redirect-all 443 8453
+#../../ubuntu/ip-redirect-all 80 8090
+#../../ubuntu/ip-redirect-all 443 8453
 
 ../../components/cache/memcached-start tmp 11212
 ../../components/cache/memcached-start tmp 11213
 
-../../modules/http/ssl-ca-conf tmp localhost
-../../modules/http/ssl-cert-conf tmp localhost
-../../modules/http/httpd-conf tmp localhost 8090/80 htdocs
-../../modules/http/httpd-ssl-conf tmp 8453/443
+../../modules/http/ssl-ca-conf tmp www.example.com
+../../modules/http/ssl-cert-conf tmp www.example.com
+../../modules/http/httpd-conf tmp www.example.com 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453
 
 ./oauth-conf tmp
-./oauth-memcached-conf tmp localhost 11212
-./oauth-memcached-conf tmp localhost 11213
+./oauth-memcached-conf tmp www.example.com 11212
+./oauth-memcached-conf tmp www.example.com 11213
 
 # Configure your app keys here
 ./oauth1-appkey-conf tmp twitter.com app2345 secret7890
@@ -41,7 +44,7 @@
 
 # For this test to work you need to add your oauth user id to the
 # authorized user group
-../../modules/http/group-auth-conf tmp 123456
+../../modules/http/group-auth-conf tmp jane@example.com
 
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp

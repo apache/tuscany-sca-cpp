@@ -89,7 +89,7 @@ public:
  * Return the user info for a session.
  */
 const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) {
-    return memcache::get(mklist<value>("tuscanyOpenAuth", sid), mc);
+    return memcache::get(mklist<value>("tuscanyOAuth1", sid), mc);
 }
 
 /**
@@ -174,25 +174,28 @@ const list<string> sign(const string& verb, const string& uri, const list<value>
  */
 const failable<int> authorize(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const memcache::MemCached& mc) {
     // Extract authorize, access_token, client ID and info URIs
-    const list<value> req = assoc<value>("mod_oauth1_request_token", args);
+    const list<value> ref = assoc<value>("openauth_referrer", args);
+    if (isNil(ref) || isNil(cdr(ref)))
+        return mkfailure<int>("Missing openauth_referrer parameter");
+    const list<value> req = assoc<value>("oauth1_request_token", args);
     if (isNil(req) || isNil(cdr(req)))
-        return mkfailure<int>("Missing mod_oauth1_request_token parameter");
-    const list<value> auth = assoc<value>("mod_oauth1_authorize", args);
+        return mkfailure<int>("Missing oauth1_request_token parameter");
+    const list<value> auth = assoc<value>("oauth1_authorize", args);
     if (isNil(auth) || isNil(cdr(auth)))
-        return mkfailure<int>("Missing mod_oauth1_authorize parameter");
-    const list<value> tok = assoc<value>("mod_oauth1_access_token", args);
+        return mkfailure<int>("Missing oauth1_authorize parameter");
+    const list<value> tok = assoc<value>("oauth1_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
-        return mkfailure<int>("Missing mod_oauth1_access_token parameter");
-    const list<value> cid = assoc<value>("mod_oauth1_client_id", args);
+        return mkfailure<int>("Missing oauth1_access_token parameter");
+    const list<value> cid = assoc<value>("oauth1_client_id", args);
     if (isNil(cid) || isNil(cdr(cid)))
-        return mkfailure<int>("Missing mod_oauth1_client_id parameter");
-    const list<value> info = assoc<value>("mod_oauth1_info", args);
+        return mkfailure<int>("Missing oauth1_client_id parameter");
+    const list<value> info = assoc<value>("oauth1_info", args);
     if (isNil(info) || isNil(cdr(info)))
-        return mkfailure<int>("Missing mod_oauth1_info parameter");
+        return mkfailure<int>("Missing oauth1_info parameter");
 
     // Build the redirect URI
-    const list<list<value> > redirargs = mklist<list<value> >(mklist<value>("mod_oauth1_step", "access_token"), tok, cid, info);
-    const string redir = httpd::url(r->uri, r) + string("?") + http::queryString(redirargs);
+    const list<list<value> > redirargs = mklist<list<value> >(tok, cid, info, ref);
+    const string redir = httpd::url("/oauth1/access_token/", r) + string("?") + http::queryString(redirargs);
     debug(redir, "modoauth1::authorize::redir");
 
     // Lookup client app configuration
@@ -296,15 +299,18 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
  */
 const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const memcache::MemCached& mc) {
     // Extract access_token URI, client ID and verification code
-    const list<value> tok = assoc<value>("mod_oauth1_access_token", args);
+    const list<value> ref = assoc<value>("openauth_referrer", args);
+    if (isNil(ref) || isNil(cdr(ref)))
+        return mkfailure<int>("Missing openauth_referrer parameter");
+    const list<value> tok = assoc<value>("oauth1_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
-        return mkfailure<int>("Missing mod_oauth1_access_token parameter");
-    const list<value> cid = assoc<value>("mod_oauth1_client_id", args);
+        return mkfailure<int>("Missing oauth1_access_token parameter");
+    const list<value> cid = assoc<value>("oauth1_client_id", args);
     if (isNil(cid) || isNil(cdr(cid)))
-        return mkfailure<int>("Missing mod_oauth1_client_id parameter");
-    const list<value> info = assoc<value>("mod_oauth1_info", args);
+        return mkfailure<int>("Missing oauth1_client_id parameter");
+    const list<value> info = assoc<value>("oauth1_info", args);
     if (isNil(info) || isNil(cdr(info)))
-        return mkfailure<int>("Missing mod_oauth1_info parameter");
+        return mkfailure<int>("Missing oauth1_info parameter");
     const list<value> tv = assoc<value>("oauth_token", args);
     if (isNil(tv) || isNil(cdr(tv)))
         return mkfailure<int>("Missing oauth_token parameter");
@@ -372,14 +378,14 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth1_") + mkrand();
-    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), mc);
+    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth1", sid), content(iv), mc);
     if (!hasContent(prc))
         return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
-    debug(c_str(openauth::cookie(sid, httpd::hostName(r))), "modoauth1::access_token::setcookie");
-    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(openauth::cookie(sid, httpd::hostName(r))));
-    return httpd::externalRedirect(httpd::url(r->uri, r), r);
+    debug(c_str(openauth::cookie("TuscanyOAuth1", sid, httpd::hostName(r))), "modoauth1::access_token::setcookie");
+    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(openauth::cookie("TuscanyOAuth1", sid, httpd::hostName(r))));
+    return httpd::externalRedirect(httpd::url(httpd::unescape(cadr(ref)), r), r);
 }
 
 /**
@@ -391,6 +397,7 @@ static int checkAuthn(request_rec *r) {
     if (!dc.enabled)
         return DECLINED;
     const char* atype = ap_auth_type(r);
+    debug(atype, "modopenauth::checkAuthn::auth_type");
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
 
@@ -398,11 +405,11 @@ static int checkAuthn(request_rec *r) {
     gc_scoped_pool pool(r->pool);
 
     // Get the server configuration
-    httpdDebugRequest(r, "modoauth1::checkAuthn::input");
+    debug_httpdRequest(r, "modoauth1::checkAuthn::input");
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth1);
 
     // Get session id from the request
-    const maybe<string> sid = openauth::sessionID(r);
+    const maybe<string> sid = openauth::sessionID(r, "TuscanyOAuth1");
     if (hasContent(sid)) {
         // Decline if the session id was not created by this module
         if (substr(content(sid), 0, 7) != "OAuth1_")
@@ -416,33 +423,25 @@ static int checkAuthn(request_rec *r) {
         }
     }
 
-    // Get the request args
-    const list<list<value> > args = httpd::queryArgs(r);
-
-    // Decline if the request is for another authentication provider
-    if (!isNil(assoc<value>("openid_identifier", args)))
-        return DECLINED;
-    if (!isNil(assoc<value>("mod_oauth2_step", args)))
-        return DECLINED;
-
-    // Determine the OAuth protocol flow step, conveniently passed
-    // around in a request arg
-    const list<value> sl = assoc<value>("mod_oauth1_step", args);
-    const value step = !isNil(sl) && !isNil(cdr(sl))? cadr(sl) : "";
-
     // Handle OAuth authorize request step
-    if (step == "authorize") {
+    if (string(r->uri) == "/oauth1/authorize/") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(authorize(args, r, sc.appkeys, sc.mc));
+        return httpd::reportStatus(authorize(httpd::queryArgs(r), r, sc.appkeys, sc.mc));
     }
 
     // Handle OAuth access_token request step
-    if (step == "access_token") {
+    if (string(r->uri) == "/oauth1/access_token/") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(accessToken(args, r, sc.appkeys, sc.mc));
+        return httpd::reportStatus(accessToken(httpd::queryArgs(r), r, sc.appkeys, sc.mc));
     }
 
-    // Redirect to the login page
+    // Redirect to the login page, unless we have a session id from another module
+    if (hasContent(openauth::sessionID(r, "TuscanyOpenIDAuth")) ||
+        hasContent(openauth::sessionID(r, "TuscanyOpenAuth")) ||
+        hasContent(openauth::sessionID(r, "TuscanyOAuth2")))
+        return DECLINED;
+    if ((substr(string(r->uri), 0, 8) == "/oauth2/") || !isNil(assoc<value>("openid_identifier", httpd::queryArgs(r))))
+        return DECLINED;
     r->ap_auth_type = const_cast<char*>(atype);
     return httpd::reportStatus(openauth::login(dc.login, r));
 }

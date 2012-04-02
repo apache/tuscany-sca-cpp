@@ -77,7 +77,7 @@ public:
     string login;
 };
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Log session entries.
@@ -88,11 +88,15 @@ int debugSessionEntry(unused void* r, const char* key, const char* value) {
 }
 
 const bool debugSession(request_rec* r, session_rec* z) {
-    if (!isDebugLog())
-        return true;
     apr_table_do(debugSessionEntry, r, z->entries, NULL);
     return true;
 }
+
+#define debug_authSession(r, z) if (debug_islogging()) openauth::debugSession(r, z)
+
+#else
+
+#define debug_authSession(r, z)
 
 #endif
 
@@ -110,9 +114,7 @@ const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
     ap_session_load_fn(r, &z);
     if (z == NULL)
         return mkfailure<value>("Couldn't retrieve user session");
-#ifdef WANT_MAINTAINER_MODE
-    debugSession(r, z);
-#endif
+    debug_authSession(r, z);
 
     if (ap_session_get_fn == NULL)
         ap_session_get_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_get);
@@ -213,10 +215,10 @@ static int checkAuthn(request_rec *r) {
 
     // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
-    httpdDebugRequest(r, "modopenauth::checkAuthn::input");
+    debug_httpdRequest(r, "modopenauth::checkAuthn::input");
 
     // Get session id from the request
-    const maybe<string> sid = sessionID(r);
+    const maybe<string> sid = sessionID(r, "TuscanyOpenAuth");
     if (hasContent(sid)) {
         // Decline if the session id was not created by this module
         const string stype = substr(content(sid), 0, 7);
@@ -283,12 +285,12 @@ static int checkAuthn(request_rec *r) {
     // Decline if the request is for another authentication provider
     if (!isNil(assoc<value>("openid_identifier", args)))
         return DECLINED;
-    if (!isNil(assoc<value>("mod_oauth1_step", args)))
-        return DECLINED;
-    if (!isNil(assoc<value>("mod_oauth2_step", args)))
-        return DECLINED;
 
-    // Redirect to the login page
+    // Redirect to the login page, unless we have a session id from another module
+    if (hasContent(sessionID(r, "TuscanyOpenIDAuth")) ||
+        hasContent(sessionID(r, "TuscanyOAuth1")) ||
+        hasContent(sessionID(r, "TuscanyOAuth2")))
+        return DECLINED;
     r->ap_auth_type = const_cast<char*>(atype);
     return httpd::reportStatus(login(dc.login, r));
 }

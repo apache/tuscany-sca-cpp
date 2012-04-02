@@ -29,9 +29,16 @@
 <h1>Sign in with a Form, an OpenID provider or an OAuth provider</h1>
 
 <script type="text/javascript">
+function clearauthcookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    return true;
+}
+
 function submitFormSignin() {
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
+    clearauthcookie();
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
 }
@@ -50,7 +57,7 @@ function queryParams() {
 function openauthReferrer() {
     r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
-        return r;
+        return '/';
     q = r.indexOf('?');
     if (q > 0)
         return r.substring(0, q);
@@ -62,8 +69,7 @@ if (typeof(openauthReferrer()) == 'undefined') {
 }
 
 function submitOpenIDSignin(w) {
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
+    clearauthcookie();
     document.openIDSignin.openid_identifier.value = w();
     document.openIDSignin.action = openauthReferrer();
     document.openIDSignin.submit();
@@ -111,36 +117,38 @@ function withXRDSEndpoint() {
 
 function submitOAuth2Signin(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
-    document.oauth2Signin.mod_oauth2_authorize.value = parms[0];
-    document.oauth2Signin.mod_oauth2_access_token.value = parms[1];
-    document.oauth2Signin.mod_oauth2_client_id.value = parms[2];
-    document.oauth2Signin.mod_oauth2_info.value = parms[3];
-    document.oauth2Signin.action = openauthReferrer();
+    clearauthcookie();
+    document.oauth2Signin.oauth2_authorize.value = parms[0];
+    document.oauth2Signin.oauth2_access_token.value = parms[1];
+    document.oauth2Signin.oauth2_client_id.value = parms[2];
+    document.oauth2Signin.oauth2_info.value = parms[3];
+    document.oauth2Signin.oauth2_scope.value = parms[4];
+    document.oauth2Signin.oauth2_display.value = parms[5];
+    document.oauth2Signin.openauth_referrer.value = openauthReferrer();
+    document.oauth2Signin.action = '/oauth2/authorize/';
     document.oauth2Signin.submit();
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me', 'email', 'page'];
     return parms;
 }
 
 function withGithub() {
-    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'github.com', 'https://github.com/api/v2/json/user/show'];
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'github.com', 'https://github.com/api/v2/json/user/show', 'email', ''];
     return parms;
 }
 
 function submitOAuth1Signin(w) {
     parms = w();
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + window.location.hostname + '; path=/';
-    document.cookie = reset;
-    document.oauth1Signin.mod_oauth1_request_token.value = parms[0];
-    document.oauth1Signin.mod_oauth1_authorize.value = parms[1];
-    document.oauth1Signin.mod_oauth1_access_token.value = parms[2];
-    document.oauth1Signin.mod_oauth1_client_id.value = parms[3];
-    document.oauth1Signin.mod_oauth1_info.value = parms[4];
-    document.oauth1Signin.action = openauthReferrer();
+    clearauthcookie();
+    document.oauth1Signin.oauth1_request_token.value = parms[0];
+    document.oauth1Signin.oauth1_authorize.value = parms[1];
+    document.oauth1Signin.oauth1_access_token.value = parms[2];
+    document.oauth1Signin.oauth1_client_id.value = parms[3];
+    document.oauth1Signin.oauth1_info.value = parms[4];
+    document.oauth1Signin.openauth_referrer.value = openauthReferrer();
+    document.oauth1Signin.action = '/oauth1/authorize/';
     document.oauth1Signin.submit();
 }
 
@@ -205,20 +213,22 @@ function withTwitter() {
 </form>
 
 <form name="oauth2Signin" action="/" method="GET">
-<input type="hidden" name="mod_oauth2_authorize" value=""/>
-<input type="hidden" name="mod_oauth2_access_token" value=""/>
-<input type="hidden" name="mod_oauth2_client_id" value=""/>
-<input type="hidden" name="mod_oauth2_info" value=""/>
-<input type="hidden" name="mod_oauth2_step" value="authorize"/>
+<input type="hidden" name="oauth2_authorize" value=""/>
+<input type="hidden" name="oauth2_access_token" value=""/>
+<input type="hidden" name="oauth2_client_id" value=""/>
+<input type="hidden" name="oauth2_info" value=""/>
+<input type="hidden" name="oauth2_scope" value=""/>
+<input type="hidden" name="oauth2_display" value=""/>
+<input type="hidden" name="openauth_referrer" value=""/>
 </form>
 
 <form name="oauth1Signin" action="/" method="GET">
-<input type="hidden" name="mod_oauth1_request_token" value=""/>
-<input type="hidden" name="mod_oauth1_authorize" value=""/>
-<input type="hidden" name="mod_oauth1_access_token" value=""/>
-<input type="hidden" name="mod_oauth1_client_id" value=""/>
-<input type="hidden" name="mod_oauth1_info" value=""/>
-<input type="hidden" name="mod_oauth1_step" value="authorize"/>
+<input type="hidden" name="oauth1_request_token" value=""/>
+<input type="hidden" name="oauth1_authorize" value=""/>
+<input type="hidden" name="oauth1_access_token" value=""/>
+<input type="hidden" name="oauth1_client_id" value=""/>
+<input type="hidden" name="oauth1_info" value=""/>
+<input type="hidden" name="openauth_referrer" value=""/>
 </form>
 
 </body>

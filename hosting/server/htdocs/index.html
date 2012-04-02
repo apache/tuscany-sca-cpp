@@ -74,8 +74,11 @@ appcache.get = function(uri) {
     document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 })();
 
+</script>
+<script type="text/javascript">
+
 // Redirect to login page if not signed in
-if (document.location.protocol == 'https:' && !ui.signedin())
+if (document.location.protocol == 'https:' && !hasauthcookie())
     document.location = '/login/';
 
 </script>
@@ -260,7 +263,7 @@ function showmenu(mdiv, view, appname) {
                         ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/#view=graph&app=' + appname, '_view', view == 'graph'))),
         mklist(
             ui.menu('Account', '/#view=account', '_view', view == 'account'),
-            ui.signedin()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false)));
+            hasauthcookie()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false)));
 }
 
 /**
@@ -434,8 +437,7 @@ window.onloginredirect = function(e) {
  */
 function logout() {
     // Clear session cookie and user-specific local storage entries
-    var reset = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = reset;
+    clearauthcookie();
     localStorage.removeItem('/r/EditWidget/accounts');
     localStorage.removeItem('/r/EditWidget/dashboards');
     //localStorage.clear();
