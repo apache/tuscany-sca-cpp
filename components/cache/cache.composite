@@ -26,7 +26,9 @@
         <service name="memcache">
             <binding.http uri="memcache"/>
         </service>
-        <property name="servers">localhost localhost:11212 localhost:11213</property>
+        <property name="server">localhost</property>
+        <property name="server">localhost:11212</property>
+        <property name="server">localhost:11213</property>
     </component>
 
     <component name="l2cache">

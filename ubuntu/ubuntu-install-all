@@ -50,6 +50,8 @@ if [ "$?" != "0" ]; then
 fi
 svn co -r 1201086 http://svn.apache.org/repos/asf/apr/apr/trunk apr-1.4.x
 cd apr-1.4.x
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/apr-1.4.x.patch
+patch -p0 <apr-1.4.x.patch
 ./buildconf
 ./configure -with-openssl --with-crypto --with-expat=$build/expat-2.0.1-bin --prefix=$build/apr-1.4.x-bin
 make

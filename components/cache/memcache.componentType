@@ -23,6 +23,6 @@
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
     <service name="memcache"/>
-    <property name="servers" type="xsd:string">localhost</property>
+    <property name="server" type="xsd:string">localhost</property>
 
 </composite>

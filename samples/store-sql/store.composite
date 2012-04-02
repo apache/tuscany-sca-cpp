@@ -74,7 +74,7 @@
         <service name="Memcache">
             <binding.atom uri="memcache"/>
         </service>
-        <property name="servers">localhost:11211</property>
+        <property name="server">localhost:11211</property>
     </component>     
 
     <component name="Sqldb">

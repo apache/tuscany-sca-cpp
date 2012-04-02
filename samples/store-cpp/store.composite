@@ -63,7 +63,7 @@
         <service name="Cache">
             <binding.atom uri="cache"/>
         </service>
-        <property name="servers">localhost:11211</property>
+        <property name="server">localhost:11211</property>
     </component>     
 
 </composite>

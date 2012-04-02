@@ -144,7 +144,8 @@
         <service name="Memcache">
             <binding.http uri="memcache"/>
         </service>
-        <property name="servers">localhost:11211</property>
+        <property name="server">localhost:11211</property>
+        <property name="server">localhost:11212</property>
     </component>
 
     <component name="Database">

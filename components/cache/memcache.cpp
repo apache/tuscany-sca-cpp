@@ -98,12 +98,21 @@ private:
 };
 
 /**
+ * Convert a list of properties to a list of server addresses.
+ */
+const list<string> servers(const list<value>& params) {
+    if (isNil(params))
+        return list<string>();
+    const value s = ((lambda<value(list<value>)>)car(params))(list<value>());
+    return cons<string>(s, servers(cdr(params)));
+}
+
+/**
  * Start the component.
  */
-const failable<value> start(unused const list<value>& params) {
+const failable<value> start(const list<value>& params) {
     // Connect to memcached
-    const value servers = ((lambda<value(list<value>)>)car(params))(list<value>());
-    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(tokenize(" ", servers)));
+    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(servers(params)));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyCache(ch)));

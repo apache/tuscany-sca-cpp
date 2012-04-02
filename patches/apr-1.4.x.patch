@@ -1,0 +1,12 @@
+--- memcache/apr_memcache.c
++++ memcache/apr_memcache.c
+@@ -301,9 +301,6 @@
+     }
+ 
+     rv = apr_socket_connect(conn->sock, sa);
+-    if (rv != APR_SUCCESS) {
+-        return rv;
+-    }
+ 
+     rv = apr_socket_timeout_set(conn->sock, -1);
+     if (rv != APR_SUCCESS) {
