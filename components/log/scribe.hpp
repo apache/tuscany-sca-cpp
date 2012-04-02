@@ -37,7 +37,7 @@
 #undef OK
 
 // Ignore integer conversion issues in Thrift and Scribe headers
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
@@ -47,7 +47,7 @@
 
 #include "gen-cpp/scribe.h"
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wconversion"
 #endif
 
@@ -99,6 +99,7 @@ private:
     boost::shared_ptr<apache::thrift::transport::TTransport> transport;
 
     friend const failable<bool> log(const value& val, const value& category, const Scribe& sc);
+    friend const failable<string> status(const Scribe& sc);
 
     /**
      * Initialize the Scribe connection.
@@ -145,6 +146,40 @@ const failable<bool> log(const value& val, const value& category, const Scribe& 
 
     debug(true, "scribe::log::result");
     return true;
+}
+
+/**
+ * Return Scribe status.
+ */
+const failable<string> status(const Scribe& sc) {
+    debug("scribe::status");
+
+    try {
+        ::facebook::fb303::fb_status s = sc.client->getStatus();
+        switch(s) {
+        case ::facebook::fb303::DEAD:
+            debug("DEAD", "scribe::status::result");
+            return string("DEAD");
+        case ::facebook::fb303::STARTING:
+            debug("STARTING", "scribe::status::result");
+            return string("STARTING");
+        case ::facebook::fb303::ALIVE:
+            debug("ALIVE", "scribe::status::result");
+            return string("ALIVE");
+        case ::facebook::fb303::STOPPING:
+            debug("STOPPING", "scribe::status::result");
+            return string("STOPPING");
+        case ::facebook::fb303::STOPPED:
+            debug("STOPPED", "scribe::status::result");
+            return string("STOPPED");
+        case ::facebook::fb303::WARNING:
+            debug("WARNING", "scribe::status::result");
+            return string("WARNING");
+        }
+        return mkfailure<string>("Unknown status");
+    } catch (const std::exception& e) {
+        return mkfailure<string>(e.what());
+    }
 }
 
 }

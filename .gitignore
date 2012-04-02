@@ -132,6 +132,7 @@ curl-get
 curl-connect
 rss-test
 scribe-cat
+scribe-status
 js-test
 js-shell
 file-test

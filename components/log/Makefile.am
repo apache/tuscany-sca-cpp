@@ -57,12 +57,17 @@ liblogger_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -
 liblogger${libsuffix}:
 	ln -s .libs/liblogger${libsuffix}
 
-comp_PROGRAMS = scribe-cat
+comp_PROGRAMS = scribe-cat scribe-status
 
 nodist_scribe_cat_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 scribe_cat_CXXFLAGS = -Wno-unused-parameter -Wno-conversion -Wno-return-type
 scribe_cat_SOURCES = scribe-cat.cpp
 scribe_cat_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
+
+nodist_scribe_status_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
+scribe_status_CXXFLAGS = -Wno-unused-parameter -Wno-conversion -Wno-return-type
+scribe_status_SOURCES = scribe-status.cpp
+scribe_status_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

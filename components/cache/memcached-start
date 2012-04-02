@@ -44,8 +44,8 @@ mkdir -p $root/memcached
 echo $log > $root/memcached/logger
 
 if [ "$ip" = "" ]; then
-    ($memcached_prefix/bin/memcached -d -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)&
+    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
 else
-    ($memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)&
+    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
 fi
 
