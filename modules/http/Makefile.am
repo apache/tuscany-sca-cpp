@@ -20,7 +20,7 @@ INCLUDES = -I${HTTPD_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
-dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf proxy-ssl-nossl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf httpd-loglevel-conf minify-html minify-js minify-css
+dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf proxy-conf proxy-base-conf proxy-ssl-conf proxy-balancer-conf proxy-member-conf proxy-ssl-member-conf proxy-ssl-nossl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf httpd-loglevel-conf minify-html minify-js minify-css
 moddir = $(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp
