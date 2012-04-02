@@ -27,13 +27,13 @@
  */
 
 #define XP_UNIX
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
 #include <jsapi.h>
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wunused-parameter"
 #pragma GCC diagnostic warning "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wredundant-decls"

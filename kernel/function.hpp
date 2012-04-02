@@ -33,7 +33,7 @@
 
 namespace tuscany {
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_COUNTERS
 
 /**
  * Debug counters.

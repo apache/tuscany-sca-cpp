@@ -152,7 +152,7 @@ template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
     return out << p.ptr;
 }
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Debug stream implementation with no dependencies on anything else.

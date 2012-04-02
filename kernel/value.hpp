@@ -40,12 +40,10 @@
 namespace tuscany
 {
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_COUNTERS
 
 /**
- * Debug utilities. Counters used to track instances of values, and
- * macro used to write the contents of a value in a string, easier to
- * watch in a debugger than the value itself.
+ * Debug utilities. Counters used to track instances of values
  */
 long int countValues = 0;
 long int countEValues = 0;
@@ -78,6 +76,11 @@ bool printValueCounters() {
 #endif
 
 #ifdef WANT_MAINTAINER_WATCH
+
+/**
+ * Debug utilities. Macro used to write the contents of a value to
+ * a string, easier to watch in a debugger than the value itself.
+ */
 
 #define debug_watchValue() do { \
         this->watch = watchValue(*this); \

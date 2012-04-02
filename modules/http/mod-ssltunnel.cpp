@@ -36,7 +36,7 @@
 #include "http.hpp"
 
 // Ignore cast align warnings in APR macros
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic ignored "-Wcast-align"
 #endif
 
@@ -373,7 +373,7 @@ module AP_MODULE_DECLARE_DATA mod_tuscany_ssltunnel = {
 }
 
 // Reenable cast align warnings
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wcast-align"
 #endif
 

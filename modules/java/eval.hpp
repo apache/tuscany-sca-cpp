@@ -72,7 +72,7 @@ public:
             options[args.nOptions].optionString = const_cast<char*>(c_str(cp));
             options[args.nOptions++].extraInfo = NULL;
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_ASSERT
             // Enable assertions
             options[args.nOptions++].optionString = const_cast<char*>("-ea");
 #endif

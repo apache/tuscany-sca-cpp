@@ -224,7 +224,7 @@ private:
 loghstream cinfo(APLOG_INFO);
 loghstream cfailure(APLOG_ERR);
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Debug log stream.
@@ -234,9 +234,7 @@ loghstream cdebug(APLOG_DEBUG);
 /**
  * Return true if debug log is enabled.
  */
-const bool isDebugLog() {
-    return APLOG_MODULE_IS_LEVEL(ap_server_conf, APLOG_NO_MODULE, APLOG_DEBUG);
-}
+#define debug_islogging() (bool)(APLOG_MODULE_IS_LEVEL(ap_server_conf, APLOG_NO_MODULE, APLOG_DEBUG))
 
 #endif
 
@@ -321,7 +319,7 @@ private:
 logfstream cinfo(stderr, "info");
 logfstream cfailure(stderr, "error");
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Debug log stream.
@@ -331,22 +329,18 @@ logfstream cdebug(stderr, "debug");
 /**
  * Return true if debug log is enabled.
  */
-const bool isDebugLog() {
-    return true;
-}
+#define debug_islogging() true
 
 #endif
 
 #endif
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
 
 /**
  * Log a debug message.
  */
 const bool debugLog(const string& msg) {
-    if (!isDebugLog())
-        return true;
     gc_scoped_pool();
     cdebug << msg << endl;
     return true;
@@ -356,17 +350,16 @@ const bool debugLog(const string& msg) {
  * Log a debug message and a value.
  */
 template<typename V> const bool debugLog(const V& v, const string& msg) {
-    if (!isDebugLog())
-        return true;
     gc_scoped_pool();
     cdebug << msg << ": " << v << endl;
     return true;
 }
 
-#define debug(...) tuscany::debugLog(__VA_ARGS__)
+#define debug(...) if (debug_islogging()) tuscany::debugLog(__VA_ARGS__)
 
 #else
 
+#define debug_islogging() false
 #define debug(...)
 
 #endif

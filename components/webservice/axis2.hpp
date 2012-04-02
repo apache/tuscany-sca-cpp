@@ -28,7 +28,7 @@
 #include "config.hpp"
 
 // Ignore redundant declarations in Axiom headers
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
 #include <axiom.h>
@@ -38,7 +38,7 @@
 #include <axis2_conf_ctx.h>
 #include <axis2_disp.h>
 #include <axis2_http_out_transport_info.h>
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wredundant-decls"
 #endif
 

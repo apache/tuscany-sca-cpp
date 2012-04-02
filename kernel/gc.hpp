@@ -44,7 +44,7 @@
 namespace tuscany
 {
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_ASSERT
 
 /**
  * Force a core dump on assertion violation.

@@ -67,13 +67,32 @@ namespace tuscany
 #ifdef WANT_MAINTAINER_MODE
 
 /**
+ * Strict compile warnings.
+ */
+#define WANT_MAINTAINER_WARNINGS
+
+/**
+ * Fast fail assertion.
+ */
+#define WANT_MAINTAINER_ASSERT
+
+/**
+ * Debug log.
+ */
+#define WANT_MAINTAINER_LOG
+
+/**
  * Add string watch members to important classes to help watch them in a debugger.
  */
 //#define WANT_MAINTAINER_WATCH
 
 /**
- * Increment/decrement a debug counter.
+ * Maintain counters of important objects to help test garbage collection.
  */
+//#define WANT_MAINTAINER_COUNTERS
+
+#ifdef WANT_MAINTAINER_COUNTERS
+
 bool debug_inc(long int& c) {
     c++;
     return true;
@@ -83,6 +102,13 @@ bool debug_dec(long int& c) {
     c--;
     return true;
 }
+
+#else
+
+#define debug_inc(c)
+#define debug_dec(c)
+
+#endif
 
 #else
 

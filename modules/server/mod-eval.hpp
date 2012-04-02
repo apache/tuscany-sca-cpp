@@ -1043,7 +1043,7 @@ int translate(request_rec *r) {
     // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
 
-    httpdDebugRequest(r, "modeval::translate::input");
+    debug_httpdRequest(r, "modeval::translate::input");
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
@@ -1142,7 +1142,7 @@ int handler(request_rec *r) {
     gc_scoped_pool pool(r->pool);
     ScopedRequest sr(r);
 
-    httpdDebugRequest(r, "modeval::handler::input");
+    debug_httpdRequest(r, "modeval::handler::input");
 
     // Get the request configuration
     RequestConf& reqc = httpd::requestConf<RequestConf>(r, &mod_tuscany_eval);

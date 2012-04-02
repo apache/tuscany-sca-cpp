@@ -47,11 +47,11 @@ const string clError(const cl_int e) {
     return str(s);
 }
 
-#ifdef WANT_MAINTAINER_MODE
-
 /**
  * OpenCL profiling counters.
  */
+#ifdef WANT_MAINTAINER_OPENCL_PROF
+
 cl_ulong memtime = 0;
 cl_ulong kernelqtime = 0;
 cl_ulong kerneltime = 0;
@@ -209,7 +209,7 @@ public:
 
         for (cl_uint i = 0; i < ndevs; i++) {
             cl_int cqerr;
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_OPENCL_PROF
             cq[i] = clCreateCommandQueue(ctx, devid[i], CL_QUEUE_PROFILING_ENABLE, &cqerr);
 #else
             cq[i] = clCreateCommandQueue(ctx, devid[i], 0, &cqerr);
@@ -594,7 +594,7 @@ const failable<OpenCLKernel> createKernel(const value& expr, const OpenCLProgram
  */
 const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const value& expr, const size_t gwsize, const value::ValueType type, const size_t n, const OpenCLContext& cl) {
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_OPENCL_PROF
     const cl_uint estart = (cl_uint)timens();
     const cl_uint pstart = estart;
 #endif
@@ -643,7 +643,7 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
         return mkfailure<value>(string("Couldn't read from OpenCL device memory: ") + clError(rerr));
     }
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_OPENCL_PROF
     const cl_uint pend = (cl_uint)timens();
     preptime += (pend - pstart);
 #endif
@@ -656,7 +656,7 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
         return mkfailure<value>(string("Couldn't wait for kernel completion: ") + clError(werr));
     }
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_OPENCL_PROF
     profileMemEvents(nwevt, wevt);
     profileKernelEvent(kevt);
     profileMemEvent(revt);
@@ -669,7 +669,7 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
     clReleaseEvent(revt);
     clReleaseEvent(kevt);
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_OPENCL_PROF
     const cl_uint eend = (cl_uint)timens();
     evaltime += (eend - estart);
 #endif

@@ -33,12 +33,10 @@
 
 namespace tuscany {
 
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_COUNTERS
 
 /**
- * Debug utilities. Counters used to track instances of lists, and
- * macro used to write the contents of a list in a string, easier to
- * watch in a debugger than the list itself.
+ * Debug utilities. Counters used to track instances of lists.
  */
 long countLists = 0;
 long countILists = 0;
@@ -72,6 +70,10 @@ bool printListCounters() {
 
 #ifdef WANT_MAINTAINER_WATCH
 
+/**
+ * Debug utilities. Macro used to write the contents of a list to
+ * a string, easier to watch in a debugger than the list itself.
+ */
 #define debug_watchList() do { \
         this->watch = watchList(*this); \
     } while (0)

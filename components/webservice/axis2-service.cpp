@@ -85,7 +85,7 @@ axiom_node_t *AXIS2_CALL serviceInvoke(unused axis2_svc_skeleton_t* svc_skeleton
     axis2_out_transport_info_t* tinfo = axis2_msg_ctx_get_out_transport_info(msg_ctx, env);
     axis2_apache2_out_transport_info_t* httpinfo = (axis2_apache2_out_transport_info_t*)tinfo;
     request_rec* r = httpinfo->request;
-    httpdDebugRequest(r, "webservice::serviceInvoke");
+    debug_httpdRequest(r, "webservice::serviceInvoke");
 
     // Parse the request Axiom node and construct request expression
     Axis2Context ax(env);

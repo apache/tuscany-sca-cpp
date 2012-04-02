@@ -277,7 +277,7 @@ template<typename V, typename F> const lambda<failable<V, F>(const V)> success()
  * Returns a failable monad with a failure in it.
  */
 template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const bool log = true) {
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_LOG
     if (!log)
         debug(f, "failable::mkfailure");
 #endif

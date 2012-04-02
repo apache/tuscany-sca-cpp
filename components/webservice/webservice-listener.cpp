@@ -59,7 +59,7 @@ const failable<value> handle(const list<value>& params) {
 
     // Extract HTTPD request from the params
     request_rec* r = httpd::request(car(params));
-    httpdDebugRequest(r, "webservice::handle");
+    debug_httpdRequest(r, "webservice::handle");
 
     // Extract the relay lambda from the params and store it in the HTTPD request,
     // for later retrieval by our Axis2 service

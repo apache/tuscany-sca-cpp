@@ -35,7 +35,7 @@
 #include "qpid.hpp"
 
 // Ignore conversion issues and redundant declarations in Qpid headers
-#ifdef WANT_MAINTAINER_MODE
+#ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
