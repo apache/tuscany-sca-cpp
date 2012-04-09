@@ -308,7 +308,10 @@ static int checkAuthn(request_rec *r) {
         return httpd::reportStatus(accessToken(httpd::queryArgs(r), r, sc.appkeys, sc.cs, sc.mc));
     }
 
-    // Redirect to the login page, unless we have a session id from another module
+    // Redirect to the login page, unless we have a session id or an authorization
+    // header from another module
+    if (apr_table_get(r->headers_in, (PROXYREQ_PROXY == r->proxyreq) ? "Proxy-Authorization" : "Authorization") != NULL)
+        return DECLINED;
     if (hasContent(openauth::sessionID(r, "TuscanyOpenIDAuth")) ||
         hasContent(openauth::sessionID(r, "TuscanyOpenAuth")) ||
         hasContent(openauth::sessionID(r, "TuscanyOAuth1")))

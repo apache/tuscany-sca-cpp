@@ -54,6 +54,7 @@ Include conf/dvhost.conf
 Include conf/noauth.conf
 Include conf/auth.conf
 Include conf/pubauth.conf
+Include conf/adminauth.conf
 
 </VirtualHost>
 

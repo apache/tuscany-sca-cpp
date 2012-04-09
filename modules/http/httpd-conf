@@ -121,6 +121,7 @@ SetOutputFilter RATE_LIMIT;DEFLATE
 BrowserMatch ^Mozilla/4 gzip-only-text/html
 BrowserMatch ^Mozilla/4\.0[678] no-gzip
 BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+BrowserMatch ^check_http/ check_http
 SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
 Header append Vary User-Agent env=!dont-vary
 
@@ -141,12 +142,24 @@ RewriteCond %{HTTP:X-Forwarded-Server} ^$ [NC]
 RewriteRule .* http://$host$pportsuffix%{REQUEST_URI} [R]
 </Location>
 
+# Enable server status
+<Location /server-status>
+SetHandler server-status
+HostnameLookups on
+</Location>
+
+<Location /server-info>
+SetHandler server-info
+HostnameLookups on
+</Location>
+
 Include conf/svhost.conf
 
 # Configure authentication
 Include conf/noauth.conf
 Include conf/locauth.conf
 Include conf/pubauth.conf
+Include conf/adminauth.conf
 
 </VirtualHost>
 
@@ -299,16 +312,16 @@ AuthType None
 Require all granted
 </Location>
 
+EOF
+
+cat >$root/conf/adminauth.conf <<EOF
+
 # Allow the server admin to view the server status and info
 <Location /server-status>
-SetHandler server-status
-HostnameLookups on
 Require user admin
 </Location>
 
 <Location /server-info>
-SetHandler server-info
-HostnameLookups on
 Require user admin
 </Location>
 

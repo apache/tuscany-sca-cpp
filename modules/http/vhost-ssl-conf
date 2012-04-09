@@ -59,6 +59,7 @@ Include conf/dvhost-ssl.conf
 Include conf/noauth-ssl.conf
 Include conf/auth-ssl.conf
 Include conf/pubauth-ssl.conf
+Include conf/adminauth-ssl.conf
 
 </VirtualHost>
 

@@ -44,7 +44,6 @@ RequestHeader set X-Forwarded-Port %{SERVER_PORT}s
 <Location /balancer-manager>
 SetHandler balancer-manager
 HostnameLookups on
-Require user admin
 </Location> 
 
 EOF
