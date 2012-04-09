@@ -22,7 +22,7 @@ INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/log
 
-dist_comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-tail-start scribe-tail-stop
+dist_comp_SCRIPTS = scribed-central-conf scribed-central-firehose-conf scribed-central-mkfirehose scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-tail-start scribe-tail-stop
 compdir=$(prefix)/components/log
 
 comp_DATA = scribe.prefix thrift.prefix

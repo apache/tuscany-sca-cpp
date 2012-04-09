@@ -35,10 +35,11 @@ else
         file=$1
     fi
 fi
+host=`hostname`
 
 mkdir -p `dirname $file`
 touch $file
 file=`echo "import os; print os.path.realpath('$file')" | python`
 
-tail -f -n 0 $file | $here/scribe-cat $category $type &
+tail -f -n 0 $file | $here/scribe-cat $host $category $type &
 

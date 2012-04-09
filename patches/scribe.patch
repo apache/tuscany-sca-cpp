@@ -1,0 +1,50 @@
+--- src/common.h
++++ src/common.h
+@@ -42,6 +42,8 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
++#include <signal.h>
++#include <fcntl.h>
+ #include <boost/shared_ptr.hpp>
+ #include <boost/filesystem/operations.hpp>
+ #include <boost/filesystem/convenience.hpp>
+
+--- src/file.cpp
++++ src/file.cpp
+@@ -74,9 +74,21 @@ bool StdFile::openRead() {
+ }
+ 
+ bool StdFile::openWrite() {
++  // if file is a fifo, temporarily open it for read
++  int fd = -1;
++  struct stat st;
++  int s = stat(filename.c_str(), &st);
++  if (s != -1 && S_ISFIFO(st.st_mode))
++    fd = ::open(filename.c_str(), O_RDONLY | O_NONBLOCK);
++
+   // open file for write in append mode
+   ios_base::openmode mode = fstream::out | fstream::app;
+-  return open(mode);
++  bool r = open(mode);
++
++  // close fifo
++  if (fd != -1)
++    ::close(fd);
++  return r;
+ }
+ 
+ bool StdFile::openTruncate() {
+
+--- src/scribe_server.cpp
++++ src/scribe_server.cpp
+@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
+     if (-1 == setrlimit(RLIMIT_NOFILE, &r_fd)) {
+       LOG_OPER("setrlimit error (setting max fd size)");
+     }
++    
++    signal(SIGPIPE, SIG_IGN);
+ 
+     int next_option;
+     const char* const short_options = "hp:c:";
+

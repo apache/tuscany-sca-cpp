@@ -36,33 +36,35 @@
 namespace tuscany {
 namespace scribecat {
 
-int cat(const string& category, const string& type) {
+int cat(const string& host, const string& category, const string& type) {
     // Connect to Scribe
     scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
 
     // Read lines from stdin and log them
-    char buf[8192];
+    char buf[8193];
     for (;;) {
-        const char* s = fgets(buf, 8192, stdin);
+        gc_scoped_pool();
+
+        // Write line prefix
+        ostringstream os;
+        os << "[" << host << "] ";
+        if (length(type) != 0)
+            os << "[" << logTime() << "] [" << type << "] ";
+        const string prefix = str(os);
+        const int pl = length(prefix);
+        strcpy(buf, c_str(prefix));
+
+        // Read log line
+        const char* s = fgets(buf + pl, 8192 - pl, stdin);
         if (s == NULL)
             return 0;
         const size_t l = strlen(s);
         if (l < 2)
             return 0;
-        buf[l - 1] = '\0';
+        buf[pl + l - 1] = '\0';
 
-        // Log each line as is
-        if (length(type) == 0) {
-            const failable<bool> val = scribe::log(buf, category, sc);
-            if (!hasContent(val))
-                return 1;
-            continue;
-        }
-        
-        // Log each line prefixed with time and a type tag
-        ostringstream os;
-        os << "[" << logTime() << "] [" << type << "] " << buf;
-        const failable<bool> val = scribe::log(c_str(str(os)), category, sc);
+        // Log the line
+        const failable<bool> val = scribe::log(buf, category, sc);
         if (!hasContent(val))
             return 1;
     }
@@ -72,6 +74,6 @@ int cat(const string& category, const string& type) {
 }
 
 int main(const int argc, const char** argv) {
-    return tuscany::scribecat::cat(argc < 2? "default" : argv[1], argc < 3? "" : argv[2]);
+    return tuscany::scribecat::cat(argc < 2? "localhost" : argv[1], argc < 3? "default" : argv[2], argc < 4? "" : argv[3]);
 }
 

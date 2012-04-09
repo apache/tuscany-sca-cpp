@@ -302,6 +302,8 @@ fi
 curl -OL http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
 tar xzf scribe-2.2.tar.gz
 cd scribe
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/scribe.patch
+patch -p0 <scribe.patch
 ./bootstrap.sh --prefix=$build/scribe-2.2-bin PY_PREFIX=$build/scribe-2.2-bin --with-thriftpath=$build/thrift-0.2.0-bin --with-fb303path=$build/thrift-0.2.0-bin/contrib/fb303 --disable-static
 make
 make install

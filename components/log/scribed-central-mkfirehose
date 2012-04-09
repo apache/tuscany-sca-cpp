@@ -17,35 +17,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Start memcached
+# Create a firehose fifo pipe for a log category
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+mkdir -p $1
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
-addr=$2
-if [ "$addr" = "" ]; then
-    ip=""
-    port="11211"
-else
-    ip=`$here/../../modules/http/httpd-addr ip $addr`
-    port=`$here/../../modules/http/httpd-addr port $addr`
+category=$2
+if [ "$category" = "" ]; then
+    category="default"
 fi
 
-memcached_prefix=`cat $here/memcached.prefix`
-
-if [ -f "$root/memcached/log.conf" ]; then
-    log=`cat $root/memcached/log.conf`
-    v="-v"
-else
-    mkdir -p $root/logs
-    log="cat >>$root/logs/memcached"
-    v=""
-fi
-mkdir -p $root/memcached
-echo $log > $root/memcached/logger
-
-if [ "$ip" = "" ]; then
-    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
-else
-    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
+mkdir -p $root/scribe/logs/firehose/$category
+if [ ! -e "$root/scribe/logs/firehose/$category/$category""_00000" ]; then
+    mkfifo "$root/scribe/logs/firehose/$category/$category""_00000"
 fi
 
