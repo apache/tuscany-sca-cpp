@@ -30,6 +30,7 @@ htdocs/ui-min.css: htdocs/ui.css
 
 CLEANFILES = htdocs/all.js htdocs/all-min.js htdocs/ui-min.css
 
+dist_mod_SCRIPTS = js-conf
 moddir = $(prefix)/modules/js
 nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css
 EXTRA_DIST = htdocs/*.js htdocs/*.css htdocs/all.js

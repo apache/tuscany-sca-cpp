@@ -24,11 +24,7 @@
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
 <title>Jane's Store</title>
 
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/elemutil.js"></script>
-<script type="text/javascript" src="/xmlutil.js"></script>
-<script type="text/javascript" src="/atomutil.js"></script>
-<script type="text/javascript" src="/component.js"></script>
+<script type="text/javascript" src="/all.js"></script>
 
 <script type="text/javascript">
 var store = sca.component("Store");
@@ -88,7 +84,8 @@ function addToCart() {
     var j = 0;
     for (var i=0; i<items.length; i++)
         if (items[i].checked) {
-            var entry = '<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">Item</title><content type="application/xml">' +
+            var entry = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">Item</title><content type="application/xml">' +
             '<item>' +
             '<name>' + catalogItems[i].name + '</name>' +
             '<currencyCode>' + catalogItems[i].currencyCode + '</currencyCode>' +
