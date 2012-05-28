@@ -36,7 +36,7 @@ int jsonValue() {
     const js::JSContext cx;
     const failable<list<value> > lv = json::readJSON(streamList(cin), cx);
     if (!hasContent(lv)) {
-        cerr << reason(lv);
+        cerr << reason(lv) << " : " << rcode(lv);
         return 1;
     }
     cout << writeValue(content(lv));

@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ../http/httpd-conf tmp localhost 8090 ../server/htdocs
 ../server/server-conf tmp
 ./opencl-conf tmp

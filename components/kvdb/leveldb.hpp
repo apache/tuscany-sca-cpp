@@ -157,8 +157,7 @@ const failable<int> dbopen(LevelDB& db) {
 	struct stat st;
 	const int s = stat(c_str(db.name), &st);
 	if (s == -1)
-		return mkfailure<int>(
-				string("Couldn't leveldb read database stat: ") + db.name);
+		return mkfailure<int>(string("Couldn't leveldb read database stat: ") + db.name);
 
 	leveldb::DB* ldb;
 	leveldb::Options options;

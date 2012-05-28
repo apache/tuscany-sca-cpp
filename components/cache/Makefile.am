@@ -54,4 +54,5 @@ client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 dist_noinst_SCRIPTS = memcached-test memcached-ssl-test server-test
 noinst_PROGRAMS = memcache-test client-test
-TESTS = memcached-test memcached-ssl-test server-test
+#TESTS = memcached-test memcached-ssl-test server-test
+TESTS = memcached-test server-test

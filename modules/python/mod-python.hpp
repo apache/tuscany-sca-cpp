@@ -52,7 +52,7 @@ struct applyImplementation {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::python::applyImplementation::input");
         const failable<value> res = python::evalScript(expr, impl, py);
-        const value val = !hasContent(res)? mklist<value>(value(), reason(res)) : mklist<value>(content(res));
+        const value val = !hasContent(res)? mklist<value>(value(), reason(res), rcode(res)) : mklist<value>(content(res));
         debug(val, "modeval::python::applyImplementation::result");
         return val;
     }
@@ -70,7 +70,7 @@ const failable<lambda<value(const list<value>&)> > evalImplementation(const stri
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
     const failable<PyObject*> script = python::readScript(python::moduleName(spath), fpath, is, py);
     if (!hasContent(script))
-        return mkfailure<lambda<value(const list<value>&)> >(reason(script));
+        return mkfailure<lambda<value(const list<value>&)> >(script);
     return lambda<value(const list<value>&)>(applyImplementation(content(script), px, py));
 }
 

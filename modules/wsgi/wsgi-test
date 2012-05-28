@@ -22,6 +22,7 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 curl_prefix=`cat $here/../http/curl.prefix`
 
 # Setup
+rm -rf tmp
 mkdir -p tmp
 ./wsgi-start target 8090 2>/dev/null
 sleep 2

@@ -402,7 +402,7 @@ const list<string> read(request_rec* r) {
  */
 const failable<int> writeResult(const failable<list<string> >& ls, const string& ct, request_rec* r) {
     if (!hasContent(ls))
-        return mkfailure<int>(reason(ls));
+        return mkfailure<int>(ls);
     ostringstream os;
     write(content(ls), os);
     const string ob(str(os));
@@ -437,8 +437,10 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
  */
 const int reportStatus(const failable<int>& rc) {
     debug(rc, "httpd::reportStatus::rc");
-    if (!hasContent(rc))
-        return HTTP_INTERNAL_SERVER_ERROR;
+    if (!hasContent(rc)) {
+        const int r = rcode(rc);
+        return r == -1 ? HTTP_INTERNAL_SERVER_ERROR : r;
+    }
     return content(rc);
 }
 
@@ -725,7 +727,7 @@ const bool debugRequest(request_rec* r, const string& msg) {
     return true;
 }
 
-#define debug_httpdRequest(r, msg) if (debug_islogging()) httpd::debugRequest(r, msg)
+#define debug_httpdRequest(r, msg) do { if (debug_islogging()) httpd::debugRequest(r, msg); } while(0)
 
 #else
 

@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 mkdir -p tmp
 ./wsgi-start target 8090 2>/dev/null
 sleep 2
@@ -25,6 +26,8 @@ sleep 2
 # Test JSON-RPC
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 python_prefix=`cat $here/../python/python.prefix`
+export LD_LIBRARY_PATH=$python_prefix/lib:$LD_LIBRARY_PATH
+
 $python_prefix/bin/python http-test.py
 rc=$?
 

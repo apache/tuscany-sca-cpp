@@ -42,14 +42,14 @@ const failable<value> post(const string& url, const string& user, const string& 
     // Convert value to a content request
     const failable<list<list<string> > > freq = http::contentRequest(val, url);
     if (!hasContent(freq))
-        return mkfailure<value>(reason(freq));
+        return mkfailure<value>(freq);
     const list<list<string> > req = content(freq);
     debug(req, "smtp::post::input");
 
     // Setup the CURL session
     const failable<CURL*> fch = http::setup(url, cs);
     if (!hasContent(fch))
-        return mkfailure<value>(reason(fch));
+        return mkfailure<value>(fch);
     CURL* ch = content(fch);
     curl_easy_setopt(ch, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
 
@@ -129,7 +129,7 @@ public:
         const value func(car(params));
         if (func == "get")
             return get(url, user, pass, from, to, subject, val, *ch);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

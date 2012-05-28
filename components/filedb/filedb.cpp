@@ -48,7 +48,7 @@ const failable<value> post(const list<value>& params, filedb::FileDB& db) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = filedb::post(id, cadr(params), db);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return id;
 }
 
@@ -58,7 +58,7 @@ const failable<value> post(const list<value>& params, filedb::FileDB& db) {
 const failable<value> put(const list<value>& params, filedb::FileDB& db) {
     const failable<bool> val = filedb::put(car(params), cadr(params), db);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -68,7 +68,7 @@ const failable<value> put(const list<value>& params, filedb::FileDB& db) {
 const failable<value> del(const list<value>& params, filedb::FileDB& db) {
     const failable<bool> val = filedb::del(car(params), db);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -90,7 +90,7 @@ public:
             return put(cdr(params), db);
         if (func == "delete")
             return del(cdr(params), db);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

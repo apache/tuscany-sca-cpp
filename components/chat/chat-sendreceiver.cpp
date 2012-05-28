@@ -46,7 +46,7 @@ const failable<value> post(const list<value>& params, XMPPClient& xc) {
     debug(val, "chat::post::value");
     const failable<bool> r = post(to, val, xc);
     if (!hasContent(r))
-        return mkfailure<value>(reason(r));
+        return mkfailure<value>(r);
     return value(mklist<value>(to));
 }
 
@@ -107,7 +107,7 @@ public:
 
         // Stop the chat sender/receiver component
         if (func != "stop")
-            return tuscany::mkfailure<tuscany::value>();
+            return mkfailure<value>();
         debug("chat::sendreceiver::stop");
 
         // Disconnect and shutdown the worker thread
@@ -138,7 +138,7 @@ const failable<value> start(const list<value>& params) {
     XMPPClient xc(jid, pass, false);
     const failable<bool> r = connect(xc);
     if (!hasContent(r))
-        return mkfailure<value>(reason(r));
+        return mkfailure<value>(r);
 
     // Listen and relay messages in a worker thread
     worker w(3);

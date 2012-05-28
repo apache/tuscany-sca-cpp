@@ -35,7 +35,7 @@ namespace scheme {
 int valueXML() {
     failable<list<string> > s = writeXML(readValue(cin));
     if (!hasContent(s)) {
-        cerr << reason(s);
+        cerr << reason(s) << " : " << rcode(s);
         return 1;
     }
     write(content(s), cout);

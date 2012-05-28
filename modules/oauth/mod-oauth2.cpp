@@ -222,7 +222,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     const value tval = mklist<value>(string("application/x-www-form-urlencoded;charset=UTF-8"), mklist<value>(tqs));
     const failable<value> ftr = http::post(tval, turi, *(cs));
     if (!hasContent(ftr))
-        return mkfailure<int>(reason(ftr));
+        return mkfailure<int>(ftr);
     const value tr = content(ftr);
     debug(tr, "modoauth2::access_token::response");
     if (!isList(tr) || isNil(tr))
@@ -247,13 +247,13 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     // Retrieve the user info from the profile
     const failable<list<value> > iv = profileUserInfo(cadr(cid), content(profres));
     if (!hasContent(iv))
-        return mkfailure<int>(reason(iv));
+        return mkfailure<int>(iv);
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth2_") + mkrand();
     const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth2", sid), content(iv), mc);
     if (!hasContent(prc))
-        return mkfailure<int>(reason(prc));
+        return mkfailure<int>(prc);
 
     // Send session ID to the client in a cookie
     debug(c_str(openauth::cookie("TuscanyOAuth2", sid, httpd::hostName(r))), "modoauth2::access_token::setcookie");

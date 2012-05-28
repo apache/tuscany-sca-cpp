@@ -52,7 +52,7 @@ struct applyImplementation {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::java::applyImplementation::input");
         const failable<value> res = java::evalClass(jr, expr, impl);
-        const value val = !hasContent(res)? mklist<value>(value(), reason(res)) : mklist<value>(content(res));
+        const value val = !hasContent(res)? mklist<value>(value(), reason(res), rcode(res)) : mklist<value>(content(res));
         debug(val, "modeval::java::applyImplementation::result");
         return val;
     }
@@ -66,7 +66,7 @@ const failable<lambda<value(const list<value>&)> > evalImplementation(const stri
     const string cn(attributeValue("class", impl));
     const failable<java::JavaClass> jc = java::readClass(jr, path, cn);
     if (!hasContent(jc))
-        return mkfailure<lambda<value(const list<value>&)> >(reason(jc));
+        return mkfailure<lambda<value(const list<value>&)> >(jc);
     return lambda<value(const list<value>&)>(applyImplementation(content(jc), px, jr));
 }
 

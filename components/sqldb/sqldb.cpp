@@ -49,7 +49,7 @@ const failable<value> post(const list<value>& params, pgsql::PGSql& pg) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = pgsql::post(id, cadr(params), pg);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return id;
 }
 
@@ -59,7 +59,7 @@ const failable<value> post(const list<value>& params, pgsql::PGSql& pg) {
 const failable<value> put(const list<value>& params, pgsql::PGSql& pg) {
     const failable<bool> val = pgsql::put(car(params), cadr(params), pg);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -69,7 +69,7 @@ const failable<value> put(const list<value>& params, pgsql::PGSql& pg) {
 const failable<value> del(const list<value>& params, pgsql::PGSql& pg) {
     const failable<bool> val = pgsql::del(car(params), pg);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -91,7 +91,7 @@ public:
             return put(cdr(params), *pg);
         if (func == "delete")
             return del(cdr(params), *pg);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

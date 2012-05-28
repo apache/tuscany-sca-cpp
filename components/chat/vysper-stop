@@ -21,5 +21,8 @@
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 java_prefix=`cat $here/../../modules/java/java.prefix`
-kill `ps -ef | grep -v grep | grep "${java_prefix}/jre/bin/java" | grep "vysper" | awk '{ print $2 }'`
+k=`ps -ef | grep -v grep | grep "${java_prefix}/jre/bin/java" | grep "vysper" | awk '{ print $2 }'`
+if [ "$k" != "" ]; then
+    kill $k
+fi
 

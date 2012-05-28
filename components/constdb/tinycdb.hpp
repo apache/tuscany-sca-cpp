@@ -222,7 +222,7 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
     // Open existing db
     failable<int> ffd = cdbopen(cdb);
     if (!hasContent(ffd))
-        return mkfailure<bool>(reason(ffd));
+        return mkfailure<bool>(ffd);
     const int fd = content(ffd);
 
     // Read the db header
@@ -307,7 +307,7 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
     cdbclose(cdb);
     failable<int> ffd = cdbopen(cdb);
     if (!hasContent(ffd))
-        return mkfailure<bool>(reason(ffd));
+        return mkfailure<bool>(ffd);
 
     return true;
 }
@@ -413,7 +413,7 @@ const failable<value> get(const value& key, TinyCDB& cdb) {
 
     const failable<int> ffd = cdbopen(cdb);
     if (!hasContent(ffd))
-        return mkfailure<value>(reason(ffd));
+        return mkfailure<value>(ffd);
     const int fd = content(ffd);
 
     const string ks(scheme::writeValue(key));
@@ -422,7 +422,7 @@ const failable<value> get(const value& key, TinyCDB& cdb) {
     if (cdb_seek(fd, c_str(ks), (unsigned int)length(ks), &vlen) <= 0) {
         ostringstream os;
         os << "Couldn't get tinycdb entry: " << key;
-        return mkfailure<value>(str(os));
+        return mkfailure<value>(str(os), 404, false);
     }
     char* data = gc_cnew(vlen + 1);
     cdb_bread(fd, data, vlen);

@@ -45,7 +45,7 @@ const int status(const string& host, const int port) {
 
     // Interpret and display results
     if (!hasContent(fs)) {
-        cerr << reason(fs) << endl;
+        cerr << reason(fs) << " : " << rcode(fs) << endl;
         return 2;
     }
     const string s = content(fs);

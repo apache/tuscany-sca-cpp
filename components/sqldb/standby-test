@@ -18,12 +18,13 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ../../modules/http/httpd-conf tmp/master localhost 8090 tmp/master/htdocs
 ../../modules/http/httpd-event-conf tmp
 ./pgsql-conf tmp/master 5432
 ./pgsql-start tmp/master
-./pgsql localhost 5432 "drop table test;" 1>/dev/null 2>&1
-./pgsql localhost 5432 "create table test(key text, value text);" 1>/dev/null 2>&1
+./pgsql localhost 6432 "drop table test;" 1>/dev/null 2>&1
+./pgsql localhost 6432 "create table test(key text, value text);" 1>/dev/null 2>&1
 ../../modules/http/httpd-start tmp/master
 sleep 2
 ./pgsql-standby-conf tmp/standby 5433 localhost 5432 8090

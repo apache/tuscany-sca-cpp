@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 mkdir -p tmp
 mkdir -p tmp/schemedb
 mkdir -p tmp/xmldb

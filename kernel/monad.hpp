@@ -203,59 +203,63 @@ template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, co
  * To get the value in the monad, just cast it to the value type.
  * To get the failure in the monad, cast it to the failure type.
  */
-template<typename V, typename F = string> class failable {
+template<typename V, typename F = string, typename C = int> class failable {
 public:
-    failable() : hasv(false) {
+    failable() : hasv(false), c(-1) {
     }
 
-    failable(const V& v) : hasv(true), v(v) {
+    failable(const V& v) : hasv(true), v(v), c(-1) {
     }
 
-    failable(const failable<V, F>& m) : hasv(m.hasv), v(m.v), f(m.f) {
+    failable(const failable<V, F, C>& m) : hasv(m.hasv), v(m.v), f(m.f), c(m.c) {
     }
 
-    const failable<V, F>& operator=(const failable<V, F>& m) {
+    const failable<V, F, C>& operator=(const failable<V, F, C>& m) {
         if (&m == this)
             return *this;
         hasv = m.hasv;
         v = m.v;
         f = m.f;
+        c = m.c;
         return *this;
     }
 
-    const bool operator!=(const failable<V, F>& m) const {
+    const bool operator!=(const failable<V, F, C>& m) const {
         return !this->operator==(m);
     }
 
-    const bool operator==(const failable<V, F>& m) const {
+    const bool operator==(const failable<V, F, C>& m) const {
         if (this == &m)
             return true;
         if (!hasv)
-            return !m.hasv && f == m.f;
+            return !m.hasv && f == m.f && c == m.c;
         return m.hasv && v == m.v;
     }
 
 private:
-    failable(const bool hasv, const F& f) : hasv(hasv), f(f) {
+    failable(const bool hasv, const F& f, const C& c) : hasv(hasv), f(f), c(c) {
     }
 
-    template<typename A, typename B> friend const bool hasContent(const failable<A, B>& m);
-    template<typename A, typename B> friend const A content(const failable<A, B>& m);
-    template<typename A, typename B> friend const B reason(const failable<A, B>& m);
-    template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f, const bool log);
-    template<typename A> friend const failable<A, string> mkfailure();
+    template<typename A, typename B, typename R> friend const bool hasContent(const failable<A, B, R>& m);
+    template<typename A, typename B, typename R> friend const A content(const failable<A, B, R>& m);
+    template<typename A, typename B, typename R> friend const B reason(const failable<A, B, R>& m);
+    template<typename A, typename B, typename R> friend const R rcode(const failable<A, B, R>& m);
+    template<typename A, typename B, typename R> friend const failable<A, B, R> mkfailure(const B& f, const R& c, const bool log);
+    template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f, const int c, const bool log);
+    template<typename A> friend const failable<A> mkfailure();
 
     bool hasv;
     V v;
     F f;
+    C c;
 };
 
 /**
  * Write a failable monad to a stream.
  */
-template<typename V, typename F> ostream& operator<<(ostream& out, const failable<V, F>& m) {
+template<typename V, typename F, typename C> ostream& operator<<(ostream& out, const failable<V, F, C>& m) {
     if (!hasContent(m)) {
-        out << reason(m);
+        out << reason(m) << " : " << rcode(m);
         return out;
     }
     out << content(m);
@@ -265,18 +269,18 @@ template<typename V, typename F> ostream& operator<<(ostream& out, const failabl
 /**
  * Returns a failable monad with a success value in it.
  */
-template<typename V, typename F> const failable<V, F> mksuccess(const V& v) {
-    return failable<V, F>(v);
+template<typename V, typename F, typename C> const failable<V, F, C> mksuccess(const V& v) {
+    return failable<V, F, C>(v);
 }
 
-template<typename V, typename F> const lambda<failable<V, F>(const V)> success() {
-    return mksuccess<V, F>;
+template<typename V, typename F, typename C> const lambda<failable<V, F, C>(const V)> success() {
+    return mksuccess<V, F, C>;
 }
 
 /**
  * Returns a failable monad with a failure in it.
  */
-template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const bool log = true) {
+template<typename V, typename F, typename C> const failable<V, F, C> mkfailure(const F& f, const C& c, const bool log = true) {
 #ifdef WANT_MAINTAINER_LOG
     if (!log)
         debug(f, "failable::mkfailure");
@@ -285,57 +289,85 @@ template<typename V, typename F> const failable<V, F> mkfailure(const F& f, cons
         ostringstream os;
         os << f;
         if (length(str(os)) != 0)
-            cfailure << "failable::mkfailure" << ": " << f << endl;
+            cfailure << "failable::mkfailure" << ": " << f << " : " << c << endl;
     }
-    return failable<V, F>(false, f);
+    return failable<V, F, C>(false, f, c);
 }
 
-template<typename V> const failable<V> mkfailure(const char* f, const bool log = true) {
-    return mkfailure<V, string>(string(f), log);
+template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const int c = -1, const bool log = true) {
+#ifdef WANT_MAINTAINER_LOG
+    if (!log)
+        debug(f, c, "failable::mkfailure");
+#endif
+    if (log) {
+        ostringstream os;
+        os << f;
+        if (length(str(os)) != 0)
+            cfailure << "failable::mkfailure: " << str(os) << " : " << c << endl;
+    }
+    return failable<V, F>(false, f, c);
+}
+
+template<typename V> const failable<V> mkfailure(const char* f, const int c = -1, const bool log = true) {
+    return mkfailure<V, string>(string(f), c, log);
 }
 
 template<typename V> const failable<V> mkfailure() {
-    return failable<V, string>(false, string());
+    return failable<V, string>(false, string(), -1);
 }
 
-template<typename V, typename F> const lambda<failable<V, F>(const V)> failure() {
-    return mkfailure<V, F>;
+template<typename V, typename F, typename C> const lambda<failable<V, F, C>(const V)> failure() {
+    return mkfailure<V, F, C>;
+}
+
+/**
+ * Convert a failable of a given type to a failable of another type.
+ */
+template<typename V, typename F, typename C, typename X> const failable<V, F, C> mkfailure(const failable<X, F, C>& f, const bool log = true) {
+    return mkfailure<V, F, C>(reason(f), rcode(f), log);
 }
 
 /**
  * Returns true if the monad contains a content.
  */
-template<typename V, typename F> const bool hasContent(const failable<V, F>& m) {
+template<typename V, typename F, typename C> const bool hasContent(const failable<V, F, C>& m) {
     return m.hasv;
 }
 
 /**
  * Returns the content of a failable monad.
  */
-template<typename V, typename F> const V content(const failable<V, F>& m) {
+template<typename V, typename F, typename C> const V content(const failable<V, F, C>& m) {
     return m.v;
 }
 
 /**
  * Returns the reason for failure of a failable monad.
  */
-template<typename V, typename F> const F reason(const failable<V, F>& m) {
+template<typename V, typename F, typename C> const F reason(const failable<V, F, C>& m) {
     return m.f;
+}
+
+/**
+ * Returns the reason code for failure of a failable monad.
+ */
+template<typename V, typename F, typename C> const C rcode(const failable<V, F, C>& m) {
+    return m.c;
 }
 
 /**
  * Bind a function to a failable monad. Passes the success value in the monad to the function
  * if present, or does nothing if there's no value and a failure instead.
  */
-template<typename R, typename FR, typename V, typename FV>
-const failable<R, FR> operator>>(const failable<V, FV>& m, const lambda<failable<R, FR>(const V)>& f) {
+template<typename R, typename FR, typename XR, typename V, typename FV, typename XV>
+const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const lambda<failable<R, FR, XR>(const V)>& f) {
     if (!hasContent(m))
         return m;
     return f(content(m));
 }
 
-template<typename R, typename FR, typename V, typename FV>
-const failable<R, FR> operator>>(const failable<V, FV>& m, const failable<R, FR> (* const f)(const V)) {
+template<typename R, typename FR, typename XR, typename V, typename FV, typename XV>
+const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const failable<R, FR, XR> (* const f)(const V)) {
     if (!hasContent(m))
         return m;
     return f(content(m));

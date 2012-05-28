@@ -47,7 +47,7 @@ extern "C" {
 const value redirectToAxis2(const string& uri, request_rec* r, const value& relay) {
     const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);
     if (!hasContent(nr))
-        return value(reason(nr));
+        return value(reason(nr), rcode(nr));
     ap_set_module_config(content(nr)->request_config, &axis2_module, const_cast<void*>((const void*)&relay));
     return value(httpd::internalRedirect(content(nr)));
 }

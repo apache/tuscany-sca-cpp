@@ -475,7 +475,7 @@ const failable<list<OpenCLBuffer>> valuesToKernelArgsListHelper(const list<value
         return list<OpenCLBuffer>();
     const failable<OpenCLBuffer> a = valueToKernelArg(car(v), i, kernel, cl, cq);
     if (!hasContent(a))
-        return mkfailure<list<OpenCLBuffer>>(reason(a));
+        return mkfailure<list<OpenCLBuffer>>(a);
     const failable<list<OpenCLBuffer>> al = valuesToKernelArgsListHelper(cdr(v), i + 1, kernel, cl, cq);
     if (!hasContent(al))
         return al;
@@ -600,7 +600,7 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
 #endif
 
     if (!hasContent(fkernel))
-        return mkfailure<value>(reason(fkernel));
+        return mkfailure<value>(fkernel);
     const OpenCLKernel kernel = content(fkernel);
 
     // Get a command queue for the specified device type
@@ -609,7 +609,7 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
     // Set the kernel input args
     const failable<list<OpenCLBuffer>> args = valuesToKernelArgs(cdr<value>(expr), kernel, cl, cq);
     if (!hasContent(args)) {
-        return mkfailure<value>(reason(args));
+        return mkfailure<value>(args);
     }
 
     // Allocate result buffer in device memory
@@ -618,13 +618,13 @@ const failable<value> evalKernel(const failable<OpenCLKernel>& fkernel, const va
     const size_t rsize = rtype.n * rtype.size;
     const failable<OpenCLBuffer> rbuf = writeOnlyBuffer(rsize, cl);
     if (!hasContent(rbuf))
-        return mkfailure<value>(reason(rbuf));
+        return mkfailure<value>(rbuf);
 
     // Set it as a kernel output arg
     const cl_mem rmem = content(rbuf).mem;
     const failable<OpenCLBuffer> rarg = valueToKernelArg((cl_uint)length(cdr<value>(expr)), sizeof(cl_mem), &rmem, rbuf, kernel);
     if (!hasContent(rarg))
-        return mkfailure<value>(reason(rarg));
+        return mkfailure<value>(rarg);
 
     // Enqueue the kernel, to be executed after all the writes complete
     cl_event wevt[32];
@@ -715,7 +715,7 @@ const failable<OpenCLProgram> readProgram(const string& path, istream& is, const
 const failable<value> evalKernel(const value& expr, istream& is, const OpenCLContext& cl) {
     failable<OpenCLProgram> clprog = readProgram("program.cl", is, cl);
     if (!hasContent(clprog))
-        return mkfailure<value>(reason(clprog));
+        return mkfailure<value>(clprog);
     return evalKernel(createKernel(expr, content(clprog)), expr, 1, value::Nil, 0, cl);
 }
 

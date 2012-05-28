@@ -26,6 +26,7 @@ curl_prefix=`cat $here/../../modules/http/curl.prefix`
 sleep 2
 
 # Test HTTP GET (with authentication)
+rm -rf tmp
 mkdir -p tmp
 $curl_prefix/bin/curl -L -c tmp/cookies.txt -b tmp/cookies.txt "http://localhost:8090/_ah/login?email=test@example.com&action=Login&continue=http://localhost:8090/" 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/index.html

@@ -17,6 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+rm -rf tmp
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
 ../../modules/server/server-conf tmp
 ../../modules/java/java-conf tmp

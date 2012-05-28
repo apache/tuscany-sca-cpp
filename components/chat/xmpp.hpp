@@ -291,7 +291,7 @@ const failable<bool> post(const value& to, const value& val, XMPPClient& xc) {
     const failable<size_t> r = send(stanza, xc);
     xmpp_stanza_release(stanza);
     if (!hasContent(r))
-        return mkfailure<bool>(reason(r));
+        return mkfailure<bool>(r);
     return true;
 }
 
@@ -302,7 +302,7 @@ const failable<bool> disconnect(XMPPClient& xc) {
     xc.disconnecting = true;
     const failable<size_t> r = send("</stream:stream>", xc);
     if (!hasContent(r))
-        return mkfailure<bool>(reason(r));
+        return mkfailure<bool>(r);
     return true;
 }
 

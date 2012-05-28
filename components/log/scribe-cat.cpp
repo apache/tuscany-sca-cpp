@@ -47,7 +47,6 @@ int cat(const string& host, const string& category, const string& type) {
 
         // Write line prefix
         ostringstream os;
-        os << "[" << host << "] ";
         if (length(type) != 0)
             os << "[" << logTime() << "] [" << type << "] ";
         const string prefix = str(os);
@@ -58,13 +57,14 @@ int cat(const string& host, const string& category, const string& type) {
         const char* s = fgets(buf + pl, 8192 - pl, stdin);
         if (s == NULL)
             return 0;
+
+        // Remove trailing '\n'
         const size_t l = strlen(s);
-        if (l < 2)
-            return 0;
-        buf[pl + l - 1] = '\0';
+        if (l > 0)
+            buf[pl + l - 1] = '\0';
 
         // Log the line
-        const failable<bool> val = scribe::log(buf, category, sc);
+        const failable<bool> val = scribe::log(buf, host, category, sc);
         if (!hasContent(val))
             return 1;
     }

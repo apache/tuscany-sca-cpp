@@ -125,7 +125,7 @@ const failable<bool> write(const value& v, ostream& os, const string& format) {
     if (format == "xml") {
         failable<list<string> > s = writeXML(valuesToElements(v));
         if (!hasContent(s))
-            return mkfailure<bool>(reason(s));
+            return mkfailure<bool>(s);
         write(content(s), os);
         return true;
     }
@@ -133,7 +133,7 @@ const failable<bool> write(const value& v, ostream& os, const string& format) {
         js::JSContext jscx;
         failable<list<string> > s = json::writeJSON(valuesToElements(v), jscx);
         if (!hasContent(s))
-            return mkfailure<bool>(reason(s));
+            return mkfailure<bool>(s);
         write(content(s), os);
         return true;
     }
@@ -155,7 +155,7 @@ const failable<value> read(istream& is, const string& format) {
         js::JSContext jscx;
         const failable<list<value> > fv = json::readJSON(streamList(is), jscx);
         if (!hasContent(fv))
-            return mkfailure<value>(reason(fv));
+            return mkfailure<value>(fv);
         const value v = elementsToValues(content(fv));
         return v;
     }
@@ -223,7 +223,7 @@ const failable<value> get(const value& key, FileDB& db) {
     if (is.fail()) {
         ostringstream os;
         os << "Couldn't get file database entry: " << key;
-        return mkfailure<value>(str(os));
+        return mkfailure<value>(str(os), 404, false);
     }
     const failable<value> val = read(is, db.format);
 

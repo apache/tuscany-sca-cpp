@@ -48,7 +48,7 @@ const failable<value> post(const list<value>& params, tinycdb::TinyCDB& cdb) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = tinycdb::post(id, cadr(params), cdb);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return id;
 }
 
@@ -58,7 +58,7 @@ const failable<value> post(const list<value>& params, tinycdb::TinyCDB& cdb) {
 const failable<value> put(const list<value>& params, tinycdb::TinyCDB& cdb) {
     const failable<bool> val = tinycdb::put(car(params), cadr(params), cdb);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -68,7 +68,7 @@ const failable<value> put(const list<value>& params, tinycdb::TinyCDB& cdb) {
 const failable<value> del(const list<value>& params, tinycdb::TinyCDB& cdb) {
     const failable<bool> val = tinycdb::del(car(params), cdb);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -90,7 +90,7 @@ public:
             return put(cdr(params), cdb);
         if (func == "delete")
             return del(cdr(params), cdb);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

@@ -55,12 +55,12 @@ const failable<value> post(const lambda<value(const list<value>&)> jid, const la
     XMPPClient xc(vjid, vpass);
     const failable<bool> c = connect(xc);
     if (!hasContent(c))
-        return mkfailure<value>(reason(c));
+        return mkfailure<value>(c);
 
     // Post the message
     const failable<bool> r = post(vto, vmsg, xc);
     if (!hasContent(r))
-        return mkfailure<value>(reason(r));
+        return mkfailure<value>(r);
     return value(mklist<value>(vto));
 }
 
@@ -79,7 +79,7 @@ public:
 
         // Stop the chat sender component
         if (func != "stop")
-            return tuscany::mkfailure<tuscany::value>();
+            return mkfailure<value>();
         debug("chat::sender::stop");
         return failable<value>(value(lambda<value(const list<value>&)>()));
     }

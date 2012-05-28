@@ -37,4 +37,8 @@ else
     mc="$memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port"
 fi
 
-kill `ps -ef | grep -v grep | grep "${mc}" | awk '{ print $2 }'`
+k=`ps -ef | grep -v grep | grep "${mc}" | awk '{ print $2 }'`
+if [ "$k" != "" ]; then
+    kill $k
+fi
+

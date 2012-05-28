@@ -80,7 +80,7 @@ private:
  */
 template<typename S> const failable<lambda<S> > dynlambda(const string& name, const lib& l) {
     if (!hasContent(l.h))
-        return mkfailure<lambda<S> >(reason(l.h));
+        return mkfailure<lambda<S>>(l.h);
     const void* s = dlsym(content(l.h), c_str(name));
     if (s == NULL)
         return mkfailure<lambda<S> >(string("Could not load symbol: ") + name);

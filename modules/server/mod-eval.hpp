@@ -151,7 +151,7 @@ public:
 const failable<value> failableResult(const list<value>& v) {
     if (isNil(cdr(v)))
         return car(v);
-    return mkfailure<value>(string(cadr(v)), false);
+    return mkfailure<value>(string(cadr(v)), isNil(cddr(v))? -1 : (int)caddr(v), false);
 }
 
 /**
@@ -191,7 +191,7 @@ public:
     }
 
     const value callImpl(const value& cname, const list<value>& aparams) const {
-        debug(impls, "modeval::implProxy::callImpl::impls");
+        //debug(impls, "modeval::implProxy::callImpl::impls");
 
         // Lookup the component implementation
         const list<value> impl(assoctree<value>(cname, impls));
@@ -345,9 +345,11 @@ struct hostPropProxy {
     hostPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const value r = httpd::hostName(currentRequest, v);
-        debug(r, "modeval::hostPropProxy::value");
-        return r;
+        if (currentRequest == NULL)
+            return http::hostName();
+        const value h = httpd::hostName(currentRequest, v);
+        debug(h, "modeval::hostPropProxy::value");
+        return h;
     }
 };
 
@@ -356,6 +358,8 @@ struct appPropProxy {
     appPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
         const RequestConf& reqc = httpd::requestConf<RequestConf>(currentRequest, &mod_tuscany_eval);
         const value a = isNil(reqc.vpath)? v : car(reqc.vpath);
         debug(a, "modeval::appPropProxy::value");
@@ -364,23 +368,29 @@ struct appPropProxy {
 };
 
 struct pathPropProxy {
-    pathPropProxy(unused const value& v) {
+    const value v;
+    pathPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
         const RequestConf& reqc = httpd::requestConf<RequestConf>(currentRequest, &mod_tuscany_eval);
-        const value v = reqc.rpath; 
-        debug(v, "modeval::pathPropProxy::value");
-        return v;
+        const value p = reqc.rpath; 
+        debug(p, "modeval::pathPropProxy::value");
+        return p;
     }
 };
 
 struct queryPropProxy {
-    queryPropProxy(unused const value& v) {
+    const value v;
+    queryPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const value v = httpd::unescapeArgs(httpd::queryArgs(currentRequest));
-        debug(v, "modeval::queryPropProxy::value");
-        return v;
+        if (currentRequest == NULL)
+            return v;
+        const value q = httpd::unescapeArgs(httpd::queryArgs(currentRequest));
+        debug(q, "modeval::queryPropProxy::value");
+        return q;
     }
 };
 
@@ -390,10 +400,34 @@ struct envPropProxy {
     envPropProxy(const string& name, const value& v) : name(name), v(v) {
     }
     const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
         const char* env = apr_table_get(currentRequest->subprocess_env, c_str(name));
         if (env == NULL || *env == '\0')
             return v;
-        return string(env);
+        debug(name, "modeval::envPropProxy::name");
+        const value e = string(env);
+        debug(e, "modeval::envPropProxy::value");
+        return e;
+    }
+};
+
+struct realmPropProxy {
+    const value v;
+    realmPropProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
+        const char* env = apr_table_get(currentRequest->subprocess_env, "REALM");
+        if (env == NULL)
+            return v;
+        const char* realm = strncmp(env, "www.", 4) == 0? env + 4 : env;
+        if (*realm == '\0')
+            return v;
+        const value r = string(realm);
+        debug(r, "modeval::realmPropProxy::value");
+        return r;
     }
 };
 
@@ -402,9 +436,13 @@ struct userPropProxy {
     userPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
         if (currentRequest->user == NULL)
             return v;
-        return string(currentRequest->user);
+        const value u = string(currentRequest->user);
+        debug(u, "modeval::userPropProxy::value");
+        return u;
     }
 };
 
@@ -422,7 +460,7 @@ const value mkpropProxy(const value& prop) {
     if (n == "user")
         return lambda<value(const list<value>&)>(userPropProxy(v));
     if (n == "realm")
-        return lambda<value(const list<value>&)>(envPropProxy("REALM", v));
+        return lambda<value(const list<value>&)>(realmPropProxy(v));
     if (n == "email")
         return lambda<value(const list<value>&)>(envPropProxy("EMAIL", v));
     if (n == "nickname")
@@ -508,13 +546,13 @@ const failable<list<value> > readComponents(const string& path) {
 const failable<list<value> > getComponents(const lambda<value(const list<value>&)>& provider, const string& name) {
     const failable<value> val = failableResult(provider(cons<value>("get", mklist<value>(mklist<value>(name)))));
     if (!hasContent(val))
-        return mkfailure<list<value> >(reason(val));
+        return mkfailure<list<value> >(val);
     const list<value> c = assoc<value>(value("content"), (list<list<value> >)cdr<value>(content(val)));
     if (isNil(c))
         return mkfailure<list<value> >(string("Could not get composite: ") + name);
     const failable<list<string> > x = writeXML(car<value>(valuesToElements(mklist<value>(mklist<value>(cadr(c))))));
     if (!hasContent(x))
-        return mkfailure<list<value> >(reason(x));
+        return mkfailure<list<value> >(x);
     return scdl::components(readXML(content(x)));
 }
 
@@ -530,7 +568,7 @@ const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const 
     const lambda<value(const list<value>&)> l = cadr<value>(car(impls));
     const failable<value> r = failableResult(l(expr));
     if (!hasContent(r))
-        return mkfailure<list<value> >(reason(r));
+        return mkfailure<list<value> >(r);
     const lambda<value(const list<value>&)> rl = content(r);
 
     // Use the returned lambda function, if any, from now on
@@ -604,7 +642,7 @@ const failable<Composite> confComponents(const string& contribPath, const string
         readComponents(scdl::resourcePath(length(vhost) != 0? contribPath + vhost + "/" : contribPath, composName)) :
         getComponents(provider, vhost);
     if (!hasContent(fcomps))
-        return mkfailure<Composite>(reason(fcomps));
+        return mkfailure<Composite>(fcomps);
 
     const list<value> comps = content(fcomps);
     debug(comps, "modeval::confComponents::comps");
@@ -630,7 +668,7 @@ const failable<list<value> > startComponents(const list<value>& impls) {
     debug(flatten(impls), "modeval::startComponents::impls");
     const failable<list<value> > fsimpls = applyLifecycleExpr(flatten(impls), mklist<value>("start"));
     if (!hasContent(fsimpls))
-        return mkfailure<list<value> >(reason(fsimpls));
+        return mkfailure<list<value> >(fsimpls);
 
     const list<value> simpls = content(fsimpls);
     debug(impls, "modeval::startComponents::simpls");
@@ -667,7 +705,7 @@ const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<v
         // Apply the requested function
         const failable<value> val = failableResult(impl(cons(func, json::queryParams(args))));
         if (!hasContent(val))
-            return mkfailure<int>(reason(val));
+            return mkfailure<int>(val);
 
         // Return JSON result
         js::JSContext cx;
@@ -678,7 +716,7 @@ const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<v
     const list<value> params(cddr(rpath));
     const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
     if (!hasContent(val))
-        return mkfailure<int>(reason(val));
+        return mkfailure<int>(val);
     const value c = content(val);
     debug(c, "modeval::get::content");
 
@@ -776,7 +814,7 @@ const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<
         // Evaluate the request expression
         const failable<value> val = failableResult(impl(cons<value>(func, params)));
         if (!hasContent(val))
-            return mkfailure<int>(reason(val));
+            return mkfailure<int>(val);
 
         // Return JSON result
         return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
@@ -796,7 +834,7 @@ const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<
         // Evaluate the POST expression
         const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(rpath), aval))));
         if (!hasContent(val))
-            return mkfailure<int>(reason(val));
+            return mkfailure<int>(val);
 
         // Return the created resource location
         debug(content(val), "modeval::post::location");
@@ -809,7 +847,7 @@ const failable<int> post(const list<value>& rpath, request_rec* r, const lambda<
     // the component implementation function
     const failable<value> val = failableResult(impl(cons<value>("handle", mklist<value>(httpd::requestValue(r)))));
     if (!hasContent(val))
-        return mkfailure<int>(reason(val));
+        return mkfailure<int>(val);
     return (int)content(val);
 }
 
@@ -830,7 +868,7 @@ const failable<int> put(const list<value>& rpath, request_rec* r, const lambda<v
     // Evaluate the PUT expression and update the corresponding resource
     const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(rpath), aval))));
     if (!hasContent(val))
-        return mkfailure<int>(reason(val));
+        return mkfailure<int>(val);
     if (val == value(false))
         return HTTP_NOT_FOUND;
     return OK;
@@ -845,7 +883,7 @@ const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<v
     // Evaluate an ATOM delete request
     const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(rpath)))));
     if (!hasContent(val))
-        return mkfailure<int>(reason(val));
+        return mkfailure<int>(val);
     if (val == value(false))
         return HTTP_NOT_FOUND;
     return OK;
@@ -854,7 +892,12 @@ const failable<int> del(const list<value>& rpath, request_rec* r, const lambda<v
 /**
  * Proceed to handle a service component request.
  */
-int proceedToHandler(request_rec* r, const bool valias, const list<value>& rpath, const list<value>& vpath, const list<value>& impls) {
+int proceedToHandler(request_rec* r, const int rc) {
+    r->handler = "mod_tuscany_eval";
+    return rc;
+}
+
+int proceedToHandler(request_rec* r, const int rc, const bool valias, const list<value>& rpath, const list<value>& vpath, const list<value>& impls) {
     r->handler = "mod_tuscany_eval";
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:") + r->uri));
 
@@ -864,7 +907,7 @@ int proceedToHandler(request_rec* r, const bool valias, const list<value>& rpath
     reqc.rpath = rpath;
     reqc.vpath = vpath;
     reqc.impls = impls;
-    return OK;
+    return rc;
 }
 
 /**
@@ -882,7 +925,7 @@ int translateComponent(request_rec *r, const list<value>& rpath, const list<valu
         return HTTP_NOT_FOUND;
     debug(impl, "modeval::translateComponent::impl");
 
-    return proceedToHandler(r, false, rpath, vpath, impls);;
+    return proceedToHandler(r, OK, false, rpath, vpath, impls);;
 }
 
 /**
@@ -928,7 +971,7 @@ int translateReference(request_rec *r, const list<value>& rpath, const list<valu
     const value tname = substr(target, 0, find(target, '/'));
     const list<value> redir = cons<value>(string("c"), cons(tname, pathInfo));
     debug(redir, "modeval::translateReference::redirect");
-    return proceedToHandler(r, false, redir, vpath, impls);;
+    return proceedToHandler(r, OK, false, redir, vpath, impls);;
 }
 
 /**
@@ -973,7 +1016,7 @@ int translateService(request_rec *r, const list<value>& rpath, const list<value>
     // / c / target component name / request path info
     const list<value> redir = cons<value>(string("c"), cons<value>(cadr(svc), httpd::pathInfo(rpath, car(svc))));
     debug(redir, "modeval::translateService::redirect");
-    return proceedToHandler(r, false, redir, vpath, impls);
+    return proceedToHandler(r, OK, false, redir, vpath, impls);
 }
 
 /**
@@ -986,15 +1029,15 @@ const int translateRequest(request_rec* r, const list<value>& rpath, const list<
 
     // Translate a component request
     if ((prefix == string("components") || prefix == string("c")) && translateComponent(r, rpath, vpath, impls) == OK)
-        return OK;
+        return proceedToHandler(r, OK);
 
     // Translate a component reference request
     if ((prefix == string("references") || prefix == string("r")) && translateReference(r, rpath, vpath, refs, impls) == OK)
-        return OK;
+        return proceedToHandler(r, OK);
 
     // Attempt to translate the request to a service request
     if (translateService(r, rpath, vpath, svcs, impls) == OK)
-        return OK;
+        return proceedToHandler(r, OK);
 
     // Attempt to map a request targeting the main host to an actual file
     if (isNil(vpath)) {
@@ -1019,15 +1062,14 @@ const int translateRequest(request_rec* r, const list<value>& rpath, const list<
         if (isNil(rpath) && r->uri[strlen(r->uri) - 1] != '/') {
             const string target = string(r->uri) + string("/") + (r->args != NULL? string("?") + string(r->args) : string(""));
             debug(target, "modeval::translateRequest::location");
-            r->handler = "mod_tuscany_eval";
-            return httpd::externalRedirect(target, r);
+            return proceedToHandler(r, httpd::externalRedirect(target, r));
         }
 
         // If the request didn't match a service, reference or component,
         // redirect it to / v / app / path. This will allow mapping to
         // the actual app resource using HTTPD aliases.
         debug(true, "modeval::translateRequest::valias");
-        return proceedToHandler(r, true, rpath, vpath, impls);
+        return proceedToHandler(r, OK, true, rpath, vpath, impls);
     }
 
     return HTTP_NOT_FOUND;
@@ -1093,7 +1135,6 @@ int translate(request_rec *r) {
         reqc.impls = vcompos.impls;
         return translateRequest(r, cdr(rpath), mklist<value>(vname), vcompos.refs, vcompos.svcs, reqc.impls);
     }
-
     return DECLINED;
 }
 
@@ -1129,14 +1170,17 @@ const int handleRequest(const list<value>& rpath, request_rec *r, const list<val
  * HTTP request handler.
  */
 int handler(request_rec *r) {
-    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
-        return DECLINED;
-    if(strcmp(r->handler, "mod_tuscany_eval"))
+    if (r->handler != NULL && r->handler[0] != '\0')
         return DECLINED;
 
-    // Nothing to do for an external redirect
-    if (r->status == HTTP_MOVED_TEMPORARILY)
-        return OK;
+    // Attempt to translate the request
+    const int trc = translate(r);
+
+    // Pass if we couldn't translate the request
+    if(trc != OK)
+        return trc;
+    if(strcmp(r->handler, "mod_tuscany_eval"))
+        return DECLINED;
 
     // Create a scoped memory pool and a scope for the current request
     gc_scoped_pool pool(r->pool);
@@ -1397,7 +1441,6 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_translate_name(translate, NULL, NULL, APR_HOOK_LAST);
 }
 
 }

@@ -76,7 +76,7 @@ if WANT_MODSECURITY
 modsecurity.prefix: $(top_builddir)/config.status
 	echo ${MODSECURITY_PREFIX} >modsecurity.prefix
 
-dist_modsecurity_SCRIPTS = mod-security-conf
+dist_modsecurity_SCRIPTS = mod-security-conf mod-security-audit-conf
 modsecurity_DATA = modsecurity.prefix
 modsecuritydir = $(prefix)/modules/http
 

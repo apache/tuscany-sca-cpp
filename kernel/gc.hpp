@@ -26,6 +26,7 @@
  * Garbage collected memory management, using APR memory pools.
  */
 
+#include "config.hpp"
 #ifdef WANT_MALLOC_MMAP
 #include <sys/mman.h>
 #include <malloc.h>
@@ -36,7 +37,6 @@
 #include <apr_strings.h>
 #include <assert.h>
 #include <new>
-#include "config.hpp"
 #ifdef WANT_THREADS
 #include <pthread.h>
 #endif
@@ -267,7 +267,7 @@ public:
     }
 
 private:
-    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.apr_pool), prev(NULL), owner(false) {
+    gc_scoped_pool(const gc_scoped_pool& pool) : gc_pool(pool.apr_pool), prev(NULL), owner(false) {
     }
 
     apr_pool_t* prev;

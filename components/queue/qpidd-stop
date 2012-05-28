@@ -23,4 +23,8 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 qpid_prefix=`cat $here/qpidc.prefix`
 qpidd="$qpid_prefix/sbin/qpidd"
 
-kill `ps -ef | grep -v grep | grep "${qpidd}" | awk '{ print $2 }'`
+k=`ps -ef | grep -v grep | grep "${qpidd}" | awk '{ print $2 }'`
+if [ "$k" != "" ]; then
+    kill $k
+fi
+

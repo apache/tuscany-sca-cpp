@@ -38,5 +38,8 @@ fi
 file=`echo "import os; print os.path.realpath('$file')" | python`
 
 cmd="tail -f -n 0 $file"
-kill `ps -ef | grep -v grep | grep "${cmd}" | awk '{ print $2 }'`
+k=`ps -ef | grep -v grep | grep "${cmd}" | awk '{ print $2 }'`
+if [ "$k" != "" ]; then
+    kill $k
+fi
 

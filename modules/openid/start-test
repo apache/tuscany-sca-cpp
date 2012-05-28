@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ../../components/cache/memcached-start tmp 11212
 ../../components/cache/memcached-start tmp 11213
 

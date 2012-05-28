@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ../../modules/http/ssl-ca-conf tmp/ssl localhost
 ../../modules/http/ssl-cert-conf tmp/ssl localhost server
 ../../modules/http/ssl-cert-conf tmp/ssl localhost tunnel

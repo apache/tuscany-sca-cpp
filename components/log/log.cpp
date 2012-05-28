@@ -29,6 +29,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "../../modules/http/http.hpp"
 #include "scribe.hpp"
 
 namespace tuscany {
@@ -37,11 +38,11 @@ namespace log {
 /**
  * Post an item to the Scribe log.
  */
-const failable<value> post(const list<value>& params, const value& category, scribe::Scribe& sc) {
+const failable<value> post(const list<value>& params, const value& host, const value& category, scribe::Scribe& sc) {
     debug(cadr(params), "log::post::value");
-    const failable<bool> val = scribe::log(cadr(params), category, sc);
+    const failable<bool> val = scribe::log(cadr(params), host, category, sc);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(mklist<value>(true));
 }
 
@@ -50,17 +51,18 @@ const failable<value> post(const list<value>& params, const value& category, scr
  */
 class applyLog {
 public:
-    applyLog(const value& category, scribe::Scribe& sc) : category(category), sc(sc) {
+    applyLog(const value& host, const value& category, scribe::Scribe& sc) : host(host), category(category), sc(sc) {
     }
 
     const value operator()(const list<value>& params) const {
         const value func(car(params));
         if (func == "post")
-            return post(cdr(params), category, sc);
-        return tuscany::mkfailure<tuscany::value>();
+            return post(cdr(params), host, category, sc);
+        return mkfailure<value>();
     }
 
 private:
+    const value host;
     const value category;
     scribe::Scribe& sc;
 };
@@ -68,16 +70,18 @@ private:
 /**
  * Start the component.
  */
-const failable<value> start(unused const list<value>& params) {
+const failable<value> start(const list<value>& params) {
     // Connect to Scribe
     scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
 
     // Extract the configured category
-    const value category = ((lambda<value(list<value>)>)car(params))(list<value>());
+    const value host = ((lambda<value(list<value>)>)car(params))(list<value>());
+    const value category = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    debug(host, "log::start::host");
     debug(category, "log::start::category");
 
     // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyLog(category, sc)));
+    return value(lambda<value(const list<value>&)>(applyLog(host, category, sc)));
 }
 
 }

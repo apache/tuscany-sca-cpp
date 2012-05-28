@@ -501,13 +501,23 @@ const failable<int> failableH(const int v) {
 bool testFailableMonad() {
     const failable<int> m(2);
     assert(m >> failableF == failableF(2));
-    assert((m >> success<int, string>()) == m);
+    assert((m >> success<int, string, int>()) == m);
     assert(m >> failableF >> failableG == m >> failableH);
 
     cout << "Failable monad test... " << endl;
-    failable<int> ooops = mkfailure<int>("test");
+    const failable<int> ooops = mkfailure<int>("test", 500);
     assert(reason(ooops) == "test");
+    assert(rcode(ooops) == 500);
     assert(ooops >> failableF >> failableG == ooops);
+
+    const failable<value> vooops = mkfailure<value>(ooops);
+    assert(reason(vooops) == "test");
+    assert(rcode(vooops) == 500);
+
+    const value v = value(vooops);
+    assert(car<value>(v) == value());
+    assert(cadr<value>(v) == string("test"));
+    assert(caddr<value>(v) == value((double)500));
     return true;
 }
 

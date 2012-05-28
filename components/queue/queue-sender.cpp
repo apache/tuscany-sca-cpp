@@ -54,7 +54,7 @@ const failable<value> post(const list<value>& params) {
     debug(cadr(params), "queue::post::value");
     const failable<bool> r = post(key, cadr(params), qs);
     if (!hasContent(r))
-        return mkfailure<value>(reason(r));
+        return mkfailure<value>(r);
     return key;
 }
 

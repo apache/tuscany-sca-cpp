@@ -36,7 +36,7 @@
 #ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wunused-parameter"
 #pragma GCC diagnostic warning "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wredundant-decls"
+#pragma GCC diagnostic warning "-Wredundant-decls"
 #endif
 #include "string.hpp"
 #include "list.hpp"

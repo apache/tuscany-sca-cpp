@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp

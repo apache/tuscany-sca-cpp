@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 mkdir -p tmp
 ./tinycdb -c -m tmp/test.cdb </dev/null
 

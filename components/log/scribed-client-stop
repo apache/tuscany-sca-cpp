@@ -25,4 +25,8 @@ scribe_prefix=`cat $here/scribe.prefix`
 thrift_prefix=`cat $here/thrift.prefix`
 scribed="$scribe_prefix/bin/scribed -c $root/scribe/conf/scribe-client.conf"
 
-kill `ps -ef | grep -v grep | grep "${scribed}" | awk '{ print $2 }'`
+k=`ps -ef | grep -v grep | grep "${scribed}" | awk '{ print $2 }'`
+if [ "$k" != "" ]; then
+    kill $k
+fi
+

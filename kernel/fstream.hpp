@@ -329,7 +329,17 @@ logfstream cdebug(stderr, "debug");
 /**
  * Return true if debug log is enabled.
  */
-#define debug_islogging() true
+bool debug_isLoggingSet = false;
+bool debug_isLoggingEnv = false;
+
+const bool debug_isLogging() {
+    if (debug_isLoggingSet)
+        return debug_isLoggingEnv;
+    debug_isLoggingEnv = getenv("TUSCANY_DEBUG_LOG") != NULL;
+    return debug_isLoggingEnv;
+}
+
+#define debug_islogging() debug_isLogging()
 
 #endif
 
@@ -355,7 +365,16 @@ template<typename V> const bool debugLog(const V& v, const string& msg) {
     return true;
 }
 
-#define debug(...) if (debug_islogging()) tuscany::debugLog(__VA_ARGS__)
+/**
+ * Log a debug message and two values.
+ */
+template<typename V, typename W> const bool debugLog(const V& v, const W& w, const string& msg) {
+    gc_scoped_pool();
+    cdebug << msg << ": " << v << " : " << w << endl;
+    return true;
+}
+
+#define debug(...) do { if (debug_islogging()) tuscany::debugLog(__VA_ARGS__); } while(0)
 
 #else
 

@@ -55,6 +55,8 @@ const failable<lambda<value(const list<value>&)> > evalImplementation(const stri
         return modscheme::evalImplementation(path, impl, px);
     if (contains(itype, ".cpp"))
         return modcpp::evalImplementation(path, impl, px);
+    if (contains(itype, ".widget"))
+        return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype, -1, false);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
 }
 

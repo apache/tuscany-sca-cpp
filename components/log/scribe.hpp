@@ -98,7 +98,7 @@ private:
     ::scribe::thrift::scribeClient* client;
     boost::shared_ptr<apache::thrift::transport::TTransport> transport;
 
-    friend const failable<bool> log(const value& val, const value& category, const Scribe& sc);
+    friend const failable<bool> log(const value& val, const string& host, const value& category, const Scribe& sc);
     friend const failable<string> status(const Scribe& sc);
 
     /**
@@ -122,18 +122,20 @@ private:
 /**
  * Log an item.
  */
-const failable<bool> log(const value& val, const value& category, const Scribe& sc) {
+const failable<bool> log(const value& val, const string& host, const value& category, const Scribe& sc) {
     debug(val, "scribe::log::value");
     debug(category, "scribe::log::category");
 
     const value cat = isString(category)? value(c_str(category)):category;
     const string cs(scheme::writeValue(cat));
     const string vs(scheme::writeValue(val));
+    ostringstream os;
+    os << "[" << host << "] " << vs;
 
     try {
         ::scribe::thrift::LogEntry entry;
         entry.category = c_str(cs);
-        entry.message = c_str(vs);
+        entry.message = c_str(str(os));
         std::vector< ::scribe::thrift::LogEntry> msgs;
         msgs.push_back(entry);
 

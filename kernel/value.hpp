@@ -193,7 +193,7 @@ public:
     }
 
     value(const failable<value>& m) : type(value::List),
-        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : mklist<value>(value(), reason(m))))) {
+        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : rcode(m) == 1? mklist<value>(value(), reason(m)) : mklist<value>(value(), reason(m), rcode(m))))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();

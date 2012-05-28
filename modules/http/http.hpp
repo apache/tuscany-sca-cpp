@@ -371,7 +371,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     // Setup the CURL session
     const failable<CURL*> fch = setup(url, cs);
     if (!hasContent(fch))
-        return mkfailure<list<R>>(reason(fch));
+        return mkfailure<list<R>>(fch);
     CURL* ch = content(fch);
 
     // Set the request headers
@@ -440,19 +440,19 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
     js::JSContext cx;
     const failable<list<string> > jsreq = json::jsonRequest(1, car<value>(expr), cdr<value>(expr), cx);
     if (!hasContent(jsreq))
-        return mkfailure<value>(reason(jsreq));
+        return mkfailure<value>(jsreq);
 
     // POST it to the URL
     const list<string> h = mklist<string>("Content-Type: application/json-rpc");
     const failable<list<list<string> > > res = apply<list<string> >(mklist<list<string> >(h, content(jsreq)), rcons<string>, list<string>(), url, "POST", cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     // Parse and return JSON-RPC result
     const failable<value> rval = json::jsonResultValue(cadr<list<string> >(content(res)), cx);
     debug(rval, "http::evalExpr::result");
     if (!hasContent(rval))
-        return mkfailure<value>(reason(rval));
+        return mkfailure<value>(rval);
     return content(rval);
 }
 
@@ -513,7 +513,7 @@ const failable<value> getcontent(const string& url, const CURLSession& cs) {
     // Get the contents of the resource at the given URL
     const failable<list<list<string> > > res = get<list<string>>(rcons<string>, list<string>(), url, cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
     const list<string> ls(reverse(cadr(content(res))));
 
     // Return the content as a list of values
@@ -597,7 +597,7 @@ const failable<value> get(const string& url, const CURLSession& cs) {
     // Get the contents of the resource at the given URL
     const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     // Parse the returned content
     return responseValue(content(res));
@@ -608,7 +608,7 @@ const failable<value> get(const string& url, const CURLSession& cs) {
  */
 const failable<list<list<string> > > writeRequest(const failable<list<string> >& ls, const string& ct) {
     if (!hasContent(ls))
-        return mkfailure<list<list<string> > >(reason(ls));
+        return mkfailure<list<list<string> > >(ls);
     const list<list<string> > req =  mklist<list<string> >(mklist<string>(string("Content-Type: ") + ct), content(ls));
     debug(req, "http::writeRequest::req");
     return req;
@@ -695,13 +695,13 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
     // Convert value to a content request
     const failable<list<list<string> > > req = contentRequest(val, url);
     if (!hasContent(req))
-        return mkfailure<value>(reason(req));
+        return mkfailure<value>(req);
     debug(content(req), "http::post::input");
 
     // POST it to the URL
     const failable<list<list<string> > > res = apply<list<string>>(content(req), rcons<string>, list<string>(), url, "POST", cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     // Return the new entry id from the HTTP location header, if any
     const string loc = location(car(content(res)));
@@ -724,13 +724,13 @@ const failable<value> put(const value& val, const string& url, const CURLSession
     // Convert value to a content request
     const failable<list<list<string> > > req = contentRequest(val, url);
     if (!hasContent(req))
-        return mkfailure<value>(reason(req));
+        return mkfailure<value>(req);
     debug(content(req), "http::put::input");
 
     // PUT it to the URL
     const failable<list<list<string> > > res = apply<list<string> >(content(req), rcons<string>, list<string>(), url, "PUT", cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     debug(true, "http::put::result");
     return value(true);
@@ -745,13 +745,13 @@ const failable<value> patch(const value& val, const string& url, const CURLSessi
     // Convert value to a content request
     const failable<list<list<string> > > req = contentRequest(val, url);
     if (!hasContent(req))
-        return mkfailure<value>(reason(req));
+        return mkfailure<value>(req);
     debug(content(req), "http::patch::input");
 
     // PATCH it to the URL
     const failable<list<list<string> > > res = apply<list<string> >(content(req), rcons<string>, list<string>(), url, "PATCH", cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     debug(true, "http::patch::result");
     return value(true);
@@ -766,7 +766,7 @@ const failable<value, string> del(const string& url, const CURLSession& cs) {
     const list<list<string> > req = mklist(list<string>(), list<string>());
     const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "DELETE", cs);
     if (!hasContent(res))
-        return mkfailure<value>(reason(res));
+        return mkfailure<value>(res);
 
     debug(true, "http::delete::result");
     return value(true);
@@ -805,7 +805,7 @@ const failable<bool> connect(const string& url, CURLSession& cs) {
     // Setup the CURL session
     const failable<CURL*> fch = setup(url, cs);
     if (!hasContent(fch))
-        return mkfailure<bool>(reason(fch));
+        return mkfailure<bool>(fch);
     CURL* ch = content(fch);
 
     // Connect

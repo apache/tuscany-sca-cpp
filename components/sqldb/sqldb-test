@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ./pgsql-conf tmp
 ./pgsql-start tmp
 ./pgsql "drop table test;" 1>/dev/null 2>&1

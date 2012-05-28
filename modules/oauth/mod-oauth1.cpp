@@ -235,7 +235,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     // Store the request token in memcached
     const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth1Token", cadr(tv)), cadr(sv), mc);
     if (!hasContent(prc))
-        return mkfailure<int>(reason(prc));
+        return mkfailure<int>(prc);
 
     // Redirect to the authorize URI
     const string authuri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(mklist<list<value> >(tv));
@@ -327,7 +327,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     // Retrieve the request token from memcached
     const failable<value> sv = memcache::get(mklist<value>("tuscanyOAuth1Token", cadr(tv)), mc);
     if (!hasContent(sv))
-        return mkfailure<int>(reason(sv));
+        return mkfailure<int>(sv);
 
     // Build and sign access token request URI
     const string tokuri = httpd::unescape(cadr(tok)) + string("?") + http::queryString(mklist<list<value> >(vv));
@@ -374,13 +374,13 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     // Retrieve the user info from the profile
     const failable<list<value> > iv = profileUserInfo(cadr(cid), profres);
     if (!hasContent(iv))
-        return mkfailure<int>(reason(iv));
+        return mkfailure<int>(iv);
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth1_") + mkrand();
     const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth1", sid), content(iv), mc);
     if (!hasContent(prc))
-        return mkfailure<int>(reason(prc));
+        return mkfailure<int>(prc);
 
     // Send session ID to the client in a cookie
     debug(c_str(openauth::cookie("TuscanyOAuth1", sid, httpd::hostName(r))), "modoauth1::access_token::setcookie");

@@ -20,6 +20,7 @@
 # Run Python util test cases
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 python_prefix=`cat $here/../python/python.prefix`
+export LD_LIBRARY_PATH=$python_prefix/lib:$LD_LIBRARY_PATH
 
 $python_prefix/bin/python stream-test.py
 rc=$?

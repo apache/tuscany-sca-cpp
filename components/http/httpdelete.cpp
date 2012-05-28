@@ -57,7 +57,7 @@ public:
         const value func(car(params));
         if (func == "get")
             return get(url, *ch);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

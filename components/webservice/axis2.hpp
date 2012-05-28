@@ -112,7 +112,7 @@ const failable<axiom_node_t*> stringToAxiomNode(const string& s, const Axis2Cont
 const failable<axiom_node_t*> valuesToAxiomNode(const list<value>& l, const Axis2Context& ax) {
     const failable<list<string> > xml = writeXML(valuesToElements(l), false);
     if (!hasContent(xml))
-        return mkfailure<axiom_node_t*>(reason(xml));
+        return mkfailure<axiom_node_t*>(xml);
     ostringstream os;
     write(content(xml), os);
     return stringToAxiomNode(str(os), ax);
@@ -136,7 +136,7 @@ const failable<const string> axiomNodeToString(axiom_node_t* node, const Axis2Co
 const failable<const list<value> > axiomNodeToValues(axiom_node_t* node, const Axis2Context& ax) {
     const failable<const string> s = axiomNodeToString(node, ax);
     if (!hasContent(s))
-        return mkfailure<const list<value> >(reason(s));
+        return mkfailure<const list<value> >(s);
     istringstream is(content(s));
     const failable<const list<value> > l = readXML(streamList(is));
     if (!hasContent(l))
@@ -170,7 +170,7 @@ const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
     // Construct request Axiom node
     const failable<axiom_node_t*> req = valuesToAxiomNode(param, ax);
     if (!hasContent(req))
-        return mkfailure<value>(reason(req));
+        return mkfailure<value>(req);
 
     // Call the Web service
     axiom_node_t* res = axis2_svc_client_send_receive(client, env(ax), content(req));
@@ -182,7 +182,7 @@ const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
     // Parse result Axiom node
     const failable<const list<value> > lval = axiomNodeToValues(res, ax);
     if (!hasContent(lval))
-        return mkfailure<value>(reason(lval));
+        return mkfailure<value>(lval);
     const value rval = content(lval);
     debug(rval, "webservice::evalExpr::result");
 

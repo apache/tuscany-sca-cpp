@@ -17,6 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+rm -rf tmp
 ../../modules/http/httpd-conf tmp example.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
 ../../modules/http/vhost-conf tmp domains htdocs

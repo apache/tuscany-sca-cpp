@@ -18,6 +18,7 @@
 #  under the License.
 
 # Setup
+rm -rf tmp
 ./httpd-conf tmp localhost 8090 htdocs
 ./httpd-event-conf tmp
 ./httpd-start tmp

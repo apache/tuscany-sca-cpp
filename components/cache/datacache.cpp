@@ -56,7 +56,7 @@ const failable<value> get(const value& key, const lambda<value(const list<value>
     if (isNil(val2)) {
         ostringstream os;
         os << "Couldn't get cache entry: " << key;
-        return mkfailure<value>(str(os), false);
+        return mkfailure<value>(str(os), 404, false);
     }
 
     // Update level1 cache

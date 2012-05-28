@@ -48,7 +48,7 @@ const failable<value> post(const list<value>& params, memcache::MemCached& ch) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = memcache::post(id, cadr(params), ch);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return id;
 }
 
@@ -58,7 +58,7 @@ const failable<value> post(const list<value>& params, memcache::MemCached& ch) {
 const failable<value> put(const list<value>& params, memcache::MemCached& ch) {
     const failable<bool> val = memcache::put(car(params), cadr(params), ch);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -68,7 +68,7 @@ const failable<value> put(const list<value>& params, memcache::MemCached& ch) {
 const failable<value> del(const list<value>& params, memcache::MemCached& ch) {
     const failable<bool> val = memcache::del(car(params), ch);
     if (!hasContent(val))
-        return mkfailure<value>(reason(val));
+        return mkfailure<value>(val);
     return value(content(val));
 }
 
@@ -90,7 +90,7 @@ public:
             return put(cdr(params), ch);
         if (func == "delete")
             return del(cdr(params), ch);
-        return tuscany::mkfailure<tuscany::value>();
+        return mkfailure<value>();
     }
 
 private:

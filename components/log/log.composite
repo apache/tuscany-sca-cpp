@@ -23,6 +23,7 @@
         
     <component name="log">
         <implementation.cpp path="." library="liblog"/>
+        <property name="host"></property>
         <property name="category">default</property>
         <service name="log">
             <binding.http uri="log"/>
@@ -39,6 +40,7 @@
 
     <component name="logger">
         <implementation.cpp path="." library="liblogger"/>
+        <property name="host"></property>
         <property name="category">default</property>
         <service name="logger">
             <binding.http uri="logger"/>

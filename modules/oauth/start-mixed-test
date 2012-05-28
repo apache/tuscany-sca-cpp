@@ -24,6 +24,7 @@
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
 # Setup
+rm -rf tmp
 ../../components/cache/memcached-start tmp 11212
 ../../components/cache/memcached-start tmp 11213
 

@@ -321,7 +321,7 @@ const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml)
 const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml, bool xmlTag) {
     if (xmlTag) {
         if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
-            return mkfailure<bool>(string("xmlTextWriterStartDocument failed"));
+            return mkfailure<bool>("xmlTextWriterStartDocument failed");
     }
 
     const failable<bool> w = writeList(l, xml);
@@ -371,7 +371,7 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
     const failable<bool> w = write(l, xml, xmlTag);
     xmlFreeTextWriter(xml);
     if (!hasContent(w)) {
-        return mkfailure<R>(reason(w));
+        return mkfailure<R>(w);
     }
     return cx.accum;
 }

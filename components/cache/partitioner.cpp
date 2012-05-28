@@ -47,7 +47,7 @@ const failable<lambda<value(const list<value>&)> > partition(const value& key, c
     if (isNil(p)) {
         ostringstream os;
         os << "Couldn't get partition number: " << key;
-        return mkfailure<lambda<value(const list<value>&)> >(str(os), false);
+        return mkfailure<lambda<value(const list<value>&)> >(str(os), -1, false);
     }
     return (const lambda<value(const list<value>&)>)p;
 }
@@ -60,14 +60,14 @@ const failable<value> get(const value& key, const lambda<value(const list<value>
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
     if (!hasContent(p))
-        return mkfailure<value>(reason(p));
+        return mkfailure<value>(p);
 
     // Get from selected partition
     const value val = content(p)(mklist<value>("get", key));
     if (isNil(val)) {
         ostringstream os;
         os << "Couldn't get entry from partition: " << key;
-        return mkfailure<value>(str(os), false);
+        return mkfailure<value>(str(os), 404, false);
     }
 
     return val;
@@ -82,7 +82,7 @@ const failable<value> post(const value& key, const value& val, const lambda<valu
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(id, selector, partitions);
     if (!hasContent(p))
-        return mkfailure<value>(reason(p));
+        return mkfailure<value>(p);
 
     // Put into select partition
     content(p)(mklist<value>("put", id, val));
@@ -98,7 +98,7 @@ const failable<value> put(const value& key, const value& val, const lambda<value
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
     if (!hasContent(p))
-        return mkfailure<value>(reason(p));
+        return mkfailure<value>(p);
 
     // Put into selected partition
     content(p)(mklist<value>("put", key, val));
@@ -114,7 +114,7 @@ const failable<value> del(const value& key, const lambda<value(const list<value>
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
     if (!hasContent(p))
-        return mkfailure<value>(reason(p));
+        return mkfailure<value>(p);
 
     // Delete from selected partition
     content(p)(mklist<value>("delete", key));

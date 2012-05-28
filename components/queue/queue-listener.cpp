@@ -97,7 +97,7 @@ public:
 
         // Stop the component
         if (func != "stop")
-            return tuscany::mkfailure<tuscany::value>();
+            return mkfailure<value>();
         debug("queue::listener::stop");
 
         // TODO check why stop() and close() hang in child processes

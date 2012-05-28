@@ -21,6 +21,7 @@
 # 127.0.0.1 www.example.com
 
 # Setup
+rm -rf tmp
 #../../ubuntu/ip-redirect-all 80 8090
 #../../ubuntu/ip-redirect-all 443 8453
 

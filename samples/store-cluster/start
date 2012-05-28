@@ -26,6 +26,7 @@ sudo ../../ubuntu/ip-redirect-all 80 8090
 #sudo ../../ubuntu/ip-redirect-all 80 8091
 
 # Start scribe logging
+rm -rf tmp
 ../../components/log/scribed-central-conf tmp/monitor
 ../../components/log/scribed-client-conf tmp/monitor localhost
 ../../components/log/scribed-central-start tmp/monitor

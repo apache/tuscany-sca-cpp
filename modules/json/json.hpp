@@ -72,7 +72,7 @@ const failable<list<value> > readJSON(const list<string>& ilist, const js::JSCon
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
         return mkfailure<list<value> >("JS_FinishJSONParse failed");
     if(!hasContent(consumed))
-        return mkfailure<list<value> >(reason(consumed));
+        return mkfailure<list<value> >(consumed);
 
     return list<value>(js::jsValToValue(val, cx));
 }
@@ -149,7 +149,7 @@ const failable<list<string> > jsonResult(const value& id, const value& val, js::
 const failable<value> jsonResultValue(const list<string>& s, js::JSContext& cx) {
     const failable<list<value> > jsres = json::readJSON(s, cx);
     if (!hasContent(jsres))
-        return mkfailure<value>(reason(jsres));
+        return mkfailure<value>(jsres);
     const list<value> rval(cadr<value>(elementsToValues(content(jsres))));
     const value val = cadr(rval);
     if (isList(val) && !js::isJSArray(val))
