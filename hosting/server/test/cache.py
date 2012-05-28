@@ -15,22 +15,34 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Accounts collection implementation
-from time import strftime
-from util import *
+# Mockup cache for testing
 
-# Convert a particular user id to an account id
-def accountid(user):
-    return ('accounts', user.get(()), 'user.account')
+class cache:
+    def __init__(self, name, values):
+        self.name = name
+        self.values = values
 
-# Get the current user's account
-def get(id, user, cache):
-    account = cache.get(accountid(user))
-    if isNil(account) or account is None:
-        return (("'entry", ("'title", user.get(())), ("'id", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
-    return account
+    def get(self, id):
+        if id in self.values:
+            return self.values[id]
+        return None
 
-# Update the user's account
-def put(id, account, user, cache):
-    return cache.put(accountid(user), account)
+    def put(self, id, value):
+        self.values[id] = value
+        return True
+
+    def post(self, id):
+        return self.put(id)
+
+    def delete(self, id):
+        if id in self.values:
+            del self.values[id]
+            return True
+        return False
+
+    def __repr__(self):
+        return repr((self.name, self.values))
+
+def mkcache(name, values = {}):
+    return cache(name, values)
 

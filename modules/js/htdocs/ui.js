@@ -50,6 +50,13 @@ function $(id) {
 };
 
 /**
+ * Return a list of elements with the given class name.
+ */
+ui.elementsByClassName = function(node, c) {
+    return nodeList(node.getElementsByClassName(c));
+};
+
+/**
  * Return the query string of a URL.
  */
 ui.query = function(url) {
@@ -151,7 +158,7 @@ ui.evalScript = function(s) {
  * Include a script.
  */
 ui.includeScript = function(s) {
-    log('include', s);
+    //log('include', s);
     return eval(s);
 };
 
@@ -207,18 +214,54 @@ ui.pixpos = function(p) {
 };
 
 /**
- * Reload the current document when orientation changes.
+ * Default orientation change behavior.
  */
-ui.onorientationchange = function() {
-    window.location.reload();
+ui.onorientationchange = function(e) {
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    // Change fixed position elements to absolute then back to fixed
+    // to make sure they're correctly layed out after the orientation
+    // change
+    map(function(e) {
+            e.style.position = 'absolute';
+            return e;
+        }, ui.elementsByClassName(document, 'fixed'));
+
+    setTimeout(function() {
+        map(function(e) {
+                e.style.position = 'fixed';
+                return e;
+            }, ui.elementsByClassName(document, 'fixed'));
+        }, 0);
     return true;
-}
+};
+
+/**
+ * Default page load behavior.
+ */
+ui.onload = function() {
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    // Initialize fixed position elements only after the page is loaded,
+    // to workaround layout issues with fixed position on mobile devices
+    setTimeout(function() {
+        map(function(e) {
+                e.style.position = 'fixed';
+                return e;
+            }, ui.elementsByClassName(document, 'fixed'));
+        }, 0);
+    return true;
+};
 
 /**
  * Navigate to a new document.
  */
 ui.navigate = function(url, win) {
-    log('navigate', url, win);
+    //log('navigate', url, win);
 
     // Open a new window
     if (win == '_blank')
@@ -283,17 +326,11 @@ ui.menufunc = function(name, fun, hilight) {
 };
 
 ui.menubar = function(left, right) {
-    var bar = '<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr>' +
-    '<td class="dtbar"><table border="0" cellspacing="0" cellpadding="0"><tr>';
+    var bar = '';
     for (i in left)
-        bar = bar + '<td class="ltbar">' + left[i].content() + '</td>'
-
-    bar = bar + '</tr></table></td>' +
-    '<td class="dtbar"><table border="0" cellpadding="0" cellspacing="0" align="right"><tr>';
+        bar = bar + '<span class="tbarleft">' + left[i].content() + '</span>';
     for (i in right)
-        bar = bar + '<td class="' + (i == 0? 'dtbar' : 'rtbar') + '">' + right[i].content() + '</td>'
-
-    bar = bar + '</tr></table></td></tr></table>';
+        bar = bar + '<span class="tbarright">' + right[i].content() + '</span>';
     return bar;
 };
  
@@ -378,106 +415,4 @@ ui.datalist = function(l) {
 
     return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
 }
-
-/**
- * Autocomplete / suggest support for input fields
- * To use it declare a 'suggest' function as follows:
- * function suggestItems() {
- *       return new Array('abc', 'def', 'ghi');
- * }
- * then hook it to an input field as follows:
- * suggest(document.yourForm.yourInputField, suggestItems);
- */ 
-ui.selectSuggestion = function(node, value) {
-    for (;;) {
-        node = node.parentNode;
-        if (node.tagName.toLowerCase() == 'div')
-              break;
-    }
-    node.selectSuggestion(value);
-};
-
-ui.hilightSuggestion = function(node, over) {
-    if (over)
-        node.className = 'suggestHilighted';
-    node.className = 'suggestItem';
-};
-
-ui.suggest = function(input, suggestFunction) {
-    input.suggest = suggestFunction;
-      
-    input.selectSuggestion = function(value) {
-        this.hideSuggestDiv();
-        this.value = value;
-    }
-    
-    input.hideSuggestDiv = function() {
-        if (this.suggestDiv != null) {
-            this.suggestDiv.style.visibility = 'hidden';
-        }
-    }
-    
-    input.showSuggestDiv = function() {
-        if (this.suggestDiv == null) {
-            this.suggestDiv = document.createElement('div');
-            this.suggestDiv.input = this;
-            this.suggestDiv.className = 'suggest';
-            input.parentNode.insertBefore(this.suggestDiv, input);
-            this.suggestDiv.style.visibility = 'hidden';
-            this.suggestDiv.style.zIndex = '99';
-            
-            this.suggestDiv.selectSuggestion = function(value) {
-                this.input.selectSuggestion(value);
-            }
-        }
-        
-        var values = this.suggest();
-        var items = '';
-        for (var i = 0; i < values.length; i++) {
-            if (values[i].indexOf(this.value) == -1)
-                continue;
-            if (items.length == 0)
-                items += '<table class="suggestTable">';
-            items += '<tr><td class="suggestItem" ' +
-            'onmouseover="ui.hilightSuggestion(this, true)" onmouseout="ui.hilightSuggestion(this, false)" ' +
-            'onmousedown="ui.selectSuggestion(this, \'' + values[i] + '\')">' + values[i] + '</td></tr>';
-        }
-        if (items.length != 0)
-            items += '</table>';
-        this.suggestDiv.innerHTML = items;
-        
-        if (items.length != 0) {
-            var node = input;              
-            var left = 0;
-            var top = 0;
-            for (;;) {
-                left += node.offsetLeft;
-                top += node.offsetTop;
-                node = node.offsetParent;
-                if (node.tagName.toLowerCase() == 'body')
-                  break;
-            }
-            this.suggestDiv.style.left = left;
-            this.suggestDiv.style.top = top + input.offsetHeight;
-            this.suggestDiv.style.visibility = 'visible';
-        } else
-            this.suggestDiv.style.visibility = 'hidden';
-    }
-      
-    input.onkeydown = function(event) {
-        this.showSuggestDiv();
-    };
-
-    input.onkeyup = function(event) {
-        this.showSuggestDiv();
-    };
-
-    input.onmousedown = function(event) {
-        this.showSuggestDiv();
-    };
-
-    input.onblur = function(event) {
-        setTimeout(function() { input.hideSuggestDiv(); }, 50);
-    };
-};
 

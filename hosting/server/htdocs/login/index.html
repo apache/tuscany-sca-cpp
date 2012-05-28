@@ -24,49 +24,96 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <base href="/login/"/>
-<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
-<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript">
+
+window.appcache = {};
+
+/**
+ * Get and cache a resource.
+ */
+appcache.get = function(uri) {
+    var h = uri.indexOf('#');
+    var u = h == -1? uri : uri.substring(0, h);
+
+    // Get resource from local storage first
+    var ls = window.lstorage || localStorage;
+    var item = null;
+    try { item = ls.getItem(u); } catch(e) {}
+    if (item != null && item != '')
+        return item;
+
+    // Get resource from network
+    var http = new XMLHttpRequest();
+    http.open("GET", u, false);
+    http.setRequestHeader("Accept", "*/*");
+    http.send(null);
+    if (http.status == 200) {
+        if (http.getResponseHeader("X-Login") != null) {
+            if (debug) debug('http error', u, 'X-Login');
+            return null;
+        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+            if (debug) debug('http error', u, 'No-Content');
+            return null;
+        }
+        try { ls.setItem(u, http.responseText); } catch(e) {}
+        return http.responseText;
+    }
+    if (debug) debug('http error', u, http.status, http.statusText);
+    return null;
+};
+
+// Load Javascript and CSS
+(function() {
+    var bootjs = document.createElement('script');
+    bootjs.type = 'text/javascript';
+    bootjs.text = appcache.get('/all-min.js');
+    document.head.appendChild(bootjs);
+    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+})();
+
+</script>
 </head>
 <body class="delayed" onload="onload();">
-<div id="bodydiv" class="bodydiv">
+<div id="mainbodydiv" class="bodydiv">
 
-<h1>Sign in</h1>
+<div id="headdiv" class="hsection">
+<script type="text/javascript">
+(function() {
+$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
+})();
+</script>
+</div>
 
-<form name="googleOpenIDForm">
-<table border="0">
-<tr><td><b>Sign in with your Google account (using OpenID)</b></td></tr>
-<tr><td><input type="button" value="Sign in" class="graybutton" style="font-weight: bold;" onclick="submitOpenIDSignin(withGoogleOpenID)"/></td></tr>
-</table>
+<div id="menubackground" class="tbarbackground fixed"></div>
+<div id="menu" class="tbarmenu fixed"></div>
+
+<div id="viewheadbackground" class="viewheadbackground fixed"></div>
+<div id="viewhead" class="viewhead fixed">
+<span class="cmenu">Sign in</span>
+</div>
+
+<div id="viewcontainer">
+<div id="view">
+<div id="viewcontent" class="viewcontent" style="margin-left: auto; margin-right: auto; text-align: center;">
+
+<form name="facebookOAuth2Form" style="width: 100%;">
+<p style="font-size: 16px;">Sign in with your <span style="font-weight: bold;">Facebook</span> account</p>
+<p><input type="button" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" onclick="submitOAuth2Signin(withFacebook)"/></p>
 </form>
 
-<form name="facebookOAuth2Form">
-<table border="0">
-<tr><td><b>Sign in with your Facebook account (using OAuth)</b></td></tr>
-<tr><td><input type="button" value="Sign in" class="graybutton" style="font-weight: bold;" onclick="submitOAuth2Signin(withFacebook)"/></td></tr>
-</table>
+<form name="googleOAuth2Form" style="width: 100%;">
+<p style="font-size: 16px;">Sign in with your <span style="font-weight: bold;" >Google</span> account</p>
+<p><input type="button" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" onclick="submitOAuth2Signin(withGoogleOAuth)"/></p>
 </form>
 
-<form name="googleOAuth2Form">
-<table border="0">
-<tr><td><b>Sign in with your Google account (using OAuth)</b></td></tr>
-<tr><td><input type="button" value="Sign in" class="graybutton" style="font-weight: bold;" onclick="submitOAuth2Signin(withGoogleOAuth)"/></td></tr>
-</table>
-</form>
-
-<form name="formSignin" method="POST" action="/login/dologin">
-<table border="0">
-<tr><td colspan="2"><b>Sign in with your user id and password</b></td></tr>
-<tr><td>User id:</td><td><input type="text" name="httpd_username" value=""/></td></tr>
-<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
-<tr><td><input type="button" class="graybutton" style="font-weight: bold;" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
-</table>
-</p>
+<form name="formSignin" method="POST" action="/login/dologin" onsubmit="submitFormSignin()" style="width: 100%;">
+<p id="loginprompt" style="font-size: 16px;"></p>
+<p><input type="text" class="flatentry" name="httpd_username" value="" placeholder="User id"/></p>
+<p><input type="password" class="flatentry" name="httpd_password" value="" placeholder="Password"/></p>
+<p><input type="submit" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></p>
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
-
-<form name="openIDSignin" action="/" method="GET">
-<input type="hidden" name="openid_identifier" value=""/>
-</form>
+<br/>
 
 <form name="oauth2Signin" action="/oauth2/authorize/" method="GET">
 <input type="hidden" name="oauth2_authorize" value=""/>
@@ -78,7 +125,37 @@
 <input type="hidden" name="openauth_referrer" value=""/>
 </form>
 
+</div>
+</div>
+</div>
+
 <script type="text/javascript">
+
+// Init div variables
+var mbdiv = $('menubackground'); 
+var mdiv = $('menu'); 
+var hdiv = $('viewhead'); 
+var hbdiv = $('viewheadbackground'); 
+$('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
+$('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
+$('loginprompt').innerHTML = config.loginprompt;
+
+// Set page titles
+document.title = ui.windowtitle(location.hostname) + ' - Sign in';
+$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
+
+/**
+ * Build and show the menu bar.
+ */
+function showmenu(mdiv) {
+    mdiv.innerHTML = ui.menubar(mklist(ui.menu('Home', '/', '_self', false)), mklist(ui.menu('Sign in', '/login/', '_self', true)));
+}
+
+showmenu(mdiv);
+
+/**
+ * Parse the query parameeters.
+ */
 function queryParams() {
     var qp = new Array();
     var qs = window.location.search.substring(1).split('&');
@@ -90,6 +167,9 @@ function queryParams() {
     return qp;
 }
 
+/**
+ * Return the referrer URL.
+ */
 function openauthReferrer() {
     var r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined' || domainname(r) != domainname(window.location.hostname))
@@ -103,11 +183,11 @@ function openauthReferrer() {
 /**
  * Signin with OpenID.
  */
+/*
 function submitOpenIDSignin(w) {
     clearauthcookie();
-    localStorage.removeItem('/r/EditWidget/accounts');
-    localStorage.removeItem('/r/EditWidget/dashboards');
-    //localStorage.clear();
+    lstorage.removeItem('/r/EditWidget/accounts');
+    lstorage.removeItem('/r/EditWidget/dashboards');
     document.openIDSignin.openid_identifier.value = w();
     document.openIDSignin.action = openauthReferrer();
     document.openIDSignin.submit();
@@ -116,6 +196,7 @@ function submitOpenIDSignin(w) {
 function withGoogleOpenID() {
     return 'https://www.google.com/accounts/o8/id';
 }
+*/
 
 /**
  * Signin with OAuth 2.0.
@@ -123,9 +204,8 @@ function withGoogleOpenID() {
 function submitOAuth2Signin(w) {
     parms = w();
     clearauthcookie();
-    localStorage.removeItem('/r/EditWidget/accounts');
-    localStorage.removeItem('/r/EditWidget/dashboards');
-    //localStorage.clear();
+    lstorage.removeItem('/r/EditWidget/accounts');
+    lstorage.removeItem('/r/EditWidget/dashboards');
     document.oauth2Signin.oauth2_authorize.value = parms[0];
     document.oauth2Signin.oauth2_access_token.value = parms[1];
     document.oauth2Signin.oauth2_client_id.value = parms[2];
@@ -160,25 +240,24 @@ function submitFormSignin() {
  * Handle orientation change.
  */
 document.body.onorientationchange = function(e) {
-    //log('onorientationchange');
+    //debug('onorientationchange');
+    ui.onorientationchange(e);
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
-
+    // Resize menu and view header
+    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
+    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
     return true;
 };
 
 /**
- * Document load post processing.
+ * Load post processing.
  */
 function onload() {
-    //log('onload');
+    //debug('onload');
+    ui.onload();
 
     // Show the page
     document.body.style.visibility = 'visible';
-
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
     return true;
 }
 

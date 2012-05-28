@@ -30,6 +30,7 @@
         <property name="firstname">?</property>
         <property name="lastname">?</property>
         <property name="realm">?</property>
+        <property name="host">?</property>
         <service name="User">
             <binding.http uri="user"/>
         </service>
@@ -52,6 +53,7 @@
         <implementation.widget location="/app/index.html"/>
         <reference name="user" target="User"/>
         <reference name="pages" target="Pages"/>
+        <reference name="composites" target="Composites"/>
         <reference name="log" target="Log"/>
     </component>
     
@@ -79,7 +81,9 @@
         <service name="AppStore">
             <binding.http uri="appstore"/>
         </service>        
+        <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
+        <reference name="apps" target="Apps"/>
     </component>
     
     <component name="Apps">
@@ -87,7 +91,9 @@
         <service name="Apps">
             <binding.http uri="apps"/>
         </service>
+        <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
+        <reference name="dashboard" target="Dashboards"/>
         <reference name="store" target="AppStore"/>
         <reference name="composites" target="Composites"/>
         <reference name="pages" target="Pages"/>
@@ -98,7 +104,9 @@
         <service name="Composites">
             <binding.http uri="composites"/>
         </service>
+        <reference name="user" target="User"/>
         <reference name="cache" target="Doccache"/>
+        <reference name="apps" target="Apps"/>
     </component>
     
     <component name="Pages">
@@ -106,7 +114,9 @@
         <service name="Pages">
             <binding.http uri="pages"/>
         </service>
+        <reference name="user" target="User"/>
         <reference name="cache" target="Doccache"/>
+        <reference name="apps" target="Apps"/>
     </component>
     
     <component name="Palettes">

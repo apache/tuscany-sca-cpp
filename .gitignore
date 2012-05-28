@@ -56,7 +56,6 @@ m4/
 config.guess
 config.sub
 config.status
-config.js
 all.js
 *-min.html
 *-min.js

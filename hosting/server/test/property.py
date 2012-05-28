@@ -15,22 +15,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Accounts collection implementation
-from time import strftime
-from util import *
+# Mockup component properties for testing
 
-# Convert a particular user id to an account id
-def accountid(user):
-    return ('accounts', user.get(()), 'user.account')
+class property:
+    def __init__(self, name, l):
+        self.name = name
+        self.l = l
 
-# Get the current user's account
-def get(id, user, cache):
-    account = cache.get(accountid(user))
-    if isNil(account) or account is None:
-        return (("'entry", ("'title", user.get(())), ("'id", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
-    return account
+    def __call__(self, *args):
+        return self.l(*args)
 
-# Update the user's account
-def put(id, account, user, cache):
-    return cache.put(accountid(user), account)
+    def __getattr__(self, name):
+        if name == "eval":
+            return self
+        raise AttributeError()
+
+    def __repr__(self):
+        return repr((self.name, self.l()))
+
+def mkprop(name, l):
+    return property(name, l)
 

@@ -41,6 +41,10 @@ const string itemEntry(
         "<entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         " <title type=\"text\">item</title>\n"
         " <id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>\n"
+        " <author>\n"
+        "  <email>jane@example.com</email>\n"
+        " </author>\n"
+        " <updated>Fri Jan 01 08:11:36 PDT 2012</updated>\n"
         " <content type=\"application/xml\">\n"
         "  <item>\n"
         "   <name>Apple</name>\n"
@@ -54,6 +58,10 @@ const string itemTextEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         " <title type=\"text\">item</title>\n"
         " <id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>\n"
+        " <author>\n"
+        "  <email>jane@example.com</email>\n"
+        " </author>\n"
+        " <updated>Fri Jan 01 08:11:36 PDT 2012</updated>\n"
         " <content type=\"text\">Apple</content>\n"
         " <link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>\n"
         "</entry>\n");
@@ -62,6 +70,10 @@ const string itemNoContentEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         " <title type=\"text\">item</title>\n"
         " <id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>\n"
+        " <author>\n"
+        "  <name>jane</name>\n"
+        " </author>\n"
+        " <updated>Fri Jan 01 08:11:36 PDT 2012</updated>\n"
         " <link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>\n"
         "</entry>\n");
 
@@ -96,6 +108,8 @@ bool testEntry() {
         const list<value> a = list<value>() + (list<value>() + element + value("entry")
                 + value(list<value>() + element + value("title") + value(string("item")))
                 + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("author") + value(string("jane@example.com")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012")))
                 + value(list<value>() + element + value("content") + value(i)));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
@@ -105,6 +119,8 @@ bool testEntry() {
         const list<value> a = list<value>() + (list<value>() + element + value("entry")
                 + value(list<value>() + element + value("title") + value(string("item")))
                 + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("author") + value(string("jane@example.com")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012")))
                 + value(list<value>() + element + value("content") + value(string("Apple"))));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
@@ -113,7 +129,9 @@ bool testEntry() {
     {
         const list<value> a = list<value>() + (list<value>() + element + value("entry")
                 + value(list<value>() + element + value("title") + value(string("item")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))));
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("author") + value(string("jane")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012"))));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemNoContentEntry);
@@ -158,6 +176,10 @@ const string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         " <entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         "  <title type=\"text\">item</title>\n"
         "  <id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>\n"
+        "  <author>\n"
+        "   <email>jane@example.com</email>\n"
+        "  </author>\n"
+        "  <updated>Fri Jan 01 08:11:36 PDT 2012</updated>\n"
         "  <content type=\"application/xml\">\n"
         "   <item>\n"
         "    <name>Apple</name>\n"
@@ -169,6 +191,10 @@ const string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         " <entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         "  <title type=\"text\">item</title>\n"
         "  <id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c</id>\n"
+        "  <author>\n"
+        "   <email>jane@example.com</email>\n"
+        "  </author>\n"
+        "  <updated>Fri Jan 01 08:11:36 PDT 2012</updated>\n"
         "  <content type=\"application/xml\">\n"
         "   <item>\n"
         "    <name>Orange</name>\n"
@@ -183,7 +209,9 @@ bool testFeed() {
     {
         const list<value> a = list<value>() + (list<value>() + element + value("feed")
                 + value(list<value>() + element + value("title") + value(string("Feed")))
-                + value(list<value>() + element + value("id") + value(string("1234"))));
+                + value(list<value>() + element + value("id") + value(string("1234")))
+                + value(list<value>() + element + value("author") + value(string("jane@example.com")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012"))));
         ostringstream os;
         writeATOMFeed<ostream*>(writer, &os, a);
         assert(str(os) == emptyFeed);
@@ -207,10 +235,14 @@ bool testFeed() {
             + value(list<value>() + element + value("entry")
                 + value(list<value>() + element + value("title") + value(string("item")))
                 + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("author") + value(string("jane@example.com")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012")))
                 + value(list<value>() + element + value("content") + value(i1)))
             + value(list<value>() + element + value("entry")
                 + value(list<value>() + element + value("title") + value(string("item")))
                 + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c")))
+                + value(list<value>() + element + value("author") + value(string("jane@example.com")))
+                + value(list<value>() + element + value("updated") + value(string("Fri Jan 01 08:11:36 PDT 2012")))
                 + value(list<value>() + element + value("content") + value(i2)));
         
         const list<value> a = list<value>() + (append<value>(list<value>() + element + value("feed")

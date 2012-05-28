@@ -17,39 +17,26 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<div id="bodydiv" class="bodydiv">
+<div id="bodydiv" class="body">
 
-<table style="width: 100%;">
-<tr>
-<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
-</tr>
-</table>
-
-<table style="width: 100%;">
-<tr>
-<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Stats</th>
-
-<th class="thl thr" style="width: 100%; text-align: right; padding-right: 2px; padding-top: 0px; padding-bottom: 0px;">
-<input type="button" class="graybutton" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" id="cloneApp" value="Clone" title="Clone this app"/>
-</th>
-</tr>
-</table>
+<div class="viewform">
 
 <form id="appForm">
 <table style="width: 100%;">
-<tr><tr><td><b>App Icon:</b></td></tr>
+<tr><tr><td><b>Icon:</b></td></tr>
 <tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
-<tr><td><input type="checkbox" value="shared"/><span>Shared</span></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Title:</b></td></tr>
+<tr><td><input type="text" class="flatentry" id="appTitle" size="30" readonly="readonly" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Author:</b></td></tr>
+<tr><td><span id="appAuthor"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Updated:</b></td></tr>
 <tr><td><span id="appUpdated"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
+<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" readonly="readonly" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
 </table>
 </form>
+
+</div>
 
 <script type="text/javascript">
 
@@ -58,24 +45,23 @@ var appname = ui.fragmentParams(location)['app'];
 
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - Stats - ' + appname;
-$('appNameHeader').innerHTML = '<a href=\"/' + appname + '/\" target=\"' + '_blank' + '\">' + appname + '</a>';
-var tclone = isNil(config.clone)? 'Clone' : config.clone;
-$('cloneApp').value = tclone;
-$('cloneApp').title = tclone + ' this app';
+$('viewhead').innerHTML = '<span id="appname" class="cmenu">' + appname + '</span>' +
+'<input type="button" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteApp" value="-" title="Delete the app" disabled="true"/>' +
+'<input type="button" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 5px;" id="cloneApp" value="'+ config.clone +'" title="' + config.clone + ' this app"/>';
 
 // Set images
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
 // Init service references
 var editWidget = sca.component("EditWidget");
-var dashboards = sca.reference(editWidget, "dashboards");
 var apps = sca.reference(editWidget, "apps");
 
 /**
- * The current app entry and corresponding saved XML content.
+ * The current app entry, author and saved XML content.
  */
-var appentry;
 var savedappentryxml = '';
+var author;
+var appentry;
 
 /**
  * Get and display an app.
@@ -89,17 +75,34 @@ function getapp(name) {
 
         // Stop now if we didn't get the app
         if (doc == null) {
-            showStatus('No data');
+            showError('App not available');
             return false;
         }
-        showStatus(defaultStatus());
 
-        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
-        var title = cadr(assoc("'title", cdr(appentry)));
-        $('appTitle').value = title;
-        $('appUpdated').innerHTML = 'Apr 24, 2011'
-        $('appDescription').innerHTML = '';
+        appentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        $('appTitle').value = cadr(assoc("'title", cdr(appentry)));
+        author = cadr(assoc("'author", cdr(appentry)));
+        $('appAuthor').innerHTML = author;
+        $('appUpdated').innerHTML = cadr(assoc("'updated", cdr(appentry)));
+        var content = cadr(assoc("'content", cdr(appentry)));
+        var description = assoc("'description", content);
+        $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
         savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+
+        // Enable author to edit and delete the app
+        if (username == author) {
+            $('appTitle').readOnly = false;
+            $('appDescription').readOnly = false;
+            $('deleteApp').disabled = false;
+            $('deleteApp').onclick = function() {
+                return ui.navigate('/#view=delete&app=' + appname, '_view');
+            }
+            showStatus(defaultStatus());
+        } else {
+            $('appTitle').placeholder = '';
+            $('appDescription').placeholder = '';
+            showStatus('Read only');
+        }
         return true;
     });
 }
@@ -110,7 +113,7 @@ function getapp(name) {
 function save(entryxml) {
     showStatus('Saving');
     savedappentryxml = entryxml;
-    dashboards.put(appname, savedappentryxml, function(e) {
+    apps.put(appname, savedappentryxml, function(e) {
         if (e) {
             showStatus('Local copy');
             return false;
@@ -126,8 +129,11 @@ function save(entryxml) {
  * Handle a change event
  */
 function onappchange() {
+    if (username != author)
+        return false;
     var title = $('appTitle').value;
-    var appentry = mklist("'entry", mklist("'title", title != ''? title : appname), mklist("'id", appname));
+    var description = $('appDescription').value;
+    appentry = mklist("'entry", mklist("'title", title != ''? title : appname), mklist("'id", appname), mklist("'content", mklist("'stats", mklist("'description", description))));
     var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
     if (savedappentryxml == entryxml)
         return false;

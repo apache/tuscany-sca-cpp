@@ -17,66 +17,50 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<div id="bodydiv" class="bodydiv" style="overflow: visible;">
+<div id="bodydiv" class="body">
 
-<table style="width: 100%;">
-<tr>
-<td><h2><span id="appNameHeader"></span></h2></td>
-<td style="vertical-align: middle; text-align: right; padding-right: 8px;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
-</tr>
-</table>
+<div id="contentdiv" class="viewcontent" style="width: 2500px;">
+<div id="pagediv" class="pagediv" style="top: 0px; left: -2500px; width: 5000px; height: 5000px;">
 
-<table id="widgetValueBackground" style="width: 2500px; position: absolute; top: 59px; left: 0px; z-index: -1;">
-<tr>
-<th class="thr thl"><span style="display: inline-block; padding-top: 0px; padding-bottom: 0px; height: 24px;"></span></th>
-</tr>
-</table>
-
-<table id="widgetValueTable" style="width: 100%;">
-<tr>
-<td class="thl thr" style="text-align: right; padding-right: 2px; vertical-align: top;">
-<span id="deleteWidgetButton" title="Delete a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
-
-<span id="copyWidgetButton" title="Copy a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; text-align: center; margin-left: 0px; margin-right: 0px;">c</span>
-
-<span id="addWidgetButton" title="Add a Widget" class="graybutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
-
-<span id="playPageButton" title="View page" class="graybutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
-</td>
-
-<td class="thl thr" style="padding-left: 2px; padding-right: 2px; vertical-align: top; width: 100%;">
-<input id="widgetValue" type="text" value="" title="Widget value" autocapitalize="off" placeholder="Value" style="position: relative; visibility: hidden; width: 100%;"/>
-</td>
-</tr>
-</table>
-
-<div id="contentdiv" style="margin-top: 4px; width: 2500px;">
-<div id="editdiv" style="visibility: visible; position: relative; top: 0px; left: -2500px; width: 2500px; height: 5000px;">
-
-<div style="position: relative; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7;"><span id="editgrid"></span></div>
+<!--
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 480px; height: 300px;"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 768px; height: 911px;"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 1024px; height: 655px;"></div>
+-->
 
-<span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
-<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 30px;"><h2>Header2</h2></span>
-<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 60px; width: 200px;"><span class="section">section</span></span>
-<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 90px;"><input type="button" value="button" class="graybutton"/></span>
-<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="20" autocapitalize="off"/></span>
-<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 150px;"><input type="password" value="password" size="20"/></span>
-<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 180px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
-<span class="select" id="palette:select" style="position: absolute; left: 0px; top: 210px;"><select><option value="select">select</option></select></span>
-<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 240px; width: 200px;">
-<table class="datatable" style="width: 200px;"><tr><td class="datatd">list</td></tr><tr><td class="datatd">...</td></tr></table>
+<span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header Level 1</h1></span>
+<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 30px;"><h2>Header Level 2</h2></span>
+<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 60px; width: 220px;"><span class="Section">Section</span></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 90px;"><span>Some text</span></span>
+<span class="link" id="palette:link" style="position: absolute; left: 80px; top: 90px;"><a href="/"><span>Link</span></a></span>
+<span class="button" id="palette:graybutton" style="position: absolute; left: 0px; top: 120px;"><input type="button" value="Button" class="graybutton"/></span>
+<span class="button" id="palette:bluebutton" style="position: absolute; left: 80px; top: 120px;"><input type="button" value="Button" class="graybutton bluebutton"/></span>
+<span class="button" id="palette:redbutton" style="position: absolute; left: 160px; top: 120px;"><input type="button" value="Button" class="graybutton redbutton"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 160px;"><input type="text" value="Entry Field" class="flatentry" size="20" autocapitalize="off"/></span>
+<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 190px;"><input type="password" value="Password" class="flatentry" size="20"/></span>
+<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 220px;"><input type="checkbox" value="Checkbox" class="flatcheckbox"/><span>Checkbox</span></span>
+<!--
+<span class="select" id="palette:select" style="position: absolute; left: 80px; top: 220px;"><select><option value="select">Selection</option></select></span>
+-->
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 250px; width: 220px;">
+<table class="datatable" style="width: 220px;">
+<tr><td class="datatd">List</td></tr>
+<tr><td class="datatd">List</td></tr>
+<tr><td class="datatd">List</td></tr>
+</table>
 </span>
-<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 290px; width: 200px;">
-<table class="datatable" style="width: 200px;"><tr><td class="datatdl">table</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>
+<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 320px; width: 220px;">
+<table class="datatable" style="width: 220px;">
+<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
+<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
+<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
+</table>
 </span>
-<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 340px;"><a href="/"><span>link</span></a></span>
-<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 370px;"><span>text</span></span>
-<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 400px; width: 200px;"><a href="/public/iframe-min.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
-<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img id="imgimg"/></span>
+<!--
+<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 380px; width: 200px;"><a href="/public/iframe-min.html"><span class="fakeframe"><span>Frame ...</span></span></a></span>
+-->
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 410px;"><img id="imgimg"/></span>
 </div>
 
 <div id="playdiv" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 2500px; height: 5000px;">
@@ -106,47 +90,38 @@ function applink(appname) {
 
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - Page - ' + appname;
-$('appNameHeader').innerHTML = '<a href=\"/' + appname + '/\" target=\"' + '_blank' + '\">' + appname + '</a>';
+
+// Set header div
+$('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
+'<input type="button" id="deleteWidgetButton" title="Delete a Widget" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
+'<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; visibility: hidden;" readonly="readonly"/></span>' +
+'<input type="button" id="playPageButton" title="View page" class="graybutton plusminus" style="position: absolute; top: 4px; right: 75px;" value="&gt;"/>' +
+'<input type="button" id="copyWidgetButton" title="Copy a Widget" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 40px; font-size: 16px;" disabled="true" value="C"/>' +
+'<input type="button" id="addWidgetButton" title="Add a Widget" class="graybutton bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
+
+/**
+ * Track the current page, author, and saved XHTML content.
+ */
+var author = '';
+var editable = false;
+var savedpagexhtml = '';
 
 /**
  * Page editor area, widget value field, add, delete and play page buttons.
  */
 var cdiv = $('contentdiv');
-var ediv = $('editdiv');
+var pagediv = $('pagediv');
 var evisible = true;
 var pdiv = $('playdiv');
-var wvalue = $('widgetValue');
 var wadd = $('addWidgetButton');
 var wdelete = $('deleteWidgetButton');
 var wcopy = $('copyWidgetButton');
+var wvalue = $('widgetValue');
+var atitle = $('appTitle');
 var pplay = $('playPageButton');
 
 // Set images
-$('editgrid').parentNode.style.background = 'url(\'' + ui.b64img(appcache.get('/public/grid72.b64')) + '\')';
 $('imgimg').src = ui.b64img(appcache.get('/public/img.b64'));
-
-// Position edit and play divs inside the content div
-ediv.style.position = 'absolute';
-ediv.style.top = cdiv.offsetTop + 'px';
-pdiv.style.position = 'absolute';
-pdiv.style.top = cdiv.offsetTop + 'px';
-
-// Position background divs
-var wvbackground = $('widgetValueBackground');
-var wvtable = $('widgetValueTable');
-wvbackground.style.top = ui.pixpos(wvtable.offsetTop);
-
-/**
- * Adjust widget value field size.
- */
-function resizeFields() {
-    wvalue.style.width = '0px';
-    wvalue.style.width = ui.pixpos(wvalue.parentNode.clientWidth - 18);
-    return true;
-}
-
-resizeFields();
-window.onresize = resizeFields;
 
 // Init component references
 var editWidget = sca.component('EditWidget');
@@ -163,57 +138,75 @@ var page = {};
 page.palcx = 2500;
 
 /**
- * Init a page editor. Works with all browsers except IE.
+ * Init a page editor.
  */
-page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
+page.mkedit = function(pagediv, atitle, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
 
     // Track element dragging and selection
     page.dragging = null;
     page.selected = null;
-    wvalue.disabled = true;
+    wvalue.readOnly = true;
     wvalue.style.visibility = 'hidden';
+    atitle.style.visibility = 'visible';
+    page.mousemoved = false;
     wcopy.disabled = true;
     wdelete.disabled = true;
+    wadd.disabled = !editable;
 
     // Trigger widget select and page change events
     page.onpagechange = onchange;
-    page.onwidgetselect = onselect;
+    page.onselectwidget = onselect;
 
     /**
      * Handle a mouse down event.
      */
-    elem.onmousedown = function(e) {
-
-        // On mouse controlled devices, engage the click component selection
-        // logic right away
-        if (typeof e.touches == 'undefined')
-            elem.onclick(e);
+    function onmousedown(e) {
+        // On mouse controlled devices, run component selection logic right away
+        var selected = page.selected;
+        if (typeof e.touches == 'undefined') {
+            //debug('onmousedown-click');
+            onclick(e);
+        }
 
         // Find a draggable element
-        var dragging = page.draggable(e.target, elem);
+        var dragging = page.draggable(e.target, pagediv);
         if (dragging == null || dragging != page.selected)
             return true;
         page.dragging = dragging;
 
         // Remember mouse position
         var pos = typeof e.touches != "undefined"? e.touches[0] : e;
+        page.mousemoved = false;
         page.dragX = pos.screenX;
         page.dragY = pos.screenY;
+        page.moveX = pos.screenX;
+        page.moveY = pos.screenY;
 
+        // Prevent default behavior on first click on a widget
         if (e.preventDefault)
             e.preventDefault();
         else
             e.returnValue = false;
-        return true;
-    };
 
-    // Support touch devices
-    elem.ontouchstart = elem.onmousedown;
+        return true;
+    }
+
+    if (!ui.isMobile()) {
+        pagediv.onmousedown = function(e) {
+            //debug('onmousedown');
+            return onmousedown(e);
+        };
+    } else {
+        pagediv.ontouchstart = function(e) {
+            //debug('ontouchstart');
+            return onmousedown(e);
+        };
+    }
 
     /**
      * Handle a mouse up event.
      */
-    elem.onmouseup = function(e) {
+    function onmouseup(e) {
         if (page.dragging == null)
             return true;
 
@@ -222,87 +215,123 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
         var newY = page.gridsnap(ui.numpos(page.dragging.style.top));
         page.dragging.style.left = ui.pixpos(newX);
         page.dragging.style.top = ui.pixpos(newY);
-        page.dragging.cover.style.left = ui.pixpos(newX);
-        page.dragging.cover.style.top = ui.pixpos(newY);
 
         // Fixup widget style
-        page.fixupwidget(page.dragging);
+        page.initwidget(page.dragging);
 
         // Forget dragged element
         page.dragging = null;
 
         // Trigger page change event
         page.onpagechange(false);
-        return true;
-    };
 
-    // Support touch devices
-    elem.ontouchend = elem.onmouseup;
+        // Simulate onclick event
+        onclick(e);
+
+        return true;
+    }
+
+    if (!ui.isMobile()) {
+        pagediv.onmouseup = function(e) {
+            //debug('onmouseup');
+            return onmouseup(e);
+        };
+    } else {
+        pagediv.ontouchend = function(e) {
+            //debug('ontouchend');
+            return onmouseup(e);
+        }
+    }
 
     /**
      * Handle a mouse move event.
      */
-    window.onmousemove = function(e) {
+    function onmousemove(e) {
+
+        // Track mouse moves
+        page.mousemoved = true;
+
         if (page.dragging == null)
             return true;
 
-        // Get the mouse position
-        var pos = typeof e.touches != "undefined"? e.touches[0] : e;
-        if (pos.screenX == page.dragX && pos.screenY == page.dragY)
+        // Ignore duplicate mouse move events
+        if (page.moveX == page.dragX && page.moveY == page.dragY)
             return true;
 
         // Compute position of dragged element
         var curX = ui.numpos(page.dragging.style.left);
         var curY = ui.numpos(page.dragging.style.top);
-        var newX = curX + (pos.screenX - page.dragX);
-        var newY = curY + (pos.screenY - page.dragY);
+        var newX = curX + (page.moveX - page.dragX);
+        var newY = curY + (page.moveY - page.dragY);
         if (newX >= page.palcx)
-            page.dragX = pos.screenX;
+            page.dragX = page.moveX;
         else
             newX = page.palcx;
         if (newY >= 0)
-            page.dragY = pos.screenY;
+            page.dragY = page.moveY;
         else
             newY = 0;
 
         // Move the dragged element
         page.dragging.style.left = ui.pixpos(newX);
         page.dragging.style.top = ui.pixpos(newY);
-        page.dragging.cover.style.left = ui.pixpos(newX);
-        page.dragging.cover.style.top = ui.pixpos(newY);
-        return true;
-    };
+        page.constrainwidget(page.dragging);
 
-    // Support touch devices
-    elem.ontouchmove = window.onmousemove;
+        return true;
+    }
+
+    if (!ui.isMobile()) {
+        window.onmousemove = function(e) {
+
+            // Remember mouse position
+            page.moveX = e.screenX;
+            page.moveY = e.screenY;
+
+            return onmousemove(e);
+        };
+    } else {
+        pagediv.ontouchmove = function(e) {
+
+            // Remember touch position
+            var pos = e.touches[0];
+            if (page.moveX == pos.screenX && page.moveY == pos.screenY)
+                return true;
+            page.moveX = pos.screenX;
+            page.moveY = pos.screenY;
+            if (page.moveX == page.dragX && page.moveY == page.dragY)
+                return true;
+
+            onmousemove(e);
+        };
+    }
 
     /**
      * Handle a mouse click event.
      */
-    elem.onclick = function(e) {
+    function onclick(e) {
 
         // Find selected element
-        var selected = page.draggable(e.target, elem);
+        var selected = page.draggable(e.target, pagediv);
         if (selected == null) {
             if (page.selected != null) {
 
                 // Reset current selection
-                page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
+                page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
                 page.selected = null;
 
                 // Trigger widget select event
-                page.onwidgetselect(null);
+                page.onselectwidget(null);
             }
 
             // Dismiss the palette
-            if (ui.numpos(elem.style.left) != (page.palcx * -1))
-                elem.style.left = ui.pixpos(page.palcx * -1);
+            if (ui.numpos(pagediv.style.left) != (page.palcx * -1))
+                pagediv.style.left = ui.pixpos(page.palcx * -1);
 
             return true;
         }
 
         // Deselect the previously selected element
-        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
+        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
 
         // Clone element dragged from palette
         if (selected.id.substring(0, 8) == 'palette:') {
@@ -310,8 +339,9 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
 
             // Move into the editing area and hide the palette
             page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + page.palcx);
-            page.selected.cover.style.left = ui.pixpos(ui.numpos(page.selected.cover.style.left) + page.palcx);
-            elem.style.left = ui.pixpos(page.palcx * -1);
+            page.initwidget(page.selected);
+            pagediv.style.left = ui.pixpos(page.palcx * -1);
+            page.constrainwidget(page.selected);
         
             // Bring it to the top
             page.bringtotop(page.selected);
@@ -319,21 +349,40 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
             // Trigger page change event
             page.onpagechange(true);
 
-        } else {
+            // Select the element
+            page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
 
-            // Bring selected element to the top
-            page.selected = selected;
-            page.bringtotop(page.selected);
+            // Trigger widget select event
+            page.onselectwidget(page.selected);
+
+            return true;
+
         }
 
+        // Bring selected element to the top
+        page.selected = selected;
+        page.bringtotop(page.selected);
+
         // Select the element
-        page.widgetselect(page.selected, true, wvalue, wcopy, wdelete);
+        page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
 
         // Trigger widget select event
-        page.onwidgetselect(page.selected);
+        page.onselectwidget(page.selected);
 
         return true;
-    };
+    }
+
+    if (!ui.isMobile()) {
+        pagediv.onclick = function(e) {
+            //debug('onclick');
+            return onclick(e);
+        };
+    } else {
+        pagediv.onclick = function(e) {
+            //debug('onclick');
+            return onclick(e);
+        };
+    }
 
     /**
      * Handle field on change events.
@@ -342,8 +391,6 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
         if (page.selected == null)
             return false;
         page.settext(page.selected, wvalue.value);
-        page.selected.cover.style.width = ui.pixpos(page.selected.clientWidth + 4);
-        page.selected.cover.style.height = ui.pixpos(page.selected.clientHeight + 4);
 
         // Trigger page change event
         page.onpagechange(true);
@@ -354,7 +401,7 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
     wadd.onclick = function() {
 
         // Show the palette
-        elem.style.left = ui.pixpos(0);
+        pagediv.style.left = ui.pixpos(0);
         return false;
     };
 
@@ -364,15 +411,14 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
             return false;
 
         // Reset current selection
-        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
+        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
 
         // Remove selected widget
         page.selected.parentNode.removeChild(page.selected);
-        page.selected.cover.parentNode.removeChild(page.selected.cover);
         page.selected = null;
 
         // Trigger widget select event
-        page.onwidgetselect(null);
+        page.onselectwidget(null);
 
         // Trigger page change event
         page.onpagechange(true);
@@ -387,7 +433,7 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
             return false;
 
         // Reset current selection
-        page.widgetselect(page.selected, false, wvalue, wcopy, wdelete);
+        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
 
         // Clone selected widget
         page.selected = page.clone(page.selected);
@@ -395,28 +441,23 @@ page.edit = function(elem, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
         // Move 10 pixels down right
         page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + 10);
         page.selected.style.top = ui.pixpos(ui.numpos(page.selected.style.top) + 10);
-        page.selected.cover.style.left = ui.pixpos(ui.numpos(page.selected.cover.style.left) + 10);
-        page.selected.cover.style.top = ui.pixpos(ui.numpos(page.selected.cover.style.top) + 10);
+        page.constrainwidget(page.selected);
     
         // Bring it to the top
         page.bringtotop(page.selected);
 
         // Select the element
-        page.widgetselect(page.selected, true, wvalue, wcopy, wdelete);
+        page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
 
         // Trigger widget select event
-        page.onwidgetselect(page.selected);
+        page.onselectwidget(page.selected);
 
         // Trigger page change event
         page.onpagechange(true);
         return false;
     };
 
-    // Cover child elements with span elements to prevent
-    // any input events to reach them
-    map(page.cover, nodeList(elem.childNodes));
-
-    return elem;
+    return pagediv;
 };
 
 /**
@@ -443,10 +484,12 @@ page.text = function(e) {
             var t = car(childElements(e)).defaultValue;
             return t == f? '' : t;
         }
+        /*
         if (e.className == 'select') {
             var t = car(childElements(car(childElements(e)))).value;
             return t == f? '' : t;
         }
+        */
         if (e.className == 'link') {
             var lhr = car(childElements(e)).href;
             var hr = lhr.substring(0, 5) == 'link:'? lhr.substring(5) : '';
@@ -457,10 +500,12 @@ page.text = function(e) {
             var src = car(childElements(e)).src;
             return src == location.href? '' : src;
         }
+        /*
         if (e.className == 'iframe') {
             var hr = car(childElements(e)).href;
             return hr == location.href? '' : hr;
         }
+        */
         if (e.className == 'list')
             return '';
         if (e.className == 'table')
@@ -483,14 +528,18 @@ page.hastext = function(e) {
         return true;
     if (e.className == 'entry' || e.className == 'password')
         return true;
+    /*
     if (e.className == 'select')
         return false;
+    */
     if (e.className == 'link')
         return true;
     if (e.className == 'img')
         return true;
+    /*
     if (e.className == 'iframe')
         return true;
+    */
     if (e.className == 'list')
         return false;
     if (e.className == 'table')
@@ -521,7 +570,11 @@ page.settext = function(e, t) {
         car(childElements(e)).innerHTML = isNil(c)? f : car(c);
         return t;
     }
-    if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
+    if (e.className == 'button') {
+        car(childElements(e)).value = isNil(c)? f : car(c);
+        return t;
+    }
+    if (e.className == 'entry' || e.className == 'password') {
         car(childElements(e)).defaultValue = isNil(c)? f : car(c);
         return t;
     }
@@ -530,12 +583,14 @@ page.settext = function(e, t) {
         map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = isNil(c)? f : car(c); return n; }, nodeList(e.childNodes));
         return t;
     }
+    /*
     if (e.className == 'select') {
         var ce = car(childElements(car(childElements(e))));
         ce.value = isNil(c)? f : car(c);
         ce.innerHTML = isNil(c)? f : car(c);
         return t;
     }
+    */
     if (e.className == 'list') {
         e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + (isNil(c)? f : car(c)) + '</td></tr><tr><td class="datatd">...</td></tr></table>';
         return t;
@@ -554,40 +609,102 @@ page.settext = function(e, t) {
         car(childElements(e)).src = isNil(c)? '/public/img.png' : car(c);
         return t;
     }
+    /*
     if (e.className == 'iframe') {
         car(childElements(e)).href = isNil(c)? '/public/iframe-min.html' : car(c);
         return t;
     }
+    */
     return '';
 };
 
 /**
- * Initial fixup of a widget.
+ * Initialize a widget.
  */
-page.fixupwidget = function(e) {
+page.initwidget = function(e) {
+
+    // Add a Webkit transform to leverage hardware acceleration
+    e.style.setProperty('-webkit-transform', 'translate(0px, 0px)', null);
+
+    /*
     if (e.className == 'iframe') {
         var f = car(childElements(e));
         //e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
         return e;
     }
+    */
+
     if (e.className == 'section') {
         e.style.width = '100%';
         return e;
     }
-    if (e.className == 'list') {
-        e.style.width = '100%';
-        car(childElements(e)).style.width = '100%';
+    if (e.className == 'text' || e.className == 'h1' || e.className == 'h2') {
         return e;
     }
-    if (e.className == 'table') {
+    if (e.className == 'button') {
+        return e;
+    }
+    if (e.className == 'checkbox') {
+        return e;
+    }
+    if (e.className == 'list' || e.className == 'table') {
         e.style.width = '100%';
-        car(childElements(e)).style.width = '100%';
+        var t = car(childElements(e));
+        t.style.width = '100%';
         return e;
     }
     if (e.className == 'img') {
         var i = car(childElements(e));
         if (i.src != '' && i.src.substring(0, 5) == 'data:')
             i.src = '/public/img.png';
+        return e;
+    }
+    if (e.className == 'entry' || e.className == 'password') {
+        var i = car(childElements(e));
+        i.readOnly = true;
+        i.style.cursor = 'default';
+        return e;
+    }
+    if (e.className == 'link') {
+        var l = car(childElements(e));
+        l.onclick = function(e) { return false; };
+        return e;
+    }
+    return e;
+}
+
+/**
+ * Enforce widget position and style constraints.
+ */
+page.constrainwidget = function(e) {
+    if (e.className == 'section' || e.className == 'list' || e.className == 'table') {
+        e.style.left = ui.pixpos(page.palcx);
+        return e;
+    }
+    return e;
+};
+
+/**
+ * Cleanup of a widget before saving it.
+ */
+page.cleanupwidget = function(e) {
+    //debug('cleanupwidget', e);
+
+    // Clear outline
+    e.style.outline = null;
+
+    // Clear the Webkit transform
+    e.style.removeProperty('-webkit-transform');
+
+    if (e.className == 'entry' || e.className == 'password') {
+        var i = car(childElements(e));
+        i.readOnly = false;
+        i.style.cursor = null;
+        return e;
+    }
+    if (e.className == 'link') {
+        var l = car(childElements(e));
+        l.onclick = null;
         return e;
     }
     return e;
@@ -599,10 +716,8 @@ page.fixupwidget = function(e) {
 page.draggable = function(n, e) {
     if (n == e)
         return null;
-    if (n.id != '')
+    if (!isNil(n.id) && n.id != '')
         return n;
-    if (n.covered)
-        return n.covered;
     return page.draggable(n.parentNode, e);
 }
 
@@ -618,63 +733,42 @@ page.gridsnap = function(x) {
  */
 page.bringtotop = function(n) {
     n.parentNode.appendChild(n);
-    n.cover.parentNode.appendChild(n.cover);
 }
 
 /**
- * Draw widget selection.
+ * Select a widget.
  */
-page.widgetselect = function(n, s, wvalue, wcopy, wdelete) {
+page.selectwidget = function(n, s, atitle, wvalue, wcopy, wdelete) {
+    //debug('selectwidget', n, s);
     if (isNil(n) || !s) {
         // Clear the widget value field
         wvalue.value = '';
-        wvalue.disabled = true;
+        wvalue.readOnly = true;
         wvalue.style.visibility = 'hidden';
+        atitle.style.visibility = 'visible';
         wcopy.disabled = true;
         wdelete.disabled = true;
 
         // Clear the widget outline
         if (!isNil(n))
-            n.cover.style.borderWidth = '0px';
+            n.style.outline = null;
+
         return true;
     }
 
+    // Outline the widget
+    n.style.outline = '2px solid #598edd';
+
     // Update the widget value field
     wvalue.value = page.text(n);
-    wvalue.disabled = false;
+    wvalue.readOnly = false || !editable;
     wvalue.style.visibility = 'visible';
-    wcopy.disabled = false;
-    wdelete.disabled = false;
+    atitle.style.visibility = 'hidden';
+    wcopy.disabled = false || !editable;
+    wdelete.disabled = false || !editable;
 
-    // Outline the widget
-    n.cover.style.borderWidth = '2px';
     return true;
 };
-
-/**
- * Cover a page element with a <span> element to prevent
- * any input events to reach it.
- */
-page.cover = function(e) {
-    if (e.id == '' || isNil(e.style))
-        return e;
-    var cover = document.createElement('div');
-    cover.style.position = 'absolute';
-    cover.style.left = ui.pixpos(ui.numpos(e.style.left) - 2);
-    cover.style.top = ui.pixpos(ui.numpos(e.style.top) - 2);
-    cover.style.width = ui.pixpos(e.clientWidth + 4);
-    cover.style.height = ui.pixpos(e.clientHeight + 4);
-    cover.style.visibility = 'inherit';
-    cover.style.borderStyle = 'solid';
-    cover.style.borderWidth = '0px';
-    cover.style.borderColor = '#598edd';
-    cover.style.padding = '0px';
-    cover.style.margin = '0px';
-    cover.covered = e;
-    e.cover = cover;
-    e.parentNode.appendChild(cover);
-    return e;
-}
 
 /**
  * Clone a palette element.
@@ -695,7 +789,7 @@ page.clone = function(e) {
         ne.innerHTML = e.innerHTML;
 
         // Fixup the widget style
-        page.fixupwidget(ne);
+        page.initwidget(ne);
 
         return ne;
     }
@@ -708,30 +802,11 @@ page.clone = function(e) {
         ne.style.left = ui.pixpos(ui.numpos(e.style.left));
         ne.style.top = ui.pixpos(ui.numpos(e.style.top));
         e.parentNode.appendChild(ne);
-        page.cover(ne);
         return ne;
     }
 
     return posclone(mkclone(e), e);
 };
-
-/**
- * Return the page in an ATOM entry.
- */
-function atompage(doc) {
-    var entry = atom.readATOMEntry(mklist(doc));
-    if (isNil(entry))
-        return mklist();
-    var content = namedElementChild("'content", car(entry));
-    if (content == null)
-        return mklist();
-    return elementChildren(content);
-}
-
-/**
- * Track the current page saved XHTML content.
- */
-var savedpagexhtml = '';
 
 /**
  * Track the current widget.
@@ -741,7 +816,7 @@ var widget = null;
 /**
  * Get and display an app page.
  */
-function getpage(name, ediv) {
+function getpage(name, pagediv) {
     if (isNil(name))
         return false;
     showStatus('Loading');
@@ -750,16 +825,15 @@ function getpage(name, ediv) {
 
         // Stop now if we didn't get a page
         if (doc == null) {
-            showStatus('No data');
+            showError('App not available');
             return false;
         }
-        showStatus(defaultStatus());
 
-        // Convert the page to XHTML and place it in a hidden buffer
+        // Get the page from the ATOM entry, convert it to XHTML and place it in a hidden buffer
+        var pageentry = car(atom.readATOMEntry(mklist(doc)));
+        var content = namedElementChild("'content", pageentry);
+        var el = isNil(content)? mklist() : elementChildren(content);
         var buffer = $('buffer');
-        var el = atompage(doc);
-
-        // Create a default empty page if necessary
         if (isNil(el))
             buffer.innerHTML = '<div id="page"></div>';
         else
@@ -773,21 +847,29 @@ function getpage(name, ediv) {
             if (x < 0 || ui.numpos(e.style.top) < 0)
                 return false;
             return true;
-        }, nodeList(ediv.childNodes));
+        }, nodeList(pagediv.childNodes));
 
         map(function(e) {
-            ediv.removeChild(e);
+            pagediv.removeChild(e);
         }, fnodes);
 
         // Append new page nodes to editor
         map(function(e) {
-                ediv.appendChild(e);
+                pagediv.appendChild(e);
                 if (!isNil(e.style))
                     e.style.left = ui.pixpos(ui.numpos(e.style.left) + 2500);
-                return page.cover(e);
+                page.initwidget(e);
+                return e;
             }, nodeList(buffer.childNodes[0].childNodes));
 
-        savedpagexhtml = pagexhtml(ediv);
+        savedpagexhtml = pagexhtml(pagediv);
+
+        // Enable author to edit the page
+        author = elementValue(namedElementChild("'author", pageentry));
+        editable = author == username;
+        wadd.disabled = !editable;
+        showStatus(editable? defaultStatus() : 'Read only');
+
         return true;
     });
 }
@@ -797,13 +879,13 @@ function getpage(name, ediv) {
  */
 wadd.onclick = function(e) {
     // Show the widget palette
-    ediv.style.left = ui.pixpos(0);
+    pagediv.style.left = ui.pixpos(0);
 };
 
 /**
  * Return the current page XHTML content.
  */
-function pagexhtml(ediv) {
+function pagexhtml(pagediv) {
 
     // Copy page DOM to hidden buffer
     var buffer = $('buffer');
@@ -811,7 +893,7 @@ function pagexhtml(ediv) {
     var div = buffer.childNodes[0];
 
     // Capture the nodes inside the page div
-    div.innerHTML = ediv.innerHTML;
+    div.innerHTML = pagediv.innerHTML;
     var nodes = nodeList(div.childNodes);
     map(function(e) {
         div.removeChild(e);
@@ -830,10 +912,11 @@ function pagexhtml(ediv) {
         return true;
     }, nodes);
 
-    // Reposition nodes
+    // Reposition and cleanup nodes
     map(function(e) {
         var x = ui.numpos(e.style.left) - 2500;
         e.style.left = ui.pixpos(x);
+        page.cleanupwidget(e);
         return e;
     }, fnodes);
 
@@ -873,8 +956,8 @@ function save(newxml) {
 
     // Update the page ATOM entry
     var entry = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<entry xmlns="http://www.w3.org/2005/Atom">' +
-        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
-        newxml + '</content></entry>';
+        '<title type="text">' + appname + '</title><id>' + appname + '</id><author><email>' + author + '</email></author>' +
+        '<content type="application/xml">' + newxml + '</content></entry>';
 
     pages.put(appname, entry, function(e) {
         if (e) {
@@ -891,7 +974,10 @@ function save(newxml) {
  * Handle a page change event
  */
 function onpagechange(prop) {
-    var newxml = pagexhtml(ediv);
+    if (!editable)
+        return false;
+
+    var newxml = pagexhtml(pagediv);
     if (savedpagexhtml == newxml)
         return false;
     showStatus('Modified');
@@ -914,17 +1000,10 @@ function onpagechange(prop) {
 /**
  * Handle a widget select event.
  */
-function onwidgetselect(w) {
+function onselectwidget(w) {
     if (w == widget)
         return true;
     widget = w;
-
-    function updateButton(b, v) {
-        b.style.color = v? '#000000' : '#808080';
-    }
-
-    updateButton(wdelete, !isNil(w));
-    updateButton(wcopy, !isNil(w));
     return true;
 }
 
@@ -934,31 +1013,30 @@ function onwidgetselect(w) {
 function playpage() {
     if (!evisible)
         return true;
-    page.widgetselect(widget, false, wvalue, wcopy, wdelete);
+    page.selectwidget(widget, false, atitle, wvalue, wcopy, wdelete);
     page.selected = null;
-    wvalue.value = applink(appname);
-    pplay.innerHTML = '&lt;';
+    pplay.value = '<';
     evisible = false;
     pdiv.style.visibility = 'visible';
     pdiv.innerHTML = '';
     pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="/' +
                         appname + '"></iframe>';
     setTimeout(function() {
-        ediv.style.visibility = 'hidden'
+        pagediv.style.visibility = 'hidden'
     }, 0);
     return true;
 }
 
 /**
- * Show the page editor.
+    * Show the page editor.
  */
 function showedit() {
     if (evisible)
         return true;
-    pplay.innerHTML = '&gt;';
-    ediv.style.visibility = 'visible'
+    pplay.value = '>';
+    pagediv.style.visibility = 'visible'
     evisible = true;
-    page.widgetselect(widget, true, wvalue, wcopy, wdelete);
+    page.selectwidget(widget, true, atitle, wvalue, wcopy, wdelete);
     page.selected = widget;
     setTimeout(function() {
         pdiv.style.visibility = 'hidden';
@@ -977,10 +1055,10 @@ pplay.onclick = function() {
 }
 
 // Initialize the page editor
-page.edit(ediv, wvalue, wadd, wcopy, wdelete, onpagechange, onwidgetselect);
+page.mkedit(pagediv, atitle, wvalue, wadd, wcopy, wdelete, onpagechange, onselectwidget);
 
 // Get and display the current app page
-getpage(appname, ediv);
+getpage(appname, pagediv);
 
 </script>
 

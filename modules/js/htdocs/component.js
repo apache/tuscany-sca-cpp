@@ -191,6 +191,7 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = req.cb? true : false;
     http.open("POST", this.uri, hascb);
+    http.setRequestHeader("Accept", "*/*");
     http.setRequestHeader("Content-Type", "application/json-rpc");
 
     // Construct call back if we have one
@@ -238,7 +239,9 @@ HTTPBindingClient.prototype.get = function(id, cb) {
     var hascb = cb? true : false;
 
     // Get from local storage first
-    var item = localStorage.getItem(u);
+    var ls = window.lstorage || localStorage;
+    var item = null;
+    try { item = ls.getItem(u); } catch(e) {}
     //log('localStorage.getItem', u, item);
     if (item != null && item != '') {
         if (!hascb)
@@ -253,6 +256,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     http.open("GET", u, hascb);
+    http.setRequestHeader("Accept", "*/*");
 
     // Construct call back if we have one
     if (hascb) {
@@ -282,7 +286,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
                             // Store retrieved entry in local storage
                             if (http.responseText != null) {
                                 //log('localStorage.setItem', u, http.responseText);
-                                localStorage.setItem(u, http.responseText);
+                                try { ls.setItem(u, http.responseText); } catch(e) {}
                             }
                             try {
                                 return cb(http.responseText);
@@ -337,6 +341,7 @@ HTTPBindingClient.prototype.getnocache = function(id, cb) {
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     http.open("GET", u, hascb);
+    http.setRequestHeader("Accept", "*/*");
 
     // Construct call back if we have one
     if (hascb) {
@@ -407,6 +412,7 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
     http.open("POST", this.uri, hascb);
+    http.setRequestHeader("Accept", "*/*");
     http.setRequestHeader("Content-Type", "application/atom+xml");
 
     // Construct call back if we have one
@@ -445,13 +451,15 @@ HTTPBindingClient.prototype.put = function (id, entry, cb) {
     var u = this.uri + '/' + id;
 
     // Update local storage
-    localStorage.setItem(u, entry);
+    var ls = window.lstorage || localStorage;
+    try { ls.setItem(u, entry); } catch(e) {}
     //log('localStorage.setItem', u, entry);
 
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
     http.open("PUT", u, hascb);
+    http.setRequestHeader("Accept", "*/*");
     http.setRequestHeader("Content-Type", "application/atom+xml");
 
     // Construct call back if we have one
@@ -489,13 +497,15 @@ HTTPBindingClient.prototype.del = function (id, cb) {
     var u = this.uri + '/' + id;
 
     // Update local storage
-    localStorage.removeItem(u);
+    var ls = window.lstorage || localStorage;
+    try { ls.removeItem(u); } catch(e) {}
     //log('localStorage.removeItem', u);
 
     // Connect to the service
     var http = HTTPBindingClient.getHTTPRequest();
     var hascb = cb? true : false;
     http.open("DELETE", u, hascb);        
+    http.setRequestHeader("Accept", "*/*");
 
     // Construct call back if we have one
     if (cb) {

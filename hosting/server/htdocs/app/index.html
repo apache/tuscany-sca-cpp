@@ -37,28 +37,31 @@ appcache.get = function(uri) {
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
-    var item = localStorage.getItem(u);
+    var ls = window.lstorage || localStorage;
+    var item = null;
+    try { item = ls.getItem(u); } catch(e) {}
     if (item != null && item != '')
         return item;
 
     // Get resource from network
     var http = new XMLHttpRequest();
     http.open("GET", u, false);
+    http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http error', u, 'X-Login');
+            if (debug) debug('http error', u, 'X-Login');
             // Redirect to login page if not signed in
             document.location = '/login/';
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http error', u, 'No-Content');
+            if (debug) debug('http error', u, 'No-Content');
             return null;
         }
-        localStorage.setItem(u, http.responseText);
+        try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (log) log('http error', u, http.status, http.statusText);
+    if (debug) debug('http error', u, http.status, http.statusText);
     // Redirect to login page if not signed in
     if (http.status == 403)
         document.location = '/login/';
@@ -114,10 +117,17 @@ document.title = appname;
 var contentdiv = $('content');
 
 /**
+ * The main app composite and page definitions.
+ */
+var appcomposite = null;
+var apppage = null;
+
+/**
  * Initialize the app HTTP clients.
  */
 var appWidget = sca.component('AppWidget');
 var pagecomp = sca.reference(appWidget, 'pages');
+var composcomp = sca.reference(appWidget, 'composites');
 var startcomp = sca.httpclient('start', '/' + appname + '/start');
 var stopcomp = sca.httpclient('stop', '/' + appname + '/stop');
 var timercomp = sca.httpclient('timer', '/' + appname + '/timer');
@@ -138,27 +148,29 @@ var appresources = [
  * Handle application cache events.
  */
 applicationCache.addEventListener('checking', function(e) {
-    //log('appcache checking', e);
+    //debug('appcache checking', e);
 }, false);
 applicationCache.addEventListener('error', function(e) {
-    //log('appcache error', e);
+    //debug('appcache error', e);
 }, false);
 applicationCache.addEventListener('noupdate', function(e) {
-    //log('appcache noupdate', e);
+    //debug('appcache noupdate', e);
 }, false);
 applicationCache.addEventListener('downloading', function(e) {
-    //log('appcache downloading', e);
+    //debug('appcache downloading', e);
 }, false);
 applicationCache.addEventListener('progress', function(e) {
-    //log('appcache progress', e);
+    //debug('appcache progress', e);
 }, false);
 applicationCache.addEventListener('updateready', function(e) {
-    //log('appcache updateready', e);
-    applicationCache.swapCache();
-    //log('appcache swapped', e);
+    //debug('appcache updateready', e);
+    try {
+        applicationCache.swapCache();
+    } catch(e) {}
+    //debug('appcache swapped', e);
 }, false);
 applicationCache.addEventListener('cached', function(e) {
-    //log('appcache cached', e);
+    //debug('appcache cached', e);
     map(function(res) {
         appcache.get(res[0]);
     }, appresources);
@@ -168,13 +180,13 @@ applicationCache.addEventListener('cached', function(e) {
  * Handle network offline/online events.
  */
 window.addEventListener('offline', function(e) {
-      //log('going offline');
+      //debug('going offline');
 }, false);
 window.addEventListener('online', function(e) {
-      //log('going online');
+      //debug('going online');
 }, false);
 
-//log(navigator.onLine? 'online' : 'offline');
+//debug(navigator.onLine? 'online' : 'offline');
 
 /**
  * Find a named value in a tree of elements. The value name is given
@@ -545,16 +557,23 @@ function initwidget(e) {
 }
 
 /**
+ * Return the component bound to a uri.
+ */
+function isbound(uri, comps) {
+    return !isNil(filter(function(comp) {
+        return !isNil(filter(function(svc) {
+            return !isNil(filter(function(b) {
+                return uri == scdl.uri(b);
+            }, scdl.bindings(svc)));
+        }, scdl.services(comp)));
+    }, comps));
+}
+
+/**
  * Get app data from the main app page component.
  */
-function getpagedata(appname) {
+function getappdata(appname, page, compos) {
     try {
-
-        // Display component data on the page
-        function displaypage(doc) {
-            updatepage(docdata(doc));
-            return true;
-        }
 
         // Eval a component init script
         function evalcompinit(doc) {
@@ -577,52 +596,101 @@ function getpagedata(appname) {
         // Setup the widgets
         map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
 
-        // Get the component app data
-        startcomp.get(location.search, function(doc, e) {
-            if (isNil(doc)) {
-                log('error on get(start, ' + location.search + ')', e);
-                return false;
-            }
+        // Get the app components
+        var comps = scdl.components(compos);
 
-            // Display data on the page
-            displaypage(doc);
-        });
+        // Get the component app data
+        if (isbound("start", comps)) {
+            startcomp.get(location.search, function(doc, e) {
+                if (isNil(doc)) {
+                    debug('error on get(start, ' + location.search + ')', e);
+                    return false;
+                }
+
+                // Display data on the page
+                updatepage(docdata(doc));
+            });
+        }
 
         // Get and eval the optional timer, animation and location watch setup scripts
-        timercomp.get('setup', function(doc, e) {
-            if (isNil(doc)) {
-                log('error on get(timer, setup)', e);
-                return false;
-            }
+        if (isbound("timer", comps)) {
+            timercomp.get('setup', function(doc, e) {
+                if (isNil(doc)) {
+                    debug('error on get(timer, setup)', e);
+                    return false;
+                }
 
-            // Evaluate the component init expression
-            return evalcompinit(doc);
-        });
-        animationcomp.get('setup', function(doc, e) {
-            if (isNil(doc)) {
-                log('error on get(animation, setup)', e);
-                return false;
-            }
+                // Evaluate the component init expression
+                return evalcompinit(doc);
+            });
+        }
 
-            // Evaluate the component init expression
-            return evalcompinit(doc);
-        });
-        locationcomp.get('setup', function(doc, e) {
-            if (isNil(doc)) {
-                log('error on get(location, setup)', e);
-                return false;
-            }
+        if (isbound("animation", comps)) {
+            animationcomp.get('setup', function(doc, e) {
+                if (isNil(doc)) {
+                    debug('error on get(animation, setup)', e);
+                    return false;
+                }
 
-            // Evaluate the component init expression
-            return evalcompinit(doc);
-        });
+                // Evaluate the component init expression
+                return evalcompinit(doc);
+            });
+        }
+
+        if (isbound("location", comps)) {
+            locationcomp.get('setup', function(doc, e) {
+                if (isNil(doc)) {
+                    debug('error on get(location, setup)', e);
+                    return false;
+                }
+
+                // Evaluate the component init expression
+                return evalcompinit(doc);
+            });
+        }
 
         return true;
 
     } catch(e) {
-        log('error in getpagedata()', e);
+        debug('error in getappdata()', e);
         return true;
     }
+}
+
+/**
+ * Return the page in an ATOM entry.
+ */
+function atompage(doc) {
+    var entry = atom.readATOMEntry(mklist(doc));
+    if (isNil(entry))
+        return mklist();
+    var content = namedElementChild("'content", car(entry));
+    if (content == null)
+        return mklist();
+    return elementChildren(content);
+}
+
+/**
+ * Get the app page.
+ */
+function getapppage(appname, compos) {
+    pagecomp.get(appname, function(doc, e) {
+        //debug('page get');
+        if (isNil(doc)) {
+            debug('error in getapppage', e);
+            return false;
+        }
+
+        // Set the app HTML page into the content div
+        var page = atompage(doc);
+        contentdiv.innerHTML = writeStrings(writeXML(page, false));
+        apppage = page;
+
+        // Merge in the app data
+        if (!isNil(appcomposite))
+            getappdata(appname, apppage, appcomposite);
+});
+
 }
 
 /**
@@ -658,7 +726,7 @@ function buttonClickHandler(id, appname) {
         var uri = compquery();
         return sca.component(id, appname).get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('error on get(button, ' + uri + ')', e);
+                debug('error on get(button, ' + uri + ')', e);
                 return false;
             }
 
@@ -666,7 +734,7 @@ function buttonClickHandler(id, appname) {
             updatepage(docdata(doc));
         });
     } catch(e) {
-        log('error in buttonClickHandler()', e);
+        debug('error in buttonClickHandler()', e);
         return true;
     }
 }
@@ -679,7 +747,7 @@ function intervalHandler() {
         var uri = compquery();
         return timercomp.get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('error on get(timer, ' + uri + ')', e);
+                debug('error on get(timer, ' + uri + ')', e);
                 return false;
             }
 
@@ -687,7 +755,7 @@ function intervalHandler() {
             updatepage(docdata(doc));
         });
     } catch(e) {
-        log('error in intervalHandler()', e);
+        debug('error in intervalHandler()', e);
         return true;
     }
 }
@@ -700,7 +768,7 @@ function setupIntervalHandler(msec) {
     try {
         return setInterval(intervalHandler, msec);
     } catch(e) {
-        log('error in setupIntervalHandler()', e);
+        debug('error in setupIntervalHandler()', e);
         return true;
     }
 }
@@ -753,7 +821,7 @@ function animationHandler() {
             var uri = compquery();
             return animationcomp.get(uri, function(doc, e) {
                 if (isNil(doc)) {
-                    log('error on get(animation, ' + uri + ')', e);
+                    debug('error on get(animation, ' + uri + ')', e);
                     return false;
                 }
 
@@ -769,7 +837,7 @@ function animationHandler() {
         return applyAnimation();
 
     } catch(e) {
-        log('error in animationHandler()', e);
+        debug('error in animationHandler()', e);
         return true;
     }
 }
@@ -783,7 +851,7 @@ function setupAnimationHandler(msec, loop) {
     try {
         return setInterval(animationHandler, msec);
     } catch(e) {
-        log('error in setupAnimationHandler()', e);
+        debug('error in setupAnimationHandler()', e);
         return true;
     }
 }
@@ -800,7 +868,7 @@ function locationHandler(pos) {
         var uri = compquery();
         return locationcomp.get(uri, function(doc, e) {
             if (isNil(doc)) {
-                log('error on get(location, ' + uri + ')', e);
+                debug('error on get(location, ' + uri + ')', e);
                 return false;
             }
 
@@ -813,7 +881,7 @@ function locationHandler(pos) {
 }
 
 function locationErrorHandler(e) {
-    log('location error', e);
+    debug('location error', e);
     if (!isNil(locationWatch)) {
         try {
             navigator.geolocation.clearWatch(locationWatch);
@@ -833,7 +901,7 @@ function setupLocationHandler() {
         try {
             locationWatch = navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
         } catch(e) {
-            log('error in installLocationHandler()', e);
+            debug('error in installLocationHandler()', e);
         }
         return true;
     }
@@ -844,9 +912,21 @@ function setupLocationHandler() {
 }
 
 /**
- * Return the page in an ATOM entry.
+ * Handle orientation change.
  */
-function atompage(doc) {
+document.body.onorientationchange = function(e) {
+    //debug('onorientationchange');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
+
+    return true;
+};
+
+/**
+ * Return the composite in an ATOM entry.
+ */
+function atomcomposite(doc) {
     var entry = atom.readATOMEntry(mklist(doc));
     if (isNil(entry))
         return mklist();
@@ -856,46 +936,51 @@ function atompage(doc) {
     return elementChildren(content);
 }
 
-// Load the app page
-pagecomp.get(appname, function(doc, e) {
-    //log('page get');
-    if (isNil(doc)) {
-        log('error getting app page', e);
-        return false;
-    }
-
-    // Set the app HTML page into the content div
-    //log('page', doc);
-    var el = atompage(doc);
-    contentdiv.innerHTML = writeStrings(writeXML(el, false));
-
-    // Merge in the app data
-    getpagedata(appname);
-});
-
 /**
- * Handle orientation change.
+ * Get the app composite.
  */
-document.body.onorientationchange = function(e) {
-    //log('onorientationchange');
+function getappcomposite(appname) {
+    return composcomp.get(appname, function(doc, e) {
+        //debug('page get');
+        if (isNil(doc)) {
+            debug('error in getappcomposite', e);
+            return false;
+        }
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
+        var compos = atomcomposite(doc);
+        if (isNil(compos)) {
 
-    return true;
-};
+            // Create a default empty composite if necessary
+            var x = '<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" ' +
+                'targetNamespace="http://app" name="app"></composite>';
+            compos = readXML(mklist(x));
+        }
+        appcomposite = compos;
+
+        // Merge in the app data
+        if (!isNil(apppage))
+            getappdata(appname, apppage, appcomposite);
+    });
+}
 
 /**
  * Document load post processing.
  */
 function onload() {
-    //log('onload');
+    //debug('onload');
+
+    // Scroll to the top and hide the address bar
+    window.scrollTo(0, 0);
 
     // Show the page
     document.body.style.visibility = 'visible';
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
+    // Initialize the app composite
+    getappcomposite(appname);
+
+    // Initialize the app page
+    getapppage(appname);
+
     return true;
 }
 

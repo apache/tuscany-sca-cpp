@@ -46,14 +46,24 @@ const value entry("entry");
  */
 const list<value> entryElementValues(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
-    const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
+    const list<value> t = list<value>() + element + value("title") + (isNil(lt)? value(emptyString) : elementValue(car(lt)));
+
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
-    const value i = isNil(li)? value(emptyString) : elementValue(car(li));
+    const list<value> i = list<value>() + element + value("id") + (isNil(li)? value(emptyString) : elementValue(car(li)));
+
+    const list<value> la = filter<value>(selector(mklist<value>(element, "author")), e);
+    const list<value> lan = isNil(la)? list<value>() : filter<value>(selector(mklist<value>(element, "name")), car(la));
+    const list<value> lae = isNil(la)? list<value>() : filter<value>(selector(mklist<value>(element, "email")), car(la));
+    const list<value> laa = isNil(lan)? lae : lan;
+    const list<value> a = isNil(laa)? list<value>() : mklist<value>(list<value>() + element + value("author") + elementValue(car(laa)));
+
+    const list<value> lu = filter<value>(selector(mklist<value>(element, "updated")), e);
+    const list<value> u = isNil(lu)? list<value>() : mklist<value>(list<value>() + element + value("updated") + elementValue(car(lu)));
+
     const list<value> lc = filter<value>(selector(mklist<value>(element, "content")), e);
-    return append<value>(list<value>() + element + entry 
-                + value(list<value>() + element + value("title") + t)
-                + value(list<value>() + element + value("id") + i),
-                isNil(lc)? list<value>() : mklist<value>(value(list<value>() + element + value("content") + elementValue(car(lc)))));
+    const list<value> c = isNil(lc)? list<value>() : mklist<value>(list<value>() + element + value("content") + elementValue(car(lc)));
+
+    return append<value>(append<value>(append<value>(list<value>() + element + entry + value(t) + value(i), a), u), c);
 }
 
 /**
@@ -110,22 +120,44 @@ const failable<list<value> > readATOMFeed(const list<string>& ilist) {
 }
 
 /**
+ * Returns children of an ATOM content element.
+ */
+struct filterContentElementChildren {
+    const value type;
+    filterContentElementChildren() : type("type") {
+    }
+    const bool operator()(const value& v) const {
+        return !(isAttribute(v) && attributeName((list<value>)v) == type);
+    }
+};
+
+const list<value> contentElementChildren(const value& content) {
+    return filter<value>(filterContentElementChildren(), elementChildren(content));
+}
+
+/**
  * Convert a list of element values representing an ATOM entry to a list of elements.
  */
 const list<value> entryElement(const list<value>& l) {
-    const value title = elementValue(elementChild("title", l));
-    const value id = elementValue(elementChild("id", l));
+    const value title = elementChild("title", l);
+    const value id = elementChild("id", l);
+    const value author = elementChild("author", l);
+    const bool email = isNil(author)? false : contains(elementValue(author), "@");
+    const value updated = elementChild("updated", l);
     const value content = elementChild("content", l);
     const bool text = isNil(content)? false : elementHasValue(content);
     return list<value>()
         + element + entry + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
-        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + title)
-        + (list<value>() + element + "id" + id)
+        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + elementValue(title))
+        + (list<value>() + element + "id" + elementValue(id))
+        + (isNil(author)? list<value>() : (list<value>() + element + "author" +
+            (email? (list<value>() + element + "email" + elementValue(author)) : (list<value>() + element + "name" + elementValue(author)))))
+        + (isNil(updated)? list<value>() : (list<value>() + element + "updated" + elementValue(updated)))
         + (isNil(content)?
             list<value>() :
             append<value>(list<value>() + element + "content" + (list<value>() + attribute + "type" + (text? "text" : "application/xml")),
-                text? mklist<value>(elementValue(content)) : elementChildren(content)))
-        + (list<value>() + element + "link" + (list<value>() + attribute + "href" + id));
+                text? mklist<value>(elementValue(content)) : contentElementChildren(content)))
+        + (list<value>() + element + "link" + (list<value>() + attribute + "href" + elementValue(id)));
 }
 
 /**

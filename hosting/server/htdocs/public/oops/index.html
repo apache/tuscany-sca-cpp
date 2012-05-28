@@ -36,26 +36,29 @@ appcache.get = function(uri) {
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
-    var item = localStorage.getItem(u);
+    var ls = window.lstorage || localStorage;
+    var item = null;
+    try { item = ls.getItem(u); } catch(e) {}
     if (item != null && item != '')
         return item;
 
     // Get resource from network
     var http = new XMLHttpRequest();
     http.open("GET", u, false);
+    http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http error', u, 'X-Login');
+            if (debug) debug('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http error', u, 'No-Content');
+            if (debug) debug('http error', u, 'No-Content');
             return null;
         }
-        localStorage.setItem(u, http.responseText);
+        try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (log) log('http error', u, http.status, http.statusText);
+    if (debug) debug('http error', u, http.status, http.statusText);
     return null;
 };
 
@@ -71,7 +74,7 @@ appcache.get = function(uri) {
 </script>
 </head>
 <body class="delayed" onload="onload();">
-<div id="bodydiv" class="mainbodydiv">
+<div id="mainbodydiv" class="mainbodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
@@ -81,28 +84,34 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 </script>
 </div>
 
-<div id="menu"></div>
+<div id="menubackground" class="tbarbackground fixed"></div>
+<div id="menu" class="tbarmenu fixed"></div>
 
-<div id="content" class="viewloaded3d">
+<div id="viewheadbackground" class="viewheadbackground fixed"></div>
+<div id="viewhead" class="viewhead fixed"></div>
 
-<table style="width: 100%;">
-<tr><td><h2><span id="h1"></span></h2></td></tr>
-</table>
+<div id="viewcontainer">
+<div id="view">
+<div id="viewcontent" class="viewcontent" style="margin-left: auto; margin-right: auto; text-align: center;">
 
-<div style="margin-left: auto; margin-right: auto; text-align: center;">
+<br/>
 <div class="hd2">Oops, something went wrong...</div>
-</div>
 
+</div>
+</div>
 </div>
 
 <script type="text/javascript">
 
-// Set page title
-$('h1').innerHTML = ui.hometitle(location.hostname);
-
 // Init div variables
 var mdiv = $('menu'); 
-var cdiv = $('content'); 
+var hdiv = $('viewhead'); 
+$('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
+$('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
+
+// Set page title
+document.title = ui.windowtitle(location.hostname) + ' - Oops';
+$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
 
 /**
  * Build and show the menu bar.
@@ -114,7 +123,6 @@ function showmenu(mdiv) {
 }
 
 showmenu(mdiv);
-cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
 
 /**
  * Log the current user out.
@@ -122,9 +130,8 @@ cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
 function logout() {
     // Clear session cookie and user-specific local storage entries
     clearauthcookie();
-    localStorage.removeItem('/r/EditWidget/accounts');
-    localStorage.removeItem('/r/EditWidget/dashboards');
-    //localStorage.clear();
+    lstorage.removeItem('/r/EditWidget/accounts');
+    lstorage.removeItem('/r/EditWidget/dashboards');
     document.location = '/login/';
     return true;
 }
@@ -133,11 +140,12 @@ function logout() {
  * Handle orientation change.
  */
 document.body.onorientationchange = function(e) {
-    //log('onorientationchange');
+    //debug('onorientationchange');
+    ui.onorientationchange(e);
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
-
+    // Resize menu and view header
+    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
+    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
     return true;
 };
 
@@ -145,13 +153,11 @@ document.body.onorientationchange = function(e) {
  * Load post processing.
  */
 function onload() {
-    //log('onload');
+    //debug('onload');
+    ui.onload();
 
     // Show the page
     document.body.style.visibility = 'visible';
-
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
     return true;
 }
 

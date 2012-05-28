@@ -37,28 +37,31 @@ appcache.get = function(uri) {
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
-    var item = localStorage.getItem(u);
+    var ls = window.lstorage || localStorage;
+    var item = null;
+    try { item = ls.getItem(u); } catch(e) {}
     if (item != null && item != '')
         return item;
 
     // Get resource from network
     var http = new XMLHttpRequest();
     http.open("GET", u, false);
+    http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (log) log('http error', u, 'X-Login');
+            if (debug) debug('http error', u, 'X-Login');
             // Redirect to login page if not signed in
             document.location = '/login/';
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (log) log('http error', u, 'No-Content');
+            if (debug) debug('http error', u, 'No-Content');
             return null;
         }
-        localStorage.setItem(u, http.responseText);
+        try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (log) log('http error', u, http.status, http.statusText);
+    if (debug) debug('http error', u, http.status, http.statusText);
     // Redirect to login page if not signed in
     if (http.status == 403)
         document.location = '/login/';
@@ -72,6 +75,10 @@ appcache.get = function(uri) {
     bootjs.text = appcache.get('/all-min.js');
     document.head.appendChild(bootjs);
     document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+
+    // Disable cache for testing
+    lstorage.enabled = false;
+
 })();
 
 </script>
@@ -84,7 +91,7 @@ if (document.location.protocol == 'https:' && !hasauthcookie())
 </script>
 </head>
 <body class="delayed" onload="onload();">
-<div id="mainbodydiv" class="mainbodydiv" style="overflow: visible;">
+<div id="mainbodydiv" class="mainbody">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
@@ -94,31 +101,36 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
 </script>
 </div>
 
-<div id="menubackground" style="position: absolute; top: 0px; left: 0px; z-index: -1; width: 100%; visibility: hidden;">
-<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr><td class="dtbar">
-<table border="0" cellspacing="0" cellpadding="0"><tr><td class="ltbar"><span class="tbarsmenu">>&nbsp</span></td></tr></table>
-</td></tr></table>
-</div>
+<div id="menubackground" class="tbarbackground fixed"></div>
+<div id="menu" class="tbarmenu fixed"></div>
 
-<div id="menu"></div>
+<div id="viewheadbackground" class="viewheadbackground fixed"></div>
+<div id="viewhead" class="viewhead fixed"></div>
 
-<div id="content" class="bodydiv" style="overflow: visible;">
 <div id="viewcontainer"></div>
-</div>
 
 <script type="text/javascript">
 
-// Set page titles
+// Init service references
+var editWidget = sca.component("EditWidget");
+var user= sca.defun(sca.reference(editWidget, "user"));
+var accounts = sca.reference(editWidget, "accounts");
+
+// Set page title
 document.title = ui.windowtitle(location.hostname);
 
 // Init div variables
 var bdiv = $('mainbodydiv');
 var mdiv = $('menu'); 
-var cdiv = $('content'); 
-var mbgdiv = $('menubackground'); 
-mbgdiv.style.top = ui.pixpos(mdiv.offsetTop);
+var hdiv = $('viewhead'); 
 var vcontainer = $('viewcontainer');
 vcontainer.className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
+
+/**
+ * The current user name and account entry.
+ */
+var username;
+var accountentry;
 
 /**
  * Pre-fetch app resources.
@@ -126,55 +138,58 @@ vcontainer.className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
 var appresources = [
     ['/all-min.js'],
     ['/ui-min.css'],
-    ['/account/', 'flip'],
-    ['/clone/', 'flip'],
-    ['/create/', 'flip'],
-    ['/graph/', 'flip'],
+    ['/account/', '9'],
+    ['/clone/', '3'],
+    ['/create/', '2'],
+    ['/delete/', '3'],
+    ['/graph/', '5'],
     ['/config-min.js'],
-    ['/home/', 'right'],
+    ['/home/', '0'],
     ['/home/home.b64'],
-    ['/page/', 'flip'],
+    ['/page/', '4'],
     ['/public/app.b64'],
     ['/public/config-min.js'],
     ['/public/grid72.b64'],
     ['/public/iframe-min.html'],
     ['/public/img.b64'],
     ['/public/user.b64'],
-    ['/stats/', 'flip'],
-    ['/store/', 'left']
+    ['/stats/', '2'],
+    ['/store/', '1']
 ];
 
 /**
  * Handle application cache events.
  */
 applicationCache.addEventListener('checking', function(e) {
-    //log('appcache checking', e);
+    //debug('appcache checking', e);
     showStatus('Checking');
 }, false);
 applicationCache.addEventListener('error', function(e) {
-    //log('appcache error', e);
+    //debug('appcache error', e);
     showStatus(defaultStatus());
 }, false);
 applicationCache.addEventListener('noupdate', function(e) {
-    //log('appcache noupdate', e);
+    //debug('appcache noupdate', e);
     showStatus(defaultStatus());
 }, false);
 applicationCache.addEventListener('downloading', function(e) {
-    //log('appcache downloading', e);
+    //debug('appcache downloading', e);
     showStatus('Updating');
 }, false);
 applicationCache.addEventListener('progress', function(e) {
-    //log('appcache progress', e);
+    //debug('appcache progress', e);
     showStatus('Updating');
 }, false);
 applicationCache.addEventListener('updateready', function(e) {
-    //log('appcache updateready', e);
-    applicationCache.swapCache();
+    //debug('appcache updateready', e);
+    try {
+        applicationCache.swapCache();
+    } catch(e) {}
     showStatus(defaultStatus());
-    //log('appcache swapped', e);
+    //debug('appcache swapped', e);
 }, false);
 applicationCache.addEventListener('cached', function(e) {
-    //log('appcache cached', e);
+    //debug('appcache cached', e);
     map(function(res) {
         showStatus('Updating');
         appcache.get(res[0]);
@@ -186,15 +201,15 @@ applicationCache.addEventListener('cached', function(e) {
  * Handle network offline/online events.
  */
 window.addEventListener('offline', function(e) {
-    //log('going offline');
+    //debug('going offline');
     showStatus('Offline');
 }, false);
 window.addEventListener('online', function(e) {
-    //log('going online');
+    //debug('going online');
     showStatus('Online');
 }, false);
 
-//log(navigator.onLine? 'online' : 'offline');
+//debug(navigator.onLine? 'online' : 'offline');
 
 /**
  * Handle view transitions.
@@ -218,9 +233,14 @@ map(function(res) {
 /**
  * Return the transition that should be applied to a resource.
  */
-function viewtransition(uri) {
+function viewtransition(ouri, uri) {
+    var ot = apptransitions[ouri];
+    if (isNil(ot))
+        return 'left';
     var t = apptransitions[uri];
-    return isNil(t)? 'left' : t;
+    if (isNil(t))
+        return 'left';
+    return t < ot? 'right' : 'left';
 }
 
 /**
@@ -234,7 +254,7 @@ function mkviewdiv(cname) {
 
     // Handle view transition end
     function viewdivtransitionend(e) {
-        if (e.target.className == 'leftviewunloaded3dm' || e.target.className == 'rightviewunloaded3dm' || e.target.className == 'flipviewunloaded3dm')
+        if (e.target.className == 'leftviewunloaded3dm' || e.target.className == 'rightviewunloaded3dm')
             e.target.parentNode.removeChild(e.target);
     }
     vdiv.addEventListener('webkitTransitionEnd', viewdivtransitionend, false);
@@ -246,7 +266,7 @@ function mkviewdiv(cname) {
  * Return the last visited location.
  */
 function lastvisited() {
-    return localStorage.getItem('ui.lastvisited')
+    return lstorage.getItem('ui.lastvisited');
 }
 
 /**
@@ -260,10 +280,12 @@ function showmenu(mdiv, view, appname) {
                     mklist(
                         ui.menu('Stats', '/#view=stats&app=' + appname, '_view', view == 'stats'),
                         ui.menu('Page', '/#view=page&app=' + appname, '_view', view == 'page'),
-                        ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/#view=graph&app=' + appname, '_view', view == 'graph'))),
-        mklist(
-            ui.menu('Account', '/#view=account', '_view', view == 'account'),
-            hasauthcookie()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false)));
+                        ui.menu(config.logic, '/#view=graph&app=' + appname, '_view', view == 'graph'),
+                        ui.menu('<span class="greentext" style="font-weight: bold">Run!</span>', '/' + appname + '/', '_blank', false))),
+        (isNil(appname) || appname == 'undefined')? mklist(
+            hasauthcookie()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false),
+            ui.menu('Account', '/#view=account', '_view', view == 'account')) :
+            mklist());
 }
 
 /**
@@ -273,6 +295,19 @@ function showStatus(s) {
     var sdiv = $('status');
     if (isNil(sdiv))
         return s;
+    sdiv.style.color = '#808080'
+    sdiv.innerHTML = s;
+    return s;
+}
+
+/**
+ * Show an error message.
+ */
+function showError(s) {
+    var sdiv = $('status');
+    if (isNil(sdiv))
+        return s;
+    sdiv.style.color = '#dd4b39'
     sdiv.innerHTML = s;
     return s;
 }
@@ -285,13 +320,30 @@ function defaultStatus() {
 }
 
 /**
+ * Get the current user's account.
+ */
+function getaccount() {
+    var doc = accounts.get();
+
+    // Stop now if we didn't get an account
+    if (doc == null) {
+        username = 'anonymous';
+        return false;
+    }
+
+    accountentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+    username = cadr(assoc("'id", cdr(accountentry)));
+    return true;
+}
+
+/**
  * Show a view.
  */
 function showview(url) {
-    //log('showview', url);
+    //debug('showview', url);
 
     // Save last visited location
-    localStorage.setItem('ui.lastvisited', url);
+    lstorage.setItem('ui.lastvisited', url);
 
     // Determine the view to show
     var params = ui.fragmentParams(url);
@@ -300,15 +352,7 @@ function showview(url) {
     var idx = isNil(params['idx'])? '1' : params['idx'];
 
     // Determine the transition to use
-    var vt = viewtransition(uri);
-    var ovt = viewtransition(viewuri);
-    var vtransition;
-    if (ovt == 'flip')
-        vtransition = 'flip';
-    else if (uri == viewuri && (vt == 'left' || vt == 'right'))
-        vtransition = idx >= viewidx? 'left' : 'right';
-    else
-        vtransition = vt;
+    var vtransition = uri == viewuri? (idx >= viewidx? 'left' : 'right') : viewtransition(viewuri, uri);
 
     // Track current view url and uri
     viewurl = url;
@@ -318,16 +362,9 @@ function showview(url) {
     // Show the menu bar
     var appname = params['app'];
     showmenu(mdiv, view, appname);
-    cdiv.style.top = ui.pixpos(mdiv.offsetTop + mdiv.offsetHeight);
 
     // Scroll to the top and hide the address bar
     window.scrollTo(0, 0);
-
-    // Compute the viewport size
-    var iswide = view == 'graph' || view == 'page';
-    var vwidth = iswide? '2500px' : '100%';
-    mbgdiv.style.visibility = iswide? 'visible' : 'hidden';
-    mbgdiv.style.width = vwidth;
 
     // Start to unload the front view and create a new view
     if (ui.isMobile()) {
@@ -340,12 +377,12 @@ function showview(url) {
 
         // Load the requested doc into a new view
         var vdiv = mkviewdiv(vtransition + 'viewloading3dm');
-        vcontainer.appendChild(vdiv);
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
+        vcontainer.appendChild(vdiv);
         map(ui.evalScript, ui.innerScripts(vdiv));
 
-        // Show the document
+        // Make sure the top document is visible
         if (document.body.style.visibility != 'visible')
             document.body.style.visibility = 'visible';
 
@@ -356,7 +393,8 @@ function showview(url) {
 
             // Transition the new view in
             vdiv.className = 'viewloaded3dm';
-        }, 0);
+        }, 100);
+
     } else {
         // Prepare current view for transition out
         var ovdiv = viewdiv;
@@ -365,12 +403,12 @@ function showview(url) {
 
         // Load the requested doc into the view
         var vdiv = mkviewdiv('viewloading3d');
-        vcontainer.appendChild(vdiv);
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
+        vcontainer.appendChild(vdiv);
         map(ui.evalScript, ui.innerScripts(vdiv));
 
-        // Show the document
+        // Make sure the top document is visible
         if (document.body.style.visibility != 'visible')
             document.body.style.visibility = 'visible';
 
@@ -381,7 +419,7 @@ function showview(url) {
             // Transition the old view out
             if (!isNil(ovdiv))
                 ovdiv.parentNode.removeChild(ovdiv);
-        }, 0);
+        }, 100);
     }
 
     // Track the current visible view
@@ -394,18 +432,18 @@ function showview(url) {
  * Update the browser window location.
  */
 function updatelocation(url) {
-    //log('updatelocation', url);
+    //debug('updatelocation', url);
 
     // Add url to the history if necessary
     if (url != ui.pathandparams(location)) {
         history.pushState(null, null, url);
-        //log('pushstate', history.length);
+        //debug('pushstate', history.length);
 
         // Update the location hash if necessary
         var f = ui.fragment(url);
         if (f != '' && f != location.hash) {
             location.hash = f;
-            //log('hash', f);
+            //debug('hash', f);
         }
     }
     return url;
@@ -415,7 +453,7 @@ function updatelocation(url) {
  * Handle navigations.
  */
 window.onnavigate = function(url) {
-    //log('onnavigate', url);
+    //debug('onnavigate', url);
 
     updatelocation(url);
 
@@ -438,9 +476,8 @@ window.onloginredirect = function(e) {
 function logout() {
     // Clear session cookie and user-specific local storage entries
     clearauthcookie();
-    localStorage.removeItem('/r/EditWidget/accounts');
-    localStorage.removeItem('/r/EditWidget/dashboards');
-    //localStorage.clear();
+    lstorage.removeItem('/r/EditWidget/accounts');
+    lstorage.removeItem('/r/EditWidget/dashboards');
     document.location = '/login/';
     return true;
 }
@@ -449,7 +486,7 @@ function logout() {
  * Handle history.
  */
 window.addEventListener('popstate', function(e) {
-    //log('onpopstate', history.length);
+    //debug('onpopstate', history.length);
     var furl = ui.fragment(location);
     var url = location.pathname + (furl == ''? '' : '#' + furl);
 
@@ -461,7 +498,7 @@ window.addEventListener('popstate', function(e) {
 }, false);
 
 window.addEventListener('hashchange', function(e) {
-    //log('onhashchange');
+    //debug('onhashchange');
     var furl = ui.fragment(location);
     var url = location.pathname + (furl == ''? '' : '#' + furl);
 
@@ -476,11 +513,12 @@ window.addEventListener('hashchange', function(e) {
  * Handle orientation change.
  */
 document.body.onorientationchange = function(e) {
-    //log('onorientationchange');
+    //debug('onorientationchange');
+    ui.onorientationchange(e);
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
-
+    // Resize menu and view header
+    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
+    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
     return true;
 };
 
@@ -488,10 +526,14 @@ document.body.onorientationchange = function(e) {
  * Document load post processing.
  */
 function onload() {
-    //log('onload', history.length);
-    var furl = ui.fragment(location);
+    //debug('onload', history.length);
+    ui.onload();
+
+    // Get the current user account
+    getaccount();
 
     // Show the view specified in the given url fragment
+    var furl = ui.fragment(location);
     if (furl != '') {
         var url = location.pathname + '#' + furl;
         if (url == viewurl)
@@ -501,7 +543,7 @@ function onload() {
 
     // Show the last visited view
     if (ui.isMobile() && (document.referrer == null || document.referrer == '')) {
-        //log('show lastvisited');
+        //debug('show lastvisited');
         var lv = lastvisited();
         var url = isNil(lv)? location.pathname : lv;
         updatelocation(url);

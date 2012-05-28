@@ -15,8 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# stores collection implementation
+# Stores collection implementation
 from util import *
+from sys import debug
 
 # Convert a particular store tag to a store id
 def storeid(tag):
@@ -24,61 +25,88 @@ def storeid(tag):
 
 # Get a store from the cache
 def getstore(id, cache):
+    debug('store.py::getstore::id', id)
     val = cache.get(id)
     if isNil(val) or val is None:
         return ()
-    return cdddr(car(val))
+    store = cdddr(car(val))
+    if not isNil(store) and isList(car(cadr(car(store)))):
+        # Expand list of entries
+        estore = tuple(map(lambda e: cons("'entry", e), cadr(car(store))))
+        debug('store.py::getstore::estore', estore)
+        return estore
+
+    debug('store.py::getstore::store', store)
+    return store
 
 # Put a store into the cache
 def putstore(id, store, cache):
+    debug('store.py::putstore::id', id)
+    debug('store.py::putstore::store', store)
     val = ((("'feed", ("'title", "App Store"), ("'id", cadr(id))) + store),)
+    return cache.put(id, val)
 
 # Put an app into a store
-def put(key, app, cache):
-    def putapp(app, store):
+def put(id, app, user, cache, apps):
+    debug('store.py::put::id', id)
+    debug('store.py::put::app', app)
+    tag = car(id)
+    appid = cdr(id)
+
+    def putapp(appid, app, store):
         if isNil(store):
             return app
-        if cadr(caddr(car(app))) == cadr(caddr(car(store))):
+        if car(appid) == cadr(assoc("'id", car(store))):
             return cons(car(app), cdr(store))
-        return cons(car(store), putapp(app, cdr(store)))
+        return cons(car(store), putapp(appid, app, cdr(store)))
 
-    tag = car(key)
-    store = putapp(app, getstore(storeid(tag), cache))
-    putstore(storeid(tag), store, cache)
-    return True
+    appentry = (("'entry", assoc("'title", car(app)), ("'id", car(appid)), ("'author", user.get(())), assoc("'updated", car(app)), assoc("'content", car(app))),)
+    debug('store.py::put::appentry', appentry)
+
+    store = putapp(appid, appentry, getstore(storeid(tag), cache))
+    return putstore(storeid(tag), store, cache)
 
 # Get apps from a store
-def get(key, cache):
-    tag = car(key)
-    id = cdr(key)
+def get(id, user, cache, apps):
+    debug('store.py::get::id', id)
+    tag = car(id)
+    appid = cdr(id)
 
-    def findapp(id, store):
+    def findapp(appid, store):
         if isNil(store):
             return None
-        if car(id) == cadr(caddr(car(store))):
+        if car(appid) == cadr(assoc("'id", car(store))):
             return (car(store),)
-        return findapp(id, cdr(store))
+        return findapp(appid, cdr(store))
 
-    if isNil(id):
-        return ((("'feed", ("'title", "App Store"), ("'id", tag)) + getstore(storeid(tag), cache)),)
-    return findapp(id, getstore(storeid(tag), cache))
+    if isNil(appid):
+        store = ((("'feed", ("'title", "App Store"), ("'id", tag)) + getstore(storeid(tag), cache)),)
+        debug('store.py::get::store', store)
+        return store
+
+    app = findapp(appid, getstore(storeid(tag), cache))
+    debug('store.py::get::app', app)
+    return app
 
 # Delete apps from a store
-def delete(key, cache):
-    tag = car(key)
-    id = cdr(key)
+def delete(id, user, cache, apps):
+    debug('store.py::delete::id', id)
+    tag = car(id)
+    appid = cdr(id)
 
-    if isNil(id):
+    if isNil(appid):
         return cache.delete(storeid(tag))
 
-    def deleteapp(id, store):
+    def deleteapp(appid, store):
         if isNil(store):
             return ()
-        if car(id) == cadr(caddr(car(store))):
+        if car(appid) == cadr(assoc("'id", car(store))):
             return cdr(store)
-        return cons(car(store), deleteapp(id, cdr(store)))
+        return cons(car(store), deleteapp(appid, cdr(store)))
 
-    store = deleteapp(id, getstore(storeid(tag), cache))
-    putstore(storeid(tag), store, cache)
-    return True
+    store = getstore(storeid(tag), cache)
+    deleted = deleteapp(appid, store)
+    if deleted == store:
+        return False
+    return putstore(storeid(tag), deleted, cache)
 

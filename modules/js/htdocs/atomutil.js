@@ -27,12 +27,24 @@ var atom = {};
  */
 atom.entryElementValues = function(e) {
     var lt = filter(selector(mklist(element, "'title")), e);
-    var t = isNil(lt)? '' : elementValue(car(lt));
+    var t = mklist(element, "'title", isNil(lt)? '' : elementValue(car(lt)));
+
     var li = filter(selector(mklist(element, "'id")), e);
-    var i = isNil(li)? '' : elementValue(car(li));
+    var i = mklist(element, "'id", isNil(li)? '' : elementValue(car(li)));
+
+    var la = filter(selector(mklist(element, "'author")), e);
+    var lan = isNil(la)? mklist() : filter(selector(mklist(element, "'name")), car(la));
+    var lae = isNil(la)? mklist() : filter(selector(mklist(element, "'email")), car(la));
+    var laa = isNil(lan)? lae : lan;
+    var a = isNil(laa)? mklist() : mklist(mklist(element, "'author", elementValue(car(laa))));
+
+    var lu = filter(selector(mklist(element, "'updated")), e);
+    var u = isNil(lu)? mklist() : mklist(mklist(element, "'updated", elementValue(car(lu))));
+
     var lc = filter(selector(mklist(element, "'content")), e);
-    return append(mklist(element, "'entry", mklist(element, "'title", t), mklist(element, "'id", i)),
-            isNil(lc)? mklist() : mklist(mklist(element, "'content", elementValue(car(lc)))))
+    var c = isNil(lc)? mklist() : mklist(mklist(element, "'content", elementValue(car(lc))));
+
+    return append(append(append(mklist(element, "'entry", t, i), a), u), c);
 };
 
 /**
@@ -107,14 +119,20 @@ atom.readATOMFeed = function(l) {
 atom.entryElement = function(l) {
     var title = elementValue(namedElementChild("'title", l));
     var id = elementValue(namedElementChild("'id", l));
+    var author = namedElementChild("'author", l);
+    var email = isNil(author)? false : (elementValue(author).indexOf('@') != -1);
+    var updated = namedElementChild("'updated", l);
     var content = namedElementChild("'content", l);
     var text = isNil(content)? false : elementHasValue(content);
-    return append(append(
+    return append(append(append(append(
             mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
                 mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
+                isNil(author)? mklist() : mklist(element, "'author",
+                    (email? mklist(element, "'email", elementValue(author)) : mklist(element, "'name", elementValue(author))))),
+                isNil(updated)? mklist() : mklist(element, "'updated", elementValue(updated))),
                 isNil(content)? mklist() :
-                mklist(append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")),
-                                text? mklist(elementValue(content)) : elementChildren(content)))),
+                    mklist(append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")),
+                        text? mklist(elementValue(content)) : elementChildren(content)))),
                 mklist(mklist(element, "'link", mklist(attribute, "'href", id))));
 };
 

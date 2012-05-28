@@ -21,19 +21,21 @@
 
 <div class="viewform">
 
-<form id="cloneAppForm">
+<form id="deleteAppForm">
 <table style="width: 100%;">
-<tr><td><b>New App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" class="flatentry" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Icon:</b></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
 <tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" class="flatentry" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
+<tr><td><input type="text" id="appTitle" class="flatentry" size="30" readonly="readonly" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Author:</b></td></tr>
+<tr><td><span id="appAuthor"></span></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Updated:</b></td></tr>
+<tr><td><span id="appUpdated"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
+<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" readonly="readonly" style="width: 300px;"></textarea></td></tr>
 <tr><td>
-<input id="cloneAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Clone" title="Clone the app"/>
-<input id="cloneAppCancelButton" type="button" class="graybutton" value="Cancel"/>
+<input id="deleteAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Delete" title="Delete the app"/>
+<input id="deleteAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
@@ -46,10 +48,8 @@
 var appname = ui.fragmentParams(location)['app'];
 
 // Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - ' + config.clone + ' - ' + appname;
-$('viewhead').innerHTML = '<span class="smenu">' + config.clone + ' ' + appname + '</span>';
-$('cloneAppOKButton').value = config.clone;
-$('cloneAppOKButton').title = config.clone + ' this app';
+document.title = ui.windowtitle(location.hostname) + ' - ' + 'Delete' + ' - ' + appname;
+$('viewhead').innerHTML = '<span class="smenu">Delete ' + appname + '</span>';
 
 // Set images
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
@@ -62,7 +62,6 @@ var apps = sca.reference(editWidget, "apps");
  * The current app entry and corresponding saved XML content.
  */
 var appentry;
-var savedappentryxml = '';
 
 /**
  * Get and display an app.
@@ -83,57 +82,40 @@ function getapp(name) {
 
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         $('appTitle').value = cadr(assoc("'title", cdr(appentry)));
+        $('appAuthor').innerHTML = cadr(assoc("'author", cdr(appentry)));
+        $('appUpdated').innerHTML = cadr(assoc("'updated", cdr(appentry)));
         var content = cadr(assoc("'content", cdr(appentry)));
         var description = assoc("'description", content);
         $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
-        savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
         return true;
     });
 }
 
 /**
- * Save an app.
+ * Delete an app.
  */
-function save(name, entryxml) {
-    showStatus('Saving');
-    savedappentryxml = entryxml;
-    apps.put(name, savedappentryxml, function(e) {
+$('deleteAppForm').onsubmit = function() {
+    showStatus('Deleting');
+
+    // Delete the app
+    apps.del(appname, function(e) {
         if (e) {
             showStatus('Local copy');
             return false;
         }
-        showStatus('Saved');
+        showStatus(defaultStatus());
 
-        // Open it in the page editor
-        ui.navigate('/#view=page&app=' + name, '_view');
+        // Return to the app store
+        ui.navigate('/#view=store', '_view');
         return false;
     });
     return false;
-}
-
-/**
- * Clone an app.
- */
-$('cloneAppForm').onsubmit = function() {
-    var name = $('appName').value;
-    if (name == '') {
-        showError('Missing app name');
-        return false;
-    }
-    showStatus('Saving');
-
-    // Clone the app
-    var title = $('appTitle').value;
-    var description = $('appDescription').value;
-    appentry = mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname), mklist("'content", mklist("'stats", mklist("'description", description))));
-    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
-    return save(name, entryxml);
 };
 
 /**
  * Cancel cloning an app.
  */
-$('cloneAppCancelButton').onclick = function() {
+$('deleteAppCancelButton').onclick = function() {
     history.back();
 };
 

@@ -17,68 +17,55 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<div id="bodydiv" class="bodydiv">
+<div id="bodydiv" class="body">
 
-<table style="width: 100%;">
-<tr>
-<td><h2><span id="h1"></span></h2></td>
-<td style="vertical-align: middle; text-align: right;"><span id="status" style="font-weight: bold; color: #808080;"></span></td>
-</tr>
-</table>
-
-<table style="width: 100%;">
-<tr>
-<th class="thl thr" style="padding-top: 4px; padding-bottom:4px;">Create an App</th>
-</tr>
-</table>
+<div class="viewform">
 
 <form id="createAppForm">
 <table style="width: 100%;">
 <tr><td><b>App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
+<tr><td><input type="text" id="appName" class="flatentry" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
 <tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
-<tr><td><input type="checkbox" value="shared"/><span>Shared</span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
+<tr><td><input type="text" id="appTitle" class="flatentry" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
+<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
 <tr><td>
-<input id="createAppOKButton" type="submit" class="graybutton" style="font-weight: bold;" value="Create" title="Create the app"/>
+<input id="createAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Create" title="Create the app"/>
 <input id="createAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
 
+</div>
+
 <script type="text/javascript">
 
 // Set page titles
 document.title = ui.windowtitle(location.hostname) + ' - Create App';
-$('h1').innerHTML = ui.hometitle(location.hostname);
+$('viewhead').innerHTML = '<span class="smenu">Create an App</span>';
 
 // Set images
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
 // Init service references
 var editWidget = sca.component("EditWidget");
-var dashboards = sca.reference(editWidget, "dashboards");
 var apps = sca.reference(editWidget, "apps");
 
 /**
- * Create an app.
+ * The current app entry and corresponding saved XML content.
  */
-$('createAppForm').onsubmit = function() {
-    var name = $('appName').value;
-    if (name == '')
-        return false;
-    showStatus('Saving');
+var appentry;
+var savedappentryxml = '';
 
-    // Clone the '.new' app template
-    var title = $('appTitle').value;
-    var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", 'new')));
-    var entry = atom.writeATOMEntry(valuesToElements(app));
-    dashboards.put(name, car(entry), function(e) {
+/**
+ * Save an app.
+ */
+function save(name, entryxml) {
+    showStatus('Saving');
+    savedappentryxml = entryxml;
+    apps.put(name, savedappentryxml, function(e) {
         if (e) {
             showStatus('Local copy');
             return false;
@@ -90,6 +77,25 @@ $('createAppForm').onsubmit = function() {
         return false;
     });
     return false;
+}
+
+/**
+ * Create an app.
+ */
+$('createAppForm').onsubmit = function() {
+    var name = $('appName').value;
+    if (name == '') {
+        showError('Missing app name');
+        return false;
+    }
+    showStatus('Modified');
+
+    // Clone the 'new' app template
+    var title = $('appTitle').value;
+    var description = $('appDescription').value;
+    appentry = mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", 'new'), mklist("'content", mklist("'stats", mklist("'description", description))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+    return save(name, entryxml);
 };
 
 /**

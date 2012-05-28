@@ -17,68 +17,89 @@
 
 # Dashboards collection implementation
 from util import *
+from sys import debug
 
 # Convert a particular user id to a dashboard id
 def dashboardid(user):
-    return ("dashboards", user.id(), "user.apps")
+    return ("dashboards", user.get(()), "user.apps")
 
 # Get a dashboard from the cache
 def getdashboard(id, cache):
+    debug('dashboards.py::getdashboard::id', id)
     val = cache.get(id)
     if isNil(val) or val is None:
         return ()
-    return cdddr(car(val))
+    dashboard = cdddr(car(val))
+    if not isNil(dashboard) and isList(car(cadr(car(dashboard)))):
+        # Expand list of entries
+        edashboard = tuple(map(lambda e: cons("'entry", e), cadr(car(dashboard))))
+        debug('dashboards.py::getdashboard::edashboard', edashboard)
+        return edashboard
+
+    debug('dashboards.py::getdashboard::dashboard', dashboard)
+    return dashboard
 
 # Put a dashboard into the cache
 def putdashboard(id, dashboard, cache):
+    debug('dashboards.py::putdashboard::id', id)
+    debug('dashboards.py::putdashboard::dashboard', dashboard)
     val = ((("'feed", ("'title", "Your Apps"), ("'id", cadr(id))) + dashboard),)
+    return cache.put(id, val)
 
 # Put an app into the user's dashboard
 def put(id, app, user, cache, apps):
-    def putapp(app, dashboard):
+    debug('dashboards.py::put::id', id)
+    debug('dashboards.py::put::app', app)
+
+    def putapp(id, app, dashboard):
         if isNil(dashboard):
             return app
-        if cadr(caddr(car(app))) == cadr(caddr(car(dashboard))):
+        if car(id) == cadr(assoc("'id", car(dashboard))):
             return cons(car(app), cdr(dashboard))
-        return cons(car(dashboard), putapp(app, cdr(dashboard)))
+        return cons(car(dashboard), putapp(id, app, cdr(dashboard)))
 
-    appentry = (("'entry", cadr(car(app)), ("'id", car(id))),)
-    dashboard = putapp(appentry, getdashboard(dashboardid(user), cache))
-    putdashboard(dashboardid(user), dashboard, cache)
+    appentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), ("'author", user.get(())), assoc("'updated", car(app)), assoc("'content", car(app))),)
+    debug('dashboards.py::put::appentry', appentry)
 
-    # Update app in app repository
-    apps.put(id, app);
-    return True
+    dashboard = putapp(id, appentry, getdashboard(dashboardid(user), cache))
+    return putdashboard(dashboardid(user), dashboard, cache)
 
 # Get apps from the user's dashboard
 def get(id, user, cache, apps):
+    debug('dashboards.py::get::id', id)
+
     def findapp(id, dashboard):
         if isNil(dashboard):
             return None
-        if car(id) == cadr(caddr(car(dashboard))):
+        if car(id) == cadr(assoc("'id", car(dashboard))):
             return (car(dashboard),)
         return findapp(id, cdr(dashboard))
 
     if isNil(id):
-        return ((("'feed", ("'title", "Your Apps"), ("'id", user.id())) + getdashboard(dashboardid(user), cache)),)
-    return findapp(id, getdashboard(dashboardid(user), cache))
+        dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + getdashboard(dashboardid(user), cache)),)
+        debug('dashboards.py::get::dashboard', dashboard)
+        return dashboard
+
+    app = findapp(id, getdashboard(dashboardid(user), cache))
+    debug('dashboards.py::get::app', app)
+    return app
 
 # Delete apps from the user's dashboard
 def delete(id, user, cache, apps):
+    debug('dashboards.py::delete::id', id)
     if isNil(id):
         return cache.delete(dashboardid(user))
 
     def deleteapp(id, dashboard):
         if isNil(dashboard):
             return ()
-        if car(id) == cadr(caddr(car(dashboard))):
+        if car(id) == cadr(assoc("'id", car(dashboard))):
             return cdr(dashboard)
         return cons(car(dashboard), deleteapp(id, cdr(dashboard)))
 
-    dashboard = deleteapp(id, getdashboard(dashboardid(user), cache))
-    putdashboard(dashboardid(user), dashboard, cache)
-
-    # Delete app from app repository
-    apps.delete(id);
-    return True
+    dashboard = getdashboard(dashboardid(user), cache)
+    deleted = deleteapp(id, dashboard)
+    if deleted == dashboard:
+        return False
+    return putdashboard(dashboardid(user), deleted, cache)
 

@@ -57,7 +57,7 @@ AuthFormProvider file
 AuthFormLoginRequiredLocation /login
 AuthFormLogoutLocation /
 Session On
-SessionCookieName TuscanyFormAuth path=/;secure=TRUE
+SessionCookieName TuscanyFormAuth domain=.$host; path=/
 SessionCryptoPassphrase $pw
 Require valid-user
 </Location>

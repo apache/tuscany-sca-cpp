@@ -170,11 +170,11 @@ function tokens(path) {
 }
 
 /**
- * Log a value.
+ * Debug log a value.
  */
 var rconsole;
 
-function log(v) {
+function debug(v) {
     try {
         var s = '';
         for (i = 0; i < arguments.length; i++) {
@@ -196,13 +196,13 @@ function log(v) {
 }
 
 /**
- * Dump an object to the debug console.
+ * Dump an object to the console.
  */
-function debug(o) {
+function dump(o) {
     try {
         for (f in o) {
             try {
-                log('debug ' + f + '=' + o[f]);
+                debug('dump ' + f + '=' + o[f]);
             } catch (e) {}
         }
     } catch (e) {}
@@ -299,6 +299,51 @@ function memo(obj, key, f) {
 function unmemo(obj) {
     obj.memo = {};
     return true;
+}
+
+/**
+ * Local storage.
+ */
+var lstorage = {};
+lstorage.enabled = true;
+
+/**
+ * Get an item.
+ */
+lstorage.getItem = function(k) {
+    if (!lstorage.enabled)
+        return null;
+    try {
+        return localStorage.getItem(k);
+    } catch(e) {
+        return null;
+    }
+}
+
+/**
+ * Set an item.
+ */
+lstorage.setItem = function(k, v) {
+    if (!lstorage.enabled)
+        return null;
+    try {
+        return localStorage.setItem(k, v);
+    } catch(e) {
+        return null;
+    }
+}
+
+/**
+ * Remove an item.
+ */
+lstorage.removeItem = function(k) {
+    if (!lstorage.enabled)
+        return null;
+    try {
+        return localStorage.removeItem(k);
+    } catch(e) {
+        return null;
+    }
 }
 
 /**

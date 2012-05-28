@@ -471,7 +471,7 @@ image/gif			gif
 image/ief			ief
 image/jpeg			jpeg jpg jpe
 image/naplps
-image/png			png
+image/png			png b64
 image/prs.btif
 image/prs.pti
 image/svg+xml			svg
@@ -546,7 +546,7 @@ text/directory
 text/enriched
 text/html			html htm
 text/parityfec
-text/plain			asc txt b64
+text/plain			asc txt
 text/prs.lines.tag
 text/rfc822-headers
 text/richtext			rtx

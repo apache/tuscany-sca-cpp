@@ -16,29 +16,81 @@
 #  under the License.
 
 # App pages collection implementation
+from time import strftime
 from util import *
+from sys import debug
 
-# Convert an id to an app id
-def appid(id):
+# Convert an id to a page id
+def pageid(id):
     return ("apps", car(id), "htdocs", "app.html")
 
-# Put an app page into the apps db
-def put(id, app, cache):
-    xhtml = cdr(cadddr(car(app)))
-    cache.put(appid(id), xhtml)
-    return True
+# Put a page into the page db
+def put(id, page, user, cache, apps):
+    debug('pages.py::put::id', id)
+    debug('pages.py::put::page', page)
 
-# Get an app page from the apps db
-def get(id, cache):
+    # Get the requested app
+    app = apps.get(id);
+    if isNil(app) or app is None:
+        debug('pages.py::put', 'app not found', id)
+        return False
+
+    # Check app author
+    author = cadr(assoc("'author", car(app)))
+    if author != user.get(()):
+        debug('pages.py::put', 'different author', author)
+        return False
+
+    # Update the page in the page db
+    pageentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y')), assoc("'content", car(page))),)
+    debug('pages.py::put::pageentry', pageentry)
+    return cache.put(pageid(id), pageentry)
+
+# Get a page from the page db
+def get(id, user, cache, apps):
+    debug('pages.py::get::id', id)
     if isNil(id):
         return (("'feed", ("'title", "Pages"), ("'id", "pages")),)
-    xhtml = cache.get(appid(id))
-    if isNil(xhtml) or xhtml is None:
-        return (("'entry", ("'title", car(id)), ("'id", car(id))),)
-    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(xhtml))),)
 
-# Delete an app page from the apps db
-def delete(id, cache):
-    cache.delete(appid(id))
-    return True
+    # Get the requested app
+    app = apps.get(id)
+    if isNil(app) or app is None:
+        debug('pages.py::get', 'app not found', id)
+
+        # Return a default new page
+        return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
+
+    # Get the requested page
+    page = cache.get(pageid(id))
+    if isNil(page) or page is None:
+        debug('pages.py::get', 'page not found', id)
+
+        # Return a default new page
+        return (("'entry", ("'title", car(id)), ("'id", car(id)), assoc("'author", car(app)), assoc("'updated", car(app))),)
+
+    # Return the page
+    def updated(u):
+        return assoc("'updated", car(app)) if isNil(u) or u is None else u
+    pageentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), assoc("'author", car(app)), updated(assoc("'updated", car(page))), assoc("'content", car(page))),)
+    debug('pages.py::get::pageentry', pageentry)
+    return pageentry
+
+# Delete a page from the page db
+def delete(id, user, cache, apps):
+    debug('pages.py::delete::id', id)
+
+    # Get the requested app
+    app = apps.get(id);
+    if isNil(app) or app is None:
+        debug('pages.py::delete', 'app not found', id)
+        return False
+
+    # Check app author
+    author = cadr(assoc("'author", car(app)))
+    if author != user.get(()):
+        debug('pages.py::delete', 'different author', author)
+        return False
+
+    # Delete the page
+    return cache.delete(pageid(id))
 

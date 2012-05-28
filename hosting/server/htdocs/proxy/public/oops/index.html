@@ -19,11 +19,11 @@
 -->
 <html>
 <head>
-<title>Page not found</title>
+<title>Oops</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<base href="/public/notyet/"/>
+<base href="/proxy/public/oops/"/>
 <script type="text/javascript">
 
 window.appcache = {};
@@ -66,9 +66,9 @@ appcache.get = function(uri) {
 (function() {
     var bootjs = document.createElement('script');
     bootjs.type = 'text/javascript';
-    bootjs.text = appcache.get('/all-min.js');
+    bootjs.text = appcache.get('/proxy/all-min.js');
     document.head.appendChild(bootjs);
-    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+    document.head.appendChild(ui.declareCSS(appcache.get('/proxy/ui-min.css')));
 })();
 
 </script>
@@ -79,7 +79,7 @@ appcache.get = function(uri) {
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
-$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
+$('headdiv').appendChild(ui.declareScript(appcache.get('/proxy/public/config-min.js')));
 })();
 </script>
 </div>
@@ -95,8 +95,7 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 <div id="viewcontent" class="viewcontent" style="margin-left: auto; margin-right: auto; text-align: center;">
 
 <br/>
-<div class="hd2">Sorry, that page is still under construction.</div>
-<div>Please check back later.</div>
+<div class="hd2">Oops, something went wrong...</div>
 
 </div>
 </div>
@@ -111,7 +110,7 @@ $('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer
 $('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
 
 // Set page title
-document.title = ui.windowtitle(location.hostname) + ' - Page not found';
+document.title = ui.windowtitle(location.hostname) + ' - Oops';
 $('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
 
 /**
