@@ -23,7 +23,7 @@ root=`echo "import os; print os.path.realpath('$1')" | python`
 
 if [ "$2" = "" ]; then
     host="localhost"
-    port="5432"
+    port="6432"
 else
     host="$2"
     port="$3"
@@ -40,12 +40,40 @@ fi
 mkdir -p $root/sqldb
 echo $pgsql_log >$root/sqldb/logger
 
-$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('backup', true)" db 2>&1 | sh $root/sqldb/logger
+mkdir -p $root/sqldb/backup
+mkdir -p $root/sqldb/archive
 
-echo "Content-type: application/x-compressed"
-echo
+# Make sure that only one backup is in progress at a time
+if [ -f $root/sqldb/backup/inprogress ]; then
+    exit 0
+fi
+touch $root/sqldb/backup/inprogress
 
-tar -C $root/sqldb -cz data
+# Backup
+stamp=`date +%Y%m%d%H%M%S`
+$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('$stamp', true)" db 2>&1 | sh $root/sqldb/logger
+
+uname=`uname -s`
+if [ $uname = "Darwin" ]; then
+    tar=gnutar
+else
+    tar=tar
+fi
+$tar -C $root/sqldb --exclude data/postmaster.pid --exclude data/postmaster.opts --exclude data/pg_xlog --ignore-failed-read -czf $root/sqldb/backup/$stamp.backup.tar.gz data
+rc=$?
+if [ "$rc" = "0" ]; then
+    mv $root/sqldb/backup/$stamp.backup.tar.gz $root/sqldb/archive/$stamp.backup.tar.gz
+fi
 
 $pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_stop_backup()" db 2>&1 | sh $root/sqldb/logger
+
+if [ "$rc" != "0" ]; then
+    rm -f $root/sqldb/backup/inprogress
+    exit $rc
+fi
+
+# Clean obsolete backup and WAL files
+$here/pgsql-clean-archive $root
+
+rm -f $root/sqldb/backup/inprogress
 

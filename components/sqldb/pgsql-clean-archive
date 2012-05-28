@@ -17,27 +17,42 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Stop postgresql
+# Cleanup database archive.
+# Keep the last two backups and corresponding WAL files.
+
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
-pgsql_prefix=`cat $here/pgsql.prefix`
-pgbouncer_prefix=`cat $here/pgbouncer.prefix`
+baks=`ls $root/sqldb/archive | sort -r | grep "\.backup$" | head -2`
+wals=`ls $root/sqldb/archive | sort -r | grep -v "\.backup\.tar\.gz$"`
+tars=`ls $root/sqldb/archive | sort -r | grep "\.backup\.tar\.gz$"`
 
-if [ -f "$root/sqldb/log.conf" ]; then
-    pgsql_log=`cat $root/sqldb/log.conf`
-else
-    mkdir -p $root/logs
-    pgsql_log="cat >>$root/logs/postgresql"
-fi
-mkdir -p $root/sqldb
-echo $pgsql_log >$root/sqldb/logger
+for f in $baks; do
+    if [ "$lastbak" = "" ]; then
+        lastbak=$f
+    else
+        prevbak=$f
+    fi
+done
 
-pgb="$pgbouncer_prefix/bin/pgbouncer -q -d $root/sqldb/data/pgbouncer.conf"
-k=`ps -ef | grep -v grep | grep "${pgb}" | awk '{ print $2 }'`
-if [ "$k" != "" ]; then
-    kill $k
-fi
+w=0
+for f in $wals; do
+    if [ "$w" = "2" ]; then
+        rm $root/sqldb/archive/$f
+    fi
+    if [ "$w" = "1" ]; then
+        w=2
+    fi
+    if [ "$f" = "$prevbak" ]; then
+        w=1
+    fi
+done
 
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
+t=0
+for f in $tars; do
+    if [ "$t" = "2" ]; then
+        rm $root/sqldb/archive/$f
+    fi
+    t=$((t+1))
+done
 

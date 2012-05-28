@@ -23,7 +23,7 @@
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
     <service name="sqldb"/>
-    <property name="conninfo" type="xsd:string">host=localhost port=5432 dbname=db</property>
+    <property name="conninfo" type="xsd:string">host=localhost port=6432 dbname=db</property>
     <property name="table" type=xsd:string"/>
 
 </composite>

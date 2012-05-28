@@ -17,27 +17,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Stop postgresql
+# Backup postgresql data directory
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
-pgsql_prefix=`cat $here/pgsql.prefix`
-pgbouncer_prefix=`cat $here/pgbouncer.prefix`
+tar=`ls $root/sqldb/archive | sort -r  | grep "\.backup\.tar\.gz$" | head -1`
 
-if [ -f "$root/sqldb/log.conf" ]; then
-    pgsql_log=`cat $root/sqldb/log.conf`
-else
-    mkdir -p $root/logs
-    pgsql_log="cat >>$root/logs/postgresql"
-fi
-mkdir -p $root/sqldb
-echo $pgsql_log >$root/sqldb/logger
+echo "Content-type: application/x-compressed"
+echo ""
 
-pgb="$pgbouncer_prefix/bin/pgbouncer -q -d $root/sqldb/data/pgbouncer.conf"
-k=`ps -ef | grep -v grep | grep "${pgb}" | awk '{ print $2 }'`
-if [ "$k" != "" ]; then
-    kill $k
-fi
-
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
+cat $root/sqldb/archive/$tar
 

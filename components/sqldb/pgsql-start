@@ -22,6 +22,7 @@ here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $h
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
 pgsql_prefix=`cat $here/pgsql.prefix`
+pgbouncer_prefix=`cat $here/pgbouncer.prefix`
 
 if [ -f "$root/sqldb/log.conf" ]; then
     pgsql_log=`cat $root/sqldb/log.conf`
@@ -42,4 +43,8 @@ while [ $sti -ne 30 ]; do
     sleep 1
     sti=$((sti+1))
 done
+
+# Start PgBouncer
+mkdir -p $root/logs
+$pgbouncer_prefix/bin/pgbouncer -q -d $root/sqldb/data/pgbouncer.conf
 

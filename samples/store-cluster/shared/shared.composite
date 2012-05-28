@@ -44,7 +44,7 @@
 
     <component name="Masterdb">
         <implementation.cpp path="../../../components/sqldb" library="libsqldb"/>
-        <property name="conninfo">host=localhost port=5432 dbname=db</property>
+        <property name="conninfo">host=localhost port=6432 dbname=db</property>
         <property name="table">store</property>
         <service name="Masterdb">
             <binding.atom uri="masterdb"/>
@@ -53,7 +53,7 @@
 
     <component name="Standbydb">
         <implementation.cpp path="../../../components/sqldb" library="libsqldb"/>
-        <property name="conninfo">host=localhost port=5433 dbname=db</property>
+        <property name="conninfo">host=localhost port=6433 dbname=db</property>
         <property name="table">store</property>
         <service name="Standbydb">
             <binding.atom uri="standbydb"/>

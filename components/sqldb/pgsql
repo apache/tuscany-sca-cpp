@@ -23,7 +23,7 @@ pgsql_prefix=`cat $here/pgsql.prefix`
 
 if [ "$2" = "" ]; then
     host="localhost"
-    port="5432"
+    port="6432"
     cmd="$1"
 else
     host="$1"

@@ -22,12 +22,14 @@ INCLUDES = -I${PGSQL_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/sqldb
 
-dist_comp_SCRIPTS = pgsql-conf pgsql-log-conf pgsql-start pgsql-stop pgsql pgsql-standby-conf pgsql-backup
+dist_comp_SCRIPTS = pgsql-conf pgsql-log-conf pgsql-start pgsql-stop pgsql pgsql-standby-conf pgsql-archive pgsql-backup pgsql-restore pgsql-clean-archive
 compdir=$(prefix)/components/sqldb
 
-comp_DATA = pgsql.prefix
+comp_DATA = pgsql.prefix pgbouncer.prefix
 pgsql.prefix: $(top_builddir)/config.status
 	echo ${PGSQL_PREFIX} >pgsql.prefix
+pgbouncer.prefix: $(top_builddir)/config.status
+	echo ${PGBOUNCER_PREFIX} >pgbouncer.prefix
 
 EXTRA_DIST = sqldb.composite sqldb.componentType
 

@@ -149,6 +149,7 @@ Google LevelDB 1.2 (http://code.google.com/p/leveldb/)
 
 SQL database:
 PostgreSQL 9.1.2 (http://www.postgresql.org/)
+PgBouncer 1.5 (http://wiki.postgresql.org/wiki/PgBouncer)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
@@ -197,7 +198,7 @@ Vysper if you want to run the tests with a local Vysper XMPP server):
 To build the Log utility component (requires Facebook Scribe and Apache Thrift):
 --enable-log
 
-To build the SQL Database utility component (requires PostgreSQL):
+To build the SQL Database utility component (requires PostgreSQL and PgBouncer):
 --enable-sqldb
 
 To build the Web service utility component (requires Apache Axis2/C):
@@ -247,6 +248,7 @@ dependencies installed under $build:
 --enable-chat --with-libstrophe=$build/libstrophe-bin \
 --with-vysper=$build/vysper-0.5 \
 --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin \
+--with-pgbouncer=$build/pgbouncer-1.5-bin \
 --enable-log --with-thrift=$build/thrift-0.2.0-bin \
 --with-scribe=$build/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin \

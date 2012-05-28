@@ -17,27 +17,43 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Stop postgresql
+# PostgreSQL archive command
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 root=`echo "import os; print os.path.realpath('$1')" | python`
 
-pgsql_prefix=`cat $here/pgsql.prefix`
-pgbouncer_prefix=`cat $here/pgbouncer.prefix`
+host=$2
+port=$3
+walp=$4
+walf=$5
 
-if [ -f "$root/sqldb/log.conf" ]; then
-    pgsql_log=`cat $root/sqldb/log.conf`
-else
-    mkdir -p $root/logs
-    pgsql_log="cat >>$root/logs/postgresql"
-fi
-mkdir -p $root/sqldb
-echo $pgsql_log >$root/sqldb/logger
-
-pgb="$pgbouncer_prefix/bin/pgbouncer -q -d $root/sqldb/data/pgbouncer.conf"
-k=`ps -ef | grep -v grep | grep "${pgb}" | awk '{ print $2 }'`
-if [ "$k" != "" ]; then
-    kill $k
+# Copy WAL to archive directory
+if [ ! -f $root/sqldb/archive/$walf ]; then
+    cp $walp $root/sqldb/archive/$walf
+    rc=$?
+    if [ "$rc" != "0" ]; then
+        exit $rc
+    fi
 fi
 
-$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
+# Trigger a backup if we have 10 WAL files archived since the last backup
+lastbak=`ls $root/sqldb/archive | sort -r | grep "\.backup$" | head -1`
+if [ "$lastbak" = "" ]; then
+    exit 0
+fi
+wals=`ls $root/sqldb/archive | sort -r | grep -v "\.backup\.tar\.gz$"`
+
+w=0
+for f in $wals; do
+    if [ "$f" = "$lastbak" ]; then
+        break
+    fi
+    w=$((w+1))
+
+    if [ "$w" = "10" ]; then
+        nohup /bin/sh -c "$here/pgsql-backup $root $host $port" 1>/dev/null 2>/dev/null &
+        break
+    fi
+done
+
+exit 0
 

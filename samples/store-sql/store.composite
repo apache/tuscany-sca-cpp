@@ -79,7 +79,7 @@
 
     <component name="Sqldb">
         <implementation.cpp path="../../components/sqldb" library="libsqldb"/>
-        <property name="conninfo">host=localhost port=5432 dbname=db</property>
+        <property name="conninfo">host=localhost port=6432 dbname=db</property>
         <property name="table">store</property>
         <service name="Sqldb">
             <binding.atom uri="sqldb"/>

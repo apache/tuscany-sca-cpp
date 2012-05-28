@@ -21,7 +21,7 @@ Smtp: SMTP client, using Libcurl;
 Kvdb: fast key/value persistent store, using LevelDB;
 Log: distributed logger, using Facebook Scribe;
 Queue: AMQP queuing, using Apache Qpid/C;
-Sqldb: SQL database, using PostgreSQL;
+Sqldb: SQL database, using PostgreSQL and PgBouncer;
 Webservice: Web service gateway, using Apache Axis2/C.
 
 These components present a simple ATOMPub REST interface, allowing you to send

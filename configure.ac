@@ -191,7 +191,7 @@ AC_ARG_ENABLE(malloc-mmap, [AS_HELP_STRING([--enable-malloc-mmap], [use mmap for
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-if test "${want_efence}" = "true"; then
+if test "${want_malloc_mmap}" = "true"; then
   AM_CONDITIONAL([WANT_MALLOC_MMAP], true)
   AC_DEFINE([WANT_MALLOC_MMAP], 1, [use mmap for memory allocation])
 else
@@ -264,6 +264,7 @@ AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl 
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(CURL_PREFIX)
+AC_DEFINE_UNQUOTED([CURL_PREFIX], "${CURL_PREFIX}", [path to installed curl])
 AC_SUBST(LIBCURL_INCLUDE)
 AC_SUBST(LIBCURL_LIB)
 LIBS="-L${LIBCURL_LIB} ${defaultlibs}"
@@ -339,6 +340,7 @@ AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed Apa
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(HTTPD_PREFIX)
+AC_DEFINE_UNQUOTED([HTTPD_PREFIX], "${HTTPD_PREFIX}", [path to installed Apache HTTPD])
 AC_SUBST(HTTPD_APACHECTL_PREFIX)
 AC_SUBST(HTTPD_MODULES_PREFIX)
 AC_SUBST(HTTPD_INCLUDE)
@@ -365,6 +367,7 @@ AC_ARG_WITH([memcached], [AC_HELP_STRING([--with-memcached=PATH], [path to insta
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(MEMCACHED_PREFIX)
+AC_DEFINE_UNQUOTED([MEMCACHED_PREFIX], "${MEMCACHED_PREFIX}", [path to installed memcached])
 AC_MSG_CHECKING([for ${MEMCACHED_PREFIX}/bin/memcached])
 if test -x "${MEMCACHED_PREFIX}/bin/memcached"; then
     AC_MSG_RESULT(found)
@@ -386,6 +389,7 @@ AC_ARG_WITH([tinycdb], [AC_HELP_STRING([--with-tinycdb=PATH], [path to installed
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(TINYCDB_PREFIX)
+AC_DEFINE_UNQUOTED([TINYCDB_PREFIX], "${TINYCDB_PREFIX}", [path to installed tinycdb])
 AC_SUBST(TINYCDB_INCLUDE)
 AC_SUBST(TINYCDB_LIB)
 LIBS="-L${TINYCDB_LIB} ${defaultlibs}"
@@ -428,6 +432,7 @@ if test "${want_python}" = "true"; then
     AC_MSG_RESULT(/usr)
   ])
   AC_SUBST(PYTHON_PREFIX)
+  AC_DEFINE_UNQUOTED([PYTHON_PREFIX], "${PYTHON_PREFIX}", [path to installed Python])
   AC_SUBST(PYTHON_INCLUDE)
   AC_SUBST(PYTHON_LIB)
   LIBS="-L${PYTHON_LIB} ${defaultlibs}"
@@ -480,6 +485,7 @@ if test "${want_pagespeed}" = "true"; then
     fi
   AM_CONDITIONAL([WANT_PAGESPEED], true)
   AC_DEFINE([WANT_PAGESPEED], 1, [run Page Speed optimizations])
+  AC_DEFINE_UNQUOTED([PAGESPEED_PREFIX], "${PAGESPEED_PREFIX}", [path to installed Page Speed])
 else
   AM_CONDITIONAL([WANT_PAGESPEED], false)
 fi
@@ -559,6 +565,7 @@ if test "${want_java}" = "true"; then
     AC_MSG_RESULT(/usr/lib/jvm/default-java)
   ])
   AC_SUBST(JAVA_PREFIX)
+  AC_DEFINE_UNQUOTED([JAVA_PREFIX], "${JAVA_PREFIX}", [path to installed Java])
   AC_SUBST(JAVA_INCLUDE)
   AC_SUBST(JAVAC)
   AC_SUBST(JAR)
@@ -655,6 +662,7 @@ if test "${want_openid}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(MODAUTHOPENID_PREFIX)
+  AC_DEFINE_UNQUOTED([MODAUTHOPENID_PREFIX], "${MODAUTHOPENID_PREFIX}", [path to installed mod-auth-openid])
 
   AM_CONDITIONAL([WANT_OPENID], true)
   AC_DEFINE([WANT_OPENID], 1, [enable OpenID support])
@@ -726,6 +734,7 @@ if test "${want_modsecurity}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(MODSECURITY_PREFIX)
+  AC_DEFINE_UNQUOTED([MODSECURITY_PREFIX], "${MODSECURITY_PREFIX}", [path to installed mod-security])
 
   AM_CONDITIONAL([WANT_MODSECURITY], true)
   AC_DEFINE([WANT_MODSECURITY], 1, [enable mod-security support])
@@ -827,6 +836,7 @@ if test "${want_webservice}" = "true"; then
     AC_MSG_RESULT(/usr/local/axis2c)
   ])
   AC_SUBST(AXIS2C_PREFIX)
+  AC_DEFINE_UNQUOTED([AXIS2C_PREFIX], "${AXIS2C_PREFIX}", [path to installed Axis2C])
   AC_SUBST(AXIS2C_INCLUDE)
   AC_SUBST(AXIS2C_LIB)
   LIBS="-L${AXIS2C_LIB} ${defaultlibs}"
@@ -868,8 +878,21 @@ if test "${want_sqldb}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(PGSQL_PREFIX)
+  AC_DEFINE_UNQUOTED([PGSQL_PREFIX], "${PGSQL_PREFIX}", [path to installed PostgreSQL])
   AC_SUBST(PGSQL_INCLUDE)
   AC_SUBST(PGSQL_LIB)
+
+  # Configure path to PgBouncer.
+  AC_MSG_CHECKING([for pgbouncer])
+  AC_ARG_WITH([pgbouncer], [AC_HELP_STRING([--with-pgbouncer=PATH], [path to installed PgBouncer [default=/usr/local]])], [
+    PGBOUNCER_PREFIX="${withval}"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    PGBOUNCER_PREFIX="/usr/local"
+    AC_MSG_RESULT(/usr/local)
+  ])
+  AC_SUBST(PGBOUNCER_PREFIX)
+  AC_DEFINE_UNQUOTED([PGBOUNCER_PREFIX], "${PGBOUNCER_PREFIX}", [path to installed PgBouncer])
 
   AM_CONDITIONAL([WANT_SQLDB], true)
   AC_DEFINE([WANT_SQLDB], 1, [enable SQL Database component])
@@ -906,6 +929,7 @@ if test "${want_queue}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(QPIDC_PREFIX)
+  AC_DEFINE_UNQUOTED([QPIDC_PREFIX], "${QPIDC_PREFIX}", [path to installed Qpid/C++])
   AC_SUBST(QPIDC_INCLUDE)
   AC_SUBST(QPIDC_LIB)
 
@@ -1015,6 +1039,7 @@ if test "${want_log}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(THRIFT_PREFIX)
+  AC_DEFINE_UNQUOTED([THRIFT_PREFIX], "${THRIFT_PREFIX}", [path to installed Apache Thrift])
   AC_SUBST(THRIFT_INCLUDE)
   AC_SUBST(THRIFT_LIB)
   AC_SUBST(FB303_PREFIX)
@@ -1035,6 +1060,7 @@ if test "${want_log}" = "true"; then
     AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(SCRIBE_PREFIX)
+  AC_DEFINE_UNQUOTED([SCRIBE_PREFIX], "${SCRIBE_PREFIX}", [path to installed Facebook Scribe])
   AC_SUBST(SCRIBE_INCLUDE)
   AC_SUBST(SCRIBE_LIB)
 

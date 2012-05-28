@@ -33,7 +33,7 @@ namespace tuscany {
 namespace pgsql {
 
 bool testPGSql() {
-    PGSql pg("host=localhost port=5432 dbname=db", "test");
+    PGSql pg("host=localhost port=6432 dbname=db", "test");
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), pg)));
@@ -59,7 +59,7 @@ struct getLoop {
 
 bool testGetPerf() {
     const value k = mklist<value>("c");
-    PGSql pg("host=localhost port=5432 dbname=db", "test");
+    PGSql pg("host=localhost port=6432 dbname=db", "test");
     assert(hasContent(post(k, string("CCC"), pg)));
 
     const lambda<bool()> gl = getLoop(k, pg);

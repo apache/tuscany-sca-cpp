@@ -249,7 +249,7 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build PostgreSQL
+# Build PostgreSQL and PgBouncer
 sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
     exit $?
@@ -264,9 +264,20 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
+curl -OL http://pgfoundry.org/frs/download.php/3197/pgbouncer-1.5.tar.gz
+tar xzf pgbouncer-1.5.tar.gz
+cd pgbouncer-1.5
+./configure --prefix=$build/pgbouncer-1.5-bin
+make
+cp install-sh doc
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Build Apache Thrift
-sudo apt-get -y install bison flex python-dev libboost-dev libboost-filesystem-dev 
+sudo apt-get -y install bison flex libboost-dev libboost-filesystem-dev 
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -274,7 +285,7 @@ curl -OL http://archive.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift
 tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
 ./bootstrap.sh
-./configure --prefix=$build/thrift-0.2.0-bin PY_PREFIX=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+./configure --prefix=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
 make
 make install
 if [ "$?" != "0" ]; then
@@ -345,7 +356,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin --enable-libcloud --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.1-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin --enable-libcloud --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --with-pgbouncer=$build/pgbouncer-1.5-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.1-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -354,8 +365,8 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.15-beta httpd-2.3.15-beta.tar.gz httpd-2.3.15-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.1-bin modsecurity-apache_2.6.1.tar.gz modsecurity-crs_2.2.2 modsecurity-crs_2.2.2.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tidy tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.15-beta httpd-2.3.15-beta.tar.gz httpd-2.3.15-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.1-bin modsecurity-apache_2.6.1.tar.gz modsecurity-crs_2.2.2 modsecurity-crs_2.2.2.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip pgbouncer-1.5 pgbouncer-1.5-bin pgbouncer-1.5.tar.gz postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tidy tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.24.0-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.15-bin js-1.8.5-bin libcloud-0.4.2-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel page-speed-1.9-bin postgresql-9.1.2-bin scribe-2.2-bin thrift-0.2.0-bin tinycdb-0.77-bin tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.24.0-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.15-bin js-1.8.5-bin libcloud-0.4.2-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel page-speed-1.9-bin pgbouncer-1.5-bin postgresql-9.1.2-bin scribe-2.2-bin thrift-0.2.0-bin tinycdb-0.77-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 
