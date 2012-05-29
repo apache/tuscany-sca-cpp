@@ -135,18 +135,10 @@ ServerName http://$host$pportsuffix
 RewriteEngine on
 RewriteCond %{HTTP_HOST} !^$host [NC]
 RewriteCond %{HTTP:X-Forwarded-Server} ^$ [NC]
+RewriteCond %{REQUEST_URI} !^/server-status [NC]
+RewriteCond %{REQUEST_URI} !^/balancer-manager [NC]
+RewriteCond %{REQUEST_URI} !^/proxy/ [NC]
 RewriteRule .* http://$host$pportsuffix%{REQUEST_URI} [R]
-</Location>
-
-# Enable server status
-<Location /server-status>
-SetHandler server-status
-HostnameLookups on
-</Location>
-
-<Location /server-info>
-SetHandler server-info
-HostnameLookups on
 </Location>
 
 Include conf/svhost.conf
@@ -210,7 +202,6 @@ LoadModule socache_shmcb_module ${modules_prefix}/modules/mod_socache_shmcb.so
 LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
 LoadModule mime_module ${modules_prefix}/modules/mod_mime.so
 LoadModule status_module ${modules_prefix}/modules/mod_status.so
-LoadModule info_module ${modules_prefix}/modules/mod_info.so
 LoadModule negotiation_module ${modules_prefix}/modules/mod_negotiation.so
 LoadModule dir_module ${modules_prefix}/modules/mod_dir.so
 LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
@@ -296,12 +287,8 @@ EOF
 
 cat >$root/conf/adminauth.conf <<EOF
 
-# Allow the server admin to view the server status and info
+# Allow the server admin to view the server status
 <Location /server-status>
-Require user admin
-</Location>
-
-<Location /server-info>
 Require user admin
 </Location>
 
@@ -346,6 +333,12 @@ UseCanonicalName Off
 ProxyRequests Off
 ProxyPreserveHost Off
 ProxyStatus On
+
+# Enable server status
+<Location /server-status>
+SetHandler server-status
+HostnameLookups on
+</Location>
 
 EOF
 

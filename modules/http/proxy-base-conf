@@ -27,7 +27,6 @@ cat >>$root/conf/vhost.conf <<EOF
 # Do not proxy admin pages
 ProxyPass /balancer-manager !
 ProxyPass /server-status !
-ProxyPass /server-info !
 ProxyPass /proxy !
 
 # Enable balancer manager

@@ -71,6 +71,9 @@ ServerName https://$host$sslpportsuffix
 RewriteEngine on
 RewriteCond %{HTTP_HOST} !^$host [NC]
 RewriteCond %{HTTP:X-Forwarded-Server} ^$ [NC]
+RewriteCond %{REQUEST_URI} !^/server-status [NC]
+RewriteCond %{REQUEST_URI} !^/balancer-manager [NC]
+RewriteCond %{REQUEST_URI} !^/proxy/ [NC]
 RewriteRule .* https://$host$sslpportsuffix%{REQUEST_URI} [R]
 </Location>
 
@@ -182,6 +185,12 @@ SSLProxyCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+e
 SSLProxyVerify require
 SSLProxyVerifyDepth 1
 SSLProxyCheckPeerCN Off
+
+# Enable server status
+<Location /server-status>
+SetHandler server-status
+HostnameLookups on
+</Location>
 
 EOF
 

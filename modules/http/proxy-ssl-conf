@@ -27,7 +27,6 @@ cat >>$root/conf/vhost-ssl.conf <<EOF
 # Do not proxy admin pages
 ProxyPass /balancer-manager !
 ProxyPass /server-status !
-ProxyPass /server-info !
 ProxyPass /proxy !
 
 # Enable load balancing
