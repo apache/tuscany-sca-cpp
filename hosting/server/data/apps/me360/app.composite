@@ -17,77 +17,84 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
- <service name="start" promote="start"/>
- <component name="bzprofile" title="buzz profile" color="blue1">
-  <implementation.python script="nuvem/bzprofile.py"/>
-  <service name="bzprofile"/>
-  <reference target="text4" name="id"/>
-  <reference name="bz" visible="false">
-   <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
-  </reference>
- </component>
- <component x="130" y="30" name="fbprofile" title="facebook profile" color="blue1">
-  <implementation.python script="nuvem/fbprofile.py"/>
-  <service name="fbprofile"/>
-  <reference target="text" name="id"/>
-  <reference name="fb" visible="false">
-   <binding.http uri="https://graph.facebook.com"/>
-  </reference>
- </component>
- <component x="90" y="170" name="item" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="fbprofile" name="value"/>
-  <property>fbprofile</property>
- </component>
- <component x="90" y="190" name="item2" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="twprofile" name="value"/>
-  <property>twitprofile</property>
- </component>
- <component x="90" y="210" name="item3" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="bzprofile" name="value"/>
-  <property>buzzprofile</property>
- </component>
- <component x="60" y="30" name="list31" title="list" color="yellow1">
-  <implementation.python script="nuvem/triple.py"/>
-  <service name="list3"/>
-  <reference target="item" name="first"/>
-  <reference target="item2" name="second"/>
-  <reference target="item3" name="third"/>
- </component>
- <component x="10" y="10" name="start" title="start" color="green1">
-  <implementation.python script="nuvem/start.py"/>
-  <service name="start" visible="false">
-   <binding.http uri="start"/>
-  </service>
-  <reference target="list31" name="content"/>
- </component>
- <component x="220" y="170" name="text" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>jsdelfino</property>
- </component>
- <component x="220" y="200" name="text2" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>jsdelfino</property>
- </component>
- <component x="220" y="230" name="text4" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>jsdelfino</property>
- </component>
- <component name="twprofile" title="twitter profile" color="blue1">
-  <implementation.python script="nuvem/twprofile.py"/>
-  <service name="twprofile"/>
-  <reference target="text2" name="id"/>
-  <reference name="tw" visible="false">
-   <binding.http uri="http://api.twitter.com/1/users/show.json"/>
-  </reference>
- </component>
-</composite>
+<entry xmlns="http://www.w3.org/2005/Atom">
+ <title type="text">me360</title>
+ <id>me360</id>
+ <content type="application/xml">
+  <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+   <service name="start" promote="start"/>
+   <component name="bzprofile" title="buzz profile" color="blue1">
+    <implementation.python script="nuvem/bzprofile.py"/>
+    <service name="bzprofile"/>
+    <reference target="text4" name="id"/>
+    <reference name="bz" visible="false">
+     <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
+    </reference>
+   </component>
+   <component x="130" y="30" name="fbprofile" title="facebook profile" color="blue1">
+    <implementation.python script="nuvem/fbprofile.py"/>
+    <service name="fbprofile"/>
+    <reference target="text" name="id"/>
+    <reference name="fb" visible="false">
+     <binding.http uri="https://graph.facebook.com"/>
+    </reference>
+   </component>
+   <component x="90" y="170" name="item" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="fbprofile" name="value"/>
+    <property>fbprofile</property>
+   </component>
+   <component x="90" y="190" name="item2" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="twprofile" name="value"/>
+    <property>twitprofile</property>
+   </component>
+   <component x="90" y="210" name="item3" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="bzprofile" name="value"/>
+    <property>buzzprofile</property>
+   </component>
+   <component x="60" y="30" name="list31" title="list" color="yellow1">
+    <implementation.python script="nuvem/triple.py"/>
+    <service name="list3"/>
+    <reference target="item" name="first"/>
+    <reference target="item2" name="second"/>
+    <reference target="item3" name="third"/>
+   </component>
+   <component x="10" y="10" name="start" title="start" color="green1">
+    <implementation.python script="nuvem/start.py"/>
+    <service name="start" visible="false">
+     <binding.http uri="start"/>
+    </service>
+    <reference target="list31" name="content"/>
+   </component>
+   <component x="220" y="170" name="text" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>jsdelfino</property>
+   </component>
+   <component x="220" y="200" name="text2" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>jsdelfino</property>
+   </component>
+   <component x="220" y="230" name="text4" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>jsdelfino</property>
+   </component>
+   <component name="twprofile" title="twitter profile" color="blue1">
+    <implementation.python script="nuvem/twprofile.py"/>
+    <service name="twprofile"/>
+    <reference target="text2" name="id"/>
+    <reference name="tw" visible="false">
+     <binding.http uri="http://api.twitter.com/1/users/show.json"/>
+    </reference>
+   </component>
+  </composite>
+ </content>
+ <link href="me360"/>
+</entry>

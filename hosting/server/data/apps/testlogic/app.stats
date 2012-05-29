@@ -1,1 +1,1 @@
-((entry (title "Test logic components") (id "testlogic")))
+((entry (title "Test logic components") (id "testlogic") (author "admin@example.com") (updated "Jan 01, 2012") (content (stats (description "Sample app")))))

@@ -17,36 +17,43 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
- <service name="comment1" promote="comment1"/>
- <service name="start1" promote="start1"/>
- <component x="10" y="0" name="comment1" title="{propval}" color="white">
-  <implementation.python script="nuvem/comment.py"/>
-  <service name="comment" visible="false"/>
-  <property>Change this example to do what you want</property>
- </component>
- <component x="80" y="40" name="item1" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="user1" name="value"/>
-  <property>me</property>
- </component>
- <component name="list1" title="list.." color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item1" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component x="10" y="40" name="start1" title="start" color="green1">
-  <implementation.python script="nuvem/start.py"/>
-  <service name="start" visible="false">
-   <binding.http uri="start"/>
-  </service>
-  <reference target="list1" name="content"/>
- </component>
- <component name="user1" title="user" color="green1">
-  <implementation.python script="nuvem/user.py"/>
-  <service name="user"/>
-  <property name="user" visible="false"/>
- </component>
-</composite>
+<entry xmlns="http://www.w3.org/2005/Atom">
+ <title type="text">new</title>
+ <id>new</id>
+ <content type="application/xml">
+  <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+   <service name="comment1" promote="comment1"/>
+   <service name="start1" promote="start1"/>
+   <component x="10" y="0" name="comment1" title="{propval}" color="white">
+    <implementation.python script="nuvem/comment.py"/>
+    <service name="comment" visible="false"/>
+    <property>Change this example to do what you want</property>
+   </component>
+   <component x="80" y="40" name="item1" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="user1" name="value"/>
+    <property>me</property>
+   </component>
+   <component name="list1" title="list.." color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="item1" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component x="10" y="40" name="start1" title="start" color="green1">
+    <implementation.python script="nuvem/start.py"/>
+    <service name="start" visible="false">
+     <binding.http uri="start"/>
+    </service>
+    <reference target="list1" name="content"/>
+   </component>
+   <component name="user1" title="user" color="green1">
+    <implementation.python script="nuvem/user.py"/>
+    <service name="user"/>
+    <property name="user" visible="false"/>
+   </component>
+  </composite>
+ </content>
+ <link href="new"/>
+</entry>

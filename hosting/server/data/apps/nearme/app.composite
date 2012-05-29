@@ -17,428 +17,435 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
- <service name="getlocs" promote="getlocs"/>
- <service name="location" promote="location"/>
- <service name="map" promote="map"/>
- <service name="nearme" promote="nearme"/>
- <service name="start2" promote="start2"/>
- <service name="timer" promote="timer"/>
- <component name="append" title="+" color="yellow1">
-  <implementation.python script="nuvem/append.py"/>
-  <service name="append"/>
-  <reference target="params" name="first"/>
-  <reference target="call2" name="second"/>
- </component>
- <component x="130" y="530" name="call" title="call" color="green1">
-  <implementation.python script="nuvem/call.py"/>
-  <service name="call"/>
-  <reference target="name" name="name"/>
-  <reference name="proxy" wiredByImpl="true" visible="false"/>
- </component>
- <component name="call2" title="call" color="green1">
-  <implementation.python script="nuvem/call.py"/>
-  <service name="call"/>
-  <reference target="name2" name="name"/>
-  <reference name="proxy" wiredByImpl="true" visible="false"/>
- </component>
- <component name="call3" title="call" color="green1">
-  <implementation.python script="nuvem/call.py"/>
-  <service name="call"/>
-  <reference target="name4" name="name"/>
-  <reference name="proxy" wiredByImpl="true" visible="false"/>
- </component>
- <component name="call4" title="call" color="green1">
-  <implementation.python script="nuvem/call.py"/>
-  <service name="call"/>
-  <reference target="name3" name="name"/>
-  <reference name="proxy" wiredByImpl="true" visible="false"/>
- </component>
- <component name="filedb" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component x="210" y="120" name="filedb1" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component name="filedb10" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component name="filedb11" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component xmlns="" name="filedb4" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component xmlns="" name="filedb5" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component xmlns="" name="filedb6" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component xmlns="" name="filedb8" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component xmlns="" name="filedb9" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="AppDataFileCache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component x="190" y="120" name="get1" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb1" name="collection"/>
-  <reference target="user4" name="id"/>
- </component>
- <component name="get10" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb11" name="collection"/>
-  <reference target="param5" name="id"/>
- </component>
- <component xmlns="" name="get3" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb4" name="collection"/>
-  <reference target="param3" name="id"/>
- </component>
- <component xmlns="" name="get4" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb5" name="collection"/>
-  <reference target="param4" name="id"/>
- </component>
- <component xmlns="" name="get5" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb6" name="collection"/>
-  <reference target="param2" name="id"/>
- </component>
- <component xmlns="" name="get7" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb8" name="collection"/>
-  <reference target="param7" name="id"/>
- </component>
- <component xmlns="" name="get8" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb9" name="collection"/>
-  <reference target="param6" name="id"/>
- </component>
- <component name="get9" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb10" name="collection"/>
-  <reference target="user5" name="id"/>
- </component>
- <component x="310" y="270" name="getlocs" title="{compname}" color="green1">
-  <implementation.python script="nuvem/service.py"/>
-  <service name="service" visible="false"/>
-  <reference target="list4" name="content"/>
- </component>
- <component x="80" y="610" name="gmap1" title="map" color="blue1">
-  <implementation.python script="nuvem/gmap.py"/>
-  <service name="gmap"/>
-  <reference target="call" name="locations"/>
-  <reference name="s" visible="false">
-   <binding.http uri="http://maps.google.com/maps/api/staticmap"/>
-  </reference>
- </component>
- <component x="110" y="90" name="item" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="user3" name="value"/>
-  <property>me</property>
- </component>
- <component x="110" y="390" name="item10" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="url" name="value"/>
-  <property>mapimg</property>
- </component>
- <component x="660" y="350" name="item11" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="get9" name="value"/>
-  <property>x</property>
- </component>
- <component x="660" y="400" name="item12" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="get10" name="value"/>
-  <property>1</property>
- </component>
- <component x="660" y="460" name="item4" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="get3" name="value"/>
-  <property>2</property>
- </component>
- <component x="660" y="530" name="item5" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="get4" name="value"/>
-  <property>3</property>
- </component>
- <component x="110" y="330" name="item6" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="last4" name="value"/>
-  <property>time3</property>
- </component>
- <component x="110" y="260" name="item7" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="last3" name="value"/>
-  <property>time2</property>
- </component>
- <component x="100" y="200" name="item8" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="last2" name="value"/>
-  <property>time1</property>
- </component>
- <component x="100" y="120" name="item9" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="last" name="value"/>
-  <property>mytime</property>
- </component>
- <component name="last" title="last" color="yellow1">
-  <implementation.python script="nuvem/last.py"/>
-  <service name="last"/>
-  <reference target="get1" name="list"/>
- </component>
- <component name="last2" title="last" color="yellow1">
-  <implementation.python script="nuvem/last.py"/>
-  <service name="last"/>
-  <reference target="get5" name="list"/>
- </component>
- <component x="160" y="220" name="last3" title="last" color="yellow1">
-  <implementation.python script="nuvem/last.py"/>
-  <service name="last"/>
-  <reference target="get8" name="list"/>
- </component>
- <component name="last4" title="last" color="yellow1">
-  <implementation.python script="nuvem/last.py"/>
-  <service name="last"/>
-  <reference target="get7" name="list"/>
- </component>
- <component name="list1" title="list.." color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item" name="item" clonable="true"/>
-  <reference target="item9" name="item" clonable="true"/>
-  <reference target="item8" name="item" clonable="true"/>
-  <reference target="item7" name="item" clonable="true"/>
-  <reference target="item6" name="item" clonable="true"/>
-  <reference target="item10" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list2" title="list.." color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text7" name="item" clonable="true"/>
-  <reference target="param10" name="item" clonable="true"/>
-  <reference target="param" name="item" clonable="true"/>
-  <reference target="now" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list4" title="list.." color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item11" name="item" clonable="true"/>
-  <reference target="item12" name="item" clonable="true"/>
-  <reference target="item4" name="item" clonable="true"/>
-  <reference target="item5" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component x="310" y="80" name="location" title="location" color="green1">
-  <implementation.python script="nuvem/location.py"/>
-  <service name="location" visible="false">
-   <binding.http uri="location"/>
-  </service>
-  <reference target="put" name="content"/>
- </component>
- <component x="10" y="460" name="map" title="{compname}" color="green1">
-  <implementation.python script="nuvem/service.py"/>
-  <service name="service" visible="false"/>
-  <reference target="gmap1" name="content"/>
- </component>
- <component name="name" title="" color="orange1">
-  <implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>getlocs</property>
- </component>
- <component name="name2" title="" color="orange1">
-  <implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>getlocs</property>
- </component>
- <component name="name3" title="" color="orange1">
-  <implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>nearme</property>
- </component>
- <component name="name4" title="" color="orange1">
-  <implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>nearme</property>
- </component>
- <component x="10" y="60" name="nearme" title="{compname}" color="green1">
-  <implementation.python script="nuvem/service.py"/>
-  <service name="service" visible="false"/>
-  <reference target="list1" name="content"/>
- </component>
- <component x="500" y="250" name="now" title="now" color="orange1">
-  <implementation.python script="nuvem/now.py"/>
-  <service name="now"/>
-  <reference target="text" name="format"/>
- </component>
- <component xmlns="" name="number" title="#" color="orange1">
-  <implementation.python script="nuvem/number.py"/>
-  <service name="number"/>
-  <property>5000</property>
- </component>
- <component x="500" y="220" name="param" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>longitude</property>
-  <property name="query" visible="false"/>
- </component>
- <component x="500" y="200" name="param10" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>latitude</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param2" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend1</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param3" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend2</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param4" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend3</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param5" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend1</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param6" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend2</property>
-  <property name="query" visible="false"/>
- </component>
- <component name="param7" title="?param" color="green1">
-  <implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <property>friend3</property>
-  <property name="query" visible="false"/>
- </component>
- <component xmlns="" name="params" title="?params" color="green1">
-  <implementation.python script="nuvem/params.py"/>
-  <service name="params"/>
-  <property name="query" visible="false"/>
- </component>
- <component xmlns="" name="put" title="put" color="pink1">
-  <implementation.python script="nuvem/put.py"/>
-  <service name="put"/>
-  <reference target="filedb" name="collection"/>
-  <reference target="user" name="id"/>
-  <reference target="list2" name="value"/>
- </component>
- <component x="10" y="10" name="start2" title="start" color="green1">
-  <implementation.python script="nuvem/start.py"/>
-  <service name="start" visible="false">
-   <binding.http uri="start"/>
-  </service>
-  <reference target="call4" name="content"/>
- </component>
- <component name="text" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>%a %b %d, %I:%M %p</property>
- </component>
- <component name="text2" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>/components/map</property>
- </component>
- <component xmlns="" x="500" y="170" name="text7" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>green</property>
- </component>
- <component x="310" y="10" name="timer" title="timer" color="green1">
-  <implementation.python script="nuvem/timer.py"/>
-  <service name="timer" visible="false">
-   <binding.http uri="timer"/>
-  </service>
-  <reference target="number" name="n"/>
-  <reference target="call3" name="content"/>
- </component>
- <component name="url" title="url" color="green1">
-  <implementation.python script="nuvem/url.py"/>
-  <service name="url"/>
-  <reference target="text2" name="address"/>
-  <reference target="append" name="args"/>
- </component>
- <component xmlns="" name="user" title="user" color="green1">
-  <implementation.python script="nuvem/user.py"/>
-  <service name="user"/>
-  <property name="user" visible="false"/>
- </component>
- <component xmlns="" name="user3" title="user" color="green1">
-  <implementation.python script="nuvem/user.py"/>
-  <service name="user"/>
-  <property name="user" visible="false"/>
- </component>
- <component xmlns="" x="210" y="150" name="user4" title="user" color="green1">
-  <implementation.python script="nuvem/user.py"/>
-  <service name="user"/>
-  <property name="user" visible="false"/>
- </component>
- <component name="user5" title="user" color="green1">
-  <implementation.python script="nuvem/user.py"/>
-  <service name="user"/>
-  <property name="user" visible="false"/>
- </component>
-</composite>
+<entry xmlns="http://www.w3.org/2005/Atom">
+ <title type="text">nearme</title>
+ <id>nearme</id>
+ <content type="application/xml">
+  <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+   <service name="getlocs" promote="getlocs"/>
+   <service name="location" promote="location"/>
+   <service name="map" promote="map"/>
+   <service name="nearme" promote="nearme"/>
+   <service name="start2" promote="start2"/>
+   <service name="timer" promote="timer"/>
+   <component name="append" title="+" color="yellow1">
+    <implementation.python script="nuvem/append.py"/>
+    <service name="append"/>
+    <reference target="params" name="first"/>
+    <reference target="call2" name="second"/>
+   </component>
+   <component x="130" y="530" name="call" title="call" color="green1">
+    <implementation.python script="nuvem/call.py"/>
+    <service name="call"/>
+    <reference target="name" name="name"/>
+    <reference name="proxy" wiredByImpl="true" visible="false"/>
+   </component>
+   <component name="call2" title="call" color="green1">
+    <implementation.python script="nuvem/call.py"/>
+    <service name="call"/>
+    <reference target="name2" name="name"/>
+    <reference name="proxy" wiredByImpl="true" visible="false"/>
+   </component>
+   <component name="call3" title="call" color="green1">
+    <implementation.python script="nuvem/call.py"/>
+    <service name="call"/>
+    <reference target="name4" name="name"/>
+    <reference name="proxy" wiredByImpl="true" visible="false"/>
+   </component>
+   <component name="call4" title="call" color="green1">
+    <implementation.python script="nuvem/call.py"/>
+    <service name="call"/>
+    <reference target="name3" name="name"/>
+    <reference name="proxy" wiredByImpl="true" visible="false"/>
+   </component>
+   <component name="filedb" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component x="210" y="120" name="filedb1" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component name="filedb10" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component name="filedb11" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component xmlns="" name="filedb4" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component xmlns="" name="filedb5" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component xmlns="" name="filedb6" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component xmlns="" name="filedb8" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component xmlns="" name="filedb9" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="AppDataFileCache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component x="190" y="120" name="get1" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb1" name="collection"/>
+    <reference target="user4" name="id"/>
+   </component>
+   <component name="get10" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb11" name="collection"/>
+    <reference target="param5" name="id"/>
+   </component>
+   <component xmlns="" name="get3" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb4" name="collection"/>
+    <reference target="param3" name="id"/>
+   </component>
+   <component xmlns="" name="get4" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb5" name="collection"/>
+    <reference target="param4" name="id"/>
+   </component>
+   <component xmlns="" name="get5" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb6" name="collection"/>
+    <reference target="param2" name="id"/>
+   </component>
+   <component xmlns="" name="get7" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb8" name="collection"/>
+    <reference target="param7" name="id"/>
+   </component>
+   <component xmlns="" name="get8" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb9" name="collection"/>
+    <reference target="param6" name="id"/>
+   </component>
+   <component name="get9" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb10" name="collection"/>
+    <reference target="user5" name="id"/>
+   </component>
+   <component x="310" y="270" name="getlocs" title="{compname}" color="green1">
+    <implementation.python script="nuvem/service.py"/>
+    <service name="service" visible="false"/>
+    <reference target="list4" name="content"/>
+   </component>
+   <component x="80" y="610" name="gmap1" title="map" color="blue1">
+    <implementation.python script="nuvem/gmap.py"/>
+    <service name="gmap"/>
+    <reference target="call" name="locations"/>
+    <reference name="s" visible="false">
+     <binding.http uri="http://maps.google.com/maps/api/staticmap"/>
+    </reference>
+   </component>
+   <component x="110" y="90" name="item" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="user3" name="value"/>
+    <property>me</property>
+   </component>
+   <component x="110" y="390" name="item10" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="url" name="value"/>
+    <property>mapimg</property>
+   </component>
+   <component x="660" y="350" name="item11" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="get9" name="value"/>
+    <property>x</property>
+   </component>
+   <component x="660" y="400" name="item12" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="get10" name="value"/>
+    <property>1</property>
+   </component>
+   <component x="660" y="460" name="item4" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="get3" name="value"/>
+    <property>2</property>
+   </component>
+   <component x="660" y="530" name="item5" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="get4" name="value"/>
+    <property>3</property>
+   </component>
+   <component x="110" y="330" name="item6" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="last4" name="value"/>
+    <property>time3</property>
+   </component>
+   <component x="110" y="260" name="item7" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="last3" name="value"/>
+    <property>time2</property>
+   </component>
+   <component x="100" y="200" name="item8" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="last2" name="value"/>
+    <property>time1</property>
+   </component>
+   <component x="100" y="120" name="item9" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="last" name="value"/>
+    <property>mytime</property>
+   </component>
+   <component name="last" title="last" color="yellow1">
+    <implementation.python script="nuvem/last.py"/>
+    <service name="last"/>
+    <reference target="get1" name="list"/>
+   </component>
+   <component name="last2" title="last" color="yellow1">
+    <implementation.python script="nuvem/last.py"/>
+    <service name="last"/>
+    <reference target="get5" name="list"/>
+   </component>
+   <component x="160" y="220" name="last3" title="last" color="yellow1">
+    <implementation.python script="nuvem/last.py"/>
+    <service name="last"/>
+    <reference target="get8" name="list"/>
+   </component>
+   <component name="last4" title="last" color="yellow1">
+    <implementation.python script="nuvem/last.py"/>
+    <service name="last"/>
+    <reference target="get7" name="list"/>
+   </component>
+   <component name="list1" title="list.." color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="item" name="item" clonable="true"/>
+    <reference target="item9" name="item" clonable="true"/>
+    <reference target="item8" name="item" clonable="true"/>
+    <reference target="item7" name="item" clonable="true"/>
+    <reference target="item6" name="item" clonable="true"/>
+    <reference target="item10" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list2" title="list.." color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text7" name="item" clonable="true"/>
+    <reference target="param10" name="item" clonable="true"/>
+    <reference target="param" name="item" clonable="true"/>
+    <reference target="now" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list4" title="list.." color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="item11" name="item" clonable="true"/>
+    <reference target="item12" name="item" clonable="true"/>
+    <reference target="item4" name="item" clonable="true"/>
+    <reference target="item5" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component x="310" y="80" name="location" title="location" color="green1">
+    <implementation.python script="nuvem/location.py"/>
+    <service name="location" visible="false">
+     <binding.http uri="location"/>
+    </service>
+    <reference target="put" name="content"/>
+   </component>
+   <component x="10" y="460" name="map" title="{compname}" color="green1">
+    <implementation.python script="nuvem/service.py"/>
+    <service name="service" visible="false"/>
+    <reference target="gmap1" name="content"/>
+   </component>
+   <component name="name" title="" color="orange1">
+    <implementation.python script="nuvem/name.py"/>
+    <service name="name"/>
+    <property>getlocs</property>
+   </component>
+   <component name="name2" title="" color="orange1">
+    <implementation.python script="nuvem/name.py"/>
+    <service name="name"/>
+    <property>getlocs</property>
+   </component>
+   <component name="name3" title="" color="orange1">
+    <implementation.python script="nuvem/name.py"/>
+    <service name="name"/>
+    <property>nearme</property>
+   </component>
+   <component name="name4" title="" color="orange1">
+    <implementation.python script="nuvem/name.py"/>
+    <service name="name"/>
+    <property>nearme</property>
+   </component>
+   <component x="10" y="60" name="nearme" title="{compname}" color="green1">
+    <implementation.python script="nuvem/service.py"/>
+    <service name="service" visible="false"/>
+    <reference target="list1" name="content"/>
+   </component>
+   <component x="500" y="250" name="now" title="now" color="orange1">
+    <implementation.python script="nuvem/now.py"/>
+    <service name="now"/>
+    <reference target="text" name="format"/>
+   </component>
+   <component xmlns="" name="number" title="#" color="orange1">
+    <implementation.python script="nuvem/number.py"/>
+    <service name="number"/>
+    <property>5000</property>
+   </component>
+   <component x="500" y="220" name="param" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>longitude</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component x="500" y="200" name="param10" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>latitude</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param2" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend1</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param3" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend2</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param4" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend3</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param5" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend1</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param6" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend2</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component name="param7" title="?param" color="green1">
+    <implementation.python script="nuvem/param.py"/>
+    <service name="param"/>
+    <property>friend3</property>
+    <property name="query" visible="false"/>
+   </component>
+   <component xmlns="" name="params" title="?params" color="green1">
+    <implementation.python script="nuvem/params.py"/>
+    <service name="params"/>
+    <property name="query" visible="false"/>
+   </component>
+   <component xmlns="" name="put" title="put" color="pink1">
+    <implementation.python script="nuvem/put.py"/>
+    <service name="put"/>
+    <reference target="filedb" name="collection"/>
+    <reference target="user" name="id"/>
+    <reference target="list2" name="value"/>
+   </component>
+   <component x="10" y="10" name="start2" title="start" color="green1">
+    <implementation.python script="nuvem/start.py"/>
+    <service name="start" visible="false">
+     <binding.http uri="start"/>
+    </service>
+    <reference target="call4" name="content"/>
+   </component>
+   <component name="text" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>%a %b %d, %I:%M %p</property>
+   </component>
+   <component name="text2" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>/components/map</property>
+   </component>
+   <component xmlns="" x="500" y="170" name="text7" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>green</property>
+   </component>
+   <component x="310" y="10" name="timer" title="timer" color="green1">
+    <implementation.python script="nuvem/timer.py"/>
+    <service name="timer" visible="false">
+     <binding.http uri="timer"/>
+    </service>
+    <reference target="number" name="n"/>
+    <reference target="call3" name="content"/>
+   </component>
+   <component name="url" title="url" color="green1">
+    <implementation.python script="nuvem/url.py"/>
+    <service name="url"/>
+    <reference target="text2" name="address"/>
+    <reference target="append" name="args"/>
+   </component>
+   <component xmlns="" name="user" title="user" color="green1">
+    <implementation.python script="nuvem/user.py"/>
+    <service name="user"/>
+    <property name="user" visible="false"/>
+   </component>
+   <component xmlns="" name="user3" title="user" color="green1">
+    <implementation.python script="nuvem/user.py"/>
+    <service name="user"/>
+    <property name="user" visible="false"/>
+   </component>
+   <component xmlns="" x="210" y="150" name="user4" title="user" color="green1">
+    <implementation.python script="nuvem/user.py"/>
+    <service name="user"/>
+    <property name="user" visible="false"/>
+   </component>
+   <component name="user5" title="user" color="green1">
+    <implementation.python script="nuvem/user.py"/>
+    <service name="user"/>
+    <property name="user" visible="false"/>
+   </component>
+  </composite>
+ </content>
+ <link href="nearme"/>
+</entry>

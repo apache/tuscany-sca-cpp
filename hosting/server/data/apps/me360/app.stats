@@ -1,1 +1,1 @@
-((entry (title "Check my public social data") (id "me360")))
+((entry (title "Check my public social data") (id "me360") (author "admin@example.com") (updated "Apr 28, 2012") (content (stats (description "Sample app")))))

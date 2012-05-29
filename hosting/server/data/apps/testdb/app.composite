@@ -17,83 +17,90 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
- <service name="delete" promote="delete"/>
- <service name="get" promote="get"/>
- <service name="put" promote="put"/>
- <component x="150" y="10" name="delete" title="delete" color="pink1">
-  <implementation.python script="nuvem/delete.py"/>
-  <service name="delete"/>
-  <reference target="filedb2" name="collection"/>
-  <reference target="list3" name="id"/>
- </component>
- <component name="filedb" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="Cache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component name="filedb2" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="Cache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component name="filedb3" title="file" color="pink1">
-  <implementation.python script="nuvem/filedb.py"/>
-  <service name="filedb"/>
-  <reference name="db" target="Cache" visible="false"/>
-  <property name="host" visible="false"/>
- </component>
- <component x="20" y="120" name="get" title="get" color="pink1">
-  <implementation.python script="nuvem/get.py"/>
-  <service name="get"/>
-  <reference target="filedb3" name="collection"/>
-  <reference target="list2" name="id"/>
- </component>
- <component name="list" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list2" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text3" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list3" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text4" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component x="13" y="1" name="put" title="put" color="pink1">
-  <implementation.python script="nuvem/put.py"/>
-  <service name="put"/>
-  <reference target="filedb" name="collection"/>
-  <reference target="list" name="id"/>
-  <reference target="text2" name="value"/>
- </component>
- <component name="text" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>testkey</property>
- </component>
- <component name="text2" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>testvalue</property>
- </component>
- <component name="text3" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>testkey</property>
- </component>
- <component name="text4" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>testkey</property>
- </component>
-</composite>
+<entry xmlns="http://www.w3.org/2005/Atom">
+ <title type="text">testdb</title>
+ <id>testdb</id>
+ <content type="application/xml">
+  <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+   <service name="delete" promote="delete"/>
+   <service name="get" promote="get"/>
+   <service name="put" promote="put"/>
+   <component x="150" y="10" name="delete" title="delete" color="pink1">
+    <implementation.python script="nuvem/delete.py"/>
+    <service name="delete"/>
+    <reference target="filedb2" name="collection"/>
+    <reference target="list3" name="id"/>
+   </component>
+   <component name="filedb" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="Cache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component name="filedb2" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="Cache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component name="filedb3" title="file" color="pink1">
+    <implementation.python script="nuvem/filedb.py"/>
+    <service name="filedb"/>
+    <reference name="db" target="Cache" visible="false"/>
+    <property name="host" visible="false"/>
+   </component>
+   <component x="20" y="120" name="get" title="get" color="pink1">
+    <implementation.python script="nuvem/get.py"/>
+    <service name="get"/>
+    <reference target="filedb3" name="collection"/>
+    <reference target="list2" name="id"/>
+   </component>
+   <component name="list" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list2" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text3" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list3" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text4" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component x="13" y="1" name="put" title="put" color="pink1">
+    <implementation.python script="nuvem/put.py"/>
+    <service name="put"/>
+    <reference target="filedb" name="collection"/>
+    <reference target="list" name="id"/>
+    <reference target="text2" name="value"/>
+   </component>
+   <component name="text" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>testkey</property>
+   </component>
+   <component name="text2" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>testvalue</property>
+   </component>
+   <component name="text3" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>testkey</property>
+   </component>
+   <component name="text4" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>testkey</property>
+   </component>
+  </composite>
+ </content>
+ <link href="testdb"/>
+</entry>

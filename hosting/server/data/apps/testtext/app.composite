@@ -17,200 +17,207 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
- <service name="contains" promote="contains"/>
- <service name="format" promote="format"/>
- <service name="format2" promote="format2"/>
- <service name="join" promote="join"/>
- <service name="lowercase" promote="lowercase"/>
- <service name="parse" promote="parse"/>
- <service name="replace" promote="replace"/>
- <service name="split" promote="split"/>
- <service name="uppercase" promote="uppercase"/>
- <component x="19" y="7" name="contains" title="contains" color="cyan1">
-  <implementation.python script="nuvem/contains.py"/>
-  <service name="contains"/>
-  <reference target="text10" name="search"/>
-  <reference target="text9" name="string"/>
- </component>
- <component x="150" y="110" name="format" title="format" color="cyan1">
-  <implementation.python script="nuvem/format_.py"/>
-  <service name="format"/>
-  <reference target="text13" name="pattern"/>
-  <reference target="list" name="values"/>
- </component>
- <component x="310" y="130" name="format2" title="format" color="cyan1">
-  <implementation.python script="nuvem/format_.py"/>
-  <service name="format"/>
-  <reference target="text14" name="pattern"/>
-  <reference target="list3" name="values"/>
- </component>
- <component name="item" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text17" name="value"/>
-  <property>a</property>
- </component>
- <component name="item2" title="{propval}:" color="orange1">
-  <implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <reference target="text18" name="value"/>
-  <property>b</property>
- </component>
- <component x="300" y="10" name="join" title="join" color="cyan1">
-  <implementation.python script="nuvem/join.py"/>
-  <service name="join"/>
-  <reference target="text6" name="separator"/>
-  <reference target="list2" name="list"/>
- </component>
- <component name="list" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text15" name="item" clonable="true"/>
-  <reference target="text16" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list2" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text7" name="item" clonable="true"/>
-  <reference target="text8" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component name="list3" title="list" color="yellow1">
-  <implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="item" name="item" clonable="true"/>
-  <reference target="item2" name="item" clonable="true"/>
-  <reference name="item" clonable="true"/>
- </component>
- <component x="20" y="226" name="lowercase" title="lower" color="cyan1">
-  <implementation.python script="nuvem/lowercase.py"/>
-  <service name="lowercase"/>
-  <reference target="text2" name="string"/>
- </component>
- <component x="150" y="230" name="parse" title="parse" color="cyan1">
-  <implementation.python script="nuvem/parse.py"/>
-  <service name="parse"/>
-  <reference target="text19" name="regexp"/>
-  <reference target="text20" name="string"/>
- </component>
- <component x="150" y="10" name="replace" title="replace" color="cyan1">
-  <implementation.python script="nuvem/replace.py"/>
-  <service name="replace"/>
-  <reference target="text4" name="from"/>
-  <reference target="text5" name="to"/>
-  <reference target="text3" name="string"/>
- </component>
- <component x="23" y="89" name="split" title="split" color="cyan1">
-  <implementation.python script="nuvem/split.py"/>
-  <service name="split"/>
-  <reference target="text11" name="separator"/>
-  <reference target="text12" name="string"/>
- </component>
- <component name="text" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abc</property>
- </component>
- <component name="text10" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>cd</property>
- </component>
- <component name="text11" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component name="text12" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcxdefxghi</property>
- </component>
- <component name="text13" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>The {0} brown {1}</property>
- </component>
- <component name="text14" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>The {a} brown {b}</property>
- </component>
- <component name="text15" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>quick</property>
- </component>
- <component name="text16" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>fox</property>
- </component>
- <component name="text17" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>quick</property>
- </component>
- <component name="text18" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>fox</property>
- </component>
- <component name="text19" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>city (.*) state (.*)</property>
- </component>
- <component name="text2" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>ABC</property>
- </component>
- <component name="text20" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>city San Francisco state CA</property>
- </component>
- <component name="text3" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcxdefxghi</property>
- </component>
- <component name="text4" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component name="text5" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>y</property>
- </component>
- <component name="text6" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component name="text7" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abc</property>
- </component>
- <component name="text8" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>def</property>
- </component>
- <component name="text9" title=" '{propval}'" color="orange1">
-  <implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcdef</property>
- </component>
- <component x="20" y="172" name="uppercase" title="upper" color="cyan1">
-  <implementation.python script="nuvem/uppercase.py"/>
-  <service name="uppercase"/>
-  <reference target="text" name="string"/>
- </component>
-</composite>
+<entry xmlns="http://www.w3.org/2005/Atom">
+ <title type="text">testtext</title>
+ <id>testtext</id>
+ <content type="application/xml">
+  <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+   <service name="contains" promote="contains"/>
+   <service name="format" promote="format"/>
+   <service name="format2" promote="format2"/>
+   <service name="join" promote="join"/>
+   <service name="lowercase" promote="lowercase"/>
+   <service name="parse" promote="parse"/>
+   <service name="replace" promote="replace"/>
+   <service name="split" promote="split"/>
+   <service name="uppercase" promote="uppercase"/>
+   <component x="19" y="7" name="contains" title="contains" color="cyan1">
+    <implementation.python script="nuvem/contains.py"/>
+    <service name="contains"/>
+    <reference target="text10" name="search"/>
+    <reference target="text9" name="string"/>
+   </component>
+   <component x="150" y="110" name="format" title="format" color="cyan1">
+    <implementation.python script="nuvem/format_.py"/>
+    <service name="format"/>
+    <reference target="text13" name="pattern"/>
+    <reference target="list" name="values"/>
+   </component>
+   <component x="310" y="130" name="format2" title="format" color="cyan1">
+    <implementation.python script="nuvem/format_.py"/>
+    <service name="format"/>
+    <reference target="text14" name="pattern"/>
+    <reference target="list3" name="values"/>
+   </component>
+   <component name="item" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="text17" name="value"/>
+    <property>a</property>
+   </component>
+   <component name="item2" title="{propval}:" color="orange1">
+    <implementation.python script="nuvem/item.py"/>
+    <service name="item"/>
+    <reference target="text18" name="value"/>
+    <property>b</property>
+   </component>
+   <component x="300" y="10" name="join" title="join" color="cyan1">
+    <implementation.python script="nuvem/join.py"/>
+    <service name="join"/>
+    <reference target="text6" name="separator"/>
+    <reference target="list2" name="list"/>
+   </component>
+   <component name="list" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text15" name="item" clonable="true"/>
+    <reference target="text16" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list2" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="text7" name="item" clonable="true"/>
+    <reference target="text8" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component name="list3" title="list" color="yellow1">
+    <implementation.python script="nuvem/list_.py"/>
+    <service name="list"/>
+    <reference target="item" name="item" clonable="true"/>
+    <reference target="item2" name="item" clonable="true"/>
+    <reference name="item" clonable="true"/>
+   </component>
+   <component x="20" y="226" name="lowercase" title="lower" color="cyan1">
+    <implementation.python script="nuvem/lowercase.py"/>
+    <service name="lowercase"/>
+    <reference target="text2" name="string"/>
+   </component>
+   <component x="150" y="230" name="parse" title="parse" color="cyan1">
+    <implementation.python script="nuvem/parse.py"/>
+    <service name="parse"/>
+    <reference target="text19" name="regexp"/>
+    <reference target="text20" name="string"/>
+   </component>
+   <component x="150" y="10" name="replace" title="replace" color="cyan1">
+    <implementation.python script="nuvem/replace.py"/>
+    <service name="replace"/>
+    <reference target="text4" name="from"/>
+    <reference target="text5" name="to"/>
+    <reference target="text3" name="string"/>
+   </component>
+   <component x="23" y="89" name="split" title="split" color="cyan1">
+    <implementation.python script="nuvem/split.py"/>
+    <service name="split"/>
+    <reference target="text11" name="separator"/>
+    <reference target="text12" name="string"/>
+   </component>
+   <component name="text" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>abc</property>
+   </component>
+   <component name="text10" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>cd</property>
+   </component>
+   <component name="text11" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>x</property>
+   </component>
+   <component name="text12" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>abcxdefxghi</property>
+   </component>
+   <component name="text13" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>The {0} brown {1}</property>
+   </component>
+   <component name="text14" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>The {a} brown {b}</property>
+   </component>
+   <component name="text15" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>quick</property>
+   </component>
+   <component name="text16" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>fox</property>
+   </component>
+   <component name="text17" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>quick</property>
+   </component>
+   <component name="text18" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>fox</property>
+   </component>
+   <component name="text19" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>city (.*) state (.*)</property>
+   </component>
+   <component name="text2" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>ABC</property>
+   </component>
+   <component name="text20" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>city San Francisco state CA</property>
+   </component>
+   <component name="text3" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>abcxdefxghi</property>
+   </component>
+   <component name="text4" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>x</property>
+   </component>
+   <component name="text5" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>y</property>
+   </component>
+   <component name="text6" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>x</property>
+   </component>
+   <component name="text7" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>abc</property>
+   </component>
+   <component name="text8" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>def</property>
+   </component>
+   <component name="text9" title=" '{propval}'" color="orange1">
+    <implementation.python script="nuvem/text.py"/>
+    <service name="text"/>
+    <property>abcdef</property>
+   </component>
+   <component x="20" y="172" name="uppercase" title="upper" color="cyan1">
+    <implementation.python script="nuvem/uppercase.py"/>
+    <service name="uppercase"/>
+    <reference target="text" name="string"/>
+   </component>
+  </composite>
+ </content>
+ <link href="testtext"/>
+</entry>

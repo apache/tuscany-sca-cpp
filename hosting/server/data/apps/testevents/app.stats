@@ -1,1 +1,1 @@
-((entry (title "Test event components") (id "testevents")))
+((entry (title "Test event components") (id "testevents") (author "admin@example.com") (updated "Jan 01, 2012") (content (stats (description "Sample app")))))
