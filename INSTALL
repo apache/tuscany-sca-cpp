@@ -238,7 +238,7 @@ dependencies installed under $build:
 --enable-libcloud \
 --with-libcloud=$build/libcloud-0.3.1-bin \
 --enable-threads \
---enable-python --with-python=/usr \
+--enable-python --with-python=$build/python-2.6.6-bin \
 --enable-opencl --with-opencl-include=/usr/include --with-opencl-lib=/usr/lib \
 --enable-gae --with-gae=$build/google_appengine \
 --enable-java --with-java=/usr/lib/jvm/default-java \

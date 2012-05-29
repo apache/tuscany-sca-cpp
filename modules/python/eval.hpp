@@ -27,8 +27,14 @@
  */
 #if PYTHON_VERSION == 27
 #include <python2.7/Python.h>
+#include <python2.7/frameobject.h>
+#include <python2.7/traceback.h>
 #else
+#undef _POSIX_C_SOURCE
+#undef _XOPEN_SOURCE
 #include <python2.6/Python.h>
+#include <python2.6/frameobject.h>
+#include <python2.6/traceback.h>
 #endif
 
 #include "list.hpp"
@@ -40,6 +46,21 @@ namespace python {
 class PythonThreadIn;
 class PythonThreadOut;
 class PythonRuntimeLock;
+class PythonRuntime;
+
+/**
+ * Maintain a garbage collected reference to a Python object.
+ */
+const bool pyIncRef(PyObject* o);
+const bool pyDecRef(PyObject* o, PythonRuntime* py);
+
+/**
+ * Write to debug log from Python.
+ */
+const value pyDebug(const list<value>& args) {
+    debug(args, "python::debug");
+    return true;
+}
 
 /**
  * Represent a Python runtime.
@@ -63,10 +84,12 @@ public:
         // Initialize the Python interpreter
 #ifdef IS_DARWIN
         debug("python::pythonruntime::initialize");
+        Py_SetPythonHome(const_cast<char*>(PYTHON_PREFIX));
         Py_InitializeEx(0);
 #else
         if (!Py_IsInitialized()) {
             debug("python::pythonruntime::initialize");
+            Py_SetPythonHome(const_cast<char*>(PYTHON_PREFIX));
             Py_InitializeEx(0);
         }
 #endif
@@ -84,12 +107,22 @@ public:
 #endif
 #endif
 
-        // Set default interpreter args
 #ifdef WANT_THREADS
         PyGILState_STATE gstate = PyGILState_Ensure();
 #endif
+
+        // Set default interpreter args
         const char* arg0 = "";
         PySys_SetArgv(0, const_cast<char**>(&arg0));
+
+        // Install debug log function
+        PyObject* mkPyLambda(const lambda<value(const list<value>&)>& l, PythonRuntime* py);
+        PyObject* pyd= mkPyLambda(pyDebug, this);
+        PyObject* sys = PyImport_ImportModule("sys");
+        PyObject_SetAttrString(sys, "debug", pyd);
+        pyDecRef(pyd, this);
+        pyDecRef(sys, this);
+
 #ifdef WANT_THREADS
         PyGILState_Release(gstate);
 #endif
@@ -115,24 +148,46 @@ private:
 /**
  * Return the last python error.
  */
-const string lastError() {
+const string lastErrorTrace(PyObject *trace) {
+    if (trace == NULL)
+        return "";
+    PyTracebackObject* tb = (PyTracebackObject*)trace;
+    const int limit = 16;
+    int depth = 0;
+    PyTracebackObject *tb1 = tb;
+    while (tb1 != NULL) {
+        depth++;
+        tb1 = tb1->tb_next;
+    }
+    ostringstream os;
+    while (tb != NULL) {
+        if (depth <= limit)
+            os << ", File " << PyString_AsString(tb->tb_frame->f_code->co_filename) <<
+                " line " << tb->tb_lineno << " in " << PyString_AsString(tb->tb_frame->f_code->co_name);
+        depth--;
+        tb = tb->tb_next;
+    }
+    return str(os);
+}
+
+const string lastError(PythonRuntime* py) {
     if(PyErr_Occurred()) {
-        PyObject* type;
-        PyObject* val;
-        PyObject* trace;
+        PyObject* type = NULL;
+        PyObject* val = NULL;
+        PyObject* trace = NULL;
         PyErr_Fetch(&type, &val, &trace);
         if (type != NULL && val != NULL) {
             PyObject* stype = PyObject_Str(type);    
             PyObject* sval = PyObject_Str(val);    
-            string msg = string() + PyString_AsString(stype) + " : " + PyString_AsString(sval);
-            Py_DECREF(stype);
-            Py_DECREF(sval);
+            string msg = string() + PyString_AsString(stype) + " : " + PyString_AsString(sval) + lastErrorTrace(trace);
+            pyDecRef(stype, py);
+            pyDecRef(sval, py);
             PyErr_Restore(type, val, trace);
-            PyErr_Print();
+            PyErr_Clear();
             return msg;
         }
         PyErr_Restore(type, val, trace);
-        PyErr_Print();
+        PyErr_Clear();
         return "Unknown Python error";
     }
     return "";
@@ -235,6 +290,44 @@ private:
 };
 
 /**
+ * A gargabe collected Python object reference.
+ */
+class PyGCRef {
+public:
+    PyGCRef(PyObject* o, PythonRuntime* py) : o(o), py(py) {
+    }
+
+    ~PyGCRef() {
+        if (o == NULL)
+            return;
+        PythonThreadIn pyin(py);
+        Py_DECREF(o);
+    }
+
+private:
+    PyObject* o;
+    PythonRuntime* py;
+};
+
+/**
+ * Maintain a garbage collected reference to a Python object.
+ */
+const bool pyIncRef(PyObject* o) {
+    if (o == NULL)
+        return true;
+    Py_INCREF(o);
+    return true;
+}
+
+const bool pyDecRef(unused PyObject* o, unused PythonRuntime* py) {
+    if (o == NULL)
+        return true;
+    //new (gc_new<PyGCRef>()) PyGCRef(o, py);
+    Py_DECREF(o);
+    return true;
+}
+
+/**
  * Declare conversion functions.
  */
 PyObject* valueToPyObject(const value& v, PythonRuntime* py);
@@ -254,14 +347,14 @@ typedef struct {
 PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l, PythonRuntime* py);
 
 void pyLambda_dealloc(PyObject* self) {
-    debug(self, "python::pylambda_dealloc");
+    //debug(self, "python::pylambda_dealloc");
     PyObject_Del(self);
 }
 
-const string pyRepr(PyObject* o) {
+const string pyRepr(PyObject* o, PythonRuntime* py) {
     PyObject* r = PyObject_Repr(o);
     const string s = PyString_AsString(r);
-    Py_DECREF(r);
+    pyDecRef(r, py);
     return s;
 }
 
@@ -300,7 +393,7 @@ PyObject* pyLambda_getattr(PyObject *self, PyObject *attrname) {
         return PyObject_GenericGetAttr(self, attrname);
 
     if (name == "eval") {
-        Py_INCREF(self);
+        pyIncRef(self);
         return self;
     }
 
@@ -371,7 +464,7 @@ PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l, PythonRuntime* 
         pyl->func = new (gc_new<lambda<value(const list<value>&)> >()) lambda<value(const list<value>&)>(l);
         pyl->py = py;
     }
-    debug(pyl, "python::mkpylambda");
+    //debug(pyl, "python::mkpylambda");
     return (PyObject*)pyl;
 }
 
@@ -383,14 +476,14 @@ PyObject* valuesToPyListHelper(PyObject* l, const list<value>& v, PythonRuntime*
         return l;
     PyObject* pyv = valueToPyObject(car(v), py);
     PyList_Append(l, pyv);
-    Py_DECREF(pyv);
+    pyDecRef(pyv, py);
     return valuesToPyListHelper(l, cdr(v), py);
 }
 
 PyObject* valuesToPyTuple(const list<value>& v, PythonRuntime* py) {
     PyObject* pyl = valuesToPyListHelper(PyList_New(0), v, py);
     PyObject* pyt = PyList_AsTuple(pyl);
-    Py_DECREF(pyl);
+    pyDecRef(pyl, py);
     return pyt;
 }
 
@@ -411,10 +504,16 @@ PyObject* valueToPyObject(const value& v, PythonRuntime* py) {
     }
     case value::Number:
         return PyFloat_FromDouble((double)v);
-    case value::Bool:
-        return (bool)v? Py_True : Py_False;
-    default:
-        return Py_None;
+    case value::Bool: {
+        PyObject* b = (bool)v? Py_True : Py_False;
+        pyIncRef(b);
+        return b;
+    }
+    default: {
+        PyObject* n = Py_None;
+        pyIncRef(n);
+        return n;
+    }
     }
 }
 
@@ -438,22 +537,46 @@ const list<value> pyTupleToValues(PyObject* o, PythonRuntime* py) {
 struct pyCallable {
     PyObject* func;
     PythonRuntime* py;
+    bool owner;
 
-    pyCallable(PyObject* func, PythonRuntime* py) : func(func), py(py) {
-        Py_INCREF(func);
+    pyCallable(PyObject* func, PythonRuntime* py) : func(func), py(py), owner(true) {
+        pyIncRef(func);
+    }
+
+    pyCallable(const pyCallable& c) : func(c.func), py(c.py), owner(false) {
     }
 
     ~pyCallable() {
-        Py_DECREF(func);
+        if (!owner)
+            return;
+        pyDecRef(func, py);
     }
 
     const value operator()(const list<value>& args) const {
         PythonThreadIn pyin(py);
+        {
+            // Temp
+            PyObject* rfunc = PyObject_Repr(func);
+            char* s = NULL;
+            Py_ssize_t l = 0;
+            PyString_AsStringAndSize(rfunc, &s, &l);
+            debug(string(s, l), "python::operator()::func");
+            pyDecRef(rfunc, py);
+        }
         PyObject* pyargs = valuesToPyTuple(args, py);
+        {
+            // Temp
+            PyObject* rargs = PyObject_Repr(pyargs);
+            char* s = NULL;
+            Py_ssize_t l = 0;
+            PyString_AsStringAndSize(rargs, &s, &l);
+            debug(string(s, l), "python::operator()::args");
+            pyDecRef(rargs, py);
+        }
         PyObject* result = PyObject_CallObject(func, pyargs);
         const value v = pyObjectToValue(result, py);
-        Py_DECREF(pyargs);
-        Py_DECREF(result);
+        pyDecRef(pyargs, py);
+        pyDecRef(result, py);
         return v;
     }
 };
@@ -462,6 +585,8 @@ struct pyCallable {
  * Convert a python object to a value.
  */
 const value pyObjectToValue(PyObject *o, PythonRuntime* py) {
+    if (o == NULL)
+        return value();
     if (PyString_Check(o)) {
         char* s = NULL;
         Py_ssize_t l = 0;
@@ -509,10 +634,10 @@ const failable<value> evalScript(const value& expr, PyObject* script, PythonRunt
             return value(lambda<value(const list<value>&)>());
         }
 
-        return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastError());
+        return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastError(&py));
     }
     if (!PyCallable_Check(func)) {
-        Py_DECREF(func);
+        pyDecRef(func, &py);
         return mkfailure<value>(string("Couldn't find callable function: ") + car<value>(expr));
     }
 
@@ -521,14 +646,14 @@ const failable<value> evalScript(const value& expr, PyObject* script, PythonRunt
 
     // Call the function
     PyObject* result = PyObject_CallObject(func, args);
-    Py_DECREF(func);
-    Py_DECREF(args);
+    pyDecRef(func, &py);
+    pyDecRef(args, &py);
     if (result == NULL)
-        return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastError());
+        return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastError(&py));
 
     // Convert python result to a value
     const value v = pyObjectToValue(result, &py);
-    Py_DECREF(result);
+    pyDecRef(result, &py);
     return v;
 }
 
@@ -538,27 +663,35 @@ const failable<value> evalScript(const value& expr, PyObject* script, PythonRunt
 const failable<PyObject*> readScript(const string& name, const string& path, istream& is, PythonRuntime& py) {
     PythonThreadIn pyin(&py);
 
+    // Lookup already loaded module
+    PyObject *mods = PyImport_GetModuleDict();
+    PyObject *emod = PyDict_GetItemString(mods, const_cast<char*>(c_str(name)));
+    if (emod != NULL)
+        return emod;
+
+    // Compile and import new module
+    debug(name, "python::readScript::compile::name");
+    debug(path, "python::readScript::compile::path");
     const list<string> ls = streamList(is);
     ostringstream os;
     write(ls, os);
     PyObject* code = Py_CompileStringFlags(c_str(str(os)), c_str(path), Py_file_input, NULL);
     if (code == NULL)
-        return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError());
+        return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError(&py));
     PyObject* mod = PyImport_ExecCodeModuleEx(const_cast<char*>(c_str(name)), code, const_cast<char*>(c_str(path)));
     if (mod == NULL) {
-        Py_DECREF(code);
-        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError());
+        pyDecRef(code, &py);
+        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError(&py));
     }
-    Py_DECREF(code);
     return mod;
 }
 
 /**
  * Release a python script.
  */
-const failable<bool> releaseScript(PyObject* script, PythonRuntime& py) {
+const failable<bool> releaseScript(unused PyObject* script, PythonRuntime& py) {
     PythonThreadIn pyin(&py);
-    Py_DECREF(script);
+    // No need to decref the script here, as it's referenced only once from sys.modules
     return true;
 }
 
@@ -566,9 +699,10 @@ const failable<bool> releaseScript(PyObject* script, PythonRuntime& py) {
  * Evaluate an expression against a script provided as an input stream.
  */
 const failable<value> evalScript(const value& expr, istream& is, PythonRuntime& py) {
-    failable<PyObject*> script = readScript("script", "script.py", is, py);
+    const value uuid = mkuuid();
+    failable<PyObject*> script = readScript(string("script") + string(uuid), string("script") + string(uuid) + string(".py"), is, py);
     if (!hasContent(script))
-        return mkfailure<value>(reason(script));
+        return mkfailure<value>(script);
     return evalScript(expr, content(script), py);
 }
 

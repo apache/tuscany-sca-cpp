@@ -18,6 +18,7 @@
 #  under the License.
 
 # Run valgrind to analyze memory usage and track memory leaks
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
-valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=40 --track-fds=yes --trace-children=yes $* 2>&1 | tee memgrind.log
+valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --track-fds=yes --trace-children=yes --suppressions=$here/../../Python-2.6.6/Misc/valgrind-python.supp --suppressions=$here/valgrind-apr.supp $* 2>&1 | tee memgrind.log
 

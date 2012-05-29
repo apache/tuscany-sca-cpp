@@ -59,7 +59,7 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 # Required by Apache Thrift
-sudo apt-get -y install bison flex python-dev libboost-dev libboost-filesystem-dev
+sudo apt-get -y install bison flex libboost-dev libboost-filesystem-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi

@@ -74,7 +74,7 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 # Required by Apache Thrift
-sudo apt-get -y install bison flex python-dev
+sudo apt-get -y install bison flex
 if [ "$?" != "0" ]; then
     exit $?
 fi
