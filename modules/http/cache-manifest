@@ -17,31 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# Generate a cache-manifest.cmf file from a template and the list
+# of files in the cached application
 root=$1
-port=$2
-
-set -x
-
-# Configure an app server
-../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
-../../modules/http/httpd-event-conf $root
-../../modules/http/mass-host-conf $root domains htdocs
-../../modules/server/server-conf $root
-../../modules/python/python-conf $root
-cat >>$root/conf/httpd.conf <<EOF
-# Configure SCA Composite
-SCAContribution `pwd`/shared/
-SCAComposite shared.composite
-
-# Configure SCA Composite for mass dynamic virtual hosting
-SCAVirtualDomain sca-store.com
-SCAVirtualContribution `pwd`/domains/
-SCAVirtualComposite store.composite
-
-EOF
-
-# Aggregate app server logs
-category=`basename $root`
-../../components/log/scribe-tail-start $category $root/logs/error_log
-../../components/log/scribe-tail-start $category $root/logs/access_log
+shift
+sha=`cat $* | shasum | awk '{ print $1 }'`
+cat $root/cache-template.cmf | sed -e "s/SHA1/$sha/" >$root/cache-manifest.cmf
 

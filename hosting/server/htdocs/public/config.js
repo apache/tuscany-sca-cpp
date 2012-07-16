@@ -23,7 +23,23 @@ if (isNil(config))
 /**
  * UI configuration.
  */
-config.windowtitle = 'App Builder'
-config.pagetitle = '<span style="font-weight: bold;">App Builder</span>';
-config.loginprompt = '<span>Sign in with your userid and password</span>';
+config.windowtitle = function() {
+    return 'App Builder';
+};
+
+config.pagetitle = function() {
+    return '<span style="font-weight: bold;">App Builder</span>';
+};
+
+config.loginprompt = function() {
+    return '<span>Sign in with your userid and password</span>';
+};
+
+config.viewfoot = function() {
+    return ui.menubar(mklist(ui.menu('menuabout', 'About', '/', '_view', 'note')), mklist());
+};
+
+config.appresources = function() {
+    return mklist();
+};
 

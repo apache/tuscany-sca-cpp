@@ -26,11 +26,12 @@ set -x
 # Configure an SSL-enabled app server
 ../../modules/http/httpd-conf $root sca-store.com $port htdocs
 ../../modules/http/httpd-event-conf $root
-../../modules/http/vhost-conf $root domains htdocs
+../../modules/http/mass-host-conf $root domains htdocs
 
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/httpd-ssl-conf $root $sslport
-../../modules/http/vhost-ssl-conf $root
+../../modules/http/httpd-tunnel-ssl-conf $root
+../../modules/http/mass-host-ssl-conf $root
 
 ../../modules/oauth/oauth-conf $root
 ../../modules/oauth/oauth-memcached-conf $root localhost 11211

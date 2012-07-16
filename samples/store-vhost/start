@@ -20,7 +20,7 @@
 rm -rf tmp
 ../../modules/http/httpd-conf tmp example.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
-../../modules/http/vhost-conf tmp domains htdocs
+../../modules/http/mass-host-conf tmp domains htdocs
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

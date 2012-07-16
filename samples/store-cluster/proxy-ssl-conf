@@ -25,12 +25,13 @@ set -x
 
 # Configure an SSL-enabled proxy balancer
 ../../modules/http/httpd-conf $root sca-store.com $port $root/htdocs
-../../modules/http/vhost-conf $root $root/domains htdocs
+../../modules/http/mass-host-conf $root $root/domains htdocs
 ../../modules/http/proxy-conf $root
 ../../modules/http/httpd-event-conf $root
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/httpd-ssl-conf $root $sslport
-../../modules/http/vhost-ssl-conf $root
+../../modules/http/httpd-tunnel-ssl-conf $root
+../../modules/http/mass-host-ssl-conf $root
 ../../modules/http/proxy-ssl-conf $root
 
 # Aggregate proxy balancer logs

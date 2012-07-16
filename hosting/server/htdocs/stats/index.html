@@ -39,22 +39,31 @@
 </div>
 
 <script type="text/javascript">
+(function() {
 
-// Get the app name
+/**
+ * Get the app name.
+ */
 var appname = ui.fragmentParams(location)['app'];
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - Stats - ' + appname;
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - Stats - ' + appname;
 $('viewhead').innerHTML = '<span id="appname" class="cmenu">' + appname + '</span>' +
 '<input type="button" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteApp" value="-" title="Delete the app" disabled="true"/>' +
-'<input type="button" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 5px;" id="cloneApp" value="'+ config.clone +'" title="' + config.clone + ' this app"/>';
+'<input type="button" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 5px;" id="cloneApp" value="'+ config.clone() +'" title="' + config.clone() + ' this app"/>';
 
-// Set images
+/**
+ * Set images.
+ */
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
-// Init service references
-var editWidget = sca.component("EditWidget");
-var apps = sca.reference(editWidget, "apps");
+/**
+ * Init service references.
+ */
+var editorComp = sca.component("Editor");
+var apps = sca.reference(editorComp, "apps");
 
 /**
  * The current app entry, author and saved XML content.
@@ -97,7 +106,7 @@ function getapp(name) {
             $('deleteApp').onclick = function() {
                 return ui.navigate('/#view=delete&app=' + appname, '_view');
             }
-            showStatus(defaultStatus());
+            showOnlineStatus();
         } else {
             $('appTitle').placeholder = '';
             $('appDescription').placeholder = '';
@@ -159,9 +168,12 @@ $('cloneApp').onclick = function() {
     return ui.navigate('/#view=clone&app=' + appname, '_view');
 }
 
-// Get the current app
+/**
+ * Get the current app.
+ */
 getapp(appname);
 
+})();
 </script>
 
 </div>

@@ -27,7 +27,7 @@
 <tr><td><img id="userimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Name:</b></td></tr>
 <tr><td><input type="text" id="userTitle" class="flatentry" size="30" placeholder="Enter your name" style="width: 300px;"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>About Me:</b></td></tr>
 <tr><td><textarea id="userDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of yourself" style="width: 300px;"></textarea></td></tr>
 </table>
 
@@ -70,17 +70,24 @@
 </div>
 
 <script type="text/javascript">
+(function() {
 
-// Init service references
-var editWidget = sca.component("EditWidget");
-var user= sca.defun(sca.reference(editWidget, "user"));
-var accounts = sca.reference(editWidget, "accounts");
+/**
+ * Init service references.
+ */
+var editorComp = sca.component("Editor");
+var user= sca.defun(sca.reference(editorComp, "user"));
+var accounts = sca.reference(editorComp, "accounts");
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - Account';
-$('viewhead').innerHTML = '<span class="smenu">' + username + '</span>';
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - Account';
+$('viewhead').innerHTML = '<span class="cmenu">' + username + '</span>';
 
-// Set images
+/**
+ * Set images.
+ */
 $('userimg').src = ui.b64img(appcache.get('/public/user.b64'));
 
 /**
@@ -95,18 +102,16 @@ var savedaccountentryxml = '';
 function getaccount() {
     showStatus('Loading');
 
-    return accounts.get(name, function(doc) {
+    return accounts.get('', function(doc) {
 
         // Stop now if we didn't get an account
         if (doc == null) {
-            showError('App not available');
+            showError('Account info not available');
             return false;
         }
-        showStatus(defaultStatus());
+        showOnlineStatus();
 
         accountentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
-        //username = cadr(assoc("'id", cdr(accountentry)));
-        $('userNameHeader').innerHTML = username;
         $('userTitle').value = cadr(assoc("'title", cdr(accountentry)));
 
         var content = cadr(assoc("'content", cdr(accountentry)));
@@ -146,7 +151,7 @@ function save(entryxml) {
         return false;
     showStatus('Saving');
     savedaccountentryxml = entryxml;
-    accounts.put(username, savedaccountentryxml, function(e) {
+    accounts.put('', savedaccountentryxml, function(e) {
         if (e) {
             showStatus('Local copy');
             return false;
@@ -206,9 +211,12 @@ $('userForm').onsubmit = function() {
     return false;
 };
 
-// Get the user's account
+/**
+ * Get the user's account.
+ */
 getaccount();
 
+})();
 </script>
 
 </div>

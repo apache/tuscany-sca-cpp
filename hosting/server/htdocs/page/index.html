@@ -71,8 +71,11 @@
 <div id="buffer" style="visibility: hidden; width: 0px; height: 0px"></div>
 
 <script type="text/javascript">
+(function() {
 
-// Get the app name
+/**
+ * Get the current app name.
+ */
 var appname = ui.fragmentParams(location)['app'];
 
 /**
@@ -88,10 +91,14 @@ function applink(appname) {
     return link;
 }
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - Page - ' + appname;
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - Page - ' + appname;
 
-// Set header div
+/**
+ * Set header div.
+ */
 $('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
 '<input type="button" id="deleteWidgetButton" title="Delete a Widget" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
 '<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; visibility: hidden;" readonly="readonly"/></span>' +
@@ -120,12 +127,16 @@ var wvalue = $('widgetValue');
 var atitle = $('appTitle');
 var pplay = $('playPageButton');
 
-// Set images
+/**
+ * Set images.
+ */
 $('imgimg').src = ui.b64img(appcache.get('/public/img.b64'));
 
-// Init component references
-var editWidget = sca.component('EditWidget');
-var pages = sca.reference(editWidget, 'pages');
+/**
+ * Init component references.
+ */
+var editorComp = sca.component('Editor');
+var pages = sca.reference(editorComp, 'pages');
 
 /**
  * Page editing functions.
@@ -868,7 +879,7 @@ function getpage(name, pagediv) {
         author = elementValue(namedElementChild("'author", pageentry));
         editable = author == username;
         wadd.disabled = !editable;
-        showStatus(editable? defaultStatus() : 'Read only');
+        showStatus(editable? onlineStatus() : 'Read only');
 
         return true;
     });
@@ -1054,12 +1065,17 @@ pplay.onclick = function() {
     return playpage();
 }
 
-// Initialize the page editor
+/**
+ * Initialize the page editor.
+ */
 page.mkedit(pagediv, atitle, wvalue, wadd, wcopy, wdelete, onpagechange, onselectwidget);
 
-// Get and display the current app page
+/**
+ * Get and display the current app page.
+ */
 getpage(appname, pagediv);
 
+})();
 </script>
 
 </div>

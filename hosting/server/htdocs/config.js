@@ -23,9 +23,31 @@ if (isNil(config))
 /**
  * UI configuration.
  */
-config.windowtitle = 'App Builder'
-config.pagetitle = '<span style="font-weight: bold;">App Builder</span>';
-config.hometitle = '<br/><span style="font-weight: bold;">Create SCA Composite Apps</span><br/><br/>';
-config.clone = 'Clone';
-config.logic = 'Logic';
+config.windowtitle = function() {
+    return 'App Builder';
+};
+
+config.pagetitle = function() {
+    return '<span style="font-weight: bold;">App Builder</span>';
+};
+
+config.hometitle = function() {
+    return '<br/><span style="font-weight: bold;">Create SCA Composite Apps</span><br/><br/>';
+};
+
+config.clone = function() {
+    return 'Clone';
+};
+
+config.logic = function() {
+    return 'Logic';
+};
+
+config.viewfoot = function() {
+    return ui.menubar(mklist(ui.menu('menuabout', 'About', '/', '_view', 'note')), mklist());
+};
+
+config.appresources = function() {
+    return mklist();
+};
 

@@ -26,6 +26,7 @@
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <base href="/"/>
 <script type="text/javascript">
+(function() {
 
 window.appcache = {};
 
@@ -50,50 +51,60 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (debug) debug('http error', u, 'X-Login');
+            if (window.debug) debug('http error', u, 'X-Login');
             // Redirect to login page if not signed in
             document.location = '/login/';
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (debug) debug('http error', u, 'No-Content');
+            if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
         try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (debug) debug('http error', u, http.status, http.statusText);
+    if (window.debug) debug('http error', u, http.status, http.statusText);
     // Redirect to login page if not signed in
     if (http.status == 403)
         document.location = '/login/';
     return null;
 };
 
-// Load Javascript and CSS
-(function() {
-    var bootjs = document.createElement('script');
-    bootjs.type = 'text/javascript';
-    bootjs.text = appcache.get('/all-min.js');
-    document.head.appendChild(bootjs);
-    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 })();
 
-</script>
+/**
+ * Load Javascript and CSS.
+ */
+(function() {
 
-<script type="text/javascript">
+var bootjs = document.createElement('script');
+bootjs.type = 'text/javascript';
+bootjs.text = appcache.get('/all-min.js');
+document.head.appendChild(bootjs);
+document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 
-// Redirect to login page if not signed in
+})();
+
+/**
+ * Redirect to login page if not signed in.
+ */
+(function() {
+
 if (document.location.protocol == 'https:' && !hasauthcookie())
     document.location = '/login/';
 
+})();
+
 </script>
 </head>
-<body class="delayed" onload="onload();">
+<body class="delayed">
 <div id="mainbodydiv" class="mainbodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
+
 $('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
+
 })();
 </script>
 </div>
@@ -102,13 +113,16 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
 </div>
 
 <script type="text/javascript">
+(function() {
 
 /**
  * Get the app name
  */
 var appname = location.pathname.split('/')[1];
 
-// Set page title
+/**
+ * Set page title.
+ */
 document.title = appname;
 
 /**
@@ -125,9 +139,9 @@ var apppage = null;
 /**
  * Initialize the app HTTP clients.
  */
-var appWidget = sca.component('AppWidget');
-var pagecomp = sca.reference(appWidget, 'pages');
-var composcomp = sca.reference(appWidget, 'composites');
+var appComp = sca.component('App');
+var pagecomp = sca.reference(appComp, 'pages');
+var composcomp = sca.reference(appComp, 'composites');
 var startcomp = sca.httpclient('start', '/' + appname + '/start');
 var stopcomp = sca.httpclient('stop', '/' + appname + '/stop');
 var timercomp = sca.httpclient('timer', '/' + appname + '/timer');
@@ -964,7 +978,7 @@ function getappcomposite(appname) {
 }
 
 /**
- * Document load post processing.
+ * Initialize the document.
  */
 function onload() {
     //debug('onload');
@@ -984,6 +998,9 @@ function onload() {
     return true;
 }
 
+onload();
+
+})();
 </script>
 
 <div id="footdiv" class="fsection">

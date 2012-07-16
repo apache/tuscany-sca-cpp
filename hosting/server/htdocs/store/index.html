@@ -22,43 +22,67 @@
 <div id="apps" class="viewcontent"></div>
 
 <script type="text/javascript">
-
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - Store';
-
-// Get the store category
-var category = ui.fragmentParams(location)['category'];
-if (isNil(category))
-    category = 'top';
+(function() {
 
 /**
- * Build store menu bar
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - Store';
+
+/**
+ * The store categories
+ */
+var categories = [
+    //['Featured', 'featured', 1],
+    ['Top', 'top', 2],
+    ['New', 'new', 3],
+    ['Search', 'all', 4],
+    ['My Apps', 'myapps', 5]
+];
+
+/**
+ * Find a store category.
+ */
+function findcategory(name) {
+    if (isNil(name))
+        return findcategory('top');
+    var f = filter(function(c) { return cadr(c) == name }, categories);
+    if (isNil(f))
+        return findcategory('top');
+    return car(f);
+}
+
+/**
+ * Get the current store category.
+ */
+var catname = cadr(findcategory(ui.fragmentParams(location)['category']));
+
+/**
+ * Build the store menu bar
  */
 function catmenu() {
     function catmenuitem(name, cat, idx) {
-        var c = cat == category? 'smenu' : 'amenu';
-        return '<span>' + ui.ahref('/#view=store&category=' + cat + '&idx=' + idx, '_view', '<span class="' + c + '">' + name + '</span>') + '</span>';
+        var c = cat == catname? 'smenu' : 'amenu';
+        return '<span>' + ui.href('storecat_' + cat, '/#view=store&category=' + cat + '&idx=' + idx, '_view', '<span class="' + c + '">' + name + '</span>') + '</span>';
     }
 
     var m = '';
-    //m += catmenuitem('Featured', 'featured', '1');
-    m += catmenuitem('Top', 'top', '2');
-    m += catmenuitem('New', 'new', '3');
-    m += catmenuitem('Search', 'all', '4');
-    m += catmenuitem('My Apps', 'myapps', '5');
+    map(function(c) { m += catmenuitem(car(c), cadr(c), caddr(c)); }, categories);
     m += '<span class="rmenu"><input type="button" class="graybutton bluebutton" id="createApp" title="Create a new app" Value="Create"/></span>';
     return m;
 }
 
-// Build store menu bar
+/**
+ * Build the store menu bar.
+ */
 $('viewhead').innerHTML = catmenu();
 
 /**
- * Service references.
+ * Init service references.
  */
-var editWidget = sca.component("EditWidget");
-var store = sca.reference(editWidget, "store");
-var dashboards = sca.reference(editWidget, "dashboards");
+var editorComp = sca.component("Editor");
+var store = sca.reference(editorComp, "store");
+var dashboards = sca.reference(editorComp, "dashboards");
 
 /**
  * Edit an app.
@@ -84,8 +108,8 @@ $('createApp').onclick = function() {
 /**
  * Get and display list of apps.
  */
-function getapps(category) {
-    //debug('category', category);
+function getapps(catname) {
+    //debug('catname', catname);
     showStatus('Loading');
 
     function display(doc) {
@@ -95,7 +119,7 @@ function getapps(category) {
             showError('App not available');
             return false;
         }
-        showStatus(defaultStatus());
+        showOnlineStatus();
 
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
@@ -114,10 +138,10 @@ function getapps(category) {
             var updated = cadr(assoc("'updated", entry));
 
             apps += '<div class="box">'
-            apps += '<span class="appicon">' + ui.ahref('/#view=stats&app=' + name, '_view', '<img src="' + appimg + '" width="50" height="50"></img>') + '</span>';
+            apps += '<span class="appicon">' + ui.href('appicon_' + name, '/#view=stats&app=' + name, '_view', '<img src="' + appimg + '" width="50" height="50"></img>') + '</span>';
             apps += '<span>'
-            apps += '<span class="apptitle">' + ui.ahref('/#view=stats&app=' + name, '_view', name) + '</span>';
-            if (category != 'myapps')
+            apps += '<span class="apptitle">' + ui.href('apptitle_' + name, '/#view=stats&app=' + name, '_view', name) + '</span>';
+            if (catname != 'myapps')
                 apps += '<br/><span>' + 'by&nbsp;' + author.split('@')[0] + '</span>';
             apps += '</span>';
             apps += '</div>';
@@ -130,14 +154,17 @@ function getapps(category) {
         $('apps').innerHTML = apps;
     }
 
-    if (category == 'myapps')
+    if (catname == 'myapps')
         return dashboards.get('', display);
-    return store.get(category, display);
+    return store.get(catname, display);
 }
 
-// Get and display the list of apps
-getapps(category);
+/**
+ * Get and display the list of apps.
+ */
+getapps(catname);
 
+})();
 </script>
 
 </div>

@@ -25,6 +25,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <base href="/login/"/>
 <script type="text/javascript">
+(function() {
 
 window.appcache = {};
 
@@ -49,37 +50,45 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (debug) debug('http error', u, 'X-Login');
+            if (window.debug) debug('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (debug) debug('http error', u, 'No-Content');
+            if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
         try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (debug) debug('http error', u, http.status, http.statusText);
+    if (window.debug) debug('http error', u, http.status, http.statusText);
     return null;
 };
 
-// Load Javascript and CSS
+})();
+
+/**
+ * Load Javascript and CSS.
+ */
 (function() {
-    var bootjs = document.createElement('script');
-    bootjs.type = 'text/javascript';
-    bootjs.text = appcache.get('/all-min.js');
-    document.head.appendChild(bootjs);
-    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+
+var bootjs = document.createElement('script');
+bootjs.type = 'text/javascript';
+bootjs.text = appcache.get('/all-min.js');
+document.head.appendChild(bootjs);
+document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+
 })();
 
 </script>
 </head>
-<body class="delayed" onload="onload();">
+<body class="delayed"">
 <div id="mainbodydiv" class="bodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
+
 $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
+
 })();
 </script>
 </div>
@@ -96,22 +105,31 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 <div id="view">
 <div id="viewcontent" class="viewcontent" style="margin-left: auto; margin-right: auto; text-align: center;">
 
-<form name="facebookOAuth2Form" style="width: 100%;">
-<p style="font-size: 16px;">Sign in with your <span style="font-weight: bold;">Facebook</span> account</p>
-<p><input type="button" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" onclick="submitOAuth2Signin(withFacebook)"/></p>
+<br/>
+<form id="formSignin" name="formSignin" method="POST" action="/login/dologin" style="width: 100%;">
+<table style="width: 100%;">
+<tr><td><span id="loginprompt" style="font-size: 16px;"></span></tr></td>
+<tr><td><input type="text" class="flatentry" name="httpd_username" value="" placeholder="User id"/></td></tr>
+<tr><td><input type="password" class="flatentry" name="httpd_password" value="" placeholder="Password"/></td></tr>
+<tr><td><input type="submit" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></td></tr>
+</table>
+<input type="hidden" name="httpd_location" value="/"/>
 </form>
+<br/>
+
+<form name="facebookOAuth2Form" style="width: 100%;">
+<table style="width: 100%;">
+<tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;">Facebook</span> account</span></td></tr>
+<tr><td><input type="button" id="facebookOAuth2Signin" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+</table>
+</form>
+<br/>
 
 <form name="googleOAuth2Form" style="width: 100%;">
-<p style="font-size: 16px;">Sign in with your <span style="font-weight: bold;" >Google</span> account</p>
-<p><input type="button" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" onclick="submitOAuth2Signin(withGoogleOAuth)"/></p>
-</form>
-
-<form name="formSignin" method="POST" action="/login/dologin" onsubmit="submitFormSignin()" style="width: 100%;">
-<p id="loginprompt" style="font-size: 16px;"></p>
-<p><input type="text" class="flatentry" name="httpd_username" value="" placeholder="User id"/></p>
-<p><input type="password" class="flatentry" name="httpd_password" value="" placeholder="Password"/></p>
-<p><input type="submit" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></p>
-<input type="hidden" name="httpd_location" value="/"/>
+<table style="width: 100%;">
+<tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;" >Google</span> account</span></td></tr>
+<tr><td><input type="button" id="googleOAuth2Signin" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+</table>
 </form>
 <br/>
 
@@ -129,29 +147,73 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 </div>
 </div>
 
-<script type="text/javascript">
+<div id="viewfootbackground" class="viewfootbackground fixed"></div>
+<div id="viewfoot" class="viewfoot fixed"></div>
+<div id="status" class="status fixed" style="visibility: hidden;"></div>
 
-// Init div variables
+<script type="text/javascript">
+(function() {
+
+/**
+ * Init div variables.
+ */
 var mbdiv = $('menubackground'); 
 var mdiv = $('menu'); 
 var hdiv = $('viewhead'); 
 var hbdiv = $('viewheadbackground'); 
 $('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
 $('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
-$('loginprompt').innerHTML = config.loginprompt;
+$('loginprompt').innerHTML = config.loginprompt();
+var fdiv = $('viewfoot'); 
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - Sign in';
-$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - Sign in';
+$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
 
 /**
  * Build and show the menu bar.
  */
 function showmenu(mdiv) {
-    mdiv.innerHTML = ui.menubar(mklist(ui.menu('Home', '/', '_self', false)), mklist(ui.menu('Sign in', '/login/', '_self', true)));
+    mdiv.innerHTML = ui.menubar(mklist(ui.menu('menuhome', 'Home', '/', '_self', false)), mklist());
+    fdiv.innerHTML = config.viewfoot();
 }
 
 showmenu(mdiv);
+
+/**
+ * Show a status message.
+ */
+window.showStatus = function(s, c) {
+    //debug('status', s);
+    var sdiv = $('status');
+    if (isNil(sdiv))
+        return s;
+    sdiv.innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
+    sdiv.className = 'status fixed';
+    sdiv.style.visibility = 'visible';
+    
+    function divtransitionend(e) {
+        e.target.style.visibility = 'hidden';
+        e.target.className = 'status fixed';
+    }
+    if (!sdiv.addedTransitionEnd) {
+        sdiv.addEventListener('webkitTransitionEnd', divtransitionend, false);
+        sdiv.addEventListener('transitionend', divtransitionend, false);
+        sdiv.addedTransitionEnd = true;
+    }
+    sdiv.className = 'statusout3 fixed';
+    return s;
+}
+
+/**
+ * Show an error message.
+ */
+window.showError = function(s) {
+    //debug('error', s);
+    return showStatus(s, 'errorstatus');
+}
 
 /**
  * Parse the query parameeters.
@@ -168,6 +230,18 @@ function queryParams() {
 }
 
 /**
+ * Show login status.
+ */
+function showLoginStatus() {
+    var a = queryParams()['openauth_attempt'];
+    debug('a', a);
+    if (typeof(a) != 'undefined' && a == '1')
+        showError('Incorrect email or password, please try again');
+}
+
+showLoginStatus();
+
+/**
  * Return the referrer URL.
  */
 function openauthReferrer() {
@@ -181,31 +255,13 @@ function openauthReferrer() {
 }
 
 /**
- * Signin with OpenID.
- */
-/*
-function submitOpenIDSignin(w) {
-    clearauthcookie();
-    lstorage.removeItem('/r/EditWidget/accounts');
-    lstorage.removeItem('/r/EditWidget/dashboards');
-    document.openIDSignin.openid_identifier.value = w();
-    document.openIDSignin.action = openauthReferrer();
-    document.openIDSignin.submit();
-}
-
-function withGoogleOpenID() {
-    return 'https://www.google.com/accounts/o8/id';
-}
-*/
-
-/**
  * Signin with OAuth 2.0.
  */
 function submitOAuth2Signin(w) {
     parms = w();
     clearauthcookie();
-    lstorage.removeItem('/r/EditWidget/accounts');
-    lstorage.removeItem('/r/EditWidget/dashboards');
+    lstorage.removeItem('/r/Editor/accounts');
+    lstorage.removeItem('/r/Editor/dashboards');
     document.oauth2Signin.oauth2_authorize.value = parms[0];
     document.oauth2Signin.oauth2_access_token.value = parms[1];
     document.oauth2Signin.oauth2_client_id.value = parms[2];
@@ -222,10 +278,18 @@ function withFacebook() {
     return parms;
 }
 
-function withGoogleOAuth() {
+function withGoogle() {
     var parms = ['https://accounts.google.com/o/oauth2/auth', 'https://accounts.google.com/o/oauth2/token', 'google.com', 'https://www.googleapis.com/oauth2/v1/userinfo', 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile', ''];
     return parms;
 }
+
+$('facebookOAuth2Signin').onclick = function() {
+    return submitOAuth2Signin(withFacebook);
+};
+
+$('googleOAuth2Signin').onclick = function() {
+    return submitOAuth2Signin(withGoogle);
+};
 
 /**
  * Signin with a userid and password.
@@ -235,6 +299,8 @@ function submitFormSignin() {
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
 }
+
+$('formSignin').onsubmit = submitFormSignin;
 
 /**
  * Handle orientation change.
@@ -250,7 +316,7 @@ document.body.onorientationchange = function(e) {
 };
 
 /**
- * Load post processing.
+ * Initialize the document.
  */
 function onload() {
     //debug('onload');
@@ -261,6 +327,9 @@ function onload() {
     return true;
 }
 
+onload();
+
+})();
 </script>
 
 </div>

@@ -25,8 +25,11 @@
 </div>
 
 <script type="text/javascript">
+(function() {
 
-// Get the app name
+/**
+ * Get the current app name.
+ */
 var appname = ui.fragmentParams(location)['app'];
 var ispalette = false;
 if (isNil(appname)) {
@@ -37,10 +40,14 @@ if (isNil(appname)) {
         ispalette = true;
 }
 
-// Set page title
-document.title = ui.windowtitle(location.hostname) + ' - ' + config.logic + ' - ' + appname;
+/**
+ * Set page title.
+ */
+document.title = config.windowtitle() + ' - ' + config.logic() + ' - ' + appname;
 
-// Set header div
+/**
+ * Set header div.
+ */
 $('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
 '<input type="button" id="deleteCompButton" title="Delete a component" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
 '<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="compValue" type="text" value="" class="flatentry" title="Component value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; visibility: hidden;" readonly="readonly"/></span>' +
@@ -66,13 +73,12 @@ var cdelete = $('deleteCompButton');
 var ccopy = $('copyCompButton');
 var cplay = $('playCompButton');
 
-// Init componnent references
-var editWidget = sca.component("EditWidget");
-var palettes = sca.reference(editWidget, "palettes");
-var composites = sca.reference(editWidget, ispalette? "palettes" : "composites");
-
-// Setup remote log
-//rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
+/**
+ * Init componnent references.
+ */
+var editorComp = sca.component("Editor");
+var palettes = sca.reference(editorComp, "palettes");
+var composites = sca.reference(editorComp, ispalette? "palettes" : "composites");
 
 /**
  * Composite rendering functions.
@@ -1843,7 +1849,7 @@ function getapp(name, g) {
         author = elementValue(namedElementChild("'author", composentry));
         editable = author == username;
         cadd.disabled = !editable;
-        showStatus(editable? defaultStatus() : 'Read only');
+        showStatus(editable? onlineStatus() : 'Read only');
         return true;
     });
 }
@@ -2058,10 +2064,14 @@ cplay.onclick = function() {
     return showdata(gcomp);
 }
 
-// Create editor graph area
+/**
+ * Create editor graph area.
+ */
 graph.mkedit(graphdiv, graph.mkpath().move(-2500,0), atitle, cvalue, cadd, ccopy, cdelete, oncomposchange, oncompselect);
 
-// Install the palettes
+/**
+ * Install the palettes.
+ */
 var bg = graph.mkgroup(graph.mkpath());
 var pos = graph.mkpath().move(0, 0);
 bpalette = installpalette('control', pos.rmove(5,2), graphdiv, bg, spalette, gpalettes);
@@ -2079,9 +2089,12 @@ installpalette('logic', pos.rmove(0, 28), graphdiv, bg, spalette, gpalettes);
 installpalette('math', pos.rmove(0, 28), graphdiv, bg, spalette, gpalettes);
 installpalette('python', pos.rmove(0, 28), graphdiv, bg, spalette, gpalettes);
 
-// Get and display the current app
+/**
+ * Get and display the current app.
+ */
 getapp(appname, graphdiv);
 
+})();
 </script>
 
 </div>

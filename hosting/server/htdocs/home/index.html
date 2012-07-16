@@ -37,17 +37,22 @@
 </div>
 
 <script type="text/javascript">
+(function() {
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname);
-$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
-$('hometitle').innerHTML = config.hometitle;
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle();
+$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
+$('hometitle').innerHTML = config.hometitle();
 
 $('getstarted').onclick = function() {
     return ui.navigate('/#view=store', '_view');
 };
 
-// Display animation
+/**
+ * Display animation.
+ */
 var anim = $('homeanimation');
 if (!isNil(anim)) {
     anim.style.background = 'url(\'' + ui.b64img(appcache.get('/home/home.b64')) + '\')';
@@ -60,8 +65,12 @@ if (!isNil(anim)) {
     }, 2000);
 }
 
-showStatus(defaultStatus());
+/**
+ * Show the status.
+ */
+showOnlineStatus();
 
+})();
 </script>
 
 </div>

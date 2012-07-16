@@ -25,6 +25,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <base href="/public/notfound/"/>
 <script type="text/javascript">
+(function() {
 
 window.appcache = {};
 
@@ -49,37 +50,45 @@ appcache.get = function(uri) {
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
-            if (debug) debug('http error', u, 'X-Login');
+            if (window.debug) debug('http error', u, 'X-Login');
             return null;
         } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
-            if (debug) debug('http error', u, 'No-Content');
+            if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
         try { ls.setItem(u, http.responseText); } catch(e) {}
         return http.responseText;
     }
-    if (debug) debug('http error', u, http.status, http.statusText);
+    if (window.debug) debug('http error', u, http.status, http.statusText);
     return null;
 };
 
-// Load Javascript and CSS
+})();
+
+/**
+ * Load Javascript and CSS.
+ */
 (function() {
-    var bootjs = document.createElement('script');
-    bootjs.type = 'text/javascript';
-    bootjs.text = appcache.get('/all-min.js');
-    document.head.appendChild(bootjs);
-    document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+
+var bootjs = document.createElement('script');
+bootjs.type = 'text/javascript';
+bootjs.text = appcache.get('/all-min.js');
+document.head.appendChild(bootjs);
+document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+
 })();
 
 </script>
 </head>
-<body class="delayed" onload="onload();">
+<body class="delayed">
 <div id="mainbodydiv" class="mainbodydiv">
 
 <div id="headdiv" class="hsection">
 <script type="text/javascript">
 (function() {
+
 $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
+
 })();
 </script>
 </div>
@@ -102,25 +111,35 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 </div>
 </div>
 
-<script type="text/javascript">
+<div id="viewfootbackground" class="viewfootbackground fixed"></div>
+<div id="viewfoot" class="viewfoot fixed"></div>
 
-// Init div variables
+<script type="text/javascript">
+(function() {
+
+/**
+ * Init div variables.
+ */
 var mdiv = $('menu'); 
 var hdiv = $('viewhead'); 
 $('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
 $('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
+var fdiv = $('viewfoot'); 
 
-// Set page title
-document.title = ui.windowtitle(location.hostname) + ' - Page not found';
-$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle + '</span>';
+/**
+ * Set page title.
+ */
+document.title = config.windowtitle() + ' - Page not found';
+$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
 
 /**
  * Build and show the menu bar.
  */
 function showmenu(mdiv) {
     mdiv.innerHTML = ui.menubar(
-        mklist(ui.menu('Home', '/', '_view', false)),
-            mklist(hasauthcookie()? ui.menufunc('Sign out', 'logout();', false) : ui.menu('Sign in', '/login/', '_self', false)));
+        mklist(ui.menu('menuhome', 'Home', '/', '_self', false)),
+            mklist(hasauthcookie()? ui.menufunc('menusignout', 'Sign out', 'return logout();', false) : ui.menu('menusignin', 'Sign in', '/login/', '_self', false)));
+    fdiv.innerHTML = config.viewfoot();
 }
 
 showmenu(mdiv);
@@ -128,13 +147,13 @@ showmenu(mdiv);
 /**
  * Log the current user out.
  */
-function logout() {
+window.logout = function() {
     // Clear session cookie and user-specific local storage entries
     clearauthcookie();
-    lstorage.removeItem('/r/EditWidget/accounts');
-    lstorage.removeItem('/r/EditWidget/dashboards');
+    lstorage.removeItem('/r/Editor/accounts');
+    lstorage.removeItem('/r/Editor/dashboards');
     document.location = '/login/';
-    return true;
+    return false;
 }
 
 /**
@@ -151,7 +170,7 @@ document.body.onorientationchange = function(e) {
 };
 
 /**
- * Load post processing.
+ * Initialize the document.
  */
 function onload() {
     //debug('onload');
@@ -162,6 +181,9 @@ function onload() {
     return true;
 }
 
+onload();
+
+})();
 </script>
 
 <div id="footdiv" class="fsection">

@@ -26,6 +26,7 @@
  * HTTPD module implementation functions.
  */
 
+extern "C" {
 #include <apr_strings.h>
 #include <apr_fnmatch.h>
 #include <apr_lib.h>
@@ -72,6 +73,7 @@
 #include <ap_provider.h>
 #include <mod_auth.h>
 #include <mod_session.h>
+}
 
 #include "string.hpp"
 #include "stream.hpp"
@@ -151,6 +153,14 @@ const string hostName(request_rec* r, const string& def = "localhost") {
         return fh;
     const char* h = ap_get_server_name(r);
     return h != NULL? h : (r->server->server_hostname != NULL? r->server->server_hostname : def);
+}
+
+/**
+ * Convert a host name to a realm.
+ */
+const string realm(const string& host) {
+    const string pre = substr(host, 0, 4);
+    return pre == "www." || pre == "ww1." || pre == "ww2." || pre == "ww3."? substr(host, 4) : host;
 }
 
 /**
@@ -410,6 +420,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     // Make sure browsers come back and check for updated dynamic content
     apr_table_set(r->headers_out, "Cache-Control", "must-revalidate, max-age=0");
     apr_table_set(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
+    apr_table_set(r->subprocess_env, "private-cache", "1");
 
     // Compute and return an Etag for the returned content
     const string etag(ap_md5_binary(r->pool, (const unsigned char*)c_str(ob), (int)length(ob)));
@@ -474,9 +485,9 @@ const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
  * Create an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::internal_internal_redirect.
  */
-const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, request_rec* r) {
+const failable<request_rec*> internalRedirectRequest(const string& nr_uri, request_rec* r) {
     if (ap_is_recursion_limit_exceeded(r))
-        return mkfailure<request_rec*, int>(HTTP_INTERNAL_SERVER_ERROR);
+        return mkfailure<request_rec*>("Redirect recursion limit exceeded", HTTP_INTERNAL_SERVER_ERROR);
 
     // Create a new request
     request_rec* nr = (request_rec*)apr_pcalloc(r->pool, sizeof(request_rec));
@@ -532,7 +543,7 @@ const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, 
     redirectFilters(nr->output_filters, r, nr);
     const int rrc = ap_run_post_read_request(nr);
     if (rrc != OK && rrc != DECLINED)
-        return mkfailure<request_rec*, int>(rrc);
+        return mkfailure<request_rec*>("Error handling internal redirect", rrc);
 
     return nr;
 }
@@ -561,9 +572,9 @@ const int internalRedirect(request_rec* nr) {
  */
 const int internalRedirect(const string& uri, request_rec* r) {
     debug(uri, "httpd::internalRedirect");
-    const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);
+    const failable<request_rec*> nr = httpd::internalRedirectRequest(uri, r);
     if (!hasContent(nr))
-        return reason(nr);
+        return rcode(nr);
     return httpd::internalRedirect(content(nr));
 }
 
@@ -571,9 +582,9 @@ const int internalRedirect(const string& uri, request_rec* r) {
  * Create an HTTPD sub request.
  * Similar to httpd/server/request.c::make_sub_request
  */
-const failable<request_rec*, int> internalSubRequest(const string& nr_uri, request_rec* r) {
+const failable<request_rec*> internalSubRequest(const string& nr_uri, request_rec* r) {
     if (ap_is_recursion_limit_exceeded(r))
-        return mkfailure<request_rec*, int>(HTTP_INTERNAL_SERVER_ERROR);
+        return mkfailure<request_rec*>("Redirect recursion limit exceeded", HTTP_INTERNAL_SERVER_ERROR);
 
     // Create a new sub pool
     apr_pool_t *nrp;
@@ -640,7 +651,8 @@ const int externalRedirect(const string& uri, request_rec* r) {
     debug(uri, "httpd::externalRedirect");
     r->status = HTTP_MOVED_TEMPORARILY;
     apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
-    apr_table_setn(r->headers_out, "Cache-Control", "no-cache");
+    apr_table_setn(r->headers_out, "Cache-Control", "no-store");
+    apr_table_addn(r->err_headers_out, "Cache-Control", "no-store");
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + uri));
     return HTTP_MOVED_TEMPORARILY;
 }
@@ -705,7 +717,7 @@ int debugNote(unused void* r, const char* key, const char* value) {
  * Log a request.
  */
 const bool debugRequest(request_rec* r, const string& msg) {
-    gc_scoped_pool();
+    gc_scoped_pool pool;
     cdebug << msg << ":" << endl;
     cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
     cdebug << "  uri: " << debugOptional(r->uri) << endl;

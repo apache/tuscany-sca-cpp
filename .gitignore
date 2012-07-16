@@ -57,6 +57,7 @@ config.guess
 config.sub
 config.status
 all.js
+cache-manifest.cmf
 *-min.html
 *-min.js
 *-min.css

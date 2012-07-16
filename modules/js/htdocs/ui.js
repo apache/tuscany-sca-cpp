@@ -178,28 +178,6 @@ ui.isMobile = function() {
 };
 
 /**
- * Convert a host name to a home page title.
- */
-ui.hometitle = function(host) {
-    if (!isNil(window.top.config.hometitle))
-        return window.top.config.hometitle;
-    var h = reverse(host.split('.'));
-    var d = isNil(cdr(h))? car(h) : cadr(h);
-    return d.substr(0, 1).toUpperCase() + d.substr(1);
-};
-
-/**
- * Convert a host name to a window title.
- */
-ui.windowtitle = function(host) {
-    if (!isNil(window.top.config.windowtitle))
-        return window.top.config.windowtitle;
-    var h = reverse(host.split('.'));
-    var d = isNil(cdr(h))? car(h) : cadr(h);
-    return d.substr(0, 1).toUpperCase() + d.substr(1);
-};
-
-/**
  * Convert a CSS position to a numeric position.
  */
 ui.numpos = function(p) {
@@ -264,62 +242,75 @@ ui.navigate = function(url, win) {
     //log('navigate', url, win);
 
     // Open a new window
-    if (win == '_blank')
-        return window.top.open(url, win);
+    if (win == '_blank') {
+        window.top.open(url, win);
+        return false;
+    }
 
     // Open a new document in the current window
-    if (win == '_self')
-        return window.top.open(url, win);
+    if (win == '_self') {
+        window.top.open(url, win);
+        return false;
+    }
 
     // Reload the current window
     if (win == '_reload') {
         window.top.location = url;
-        return window.top.location.reload();
+        window.top.location.reload();
+        return false;
     }
 
     // Let the current top window handle the navigation
     if (win == '_view') {
         if (!window.top.onnavigate)
             return window.top.open(url, '_self');
-        return window.top.onnavigate(url);
+        window.top.onnavigate(url);
+        return false;
     }
 
-    return window.top.open(url, win);
+    window.top.open(url, win);
+    return false;
 }
 
 /**
  * Build a portable <a href> tag.
  */
-ui.ahref = function(loc, target, html) {
+ui.href = function(id, loc, target, html) {
     if (target == '_blank')
-        return '<a href="' + loc + '" target="_blank">' + html + '</a>';
-    return '<a href="javascript:void(0)" onclick="ui.navigate(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
+        return '<a id="' + id + '" href="' + loc + '" target="_blank">' + html + '</a>';
+    return '<a id="' + id + '" href="' + loc + '" onclick="return ui.navigate(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
 };
 
 /**
  * Build a menu bar.
  */ 
-ui.menu = function(name, href, target, hilight) {
+ui.menu = function(id, name, href, target, hilight) {
     function Menu() {
         this.content = function() {
-            if (hilight)
-                return ui.ahref(href, target, '<span class="tbarsmenu">' + name + '</span>');
-            return ui.ahref(href, target, '<span class="tbaramenu">' + name + '</span>');
+            if (hilight == true)
+                return ui.href(id, href, target, '<span class="tbarsmenu">' + name + '</span>');
+            else if (hilight == false)
+                return ui.href(id, href, target, '<span class="tbaramenu">' + name + '</span>');
+            else
+                return ui.href(id, href, target, '<span class="' + hilight + '">' + name + '</span>');
         };
     }
     return new Menu();
 };
 
-ui.menufunc = function(name, fun, hilight) {
+ui.menufunc = function(id, name, fun, hilight) {
     function Menu() {
         this.content = function() {
-            function href(fun, html) {
-                return '<a href="javascript:void(0)" onclick="' + fun + '">' + html + '</a>';
+            function href(id, fun, html) {
+                return '<a id="' + id + '" href="/" onclick="' + fun + '">' + html + '</a>';
             }
 
-            if (hilight)
-                return href(fun, '<span class="tbarsmenu">' + name + '</span>');
-            return href(fun, '<span class="tbaramenu">' + name + '</span>');
+            if (hilight == true)
+                return href(id, fun, '<span class="tbarsmenu">' + name + '</span>');
+            else if (hilight == false)
+                return href(id, fun, '<span class="tbaramenu">' + name + '</span>');
+            else
+                return href(id, fun, '<span class="' + hilight + '">' + name + '</span>');
         };
     }
     return new Menu();

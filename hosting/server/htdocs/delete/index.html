@@ -43,20 +43,29 @@
 </div>
 
 <script type="text/javascript">
+(function() {
 
-// Get the app name
+/**
+ * Get the app name.
+ */
 var appname = ui.fragmentParams(location)['app'];
 
-// Set page titles
-document.title = ui.windowtitle(location.hostname) + ' - ' + 'Delete' + ' - ' + appname;
+/**
+ * Set page titles.
+ */
+document.title = config.windowtitle() + ' - ' + 'Delete' + ' - ' + appname;
 $('viewhead').innerHTML = '<span class="smenu">Delete ' + appname + '</span>';
 
-// Set images
+/**
+ * Set images.
+ */
 $('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
 
-// Init service references
-var editWidget = sca.component("EditWidget");
-var apps = sca.reference(editWidget, "apps");
+/**
+ * Init service references.
+ */
+var editorComp = sca.component("Editor");
+var apps = sca.reference(editorComp, "apps");
 
 /**
  * The current app entry and corresponding saved XML content.
@@ -78,7 +87,7 @@ function getapp(name) {
             showError('App not available');
             return false;
         }
-        showStatus(defaultStatus());
+        showOnlineStatus();
 
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         $('appTitle').value = cadr(assoc("'title", cdr(appentry)));
@@ -103,7 +112,7 @@ $('deleteAppForm').onsubmit = function() {
             showStatus('Local copy');
             return false;
         }
-        showStatus(defaultStatus());
+        showOnlineStatus();
 
         // Return to the app store
         ui.navigate('/#view=store', '_view');
@@ -119,9 +128,12 @@ $('deleteAppCancelButton').onclick = function() {
     history.back();
 };
 
-// Get the current app
+/**
+ * Get the current app.
+ */
 getapp(appname);
 
+})();
 </script>
 
 </div>

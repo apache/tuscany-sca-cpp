@@ -25,9 +25,9 @@
 ../../modules/http/ssl-cert-conf tmp *.example.com vhost
 ../../modules/http/httpd-conf tmp example.com 8090 htdocs
 ../../modules/http/httpd-event-conf tmp
-../../modules/http/vhost-conf tmp domains htdocs
+../../modules/http/mass-host-conf tmp domains htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
-../../modules/http/vhost-ssl-conf tmp
+../../modules/http/mass-host-ssl-conf tmp
 ../../modules/http/basic-auth-conf tmp
 ../../modules/http/passwd-auth-conf tmp foo foo
 ../../modules/server/server-conf tmp
