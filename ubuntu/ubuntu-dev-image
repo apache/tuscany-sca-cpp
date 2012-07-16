@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install a complete distribution, the required system tools and libraries,
-# the runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu
-# Server 10.10 image.
+# Install a minimal distribution, the required system tools and libraries,
+# runtime dependencies and the Tuscany SCA runtime on a Ubuntu Server 12.04.
 
 # Display commands as they are executed
 set -x
@@ -28,10 +27,10 @@ sudo apt-get update
 # Create install directory
 u=`id -un`
 g=`id -gn`
-sudo mkdir -p /mnt/tuscany
-sudo chown $u /mnt/tuscany
-sudo chgrp $g /mnt/tuscany
-cd /mnt/tuscany
+sudo mkdir -p /opt/tuscany
+sudo chown $u /opt/tuscany
+sudo chgrp $g /opt/tuscany
+cd /opt/tuscany
 
 # Download and run install script
 sudo apt-get -y install curl

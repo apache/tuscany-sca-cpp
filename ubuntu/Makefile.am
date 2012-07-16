@@ -18,5 +18,5 @@
 dist_ubuntu_SCRIPTS = ip-redirect ip-redirect-all uec2-conf uec2-setenv uec2-ssh uec2-start uec2-status uec2-stop
 ubuntudir=$(prefix)/ubuntu
 
-dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-bin-all-image ubuntu-dev-image ubuntu-dev-all-image ubuntu-install ubuntu-backup ubuntu-install-all ubuntu-backup-all uec2-bin-image uec2-bin-all-image uec2-dev-image uec2-dev-all-image
+dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-bin-all-image ubuntu-dev-image ubuntu-dev-all-image ubuntu-install ubuntu-install-dependencies ubuntu-backup ubuntu-install-all ubuntu-install-all-dependencies ubuntu-backup-all uec2-bin-image uec2-bin-all-image uec2-dev-image uec2-dev-all-image
 

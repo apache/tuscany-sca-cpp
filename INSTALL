@@ -1,10 +1,10 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation on Ubuntu Server 10.10 and 11.04
-=======================================================
+Automated installation on Ubuntu Server 12.04
+=============================================
 
-Tuscany provides automated install scripts for Ubuntu Server 10.10 and 11.04.
+Tuscany provides automated install scripts for Ubuntu Server 12.04.
 You can start with a fresh Ubuntu Server system and these scripts will take care
 of all the download, build and installation steps for you.
 
@@ -31,11 +31,11 @@ The installation script will display each command as it's executed.
 That's all you need to do to build and install the Tuscany SCA runtime on
 Ubuntu Server.
 
-Automated installation on Max OS X 10.6.7
+Automated installation on Max OS X 10.7.4
 =========================================
 
-Tuscany provides an automated install script for Mac OS X 10.6.7 and Xcode 4.1.
-You can start with a fresh Mac OS X 10.6.7 + Xcode 4.1 system and the script
+Tuscany provides an automated install script for Mac OS X 10.7.4 and Xcode 4.1.
+You can start with a fresh Mac OS X 10.7.4 + Xcode 4.1 system and the script
 will take care of all the download, build and installation steps for you.
 
 macos/macos-install:
@@ -67,30 +67,29 @@ OS X, or if you need to customize your installation, read on...
 The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
 First install the following development tools:
-autoconf-2.67
+autoconf-2.68
 automake-1.11
-libtool-2.2.6
+libtool-2.4.2
 doxygen-1.7.1
-gcc-g++-4.4.5
+gcc-g++-4.6.1
 
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
-httpd-2.3.15 (http://httpd.apache.org/)
-apr-1.4.x (http://apr.apache.org/)
-built with OpenSSL libssl-0.9.8, libpcre3-8.02,
+httpd-2.4.2 (http://httpd.apache.org/)
+apr-1.4.6 and apr-util-1.4.1 (http://apr.apache.org/)
+built with OpenSSL libssl-0.9.8, libpcre3-8.12,
 and expat 2.0.1
 
 Memcached:
 memcached-1.4.7 (http://memcached.org/)
-built with libevent-1.4.13
+built with libevent-1.4.14
 
 XML:
 libxml2-2.7.7 (http://xmlsoft.org/)
 
 CURL:
 curl-7-24.0
-libcurl4-openssl-7.24.0
 
 JSON:
 Mozilla SpiderMonkey libmozjs 1.8.5 and
@@ -103,8 +102,8 @@ tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
 Optional dependencies:
 
 Web application firewall:
-Mod-security 2.6.0 (http://www.modsecurity.org/)
-with the Mod-security core rule set 2.2.0
+Mod-security 2.6.6 (http://www.modsecurity.org/)
+with the Mod-security core rule set 2.2.5
 
 Web page optimizations:
 Page Speed SDK 1.9 (http://code.google.com/p/page-speed/)
@@ -114,11 +113,11 @@ Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
 
 Queueing:
 Apache Qpid/C++ 0.6 (http://qpid.apache.org/)
-built with libuuid-2.17.2, libboost-1.42.0, libboost-program-options-1.42.0 and
-libboost-filesystem-1.42.0
+built with libuuid1-2.19.1, libboost-1.46.1, libboost-program-options-1.46.1 and
+libboost-filesystem-1.46.1
 
 Python:
-Python 2.6.6 (http://www.python.org/)
+Python 2.7.3 (http://www.python.org/)
 Google AppEngine 1.4.0 (http://code.google.com/appengine/)
 
 OpenCL:
@@ -224,45 +223,35 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration tested on Ubuntu Server, with the system
-dependencies installed in the standard system directories and some of the
-dependencies installed under $build:
+Here's an example configuration tested on Ubuntu Server 12.04 with some of the
+most useful options and the corresponding dependencies installed under $build:
 
 ./configure --prefix=$build/tuscany-sca-cpp-bin \
---with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin \
+--enable-threads --enable-maintainer-mode \
+--with-curl=$build/curl-7.24.0-bin --with-libxml2=$build/libxml2-2.7.7-bin \
+--with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin \
+--with-httpd=$build/httpd-2.4.2-bin \
 --with-memcached=$build/memcached-1.4.7-bin \
 --with-tinycdb=$build/tinycdb-0.77-bin \
---with-curl=$build/curl-7.24.0-bin --with-libxml2=/usr \
---with-js-include=$build/js-1.8.5-bin/include \
+--with-js-include=$build/js-1.8.5-bin/include/js \
 --with-js-lib=$build/js-1.8.5-bin/lib \
---enable-libcloud \
---with-libcloud=$build/libcloud-0.3.1-bin \
---enable-threads \
---enable-python --with-python=$build/python-2.6.6-bin \
---enable-opencl --with-opencl-include=/usr/include --with-opencl-lib=/usr/lib \
---enable-gae --with-gae=$build/google_appengine \
---enable-java --with-java=/usr/lib/jvm/default-java \
---enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin \
---with-libxml2=$build/libxml2-2.7.7-bin \
---enable-queue --with-qpidc=$build/qpidc-0.6-bin \
---enable-chat --with-libstrophe=$build/libstrophe-bin \
---with-vysper=$build/vysper-0.5 \
+--enable-python --with-python=$build/python-2.7.3-bin \
 --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin \
 --with-pgbouncer=$build/pgbouncer-1.5-bin \
 --enable-log --with-thrift=$build/thrift-0.2.0-bin \
 --with-scribe=$build/scribe-2.2-bin \
---enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin \
 --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin \
---enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.0-bin \
---enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin \
---enable-maintainer-mode
-
+--enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.6-bin \
+--enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin
 
 To build the Tuscany SCA runtime, do this:
 make
 
 To run the tests, do this:
 make check
+
+To install the Tuscany SCA binaries, do this:
+make install
 
 To build ctags for the source, do this:
 make ctags
@@ -272,8 +261,4 @@ make dist
 
 To build a binary distribution, do this:
 make bindist
-
-To install the Tuscany SCA binaries, do this:
-make install
-
 

@@ -15,22 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install a minimal distribution, the required system tools and libraries,
-# runtime dependencies and the Tuscany SCA runtime on Ubuntu Server 12.04.
+# Install the required system tools and libraries and runtime dependencies
+# for a complete Tuscany SCA runtime distribution on Ubuntu Server 12.04.
 
 # Display commands as they are executed
 set -x
 
 # First update the system
 sudo apt-get update
-
-# Create install directory
-u=`id -un`
-g=`id -gn`
-sudo mkdir -p /opt/tuscany
-sudo chown $u /opt/tuscany
-sudo chgrp $g /opt/tuscany
-cd /opt/tuscany
 
 # Install core dev tools
 sudo apt-get -y install curl git-core subversion autoconf pkg-config automake libtool g++ make gdb vim
@@ -56,6 +48,24 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 
+# Install the Apache Qpid/C++ dependencies
+sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+
+# Install the Apache Vysper dependencies
+sudo apt-get -y install openjdk-6-jdk
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+
+# Install the HTML Tidy dependencies
+sudo apt-get -y install cvs
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+
 # Install the PostgreSQL dependencies
 sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
@@ -63,7 +73,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Install the Apache Thrift dependencies
-sudo apt-get -y install bison flex libboost-dev libboost-filesystem-dev
+sudo apt-get -y install bison flex
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -73,8 +83,4 @@ sudo apt-get -y install gawk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-
-# Download and install the Tuscany runtime
-curl -OL http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.tar.gz
-tar xzf tuscany-sca-cpp-1.0.tar.gz
 

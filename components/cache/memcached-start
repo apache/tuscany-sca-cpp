@@ -23,10 +23,10 @@ root=`echo "import os; print os.path.realpath('$1')" | python`
 
 addr=$2
 if [ "$addr" = "" ]; then
-    ip=""
+    host=""
     port="11211"
 else
-    ip=`$here/../../modules/http/httpd-addr ip $addr`
+    host=`$here/../../modules/http/httpd-addr ip $addr`
     port=`$here/../../modules/http/httpd-addr port $addr`
 fi
 
@@ -43,9 +43,9 @@ fi
 mkdir -p $root/memcached
 echo $log > $root/memcached/logger
 
-if [ "$ip" = "" ]; then
+if [ "$host" = "" ]; then
     nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
 else
-    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
+    nohup /bin/sh -c "($memcached_prefix/bin/memcached -d -l $host -m 4 -p $port $v 2>&1 | sh $root/memcached/logger)" 1>/dev/null 2>/dev/null &
 fi
 

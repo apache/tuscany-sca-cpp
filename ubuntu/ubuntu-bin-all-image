@@ -16,8 +16,7 @@
 #  under the License.
 
 # Install a complete distribution, the required system tools and libraries,
-# the runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu Server
-# 10.10 image.
+# runtime dependencies and the Tuscany SCA runtime on Ubuntu Server 12.04.
 
 # Display commands as they are executed
 set -x
@@ -28,57 +27,66 @@ sudo apt-get update
 # Create install directory
 u=`id -un`
 g=`id -gn`
-sudo mkdir -p /mnt/tuscany
-sudo chown $u /mnt/tuscany
-sudo chgrp $g /mnt/tuscany
-cd /mnt/tuscany
+sudo mkdir -p /opt/tuscany
+sudo chown $u /opt/tuscany
+sudo chgrp $g /opt/tuscany
+cd /opt/tuscany
 
 # Install core dev tools
 sudo apt-get -y install curl git-core subversion autoconf pkg-config automake libtool g++ make gdb vim
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Apache HTTP server
+
+# Install the Apache HTTP server dependencies
 sudo apt-get -y install libssl-dev libpcre3-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Memcached
+
+# Install the Memcached dependencies
 sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by SpiderMonkey
+
+# Install the SpiderMonkey dependencies
 sudo apt-get -y install zip unzip
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Apache Qpid/C++
+
+# Install the Apache Qpid/C++ dependencies
 sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Apache Vysper
+
+# Install the Apache Vysper dependencies
 sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by HTML Tidy
+
+# Install the HTML Tidy dependencies
 sudo apt-get -y install cvs
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by PostgreSQL
+
+# Install the PostgreSQL dependencies
 sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Apache Thrift
+
+# Install the Apache Thrift dependencies
 sudo apt-get -y install bison flex
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Required by Facebook Scribe
+
+# Install the Facebook Scribe dependencies
 sudo apt-get -y install gawk
 if [ "$?" != "0" ]; then
     exit $?

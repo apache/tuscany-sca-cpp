@@ -24,9 +24,9 @@ Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL and PgBouncer;
 Webservice: Web service gateway, using Apache Axis2/C.
 
-These components present a simple ATOMPub REST interface, allowing you to send
-a message to a queue, a chat connection, or add an entry to a cache or a
-database for example, using a simple HTTP POST. 
+These components present a simple ATOMPub REST interface, allowing you to work
+with a data cache, a database, a message queue or a chat connection for example
+very simply using HTTP GET, POST, PUT and DELETE methods.
 
 
 Getting the source code
@@ -34,8 +34,6 @@ Getting the source code
 
 To checkout the source code, do this:
 git clone git://git.apache.org/tuscany-sca-cpp
-or
-svn checkout http://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
 
 To checkout the source code with commit access, do this:
 git clone git://git.apache.org/tuscany-sca-cpp
@@ -98,8 +96,8 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- store-sql        Online store using an SQL database
  |   |   |-- store-vhost      Online store on virtual hosts
  |   |
- |   |-- macos                Automated install on Mac OS X 10.1.7
- |   |-- ubuntu               Automated install on Ubuntu 10.10
+ |   |-- macos                Automated install on Mac OS X 10.7.4
+ |   |-- ubuntu               Automated install on Ubuntu 12.04
  |   |-- patches              Temporary patches to some of the dependencies
  |
  |-- branches                 Topic and release branches

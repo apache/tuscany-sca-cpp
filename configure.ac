@@ -312,18 +312,33 @@ AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitab
 # Configure path to Apache APR and HTTPD includes and libs.
 AC_MSG_CHECKING([for apr])
 AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed Apache APR [default=/usr]])], [
-  APR_INCLUDE="${withval}/include/apr-2"
+  APR_INCLUDE="${withval}/include/apr-1"
   APR_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
-  APR_INCLUDE="/usr/include/apr-2"
+  APR_INCLUDE="/usr/include/apr-1"
   APR_LIB="/usr/lib"
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(APR_INCLUDE)
 AC_SUBST(APR_LIB)
 LIBS="-L${APR_LIB} ${defaultlibs}"
-AC_CHECK_LIB([apr-2], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-2, use --with-apr=PATH])])
+AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
+
+AC_MSG_CHECKING([for apr-util])
+AC_ARG_WITH([apr-util], [AC_HELP_STRING([--with-apr-util=PATH], [path to installed Apache APR util [default=/usr]])], [
+  APRUTIL_INCLUDE="${withval}/include/apr-1"
+  APRUTIL_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  APRUTIL_INCLUDE="/usr/include/apr-1"
+  APRUTIL_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(APRUTIL_INCLUDE)
+AC_SUBST(APRUTIL_LIB)
+LIBS="-L${APRUTIL_LIB} ${defaultlibs}"
+AC_CHECK_LIB([aprutil-1], [apr_memcache_server_create], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr-util=PATH])])
 
 AC_MSG_CHECKING([for httpd])
 AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed Apache HTTPD [default=/usr]])], [
@@ -396,8 +411,8 @@ LIBS="-L${TINYCDB_LIB} ${defaultlibs}"
 AC_CHECK_LIB([cdb], [cdb_make_start], [], [AC_MSG_ERROR([couldn't find a suitable libcdb, use --with-tinycdb=PATH])])
 
 # Configure default includes and ldflags
-cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${HTTPD_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${LIBCURL_INCLUDE}"
-ldflags="${ldflags} -ldl -L${APR_LIB} -R${APR_LIB} -lapr-2"
+cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${APRUTIL_INCLUDE} -I${HTTPD_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${LIBCURL_INCLUDE}"
+ldflags="${ldflags} -ldl -L${APR_LIB} -R${APR_LIB} -lapr-1 -L${APRUTIL_LIB} -R${APRUTIL_LIB} -laprutil-1"
 ldflags="${ldflags} -L${LIBCURL_LIB} -R${LIBCURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
 
 # Enable Python support.
@@ -438,8 +453,10 @@ if test "${want_python}" = "true"; then
   LIBS="-L${PYTHON_LIB} ${defaultlibs}"
   if test -f "${PYTHON_LIB}/libpython2.7${libsuffix}"; then
       PYTHON_VERSION="2.7"
+      AC_DEFINE([PYTHON_VERSION], 27, [Python version])
   else
       PYTHON_VERSION="2.6"
+      AC_DEFINE([PYTHON_VERSION], 26, [Python version])
   fi
   AC_SUBST(PYTHON_VERSION)
   AC_CHECK_LIB([python${PYTHON_VERSION}], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython, use --with-python=PATH])])

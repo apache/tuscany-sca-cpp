@@ -25,12 +25,16 @@ root=`echo "import os; print os.path.realpath('$1')" | python`
 # Server address
 addr=$2
 if [ "$addr" = "" ]; then
-    ip="*"
+    host="localhost"
+    listen="*"
     port="5432"
 else
-    ip=`$here/../../modules/http/httpd-addr ip $addr`
-    if [ "$ip" = "" ]; then
-        ip="*"
+    host=`$here/../../modules/http/httpd-addr ip $addr`
+    if [ "$host" = "" ]; then
+        host="localhost"
+        listen="*"
+    else
+        listen=$host
     fi
     port=`$here/../../modules/http/httpd-addr port $addr`
 fi
@@ -50,6 +54,8 @@ fi
 pgsql_prefix=`cat $here/pgsql.prefix`
 pgbouncer_prefix=`cat $here/pgbouncer.prefix`
 
+user=`id -un`
+
 mkdir -p $root/sqldb/data
 chmod 700 $root/sqldb/data
 mkdir -p $root/sqldb/archive
@@ -62,6 +68,7 @@ else
     pgsql_log="cat >>$root/logs/postgresql"
 fi
 mkdir -p $root/sqldb
+mkdir -p $root/sqldb/tmp
 echo $pgsql_log >$root/sqldb/logger
 
 # Initialize from a backup of the master
@@ -95,12 +102,13 @@ log_lock_waits = on
 log_statement = none
 
 # Listen
-listen_addresses = '$ip'
+listen_addresses = '$listen'
 port = $port
+unix_socket_directory = '$root/sqldb/tmp'
 
 # Setup archival
 archive_mode = on
-archive_command = '$here/pgsql-archive $root localhost $bport %p %f'
+archive_command = '$here/pgsql-archive $root $host $bport %p %f'
 
 # Setup hot standby with streaming replication
 wal_level = hot_standby
@@ -118,7 +126,7 @@ cat >$root/sqldb/data/recovery.conf << EOF
 
 # Start in standby mode
 standby_mode = 'on'
-primary_conninfo = 'host=$mhost port=$mport'
+primary_conninfo = 'host=$mhost port=$mport user=standby'
 
 # Failover
 trigger_file = '$root/sqldb/failover'
@@ -154,12 +162,13 @@ id=`id -un`
 cat >$root/sqldb/data/pgbouncer.conf <<EOF
 
 [databases]
-db = host=localhost dbname=db
+db = host=$host port=$port dbname=db user=bouncer
 
 [pgbouncer]
 pool_mode = session
+listen_addr = $listen
 listen_port = $bport
-listen_addr = $ip
+unix_socket_dir =
 auth_type = trust
 auth_file=$root/sqldb/data/pgbouncer-auth.conf
 logfile = $root/logs/pgbouncer

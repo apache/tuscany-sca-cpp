@@ -12,7 +12,7 @@
 
 --- src/file.cpp
 +++ src/file.cpp
-@@ -74,9 +74,21 @@ bool StdFile::openRead() {
+@@ -74,9 +74,21 @@
  }
  
  bool StdFile::openWrite() {
@@ -38,7 +38,7 @@
 
 --- src/scribe_server.cpp
 +++ src/scribe_server.cpp
-@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
+@@ -55,6 +55,8 @@
      if (-1 == setrlimit(RLIMIT_NOFILE, &r_fd)) {
        LOG_OPER("setrlimit error (setting max fd size)");
      }
@@ -47,4 +47,32 @@
  
      int next_option;
      const char* const short_options = "hp:c:";
+@@ -110,7 +112,7 @@
+     }
+ 
+     TNonblockingServer server(processor, binaryProtocolFactory,
+-                              g_Handler->port, thread_manager);
++                              g_Handler->host, g_Handler->port, thread_manager);
+ 
+     LOG_OPER("Starting scribe server on port %lu", g_Handler->port);
+     fflush(stderr);
+@@ -583,6 +585,8 @@
+       throw runtime_error("No port number configured");
+     }
+ 
++    config.getString("host", host);
++
+     // check if config sets the size to use for the ThreadManager
+     unsigned long int num_threads;
+     if (config.getUnsigned("num_thrift_server_threads", num_threads)) {
 
+--- src/scribe_server.h
++++ src/scribe_server.h
+@@ -51,6 +51,7 @@
+   void setStatusDetails(const std::string& new_status_details);
+ 
+   unsigned long int port; // it's long because that's all I implemented in the conf class
++  std::string host;
+ 
+   // number of threads processing new Thrift connections
+   size_t numThriftServerThreads;

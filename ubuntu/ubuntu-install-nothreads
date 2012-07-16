@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install a complete distribution, the required system tools and libraries,
+# Install a minimal distribution, the required system tools and libraries,
 # runtime dependencies and the Tuscany SCA runtime on Ubuntu Server 12.04.
 
 # Display commands as they are executed
@@ -54,7 +54,7 @@ curl -OL http://archive.apache.org/dist/apr/apr-1.4.6.tar.gz
 tar xzf apr-1.4.6.tar.gz
 cd apr-1.4.6
 ./buildconf
-./configure --prefix=$build/apr-1.4.6-bin
+./configure --prefix=$build/apr-1.4.6-bin --disable-threads
 make
 make install
 if [ "$?" != "0" ]; then
@@ -115,20 +115,11 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build LevelDB
-git clone https://code.google.com/p/leveldb/
-cd leveldb
-make all
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
 # Build Libcurl
 curl -OL http://curl.haxx.se/download/curl-7.24.0.tar.gz
 tar xzf curl-7.24.0.tar.gz
 cd curl-7.24.0
-./configure --enable-threaded-resolver --prefix=$build/curl-7.24.0-bin
+./configure --prefix=$build/curl-7.24.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -140,7 +131,7 @@ cd $build
 curl -OL ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz
 tar xzf libxml2-sources-2.7.7.tar.gz
 cd libxml2-2.7.7
-./configure --prefix=$build/libxml2-2.7.7-bin
+./configure --prefix=$build/libxml2-2.7.7-bin --without-threads
 make
 make install
 if [ "$?" != "0" ]; then
@@ -169,54 +160,11 @@ curl -OL http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz
 tar xzf js185-1.0.0.tar.gz
 cd js-1.8.5/js/src
 export LD_RUN_PATH=$build/nspr-4.8.8-bin/lib
-./configure --prefix=$build/js-1.8.5-bin --enable-threadsafe --with-system-nspr --with-nspr-prefix=$build/nspr-4.8.8-bin
+./configure --prefix=$build/js-1.8.5-bin --with-system-nspr --enable-gczeal --with-nspr-prefix=$build/nspr-4.8.8-bin
 make
 make install
 unset LD_RUN_PATH
 ln -s $build/js-1.8.5-bin/lib/libmozjs185.so $build/js-1.8.5-bin/lib/libmozjs.so
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Install Google AppEngine SDK
-curl -OL http://googleappengine.googlecode.com/files/google_appengine_1.4.0.zip
-unzip google_appengine_1.4.0.zip
-
-# Build Apache Axis2/C
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-curl -OL http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
-tar xzf axis2c-src-1.6.0.tar.gz
-cd axis2c-src-1.6.0
-./configure --enable-openssl --with-apache2=$build/httpd-2.4.2-bin/include --with-apr=$build/apr-1.4.6-bin/include/apr-1 --prefix=$build/axis2c-1.6.0-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-export AXIS2C_HOME=$build/axis2c-1.6.0-bin
-cd samples
-./configure --prefix=$build/axis2c-1.6.0-bin --with-axis2=$build/axis2c-1.6.0-bin/include/axis2-1.6.0
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Apache Qpid/C++
-sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-curl -OL http://archive.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
-tar xzf qpid-cpp-0.6.tar.gz
-cd qpidc-0.6
-./configure --prefix=$build/qpidc-0.6-bin
-make
-make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -227,57 +175,6 @@ git clone git://github.com/jsdelfino/libstrophe.git
 cd libstrophe
 ./bootstrap.sh
 ./configure --prefix=$build/libstrophe-bin --with-expat=$build/expat-2.0.1-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Install Apache Vysper
-sudo apt-get -y install openjdk-6-jdk
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-curl -OL http://archive.apache.org/dist/mina/vysper/0.6/vysper-0.6-bin.tar.gz
-tar xzf vysper-0.6-bin.tar.gz
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-
-# Build HTML Tidy
-sudo apt-get -y install cvs
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cvs -z3 -d:pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co -P tidy
-cd tidy
-sh build/gnuauto/setup.sh
-./configure --prefix=$build/htmltidy-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libopkele
-git clone git://github.com/jsdelfino/libopkele.git
-cd libopkele
-./autogen.bash
-./configure --prefix=$build/libopkele-bin --with-curl=$build/curl-7.24.0-bin --with-expat=$build/expat-2.0.1-bin --with-htmltidy=$build/htmltidy-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Mod_auth_openid
-git clone git://github.com/jsdelfino/mod_auth_openid.git
-cd mod_auth_openid
-./autogen.sh
-./configure --prefix=$build/mod-auth-openid-bin --with-apr=$build/apr-1.4.6-bin --with-httpd=$build/httpd-2.4.2-bin --with-curl=$build/curl-7.24.0-bin --with-libopkele=$build/libopkele-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -311,7 +208,7 @@ cd $build
 curl -OL http://people.apache.org/~jsdelfino/tuscany/cpp/dependencies/modsecurity-crs_2.2.5.tar.gz
 tar xzf modsecurity-crs_2.2.5.tar.gz
 cd modsecurity-crs_2.2.5
-#curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.2.patch
+#curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.5.patch
 #patch -p0 <modsecurity-crs_2.2.2.patch
 cp -R base_rules $build/modsecurity-apache-2.6.6-bin
 cp -R optional_rules $build/modsecurity-apache-2.6.6-bin
@@ -328,7 +225,7 @@ fi
 curl -OL http://ftp.postgresql.org/pub/source/v9.1.2/postgresql-9.1.2.tar.gz
 tar xzf postgresql-9.1.2.tar.gz
 cd postgresql-9.1.2
-./configure --prefix=$build/postgresql-9.1.2-bin --enable-thread-safety
+./configure --prefix=$build/postgresql-9.1.2-bin --disable-thread-safety
 make
 make install
 if [ "$?" != "0" ]; then
@@ -348,7 +245,7 @@ fi
 cd $build
 
 # Build Apache Thrift
-sudo apt-get -y install bison flex libboost-dev libboost-filesystem-dev
+sudo apt-get -y install bison flex libboost-dev libboost-filesystem-dev 
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -402,20 +299,9 @@ cd $build
 curl -OL http://www.python.org/ftp/python/2.6.6/Python-2.7.3.tgz
 tar xzf Python-2.7.3.tgz
 cd Python-2.7.3
-./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin
+./configure --prefix=$build/python-2.7.3-bin --enable-shared --without-threads --with-system-expat=$build/expat-2.0.1-bin
 make
 make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Apache Libcloud
-curl -OL http://archive.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
-tar xjf apache-libcloud-incubating-0.4.2.tar.bz2
-cd apache-libcloud-incubating-0.4.2
-python setup.py build
-python setup.py install --home $build/libcloud-0.4.2-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -442,7 +328,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin --with-httpd=$build/httpd-2.4.2-bin --with-memcached=$build/memcached-1.4.13-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin --enable-libcloud --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --with-python=$build/python-2.7.3-bin --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.6 --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --with-pgbouncer=$build/pgbouncer-1.5-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.6-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin --with-httpd=$build/httpd-2.4.2-bin --with-memcached=$build/memcached-1.4.13-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-pagespeed --with-pagespeed=$build/page-speed-1.9-bin --disable-threads --enable-python --with-python=$build/python-2.7.3-bin --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --with-pgbouncer=$build/pgbouncer-1.5-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.6-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -451,8 +337,8 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-all-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.6 apr-1.4.6.tar.gz apr-1.4.6-bin apr-util-1.4.1 apr-util-1.4.1.tar.gz apr-util-1.4.1-bin axis2c-1.6.0-bin axis2c-src-1.6.0 axis2c-src-1.6.0.tar.gz curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz google_appengine google_appengine_1.4.0.zip htmltidy-bin httpd-2.4.2 httpd-2.4.2.tar.gz httpd-2.4.2-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.13 memcached-1.4.13-bin memcached-1.4.13.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.6 modsecurity-apache-2.6.6-bin modsecurity-apache_2.6.6.tar.gz modsecurity-crs_2.2.5 modsecurity-crs_2.2.5.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip pgbouncer-1.5 pgbouncer-1.5-bin pgbouncer-1.5.tar.gz postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz qpidc-0.6 qpidc-0.6-bin qpid-cpp-0.6.tar.gz Python-2.7.3 python-2.7.3-bin Python-2.7.3.tgz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tidy tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin vysper-0.6 vysper-0.6-bin.tar.gz
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apr-1.4.6 apr-1.4.6.tar.gz apr-1.4.6-bin apr-util-1.4.1 apr-util-1.4.1.tar.gz apr-util-1.4.1-bin curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz httpd-2.4.2 httpd-2.4.2.tar.gz httpd-2.4.2-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.13 memcached-1.4.13-bin memcached-1.4.13.tar.gz modsecurity-apache_2.6.6 modsecurity-apache-2.6.6-bin modsecurity-apache_2.6.6.tar.gz modsecurity-crs_2.2.5 modsecurity-crs_2.2.5.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem page-speed-1.9 page-speed-1.9-bin page-speed-sdk.zip pgbouncer-1.5 pgbouncer-1.5-bin pgbouncer-1.5.tar.gz postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz Python-2.7.3 python-2.7.3-bin Python-2.7.3.tgz scribe scribe-2.2-bin scribe-2.2.tar.gz thrift-0.2.0 thrift-0.2.0-bin thrift-0.2.0-incubating.tar.gz tinycdb-0.77 tinycdb-0.77-bin tinycdb_0.77.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
-tar czf tuscany-sca-cpp-all-1.0.tar.gz apr-1.4.6-bin apr-util-1.4.1-bin axis2c-1.6.0-bin curl-7.24.0-bin expat-2.0.1-bin google_appengine htmltidy-bin httpd-2.4.2-bin js-1.8.5-bin libcloud-0.4.2-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.13-bin mod-auth-openid-bin modsecurity-apache-2.6.6-bin nspr-4.8.8-bin nuvem/nuvem-parallel page-speed-1.9-bin postgresql-9.1.2-bin python-2.7.3-bin qpidc-0.6-bin scribe-2.2-bin thrift-0.2.0-bin tinycdb-0.77-bin tuscany-sca-cpp tuscany-sca-cpp-bin vysper-0.6
+tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.6-bin apr-util-1.4.1-bin curl-7.24.0-bin expat-2.0.1-bin httpd-2.4.2-bin js-1.8.5-bin liboauth-0.9.1-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.13-bin modsecurity-apache-2.6.6-bin nspr-4.8.8-bin nuvem/nuvem-parallel page-speed-1.9-bin pgbouncer-1.5-bin postgresql-9.1.2-bin python-2.7.3-bin scribe-2.2-bin thrift-0.2.0-bin tinycdb-0.77-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 

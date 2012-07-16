@@ -24,12 +24,16 @@ root=`echo "import os; print os.path.realpath('$1')" | python`
 
 addr=$2
 if [ "$addr" = "" ]; then
-    ip="*"
+    host="localhost"
+    listen="*"
     port="5432"
 else
-    ip=`$here/../../modules/http/httpd-addr ip $addr`
-    if [ "$ip" = "" ]; then
-        ip="*"
+    host=`$here/../../modules/http/httpd-addr ip $addr`
+    if [ "$host" = "" ]; then
+        host="localhost"
+        listen="*"
+    else
+        listen=$host
     fi
     port=`$here/../../modules/http/httpd-addr port $addr`
 fi
@@ -37,6 +41,8 @@ bport=`expr $port + 1000`
 
 pgsql_prefix=`cat $here/pgsql.prefix`
 pgbouncer_prefix=`cat $here/pgbouncer.prefix`
+
+user=`id -un`
 
 mkdir -p $root/sqldb/data
 chmod 700 $root/sqldb/data
@@ -50,6 +56,7 @@ else
     pgsql_log="cat >>$root/logs/postgresql"
 fi
 mkdir -p $root/sqldb
+mkdir -p $root/sqldb/tmp
 echo $pgsql_log >$root/sqldb/logger
 
 # Initialize PostgreSQL
@@ -77,12 +84,13 @@ log_lock_waits = on
 log_statement = none
 
 # Listen
-listen_addresses = '$ip'
+listen_addresses = '$listen'
 port = $port
+unix_socket_directory = '$root/sqldb/tmp'
 
 # Setup archival
 archive_mode = on
-archive_command = '$here/pgsql-archive $root localhost $bport %p %f'
+archive_command = '$here/pgsql-archive $root $host $bport %p %f'
 
 # Setup hot standby with streaming replication
 wal_level = hot_standby
@@ -114,12 +122,16 @@ while [ $sti -ne 30 ]; do
     sti=$((sti+1))
 done
 
-$pgsql_prefix/bin/createdb -h localhost -p $port db 2>&1 | sh $root/sqldb/logger
+$pgsql_prefix/bin/createdb -h $host -p $port db 2>&1 | sh $root/sqldb/logger
+
+# Create default user roles
+$pgsql_prefix/bin/psql -h $host -p $port -c "create role standby with login replication" db 2>&1 | sh $root/sqldb/logger
+$pgsql_prefix/bin/psql -h $host -p $port -c "create role bouncer with login" db 2>&1 | sh $root/sqldb/logger
 
 # Backup the db if there's no backup for it yet
 baks=`ls $root/sqldb/archive | sort -r  | grep "\.backup\.tar\.gz$"`
 if [ "$baks" = "" ]; then
-    $here/pgsql-backup $root localhost $port
+    $here/pgsql-backup $root $host $port
 fi
 
 $pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 2>&1 | sh $root/sqldb/logger
@@ -151,12 +163,13 @@ id=`id -un`
 cat >$root/sqldb/data/pgbouncer.conf <<EOF
 
 [databases]
-db = host=localhost dbname=db
+db = host=$host port=$port dbname=db user=bouncer
 
 [pgbouncer]
 pool_mode = session
+listen_addr = $listen
 listen_port = $bport
-listen_addr = $ip
+unix_socket_dir =
 auth_type = trust
 auth_file=$root/sqldb/data/pgbouncer-auth.conf
 logfile = $root/logs/pgbouncer

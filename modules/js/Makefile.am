@@ -18,22 +18,30 @@
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/js
 
-BUILT_SOURCES = htdocs/all.js htdocs/all-min.js htdocs/ui-min.css
-htdocs/all.js: htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js
-	cat htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js >htdocs/all.js
+jsfiles = htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js
 
-htdocs/all-min.js: htdocs/all.js
-	../http/minify-js htdocs/all.js htdocs/all-min.js
+BUILT_SOURCES = htdocs/all.js
+htdocs/all.js: ${jsfiles}
+	cat $^ >htdocs/all.js
 
-htdocs/ui-min.css: htdocs/ui.css
-	../http/minify-css htdocs/ui.css htdocs/ui-min.css
+minified = htdocs/all-min.js htdocs/ui-min.css
 
-CLEANFILES = htdocs/all.js htdocs/all-min.js htdocs/ui-min.css
+SUFFIXES = -min.html -min.js -min.css
+.html-min.html:
+	../../modules/http/minify-html $< $@
+
+.js-min.js:
+	../../modules/http/minify-js $< $@
+
+.css-min.css:
+	../../modules/http/minify-css $< $@
+
+CLEANFILES = htdocs/all.js ${minified}
 
 dist_mod_SCRIPTS = js-conf
 moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css
-EXTRA_DIST = htdocs/*.js htdocs/*.css htdocs/all.js
+nobase_dist_mod_DATA = ${minified}
+EXTRA_DIST = ${jsfiles} htdocs/ui.css
 
 js_test_SOURCES = js-test.cpp
 js_test_LDFLAGS = -lmozjs 
@@ -45,3 +53,4 @@ noinst_PROGRAMS = js-test
 mod_PROGRAMS = js-shell
 dist_noinst_SCRIPTS = util-test
 TESTS = js-test util-test
+

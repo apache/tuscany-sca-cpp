@@ -48,11 +48,11 @@ client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 noinst_PROGRAMS = client-test
 
 dist_noinst_SCRIPTS = util-test wsgi-test wiring-test http-test server-test
-TESTS = util-test wsgi-test wiring-test http-test server-test
+TESTS = util-test
 
 if WANT_GAE
 dist_noinst_SCRIPTS += gae-test
-TESTS += gae-test
+TESTS += wsgi-test wiring-test http-test server-test gae-test
 endif
 
 endif

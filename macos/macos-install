@@ -16,8 +16,7 @@
 #  under the License.
 
 # Install a complete distribution, the required system tools and libraries, the
-# runtime dependencies and the Tuscany SCA runtime on a fresh Mac OS X 10.6.7
-# system.
+# runtime dependencies and the Tuscany SCA runtime on Mac OS X 10.6.7.
 
 # Display commands as they are executed
 set -x
@@ -62,23 +61,38 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build Apache APR and HTTP server
-svn co -r 1201086 http://svn.apache.org/repos/asf/apr/apr/trunk apr-1.4.x
-cd apr-1.4.x
-curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/apr-1.4.x.patch
-patch -p0 <apr-1.4.x.patch
+# Build Apache APR and APR util
+curl -OL http://archive.apache.org/dist/apr/apr-1.4.6.tar.gz
+tar xzf apr-1.4.6.tar.gz
+cd apr-1.4.6
 ./buildconf
-./configure -with-openssl --with-crypto --with-expat=$build/expat-2.0.1-bin --prefix=$build/apr-1.4.x-bin
+./configure --prefix=$build/apr-1.4.6-bin
 make
 make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-curl -OL http://archive.apache.org/dist/httpd/httpd-2.3.15-beta.tar.gz
-tar xzf httpd-2.3.15-beta.tar.gz
-cd httpd-2.3.15-beta
-./configure --enable-ssl --enable-proxy --enable-usertrack --enable-cgi --enable-session-crypto --enable-mods-shared=most --enable-mpms-shared="prefork worker event" --with-mpm=prefork --with-apr=$build/apr-1.4.x-bin --with-expat=$build/expat-2.0.1-bin --with-pcre=$build/pcre-8.12-bin --prefix=$build/httpd-2.3.15-bin
+
+curl -OL http://archive.apache.org/dist/apr/apr-util-1.4.1.tar.gz
+tar xzf apr-util-1.4.1.tar.gz
+cd apr-util-1.4.1
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/apr-util-1.4.1.patch
+patch -p0 <apr-util-1.4.1.patch
+./buildconf --with-apr=$build/apr-1.4.6
+./configure --with-apr=$build/apr-1.4.6-bin --with-openssl --with-crypto --with-expat=$build/expat-2.0.1-bin --prefix=$build/apr-util-1.4.1-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build HTTP server
+curl -OL http://archive.apache.org/dist/httpd/httpd-2.4.2.tar.gz
+tar xzf httpd-2.4.2.tar.gz
+cd httpd-2.4.2
+./configure --enable-ssl --enable-proxy --enable-usertrack --enable-cgi --enable-session-crypto --enable-mods-shared=most --enable-mpms-shared="prefork worker event" --with-mpm=prefork --with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin  --with-pcre=$build/pcre-8.12-bin --with-expat=$build/expat-2.0.1-bin --prefix=$build/httpd-2.4.2-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -99,14 +113,11 @@ fi
 cd $build
 
 # Build Memcached
-curl -OL http://memcached.googlecode.com/files/memcached-1.4.7.tar.gz
-tar xzf memcached-1.4.7.tar.gz
-cd memcached-1.4.7
-# http://code.google.com/p/memcached/issues/detail?id=218
-curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/memcached-1.4.7.patch
-patch -p0 <memcached-1.4.7.patch
+curl -OL http://memcached.googlecode.com/files/memcached-1.4.13.tar.gz
+tar xzf memcached-1.4.13.tar.gz
+cd memcached-1.4.13
 autoreconf --install
-./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.7-bin
+./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.13-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -125,21 +136,11 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build LevelDB
-git clone https://code.google.com/p/leveldb/
-cd leveldb
-make all 
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-
 # Build Libcurl
 curl -OL http://curl.haxx.se/download/curl-7.24.0.tar.gz
 tar xzf curl-7.24.0.tar.gz
 cd curl-7.24.0
-./configure --prefix=$build/curl-7.24.0-bin --without-libidn
+./configure --enable-threaded-resolver --prefix=$build/curl-7.24.0-bin --without-libidn
 make
 make install
 if [ "$?" != "0" ]; then
@@ -203,49 +204,11 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build HTML Tidy
-cvs -z3 -d:pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co -P tidy
-cd tidy
-sh build/gnuauto/setup.sh
-./configure --prefix=$build/htmltidy-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libopkele
-git clone git://github.com/jsdelfino/libopkele.git
-cd libopkele
-mkdir aclocal.d
-cp $build/pkg-config-0.25-bin/share/aclocal/pkg.m4 aclocal.d
-./autogen.bash
-./configure --prefix=$build/libopkele-bin OPENSSL_CFLAGS=-I/usr/include OPENSSL_LIBS=-lssl --with-curl=$build/curl-7.24.0-bin --with-expat=$build/expat-2.0.1-bin --with-htmltidy=$build/htmltidy-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Mod_auth_openid
-git clone git://github.com/jsdelfino/mod_auth_openid.git
-cd mod_auth_openid
-./autogen.sh
-./configure --prefix=$build/mod-auth-openid-bin CXXFLAGS="-I$build/pcre-8.12-bin/include" --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin --with-curl=$build/curl-7.24.0-bin --with-pcre=$build/pcre-8.12-bin --with-libopkele=$build/libopkele-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
 # Build Liboauth
 curl -OL http://liboauth.sourceforge.net/pool/liboauth-0.9.1.tar.gz
 tar xzf liboauth-0.9.1.tar.gz
 cd liboauth-0.9.1
-./configure PKG_CONFIG="$build/pkg-config-0.25-bin/bin/pkg-config" --prefix=$build/liboauth-0.9.1-bin CURL_CFLAGS="-I$build/curl-7.24.0-bin/include" CURL_LIBS="-L$build/curl-7.24.0-bin/lib -R$build/curl-7.24.0-bin/lib -lcurl"
+./configure PKG_CONFIG="$build/pkg-config-0.25-bin/bin/pkg-config" --prefix=$build/liboauth-0.9.1-bin CURL_CFLAGS="-I$build/curl-7.24.0-bin/include" CURL_LIBS="-L$build/curl-7.24.0-bin/lib -lcurl"
 make
 make install
 if [ "$?" != "0" ]; then
@@ -254,23 +217,23 @@ fi
 cd $build
 
 # Build mod_security
-curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-apache/2.6.1/modsecurity-apache_2.6.1.tar.gz/download -o modsecurity-apache_2.6.1.tar.gz
-tar xzf modsecurity-apache_2.6.1.tar.gz
-cd modsecurity-apache_2.6.1
-./configure --prefix=$build/modsecurity-apache-2.6.1-bin --with-apxs=$build/httpd-2.3.15-bin/bin/apxs --with-apr=$build/apr-1.4.x-bin/bin/apr-2-config --with-apu=$build/apr-1.4.x-bin/bin/apr-2-config --with-libxml=$build/libxml2-2.7.7-bin --with-curl=$build/curl-7.24.0-bin --with-pcre=$build/pcre-8.12-bin LIBS="-L$build/expat-2.0.1-bin/lib -R$build/expat-2.0.1-bin/lib" CFLAGS="-I$build/pcre-8.12-bin/include"
+curl -OL http://people.apache.org/~jsdelfino/tuscany/cpp/dependencies/modsecurity-apache_2.6.6.tar.gz
+tar xzf modsecurity-apache_2.6.6.tar.gz
+cd modsecurity-apache_2.6.6
+./configure --prefix=$build/modsecurity-apache-2.6.6-bin --with-apxs=$build/httpd-2.4.2-bin/bin/apxs --with-apr=$build/apr-1.4.6-bin/bin/apr-1-config --with-apu=$build/apr-util-1.4.1-bin/bin/apu-1-config --with-libxml=$build/libxml2-2.7.7-bin --with-curl=$build/curl-7.24.0-bin --with-pcre=$build/pcre-8.12-bin LIBS="-L$build/expat-2.0.1-bin/lib" CFLAGS="-I$build/pcre-8.12-bin/include"
 make
 make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-curl -L http://sourceforge.net/projects/mod-security/files/modsecurity-crs/0-CURRENT/modsecurity-crs_2.2.2.tar.gz/download -o modsecurity-crs_2.2.2.tar.gz 
-tar xzf modsecurity-crs_2.2.2.tar.gz
-cd modsecurity-crs_2.2.2
-curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.2.patch
-patch -p0 <modsecurity-crs_2.2.2.patch
-cp -R base_rules $build/modsecurity-apache-2.6.1-bin
-cp -R optional_rules $build/modsecurity-apache-2.6.1-bin
+curl -OL http://people.apache.org/~jsdelfino/tuscany/cpp/dependencies/modsecurity-crs_2.2.5.tar.gz
+tar xzf modsecurity-crs_2.2.5.tar.gz
+cd modsecurity-crs_2.2.5
+#curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/modsecurity-crs_2.2.2.patch
+#patch -p0 <modsecurity-crs_2.2.2.patch
+cp -R base_rules $build/modsecurity-apache-2.6.6-bin
+cp -R optional_rules $build/modsecurity-apache-2.6.6-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -300,23 +263,12 @@ fi
 cd $build
 
 # Build Python
-curl -OL http://www.python.org/ftp/python/2.6.6/Python-2.6.6.tgz
-tar xzf Python-2.6.6.tgz
-cd Python-2.6.6
-./configure --prefix=$build/python-2.6.6-bin --enable-shared
+curl -OL http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
+tar xzf Python-2.7.3.tgz
+cd Python-2.7.3
+./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin
 make
 make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Apache Libcloud
-curl -OL http://archive.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.4.2.tar.bz2
-tar xjf apache-libcloud-incubating-0.4.2.tar.bz2
-cd apache-libcloud-incubating-0.4.2
-python setup.py build
-python setup.py install --home $build/libcloud-0.4.2-bin
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -333,7 +285,7 @@ cd $build
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.x-bin --with-httpd=$build/httpd-2.3.15-bin --with-memcached=$build/memcached-1.4.7-bin --with-tinycdb=$build/tinycdb-bin --with-leveldb=$build/leveldb --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-libcloud --with-libcloud=$build/libcloud-0.4.2-bin --enable-threads --enable-python --with-python=$build/python-2.6.6-bin --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --with-pgbouncer=$build/pgbouncer-1.5-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.1-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.24.0-bin --with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin --with-httpd=$build/httpd-2.4.2-bin --with-memcached=$build/memcached-1.4.13-bin --with-tinycdb=$build/tinycdb-bin --with-js-include=$build/js-1.8.5-bin/include/js --with-js-lib=$build/js-1.8.5-bin/lib --enable-threads --enable-python --with-python=$build/python-2.7.3-bin --enable-opencl --with-libxml2=$build/libxml2-2.7.7-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin --with-pgbouncer=$build/pgbouncer-1.5-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.6-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -342,8 +294,8 @@ fi
 cd $build
 
 # Create src archive
-tar czf tuscany-sca-cpp-1.0-src.tar.gz apache-libcloud-incubating-0.4.2 apache-libcloud-incubating-0.4.2.tar.bz2 apr-1.4.x apr-1.4.x-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz htmltidy-bin httpd-2.3.15-beta httpd-2.3.15-beta.tar.gz httpd-2.3.15-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libcloud-0.4.2-bin libevent-2.0.13-stable libevent-2.0.13-stable-bin libevent-2.0.13-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libopkele libopkele-bin libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.7 memcached-1.4.7-bin memcached-1.4.7.tar.gz mod_auth_openid mod-auth-openid-bin modsecurity-apache_2.6.1 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.2 modsecurity-crs_2.2.2.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz pgbouncer-1.5 pgbouncer-1.5-bin pgbouncer-1.5.tar.gz postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz Python-2.6.6 python-2.6.6-bin Python-2.6.6.tgz tidy tinycdb tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0-src.tar.gz apr-1.4.6 apr-1.4.6.tar.gz apr-1.4.6-bin apr-util-1.4.1 apr-util-1.4.1.tar.gz apr-util-1.4.1-bin autoconf-2.13 autoconf-2.13-bin autoconf-2.13.tar.gz curl-7.24.0 curl-7.24.0-bin curl-7.24.0.tar.gz expat-2.0.1 expat-2.0.1-bin expat-2.0.1.tar.gz httpd-2.4.2 httpd-2.4.2.tar.gz httpd-2.4.2-bin js-1.8.5-bin js-1.8.5 js185-1.0.0.tar.gz libevent-2.0.13-stable libevent-2.0.13-stable-bin libevent-2.0.13-stable.tar.gz liboauth-0.9.1 liboauth-0.9.1-bin liboauth-0.9.1.tar.gz libstrophe libstrophe-bin libxml2-2.7.7 libxml2-2.7.7-bin libxml2-sources-2.7.7.tar.gz memcached-1.4.13 memcached-1.4.13-bin memcached-1.4.13.tar.gz modsecurity-apache_2.6.6 modsecurity-apache-2.6.0-bin modsecurity-apache_2.6.0.tar.gz modsecurity-crs_2.2.5 modsecurity-crs_2.2.5.tar.gz nspr-4.8.8-bin nspr-4.8.8 nspr-4.8.8.tar.gz nuvem pcre-8.12 pcre-8.12-bin pcre-8.12.zip pkg-config-0.25 pkg-config-0.25-bin pkg-config-0.25.tar.gz pgbouncer-1.5 pgbouncer-1.5-bin pgbouncer-1.5.tar.gz postgresql-9.1.2 postgresql-9.1.2-bin postgresql-9.1.2.tar.gz Python-2.7.3 python-2.7.3-bin Python-2.7.3.tgz tinycdb tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.x-bin curl-7.24.0-bin expat-2.0.1-bin htmltidy-bin httpd-2.3.15-bin js-1.8.5-bin libcloud-0.4.2-bin libevent-2.0.13-stable-bin liboauth-0.9.1-bin libopkele-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.7-bin mod-auth-openid-bin modsecurity-apache-2.6.1-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin pgbouncer-1.5-bin postgresql-9.1.2-bin python-2.6.6-bin tinycdb-bin leveldb tuscany-sca-cpp tuscany-sca-cpp-bin
+tar czf tuscany-sca-cpp-1.0.tar.gz apr-1.4.6-bin apr-util-1.4.1-bin curl-7.24.0-bin expat-2.0.1-bin httpd-2.4.2-bin js-1.8.5-bin libevent-2.0.13-stable-bin liboauth-0.9.1-bin libstrophe-bin libxml2-2.7.7-bin memcached-1.4.13-bin modsecurity-apache-2.6.6-bin nspr-4.8.8-bin nuvem/nuvem-parallel pcre-8.12-bin pgbouncer-1.5-bin postgresql-9.1.2-bin python-2.7.3-bin tinycdb-bin tuscany-sca-cpp tuscany-sca-cpp-bin
 

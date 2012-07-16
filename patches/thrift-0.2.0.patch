@@ -1,0 +1,39 @@
+--- lib/cpp/src/server/TNonblockingServer.cpp
++++ lib/cpp/src/server/TNonblockingServer.cpp
+@@ -622,8 +622,8 @@
+   hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
+   sprintf(port, "%d", port_);
+ 
+-  // Wildcard address
+-  error = getaddrinfo(NULL, port, &hints, &res0);
++  // Wildcard or specified address
++  error = getaddrinfo(host_ == "" || host_ =="*"? NULL : host_.c_str(), port, &hints, &res0);
+   if (error) {
+     string errStr = "TNonblockingServer::serve() getaddrinfo " + string(gai_strerror(error));
+     GlobalOutput(errStr.c_str());
+
+--- lib/cpp/src/server/TNonblockingServer.h
++++ lib/cpp/src/server/TNonblockingServer.h
+@@ -65,6 +65,9 @@
+   // Server socket file descriptor
+   int serverSocket_;
+ 
++  // Host server runs on
++  std::string host_;
++
+   // Port server runs on
+   int port_;
+ 
+@@ -117,10 +120,12 @@
+ 
+   TNonblockingServer(boost::shared_ptr<TProcessor> processor,
+                      boost::shared_ptr<TProtocolFactory> protocolFactory,
++                     std::string host,
+                      int port,
+                      boost::shared_ptr<ThreadManager> threadManager = boost::shared_ptr<ThreadManager>()) :
+     TServer(processor),
+     serverSocket_(-1),
++    host_(host),
+     port_(port),
+     threadManager_(threadManager),
+     eventBase_(NULL),
