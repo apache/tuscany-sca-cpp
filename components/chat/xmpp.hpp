@@ -76,6 +76,20 @@ public:
         debug("chat::xmppclient::copy");
     }
 
+    const XMPPClient& operator=(const XMPPClient& xc) {
+        debug("chat::xmppclient::operator=");
+        if(this == &xc)
+            return *this;
+        owner = false;
+        ctx = xc.ctx;
+        conn = xc.conn;
+        listener = xc.listener;
+        connecting = xc.connecting;
+        connected = xc.connected;
+        disconnecting = xc.disconnecting;
+        return *this;
+    }
+
     ~XMPPClient() {
         debug("chat::~xmppclient");
         extern const failable<bool> disconnect(XMPPClient& xc);
@@ -98,7 +112,7 @@ private:
     friend const failable<bool> disconnect(XMPPClient& xc);
     friend const failable<bool> listen(const lambda<failable<bool>(const value&, const value&, XMPPClient&)>& listener, XMPPClient& xc);
 
-    const bool owner;
+    bool owner;
     xmpp_ctx_t* ctx;
     xmpp_conn_t* conn;
     lambda<failable<bool>(const value&, const value&, XMPPClient&)> listener;

@@ -57,7 +57,6 @@ const string absdbname(const string& name) {
 class FileDB {
 public:
     FileDB() : owner(false) {
-        debug("filedb::filedb");
     }
 
     FileDB(const string& name, const string& format) : owner(true), name(absdbname(name)), format(format) {
@@ -69,8 +68,17 @@ public:
         debug("filedb::filedb::copy");
     }
 
+    const FileDB& operator=(const FileDB& c) {
+        debug("filedb::filedb::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        name = c.name;
+        format = c.format;
+        return *this;
+    }
+
     ~FileDB() {
-        debug("filedb::~filedb");
     }
 
 private:

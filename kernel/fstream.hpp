@@ -78,6 +78,14 @@ public:
     ofstream(const ofstream& os) : file(os.file), owner(false) {
     }
 
+    const ofstream& operator=(const ofstream& os) {
+        if(this == &os)
+            return *this;
+        file = os.file;
+        owner = false;
+        return *this;
+    }
+
     ~ofstream() {
         if (!owner)
             return;
@@ -125,6 +133,14 @@ public:
     }
 
     ifstream(const ifstream& is) : file(is.file), owner(false) {
+    }
+
+    const ifstream& operator=(const ifstream& is) {
+        if(this == &is)
+            return *this;
+        file = is.file;
+        owner = false;
+        return *this;
     }
 
     ~ifstream() {
@@ -351,7 +367,7 @@ const bool debug_isLogging() {
  * Log a debug message.
  */
 const bool debugLog(const string& msg) {
-    gc_scoped_pool();
+    gc_scoped_pool p;
     cdebug << msg << endl;
     return true;
 }
@@ -360,7 +376,7 @@ const bool debugLog(const string& msg) {
  * Log a debug message and a value.
  */
 template<typename V> const bool debugLog(const V& v, const string& msg) {
-    gc_scoped_pool();
+    gc_scoped_pool p;
     cdebug << msg << ": " << v << endl;
     return true;
 }
@@ -369,7 +385,7 @@ template<typename V> const bool debugLog(const V& v, const string& msg) {
  * Log a debug message and two values.
  */
 template<typename V, typename W> const bool debugLog(const V& v, const W& w, const string& msg) {
-    gc_scoped_pool();
+    gc_scoped_pool p;
     cdebug << msg << ": " << v << " : " << w << endl;
     return true;
 }

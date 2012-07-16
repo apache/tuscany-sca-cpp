@@ -75,8 +75,8 @@ const failable<value> start(const list<value>& params) {
     scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
 
     // Extract the configured category
-    const value host = ((lambda<value(list<value>)>)car(params))(list<value>());
-    const value category = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    const value host = ((lambda<value(const list<value>&)>)car(params))(list<value>());
+    const value category = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
     debug(host, "log::start::host");
     debug(category, "log::start::category");
 

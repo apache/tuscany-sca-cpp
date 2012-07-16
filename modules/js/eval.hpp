@@ -65,7 +65,7 @@ public:
     JSRuntime() {
         // Create JS runtime
         debug("js::jsruntime");
-        rt = JS_NewRuntime(32L * 1024L * 1024L);
+        rt = JS_NewRuntime(1L * 512L * 1024L);
         if(rt == NULL)
             cleanup();
     }
@@ -114,14 +114,19 @@ public:
         debug("js::jscontext");
         if (jsContext != NULL) {
             cx = jsContext;
+            JS_BeginRequest(cx);
             return;
         }
+        debug("js::jsnewcontext");
         cx = JS_NewContext(jsRuntime, 8192);
         if(cx == NULL)
             return;
+        JS_BeginRequest(cx);
+
         JS_SetOptions(cx, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
         JS_SetVersion(cx, JSVERSION_LATEST);
         JS_SetErrorReporter(cx, reportError);
+        //JS_SetGCZeal(cx, 2);
 
         // Create global JS object
         global = JS_NewCompartmentAndGlobalObject(cx, &jsGlobalClass, NULL);
@@ -140,8 +145,6 @@ public:
 
     ~JSContext() {
         debug("js::~jscontext");
-        if (cx != NULL)
-            JS_MaybeGC(cx);
         cleanup();
     }
 
@@ -156,8 +159,12 @@ public:
 private:
     bool cleanup() {
         if(cx != NULL) {
-            if (cx != jsContext)
+            JS_MaybeGC(cx);
+            JS_EndRequest(cx);
+            if (cx != jsContext) {
+                debug("js::jsdestroycontext");
                 JS_DestroyContext(cx);
+            }
             cx = NULL;
         }
         return true;

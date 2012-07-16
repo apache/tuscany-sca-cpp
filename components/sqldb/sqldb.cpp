@@ -120,8 +120,8 @@ private:
  */
 const failable<value> start(unused const list<value>& params) {
     // Connect to the configured database and table
-    const value conninfo = ((lambda<value(list<value>)>)car(params))(list<value>());
-    const value table = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    const value conninfo = ((lambda<value(const list<value>&)>)car(params))(list<value>());
+    const value table = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
     const perthread_ptr<pgsql::PGSql> pg(lambda<gc_ptr<pgsql::PGSql>()>(newPGSql(conninfo, table)));
 
     // Return the component implementation lambda function

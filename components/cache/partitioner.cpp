@@ -40,7 +40,7 @@ namespace partitioner {
 /**
  * Return the target partition for a key.
  */
-const failable<lambda<value(const list<value>&)> > partition(const value& key, const lambda<value(const list<value>&)> selector, const list<value>& partitions) {
+const failable<lambda<value(const list<value>&)> > partition(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
 
     // Call the selector component to convert the given key to a partition number
     const value p = selector(mklist<value>("get", key, partitions));
@@ -55,7 +55,7 @@ const failable<lambda<value(const list<value>&)> > partition(const value& key, c
 /**
  * Get an item from a partition.
  */
-const failable<value> get(const value& key, const lambda<value(const list<value>&)> selector, const list<value>& partitions) {
+const failable<value> get(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
 
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
@@ -76,7 +76,7 @@ const failable<value> get(const value& key, const lambda<value(const list<value>
 /**
  * Post an item to a partition.
  */
-const failable<value> post(const value& key, const value& val, const lambda<value(const list<value>&)> selector, const list<value>& partitions) {
+const failable<value> post(const value& key, const value& val, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
     const value id = append<value>(key, mklist(mkuuid()));
 
     // Select partition
@@ -93,7 +93,7 @@ const failable<value> post(const value& key, const value& val, const lambda<valu
 /**
  * Put an item into a partition.
  */
-const failable<value> put(const value& key, const value& val, const lambda<value(const list<value>&)> selector, const list<value>& partitions) {
+const failable<value> put(const value& key, const value& val, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
 
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
@@ -109,7 +109,7 @@ const failable<value> put(const value& key, const value& val, const lambda<value
 /**
  * Delete an item from a partition.
  */
-const failable<value> del(const value& key, const lambda<value(const list<value>&)> selector, const list<value>& partitions) {
+const failable<value> del(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
 
     // Select partition
     const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);

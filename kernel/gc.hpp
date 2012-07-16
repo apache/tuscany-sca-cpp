@@ -149,36 +149,18 @@ public:
 private:
     friend apr_pool_t* pool(const gc_pool& pool);
     friend class gc_global_pool_t;
+    friend class gc_child_pool;
+    friend class gc_local_pool;
     friend class gc_scoped_pool;
 
     apr_pool_t* apr_pool;
 };
 
 /**
- * Make a new APR pool.
- */
-apr_pool_t* mkpool() {
-    apr_pool_t* p = NULL;
-    apr_pool_create(&p, NULL);
-    assertOrFail(p != NULL);
-    return p;
-}
-
-/**
  * Return the APR pool used by a gc_pool.
  */
 apr_pool_t* pool(const gc_pool& pool) {
     return pool.apr_pool;
-}
-
-/**
- * Destroy a memory pool.
- */
-const bool destroy(const gc_pool& p) {
-    if (pool(p) == NULL)
-        return false;
-    apr_pool_destroy(pool(p));
-    return true;
 }
 
 /**
@@ -244,19 +226,77 @@ apr_pool_t* gc_current_pool() {
 }
 
 /**
- * A memory pool scope, used to setup a scope in which a particular pool
- * will be used for all allocations.
+ * A child memory pool, which will be destroyed when its parent pool is destroyed.
+ */
+class gc_child_pool : public gc_pool {
+public:
+
+    gc_child_pool() : gc_pool(NULL), owner(true) {
+        apr_pool_create(&apr_pool, gc_current_pool());
+        assertOrFail(apr_pool != NULL);
+    }
+
+    gc_child_pool(const gc_child_pool& p) : gc_pool(p.apr_pool), owner(false) {
+    }
+
+    const gc_child_pool& operator=(const gc_child_pool& p) {
+        if(this == &p)
+            return *this;
+        apr_pool = p.apr_pool;
+        owner = false;
+        return *this;
+    }
+
+
+private:
+    bool owner;
+};
+
+/**
+ * A local pool scope, which will be destroyed when exiting the current scope.
+ */
+class gc_local_pool : public gc_pool {
+public:
+
+    gc_local_pool() : gc_pool(NULL), owner(true) {
+        apr_pool_create(&apr_pool, gc_current_pool());
+        assertOrFail(apr_pool != NULL);
+    }
+
+    ~gc_local_pool() {
+        if (owner)
+            apr_pool_destroy(apr_pool);
+    }
+
+    gc_local_pool(const gc_local_pool& p) : gc_pool(p.apr_pool), owner(false) {
+    }
+
+    const gc_local_pool& operator=(const gc_local_pool& p) {
+        if(this == &p)
+            return *this;
+        apr_pool = p.apr_pool;
+        owner = false;
+        return *this;
+    }
+
+private:
+    bool owner;
+};
+
+/**
+ * A memory pool scope, used to setup a scope in which a particular pool will be
+ * used for all allocations. Will be destroyed when existing the current scope.
  */
 class gc_scoped_pool : public gc_pool {
 public:
 
     gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owner(true) {
-        apr_pool_create(&apr_pool, NULL);
+        apr_pool_create(&apr_pool, prev);
         assertOrFail(apr_pool != NULL);
         gc_push_pool(apr_pool);
     }
 
-    gc_scoped_pool(apr_pool_t* pool) : gc_pool(pool), prev(gc_current_pool()), owner(false) {
+    gc_scoped_pool(apr_pool_t* p) : gc_pool(p), prev(gc_current_pool()), owner(false) {
         gc_push_pool(apr_pool);
     }
 
@@ -266,10 +306,19 @@ public:
         gc_pop_pool(prev);
     }
 
-private:
-    gc_scoped_pool(const gc_scoped_pool& pool) : gc_pool(pool.apr_pool), prev(NULL), owner(false) {
+    gc_scoped_pool(const gc_scoped_pool& p) : gc_pool(p.apr_pool), prev(p.prev), owner(false) {
     }
 
+    const gc_scoped_pool& operator=(const gc_scoped_pool& p) {
+        if(this == &p)
+            return *this;
+        apr_pool = p.apr_pool;
+        prev = p.prev;
+        owner = false;
+        return *this;
+    }
+
+private:
     apr_pool_t* prev;
     bool owner;
 };

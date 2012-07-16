@@ -49,38 +49,41 @@ namespace memcache {
 class MemCached {
 public:
     MemCached() : owner(false) {
-        debug("memcache::memcached");
     }
 
-    MemCached(const string host, const int port) : owner(true) {
+    MemCached(const string host, const int port) : p(), owner(true) {
         debug(host, "memcache::memcached::host");
         debug(port, "memcache::memcached::port");
-        apr_pool_create(&pool, NULL);
-        apr_memcache_create(pool, 1, 0, &mc);
+        apr_memcache_create(pool(p), 1, 0, &mc);
         addServer(host, port);
     }
 
-    MemCached(const list<string>& servers) : owner(true) {
+    MemCached(const list<string>& servers) : p(), owner(true) {
         debug(servers, "memcache::memcached::servers");
-        apr_pool_create(&pool, NULL);
-        apr_memcache_create(pool, (apr_uint16_t)length(servers), 0, &mc);
+        apr_memcache_create(pool(p), (apr_uint16_t)length(servers), 0, &mc);
         addServers(servers);
     }
 
-    MemCached(const MemCached& c) : owner(false), pool(c.pool), mc(c.mc) {
+    MemCached(const MemCached& c) : p(c.p), owner(false), mc(c.mc) {
         debug("memcache::memcached::copy");
     }
 
+    const MemCached& operator=(const MemCached& c) {
+        debug("memcache::memcached::operator=");
+        if(this == &c)
+            return *this;
+        p = c.p;
+        owner = false;
+        mc = c.mc;
+        return *this;
+    }
+
     ~MemCached() {
-        debug("memcache::~memcached");
-        if (!owner)
-            return;
-        apr_pool_destroy(pool);
     }
 
 private:
+    gc_child_pool p;
     bool owner;
-    apr_pool_t* pool;
     apr_memcache_t* mc;
 
     friend const failable<bool> post(const value& key, const value& val, const MemCached& cache);
@@ -93,7 +96,7 @@ private:
      */
     const failable<bool> addServer(const string& host, const int port) {
         apr_memcache_server_t *server;
-        const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 1, 1, 1, 600, &server);
+        const apr_status_t sc = apr_memcache_server_create(pool(p), c_str(host), (apr_port_t)port, 1, 1, 1, 600, &server);
         if (sc != APR_SUCCESS) {
             ostringstream os;
             os << "Couldn't connect to memcached server: " << host << ":" << port;
@@ -176,7 +179,8 @@ const failable<value> get(const value& key, const MemCached& cache) {
     const string ks(scheme::writeValue(key));
     char *data;
     apr_size_t size;
-    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, nospaces(c_str(ks)), &data, &size, NULL);
+    gc_local_pool lp;
+    const apr_status_t rc = apr_memcache_getp(cache.mc, pool(lp), nospaces(c_str(ks)), &data, &size, NULL);
     if (rc != APR_SUCCESS) {
         ostringstream os;
         os << "Couldn't get memcached entry: " << key;

@@ -66,7 +66,6 @@ namespace scribe {
 class Scribe {
 public:
     Scribe() : owner(false) {
-        debug("scribe::scribe");
     }
 
     Scribe(const string host, const int port) : owner(true) {
@@ -80,9 +79,18 @@ public:
         client = c.client;
         transport = c.transport;
     }
+    
+    const Scribe& operator=(const Scribe& c) {
+        debug("scribe::scribe::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        client = c.client;
+        transport = c.transport;
+        return *this;
+    }
 
     ~Scribe() {
-        debug("scribe::~scribe");
         if (!owner)
             return;
         try {

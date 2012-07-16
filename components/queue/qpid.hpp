@@ -65,6 +65,15 @@ public:
         debug("queue::qpidonnection::copy");
     }
 
+    const QpidConnection& operator=(const QpidConnection& qc) {
+        debug("queue::qpidonnection::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        c = qc.c;
+        return *this;
+    }
+
     ~QpidConnection() {
         debug("queue::~qpidonnection");
         if (!owner)

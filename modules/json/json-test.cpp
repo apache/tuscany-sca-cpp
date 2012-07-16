@@ -27,6 +27,7 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "json.hpp"
+#include "perf.hpp"
 
 namespace tuscany {
 namespace json {
@@ -74,6 +75,7 @@ const string jsarray("{\n"
     "}");
 
 bool testJSON() {
+    gc_scoped_pool pool;
     const js::JSContext cx;
 
     {
@@ -217,6 +219,7 @@ const string jsechores("{\n"
     "}");
 
 bool testJSONRPC() {
+    gc_scoped_pool pool;
     js::JSContext cx;
     {
         const string lm("{\"id\": 1, \"method\": \"test\", \"params\": []}");
@@ -283,14 +286,49 @@ bool testJSONRPC() {
     return true;
 }
 
+struct testReadWrite {
+    testReadWrite() {
+    }
+    const bool operator()() const {
+        gc_scoped_pool pool;
+        js::JSContext cx;
+
+        const list<value> ad = mklist<value>(mklist<value>(attribute, "city", string("san francisco")), mklist<value>(attribute, "state", string("ca")));
+        const list<value> ac = mklist<value>(mklist<value>(element, "id", string("1234")), mklist<value>(attribute, "balance", 1000));
+        const list<value> cr = mklist<value>(mklist<value> (attribute, "name", string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
+        const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
+
+        ostringstream os;
+        writeJSON<ostream*>(jsonWriter, &os, c, cx);
+        assert(str(os) == jscustomer);
+
+        istringstream is(jscustomer);
+        const list<string> il = streamList(is);
+        const list<value> r = content(readJSON(il, cx));
+        assert(r == c);
+        return true;
+    }
+};
+
+bool testJSONPerf() {
+    gc_scoped_pool pool;
+
+    const lambda<bool()> rwl = lambda<bool()>(testReadWrite());
+    cout << "JSON read + write test " << time(rwl, 5, 200) << " ms" << endl;
+
+    return true;
+}
+
 }
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::json::testJSON();
     tuscany::json::testJSONRPC();
+    tuscany::json::testJSONPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 

@@ -48,7 +48,7 @@ const failable<value> post(const list<value>& params) {
     QpidSession qs(qc);
 
     // Post the item
-    const value pk = ((lambda<value(list<value>)>)caddr(params))(list<value>());
+    const value pk = ((lambda<value(const list<value>&)>)caddr(params))(list<value>());
     const value key = isList(pk)? append<value>(pk, (list<value>)car(params)) : cons<value>(pk, (list<value>)car(params));
     debug(key, "queue::post::key");
     debug(cadr(params), "queue::post::value");

@@ -102,7 +102,7 @@ private:
  */
 const failable<value> start(unused const list<value>& params) {
     // Connect to the configured database and table
-    const value dbname = ((lambda<value(list<value>)>)car(params))(list<value>());
+    const value dbname = ((lambda<value(const list<value>&)>)car(params))(list<value>());
     tinycdb::TinyCDB& cdb = *(new (gc_new<tinycdb::TinyCDB>()) tinycdb::TinyCDB(dbname));
 
     // Return the component implementation lambda function

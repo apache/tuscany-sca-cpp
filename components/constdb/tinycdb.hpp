@@ -107,7 +107,6 @@ const string absdbname(const string& name) {
 class TinyCDB {
 public:
     TinyCDB() : owner(false), fd(-1) {
-        debug("tinycdb::tinycdb");
         st.st_ino = 0;
     }
 
@@ -121,8 +120,18 @@ public:
         st.st_ino = c.st.st_ino;
     }
 
+    const TinyCDB& operator=(const TinyCDB& c) {
+        debug("tinycdb::tinycdb::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        name = c.name;
+        fd = c.fd;
+        st.st_ino = c.st.st_ino;
+        return *this;
+    }
+
     ~TinyCDB() {
-        debug("tinycdb::~tinycdb");
         if (!owner)
             return;
         if (fd == -1)

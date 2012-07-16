@@ -38,12 +38,12 @@ namespace scribecat {
 
 int cat(const string& host, const string& category, const string& type) {
     // Connect to Scribe
-    scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
+    scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe(host, 1464));
 
     // Read lines from stdin and log them
     char buf[8193];
     for (;;) {
-        gc_scoped_pool();
+        gc_scoped_pool p;
 
         // Write line prefix
         ostringstream os;

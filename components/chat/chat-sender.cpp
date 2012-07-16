@@ -118,8 +118,8 @@ private:
 const failable<value> start(const list<value>& params) {
     // Extract the the XMPP JID and password
     const list<value> props = params;
-    const value jid = ((lambda<value(list<value>)>)car(props))(list<value>());
-    const value pass = ((lambda<value(list<value>)>)cadr(props))(list<value>());
+    const value jid = ((lambda<value(const list<value>&)>)car(props))(list<value>());
+    const value pass = ((lambda<value(const list<value>&)>)cadr(props))(list<value>());
 
     // Create an XMPP client session
     XMPPClient xc(jid, pass, false);

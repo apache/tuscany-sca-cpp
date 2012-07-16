@@ -65,6 +65,15 @@ public:
         debug("webservice::axis2context::copy");
     }
 
+    const Axis2Context& operator=(const Axis2Context& ax) {
+        debug("webservice::axis2context::operator=");
+        if(this == &ax)
+            return *this;
+        env = ax.env;
+        owner = false;
+        return *this;
+    }
+
     Axis2Context(const axutil_env_t* env) : env(const_cast<axutil_env_t*>(env)), owner(false) {
         debug("webservice::axis2context::env");
     }

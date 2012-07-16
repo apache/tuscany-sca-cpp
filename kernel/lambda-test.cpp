@@ -87,6 +87,7 @@ bool testCppPerf() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
 #ifdef HAS_CXX0X_LAMBDAS

@@ -42,7 +42,7 @@ namespace memocache {
 /**
  * Memoize the value of a function application in a cache.
  */
-const failable<value> memoize(const list<value>& params, const lambda<value(const list<value>&)> relay, const lambda<value(const list<value>&)> cache) {
+const failable<value> memoize(const list<value>& params, const lambda<value(const list<value>&)>& relay, const lambda<value(const list<value>&)>& cache) {
     debug(params, "memocache::memoize::params");
 
     // Lookup memoized value from cache

@@ -73,8 +73,8 @@ const failable<value> start(const list<value>& params) {
 
     // Extract the configured relay service and category
     const value rel = car(params);
-    const value host = ((lambda<value(list<value>)>)cadr(params))(list<value>());
-    const value category = ((lambda<value(list<value>)>)caddr(params))(list<value>());
+    const value host = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
+    const value category = ((lambda<value(const list<value>&)>)caddr(params))(list<value>());
     debug(host, "logger::start::host");
     debug(category, "logger::start::category");
 

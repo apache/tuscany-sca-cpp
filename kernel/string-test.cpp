@@ -185,6 +185,7 @@ bool testStringPerf() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testCopies();

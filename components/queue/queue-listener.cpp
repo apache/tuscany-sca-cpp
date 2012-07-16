@@ -123,9 +123,9 @@ private:
 const failable<value> start(const list<value>& params) {
     // Extract the relay reference and the AMQP key and queue name
     const value rel = car(params);
-    const value pk = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    const value pk = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
     const value key = isList(pk)? (list<value>)pk : mklist<value>(pk);
-    const value qname = ((lambda<value(list<value>)>)caddr(params))(list<value>());
+    const value qname = ((lambda<value(const list<value>&)>)caddr(params))(list<value>());
 
     // Create an AMQP session
     QpidConnection qc(false);

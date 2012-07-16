@@ -42,10 +42,8 @@ struct timeLambda {
     timeLambda(const lambda<bool()>& f) : f(f) {
     }
     bool operator()(const long count) const {
-        if (count == 0)
-            return true;
-        f();
-        (*this)(count - 1);
+        for (long i = 0; i < count; i++)
+            f();
         return true;
     }
 };

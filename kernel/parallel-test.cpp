@@ -33,8 +33,6 @@
 
 namespace tuscany {
 
-#ifdef WANT_THREADS
-
 int inci = 0;
 
 struct incPerf {
@@ -45,6 +43,24 @@ struct incPerf {
         return true;
     }
 };
+
+const gc_ptr<int> tlsic() {
+    gc_ptr<int> i = new (gc_new<int>()) int();
+    *i = 0;
+    return i;
+}
+const perthread_ptr<int> tlsi(tlsic);
+
+struct tlsPerf {
+    tlsPerf() {
+    }
+    const bool operator()() const {
+        *tlsi = *tlsi + 1;
+        return true;
+    }
+};
+
+#ifdef WANT_THREADS
 
 int addi = 0;
 
@@ -71,21 +87,7 @@ struct mutexPerf {
     }
 };
 
-const gc_ptr<int> tlsic() {
-    gc_ptr<int> i = new (gc_new<int>()) int();
-    *i = 0;
-    return i;
-}
-const perthread_ptr<int> tlsi(tlsic);
-
-struct tlsPerf {
-    tlsPerf() {
-    }
-    const bool operator()() const {
-        *tlsi = *tlsi + 1;
-        return true;
-    }
-};
+#endif
 
 bool testAtomicPerf() {
     const int count = 100000;
@@ -94,6 +96,7 @@ bool testAtomicPerf() {
         cout << "Non-atomic inc test " << time(l, 1000, count) << " ms" << endl;
         assert(inci == count + 1000);
     }
+#ifdef WANT_THREADS
     {
         const lambda<bool()> l = addAndFetchPerf();
         cout << "Atomic inc test " << time(l, 1000, count) << " ms" << endl;
@@ -107,6 +110,7 @@ bool testAtomicPerf() {
         assert(muxi == count + 1000);
         pthread_mutex_destroy(&mutex);
     }
+#endif
     {
         const lambda<bool()> l = tlsPerf();
         cout << "Thread local inc test " << time(l, 1000, count) << " ms" << endl;
@@ -114,6 +118,8 @@ bool testAtomicPerf() {
     }
     return true;
 }
+
+#ifdef WANT_THREADS
 
 const int mtsquare(const int x) {
     for(int i = 0; i < 10000000; i++)
@@ -239,10 +245,11 @@ bool testWorker() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
-#ifdef WANT_THREADS
     tuscany::testAtomicPerf();
+#ifdef WANT_THREADS
     tuscany::testWorker();
 #else
     tuscany::cout << "Skipped multi-thread tests" << tuscany::endl;

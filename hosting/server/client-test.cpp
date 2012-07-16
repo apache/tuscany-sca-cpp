@@ -20,32 +20,18 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test JavaScript evaluation functions.
+ * Test HTTP client functions.
  */
 
-#include <assert.h>
 #include "stream.hpp"
 #include "string.hpp"
-#include "eval.hpp"
+#include "client-test.hpp"
 
-namespace tuscany {
-namespace js {
-
-bool testJSEval() {
-    failable<value> v = evalScript("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
-    assert(hasContent(v));
-    assert(content(v) == value(5));
-    return true;
-}
-
-}
-}
-
-int main() {
-    tuscany::gc_scoped_pool p;
+int main(const int argc, const char** argv) {
     tuscany::cout << "Testing..." << tuscany::endl;
+    tuscany::server::testURI = argc > 1? argv[1] : "https://jane:jane@www.example.com:8453";
 
-    tuscany::js::testJSEval();
+    tuscany::server::testServer();
 
     tuscany::cout << "OK" << tuscany::endl;
 

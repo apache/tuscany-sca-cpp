@@ -91,6 +91,17 @@ public:
         debug("pgsql::pgsql::copy");
     }
 
+    const PGSql& operator=(const PGSql& c) {
+        debug("pgsql::pgsql::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        conn = c.conn;
+        conninfo = c.conninfo;
+        table = c.table;
+        return *this;
+    }
+
     ~PGSql() {
         debug("pgsql::~pgsql");
         if (!owner)
@@ -104,7 +115,7 @@ private:
     bool owner;
     PGconn *conn;
     string conninfo;
-    const string table;
+    string table;
     string kname;
     string vname;
 

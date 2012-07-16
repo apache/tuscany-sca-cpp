@@ -93,8 +93,8 @@ bool testNoSqlDb() {
 struct getLoop {
     const string path;
     const value entry;
-    http::CURLSession cs;
-    getLoop(const string& path, const value& entry, http::CURLSession cs) : path(path), entry(entry), cs(cs) {
+    http::CURLSession& cs;
+    getLoop(const string& path, const value& entry, http::CURLSession& cs) : path(path), entry(entry), cs(cs) {
     }
     const bool operator()() const {
         const failable<value> val = http::get(uri + path, cs);

@@ -26,6 +26,8 @@
  * Python script evaluation logic.
  */
 #if PYTHON_VERSION == 27
+#undef _POSIX_C_SOURCE
+#undef _XOPEN_SOURCE
 #include <python2.7/Python.h>
 #include <python2.7/frameobject.h>
 #include <python2.7/traceback.h>
@@ -71,15 +73,12 @@ public:
     PythonRuntime() {
         debug("python::pythonruntime");
 
+        // Save current process id
 #ifdef WANT_THREADS
         pthread_mutex_init(&mutex, NULL);
-
-#ifdef IS_DARWIN
-        // Save current process id
         pthread_mutex_init(&pidmutex, NULL);
+#endif
         pid = processId();
-#endif
-#endif
 
         // Initialize the Python interpreter
 #ifdef IS_DARWIN
@@ -134,11 +133,9 @@ public:
 private:
 #ifdef WANT_THREADS
     pthread_mutex_t mutex;
-#ifdef IS_DARWIN
     pthread_mutex_t pidmutex;
+#endif
     unsigned long pid;
-#endif
-#endif
 
     friend class PythonThreadIn;
     friend class PythonThreadOut;
@@ -177,8 +174,8 @@ const string lastError(PythonRuntime* py) {
         PyObject* trace = NULL;
         PyErr_Fetch(&type, &val, &trace);
         if (type != NULL && val != NULL) {
-            PyObject* stype = PyObject_Str(type);    
-            PyObject* sval = PyObject_Str(val);    
+            PyObject* stype = PyObject_Repr(type);    
+            PyObject* sval = PyObject_Repr(val);    
             string msg = string() + PyString_AsString(stype) + " : " + PyString_AsString(sval) + lastErrorTrace(trace);
             pyDecRef(stype, py);
             pyDecRef(sval, py);
@@ -220,11 +217,10 @@ private:
 class PythonThreadIn {
 public:
     PythonThreadIn(PythonRuntime* py) : py(py) {
-#ifdef WANT_THREADS
 
-#ifdef IS_DARWIN
         // Reinitialize Python thread support after a fork
         const unsigned long pid = processId();
+#ifdef WANT_THREADS
         if (pid != py->pid) {
             pthread_mutex_lock(&py->pidmutex);
             if (pid != py->pid) {
@@ -236,16 +232,26 @@ public:
             }
             pthread_mutex_unlock(&py->pidmutex);
         }
-#endif
 
         // Acquire the Python GIL
         //debug("python::gil::ensure");
         gstate = PyGILState_Ensure();
         //debug("python::gil::ensured");
+#else
+        if (pid != py->pid) {
+            debug("python::afterfork");
+            PyOS_AfterFork();
+            debug("python::afterforked");
+            py->pid = pid;
+        }
 #endif
     }
 
     ~PythonThreadIn() {
+        // Run Python cyclic reference garbage collector
+        //const size_t c = PyGC_Collect();
+        //debug(c, "python::gc::collect::c");
+
 #ifdef WANT_THREADS
         // Release the Python GIL
         //debug("python::gil::release");
@@ -520,7 +526,6 @@ PyObject* valueToPyObject(const value& v, PythonRuntime* py) {
 /**
  * Convert a python tuple to a list of values.
  */
-
 const list<value> pyTupleToValuesHelper(PyObject* o, const size_t i, const size_t size, PythonRuntime* py) {
     if (i == size)
         return list<value>();
@@ -546,6 +551,15 @@ struct pyCallable {
     pyCallable(const pyCallable& c) : func(c.func), py(c.py), owner(false) {
     }
 
+    const pyCallable& operator=(const pyCallable& c) {
+        if(this == &c)
+            return *this;
+        func = c.func;
+        py = c.py;
+        owner = false;
+        return *this;
+    }
+
     ~pyCallable() {
         if (!owner)
             return;
@@ -554,8 +568,7 @@ struct pyCallable {
 
     const value operator()(const list<value>& args) const {
         PythonThreadIn pyin(py);
-        {
-            // Temp
+        if (debug_islogging()) {
             PyObject* rfunc = PyObject_Repr(func);
             char* s = NULL;
             Py_ssize_t l = 0;
@@ -564,8 +577,7 @@ struct pyCallable {
             pyDecRef(rfunc, py);
         }
         PyObject* pyargs = valuesToPyTuple(args, py);
-        {
-            // Temp
+        if (debug_islogging()) {
             PyObject* rargs = PyObject_Repr(pyargs);
             char* s = NULL;
             Py_ssize_t l = 0;
@@ -573,9 +585,11 @@ struct pyCallable {
             debug(string(s, l), "python::operator()::args");
             pyDecRef(rargs, py);
         }
+
         PyObject* result = PyObject_CallObject(func, pyargs);
-        const value v = pyObjectToValue(result, py);
         pyDecRef(pyargs, py);
+
+        const value v = pyObjectToValue(result, py);
         pyDecRef(result, py);
         return v;
     }
@@ -605,6 +619,8 @@ const value pyObjectToValue(PyObject *o, PythonRuntime* py) {
         return value((double)PyFloat_AsDouble(o));
     if (PyTuple_Check(o))
         return pyTupleToValues(o, py);
+    if (PyObject_TypeCheck(o, &pyLambda_type))
+        return *(((pyLambda*)o)->func);
     if (PyCallable_Check(o))
         return lambda<value(const list<value>&)>(pyCallable(o, py));
     return value();
@@ -646,10 +662,14 @@ const failable<value> evalScript(const value& expr, PyObject* script, PythonRunt
 
     // Call the function
     PyObject* result = PyObject_CallObject(func, args);
+    if (result == NULL) {
+        const string msg = lastError(&py);
+        pyDecRef(func, &py);
+        pyDecRef(args, &py);
+        return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + msg);
+    }
     pyDecRef(func, &py);
     pyDecRef(args, &py);
-    if (result == NULL)
-        return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastError(&py));
 
     // Convert python result to a value
     const value v = pyObjectToValue(result, &py);
@@ -680,10 +700,19 @@ const failable<PyObject*> readScript(const string& name, const string& path, ist
         return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError(&py));
     PyObject* mod = PyImport_ExecCodeModuleEx(const_cast<char*>(c_str(name)), code, const_cast<char*>(c_str(path)));
     if (mod == NULL) {
+        const string msg = lastError(&py);
         pyDecRef(code, &py);
-        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError(&py));
+        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + msg);
     }
-    return mod;
+    pyDecRef(code, &py);
+    pyDecRef(mod, &py);
+
+    // Lookup the loaded module
+    PyObject *lmod = PyDict_GetItemString(mods, const_cast<char*>(c_str(name)));
+    if (lmod != NULL)
+        return lmod;
+
+    return mkfailure<PyObject*>(string("Couldn't lookup module: ") + path);
 }
 
 /**

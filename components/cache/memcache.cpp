@@ -103,7 +103,7 @@ private:
 const list<string> servers(const list<value>& params) {
     if (isNil(params))
         return list<string>();
-    const value s = ((lambda<value(list<value>)>)car(params))(list<value>());
+    const value s = ((lambda<value(const list<value>&)>)car(params))(list<value>());
     return cons<string>(s, servers(cdr(params)));
 }
 

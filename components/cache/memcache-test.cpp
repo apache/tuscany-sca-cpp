@@ -52,6 +52,7 @@ struct getLoop {
     getLoop(const value& k, MemCached& ch) : k(k), ch(ch) {
     }
     const bool operator()() const {
+        gc_scoped_pool p;
         assert(get(k, ch) == value(string("CCC")));
         return true;
     }
@@ -71,6 +72,7 @@ bool testGetPerf() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::memcache::testMemCached();

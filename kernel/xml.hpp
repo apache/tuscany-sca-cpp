@@ -78,6 +78,19 @@ public:
         debug("xml::XMLReader::copy");
     }
 
+    const XMLReader& operator=(const XMLReader& r) {
+        debug("xml::XMLReader::operator=");
+        if(this == &r)
+            return *this;
+        xml = r.xml;
+        owner = false;
+        tokenType = r.tokenType;
+        isEmptyElement = r.isEmptyElement;
+        hasValue = r.hasValue;
+        hasAttributes = r.hasAttributes;
+        return *this;
+    }
+
     ~XMLReader() {
         if (!owner)
             return;
@@ -112,8 +125,8 @@ public:
     }
 
 private:
-    const xmlTextReaderPtr xml;
-    const bool owner;
+    xmlTextReaderPtr xml;
+    bool owner;
     int tokenType;
     bool isEmptyElement;
     bool hasValue;

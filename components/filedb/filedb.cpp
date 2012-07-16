@@ -102,8 +102,8 @@ private:
  */
 const failable<value> start(const list<value>& params) {
     // Connect to the configured database and table
-    const value dbname = ((lambda<value(list<value>)>)car(params))(list<value>());
-    const value format = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    const value dbname = ((lambda<value(const list<value>&)>)car(params))(list<value>());
+    const value format = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
 
     filedb::FileDB& db = *(new (gc_new<filedb::FileDB>()) filedb::FileDB(absdbname(dbname), format));
 

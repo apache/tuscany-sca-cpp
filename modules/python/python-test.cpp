@@ -42,13 +42,36 @@ bool testEvalExpr() {
     PythonRuntime py;
 
     istringstream is(testPythonAdd);
-    failable<PyObject*> script = readScript("script", "script.py", is, py);
+    failable<PyObject*> script = readScript("script1", "script1.py", is, py);
     assert(hasContent(script));
 
     const value exp = mklist<value>("add", 2, 3);
     const failable<value> r = evalScript(exp, content(script), py);
     assert(hasContent(r));
     assert(content(r) == value(5));
+
+    releaseScript(content(script), py);
+    return true;
+}
+
+const string testPythonMap =
+        "def addmap(x, y):\n"
+        "    return tuple(map(lambda i: i + y, x))\n";
+
+bool testEvalList() {
+    gc_scoped_pool pool;
+    PythonRuntime py;
+
+    istringstream is(testPythonMap);
+    failable<PyObject*> script = readScript("script2", "script2.py", is, py);
+    assert(hasContent(script));
+
+    const value exp = mklist<value>("addmap", mklist<value>(1, 2, 3), 1);
+    const failable<value> r = evalScript(exp, content(script), py);
+    assert(hasContent(r));
+    assert(car<value>(content(r)) == value(2));
+    assert(cadr<value>(content(r)) == value(3));
+    assert(caddr<value>(content(r)) == value(4));
 
     releaseScript(content(script), py);
     return true;
@@ -104,7 +127,7 @@ struct testEvalReadAdd {
     }
     const bool operator()() const {
         istringstream is(testPythonAdd);
-        failable<PyObject*> script = readScript("script", "script.py", is, py);
+        failable<PyObject*> script = readScript("script3", "script3.py", is, py);
         assert(hasContent(script));
 
         const value exp = mklist<value>("add", 2, 3);
@@ -139,7 +162,7 @@ bool testEvalPerf() {
     cout << "Python read + eval test " << time(erl, 5, 10000) << " ms" << endl;
 
     istringstream is(testPythonAdd);
-    failable<PyObject*> script = readScript("script", "script.py", is, py);
+    failable<PyObject*> script = readScript("script4", "script4.py", is, py);
     assert(hasContent(script));
 
     const lambda<bool()> el = lambda<bool()>(testEvalAdd(content(script), py));
@@ -158,7 +181,7 @@ struct testReadEvalAddLoop {
     const bool operator()() const {
         for (int i = 0; i < 100; i++) {
             istringstream is(testPythonAdd);
-            failable<PyObject*> script = readScript("script", "script.py", is, py);
+            failable<PyObject*> script = readScript("script6", "script6.py", is, py);
             assert(hasContent(script));
 
             const value exp = mklist<value>("add", 2, 3);
@@ -247,7 +270,7 @@ bool testThreads() {
     cout << "Python eval + read thread test " << time(elr, 1, 1) / 10000.0 << " ms" << endl;
 
     istringstream is(testPythonAdd);
-    failable<PyObject*> script = readScript("script", "script.py", is, py);
+    failable<PyObject*> script = readScript("script7", "script7.py", is, py);
     assert(hasContent(script));
 
     const lambda<bool()> el = lambda<bool()>(testEvalThreads(w, max, content(script), py));
@@ -263,9 +286,13 @@ bool testThreads() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::python::testEvalExpr();
+    tuscany::python::testEvalList();
+    tuscany::python::testEvalLambda();
+    tuscany::python::testEvalLambda();
     tuscany::python::testEvalLambda();
     tuscany::python::testEvalPerf();
 #ifdef WANT_THREADS

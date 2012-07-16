@@ -19,5 +19,6 @@
 
 # Remove ipcs created by httpd
 
-ipcs -s | grep 0x | awk '{ print $2 }' | xargs -i -t ipcrm -s {}
+id=`id -un`
+ipcs -s | grep "$id" | grep "0x" | awk '{ print $2 }' | xargs -i -t ipcrm -s {}
 

@@ -59,6 +59,15 @@ public:
     lib(const lib& l) : name(l.name), h(l.h), owner(false) {
     }
 
+    const lib& operator=(const lib& l) {
+        if(this == &l)
+            return *this;
+        name = l.name;
+        h = l.h;
+        owner = false;
+        return *this;
+    }
+
     ~lib() {
         if (!owner)
             return;
@@ -70,7 +79,7 @@ public:
 private:
     template<typename S> friend const failable<lambda<S> > dynlambda(const string& name, const lib& l);
 
-    const string name;
+    string name;
     failable<void*> h;
     bool owner;
 };

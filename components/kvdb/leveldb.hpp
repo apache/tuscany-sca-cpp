@@ -121,6 +121,17 @@ public:
         st.st_ino = c.st.st_ino;
     }
 
+    const LevelDB& operator=(const LevelDB& c) {
+        debug("leveldb::leveldb::operator=");
+        if(this == &c)
+            return *this;
+        owner = false;
+        name = c.name;
+        fd = c.fd;
+        st.st_ino = c.st.st_ino;
+        return *this;
+    }
+
     ~LevelDB() {
         debug("leveldb::~leveldb");
         if (!owner)

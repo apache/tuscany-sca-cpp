@@ -41,7 +41,7 @@ namespace sender {
 /**
  * Post an item to an XMPP JID.
  */
-const failable<value> post(const lambda<value(const list<value>&)> jid, const lambda<value(const list<value>&)> pass, const lambda<value(const list<value>&)> to, const lambda<value(const list<value>&)> msg, const list<value>& params) {
+const failable<value> post(const lambda<value(const list<value>&)>& jid, const lambda<value(const list<value>&)>& pass, const lambda<value(const list<value>&)>& to, const lambda<value(const list<value>&)>& msg, const list<value>& params) {
 
     const value vjid = jid(mklist<value>("get", params));
     const value vpass = pass(mklist<value>("get", params));
@@ -69,7 +69,7 @@ const failable<value> post(const lambda<value(const list<value>&)> jid, const la
  */
 class chatSender {
 public:
-    chatSender(const lambda<value(const list<value>&)> jid, const lambda<value(const list<value>&)> pass, const lambda<value(const list<value>&)> to, const lambda<value(const list<value>&)> msg) : jid(jid), pass(pass), to(to), msg(msg) {
+    chatSender(const lambda<value(const list<value>&)>& jid, const lambda<value(const list<value>&)>& pass, const lambda<value(const list<value>&)>& to, const lambda<value(const list<value>&)>& msg) : jid(jid), pass(pass), to(to), msg(msg) {
     }
 
     const value operator()(const list<value>& params) const {

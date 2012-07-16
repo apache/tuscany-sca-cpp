@@ -26,6 +26,8 @@
  * Simple monad implementations.
  */
 
+#include <execinfo.h>
+#include <cxxabi.h>
 #include "function.hpp"
 #include "string.hpp"
 #include "stream.hpp"
@@ -278,38 +280,134 @@ template<typename V, typename F, typename C> const lambda<failable<V, F, C>(cons
 }
 
 /**
+ * Demangle a C++ function name.
+ */
+const string demangleFrame(const char* fun) {
+    int status;
+    char* name = abi::__cxa_demangle(fun, 0, 0, &status);
+    if (name == NULL)
+        return fun;
+    const string s = name;
+    free(name);
+    return s;
+}
+
+/**
+ * Format a backtrace frame.
+ */
+const char* formatFrameFile(const char* file) {
+    const char* s = strrchr(file, '/');
+    return s == NULL? file : s + 1;
+}
+
+const string formatFrame(const char* symbol) {
+#ifdef __clang__
+    // Mac OS X CLang/LLVM stack frame format
+    // 0 kernel-test 0x000000010d440179 _ZN7tuscany9mkfailureINS_5valueENS_6stringEiEEKNS_8failableIT_T0_T1_EERKS5_RKS6_b + 265
+    char nb[3];
+    char file[256];
+    char addr[32];
+    char fun[256];
+    char offset[16];
+    if (sscanf(symbol, "%2s %255s %31s %255s %*[+] %15s", nb, file, addr, fun, offset) == 5) {
+        char buf[1024];
+        if (debug_islogging())
+            sprintf(buf, "%.255s %.31s %.511s + %.15s", formatFrameFile(file), addr, c_str(demangleFrame(fun)), offset);
+        else
+            sprintf(buf, "%.255s %.31s", formatFrameFile(file), addr);
+        return buf;
+    }
+#else
+    // Linux GCC stack frame format
+    // ./kernel-test(_ZN7tuscany9mkfailureINS_5valueENS_6stringEiEEKNS_8failableIT_T0_T1_EERKS5_RKS6_b+0x23d) [0xb7197afd]
+    char file[256];
+    char fun[256];
+    char offset[16];
+    char addr[32];
+    if (sscanf(symbol, "%[^(]%*[(]%[^+]%*[+]%[^)]%*[)] %*[[]%[^]]%*[]]", file, fun, offset, addr) == 4) {
+        char buf[1024];
+        if (debug_islogging())
+            sprintf(buf, "%.255s %.31s %.511s + %.15s", formatFrameFile(file), addr, c_str(demangleFrame(fun)), offset);
+        else
+            sprintf(buf, "%.255s %.31s", formatFrameFile(file), addr);
+        return buf;
+    }
+    if (sscanf(symbol, "%[^(]%*[(]%*[^)]%*[)] %*[[]%[^]]%*[]]", file, addr) == 2) {
+        char buf[512];
+        sprintf(buf, "%.255s %.31s", formatFrameFile(file), addr);
+        return buf;
+    }
+    if (sscanf(symbol, "%[^(]%*[(]%*[)] %*[[]%[^]]%*[]]", file, addr) == 2) {
+        char buf[512];
+        sprintf(buf, "%.255s %.31s", formatFrameFile(file), addr);
+        return buf;
+    }
+#endif
+    return symbol;
+}
+
+/**
+ * Log backtrace frames.
+ */
+const bool logFrames(char** symbols, const int frames, const bool log) {
+    if (frames == 0)
+        return true;
+#ifdef WANT_MAINTAINER_LOG
+    if (!log)
+        debug(formatFrame(*symbols), "failable::backtrace");
+#endif
+    if (log)
+        cfailure << "failable::backtrace: " << formatFrame(*symbols) << endl;
+    return logFrames(symbols + 1, frames - 1, log);
+}
+
+/**
+ * Log a backtrace.
+ */
+const bool logBacktrace(void** callstack, const int frames, const bool log) {
+    char** symbols = backtrace_symbols(callstack, frames);
+    logFrames(symbols, frames, log);
+    free(symbols);
+    return true;
+}
+
+/**
  * Returns a failable monad with a failure in it.
  */
 template<typename V, typename F, typename C> const failable<V, F, C> mkfailure(const F& f, const C& c, const bool log = true) {
 #ifdef WANT_MAINTAINER_LOG
-    if (!log)
+    if (!log) {
+        // Log the failure
         debug(f, "failable::mkfailure");
+
+        // Log the call stack
+        void* callstack[16];
+        const int frames = backtrace(callstack, 16);
+        logBacktrace(callstack, frames, log);
+    }
 #endif
     if (log) {
         ostringstream os;
         os << f;
-        if (length(str(os)) != 0)
-            cfailure << "failable::mkfailure" << ": " << f << " : " << c << endl;
+        if (length(str(os)) != 0) {
+            // Log the failure
+            cfailure << "failable::mkfailure: " << f << " : " << c << endl;
+
+            // Print the call stack
+            void* callstack[16];
+            const int frames = backtrace(callstack, 16);
+            logBacktrace(callstack, frames, log);
+        }
     }
     return failable<V, F, C>(false, f, c);
 }
 
 template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const int c = -1, const bool log = true) {
-#ifdef WANT_MAINTAINER_LOG
-    if (!log)
-        debug(f, c, "failable::mkfailure");
-#endif
-    if (log) {
-        ostringstream os;
-        os << f;
-        if (length(str(os)) != 0)
-            cfailure << "failable::mkfailure: " << str(os) << " : " << c << endl;
-    }
-    return failable<V, F>(false, f, c);
+    return mkfailure<V, F, int>(f, c, log);
 }
 
 template<typename V> const failable<V> mkfailure(const char* f, const int c = -1, const bool log = true) {
-    return mkfailure<V, string>(string(f), c, log);
+    return mkfailure<V, string, int>(string(f), c, log);
 }
 
 template<typename V> const failable<V> mkfailure() {

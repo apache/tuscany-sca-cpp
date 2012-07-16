@@ -429,24 +429,24 @@ private:
     }
 
 #else
-    int createkey() {
-        return 0;
+    gc_ptr<gc_ptr<T> > createkey() {
+        return new (gc_new<gc_ptr<T> >()) gc_ptr<T>();
     }
 
-    bool deletekey(unused int k) {
+    bool deletekey(unused gc_ptr<gc_ptr<T> > k) {
         return true;
     }
 
     bool set(const gc_ptr<T>& v) {
-        val = v;
+        *key = v;
         return true;
     }
 
     gc_ptr<T> get() const {
-        if (val != NULL || !managed)
-            return val;
-        val = cl();
-        return val;
+        if (*key != NULL || !managed)
+            return *key;
+        *key = cl();
+        return *key;
     }
 
 #endif
@@ -454,8 +454,7 @@ private:
 #ifdef WANT_THREADS
     pthread_key_t key;
 #else
-    int key;
-    gc_ptr<T> val;
+    gc_ptr<gc_ptr<T> >key;
 #endif
 
     bool owner;

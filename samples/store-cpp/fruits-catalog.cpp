@@ -50,7 +50,7 @@ const list<value> mkfruit(const string& name, const string& code, const string& 
         mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
 }
 
-const failable<value> items(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {
+const failable<value> items(const lambda<value(const list<value>&)>& converter, const lambda<value(const list<value>&)>& currencyCode) {
     const string currency(currencyCode(list<value>()));
     const string symbol(converter(mklist<value>("symbol", currency)));
     const lambda<value(const value&)> conv(convert(converter, currency));
