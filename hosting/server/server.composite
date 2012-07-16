@@ -31,12 +31,9 @@
         <property name="lastname">?</property>
         <property name="realm">?</property>
         <property name="host">?</property>
-        <service name="User">
-            <binding.http uri="user"/>
-        </service>
     </component>
     
-    <component name="EditWidget">
+    <component name="Editor">
         <implementation.widget location="/index.html"/>
         <reference name="user" target="User"/>
         <reference name="accounts" target="Accounts"/>
@@ -49,7 +46,7 @@
         <reference name="log" target="Log"/>
     </component>
     
-    <component name="AppWidget">
+    <component name="App">
         <implementation.widget location="/app/index.html"/>
         <reference name="user" target="User"/>
         <reference name="pages" target="Pages"/>
@@ -59,18 +56,17 @@
     
     <component name="Accounts">
         <implementation.python script="accounts.py"/>
-        <service name="Accounts">
-            <binding.http uri="accounts"/>
-        </service>
         <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+    </component>
+    
+    <component name="Authenticator">
+        <implementation.python script="authn.py"/>
         <reference name="cache" target="Cache"/>
     </component>
     
     <component name="Dashboards">
         <implementation.python script="dashboards.py"/>
-        <service name="Dashboards">
-            <binding.http uri="dashboards"/>
-        </service>        
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
         <reference name="apps" target="Apps"/>
@@ -78,9 +74,6 @@
     
     <component name="AppStore">
         <implementation.python script="store.py"/>
-        <service name="AppStore">
-            <binding.http uri="appstore"/>
-        </service>        
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
         <reference name="apps" target="Apps"/>
@@ -88,9 +81,6 @@
     
     <component name="Apps">
         <implementation.python script="apps.py"/>
-        <service name="Apps">
-            <binding.http uri="apps"/>
-        </service>
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
         <reference name="dashboard" target="Dashboards"/>
@@ -101,9 +91,6 @@
     
     <component name="Composites">
         <implementation.python script="composites.py"/>
-        <service name="Composites">
-            <binding.http uri="composites"/>
-        </service>
         <reference name="user" target="User"/>
         <reference name="cache" target="Doccache"/>
         <reference name="apps" target="Apps"/>
@@ -111,9 +98,6 @@
     
     <component name="Pages">
         <implementation.python script="pages.py"/>
-        <service name="Pages">
-            <binding.http uri="pages"/>
-        </service>
         <reference name="user" target="User"/>
         <reference name="cache" target="Doccache"/>
         <reference name="apps" target="Apps"/>
@@ -121,17 +105,11 @@
     
     <component name="Palettes">
         <implementation.python script="palettes.py"/>
-        <service name="Palettes">
-            <binding.http uri="palettes"/>
-        </service>
         <reference name="cache" target="Doccache"/>
     </component>
     
     <component name="Cache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <service name="Cache">
-            <binding.http uri="cache"/>
-        </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
         <reference name="l2reader" target="Database"/>
@@ -140,9 +118,6 @@
 
     <component name="Doccache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <service name="Doccache">
-            <binding.http uri="doccache"/>
-        </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
         <reference name="l2reader" target="Documents"/>
@@ -151,9 +126,6 @@
 
     <component name="Memcache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
-        <service name="Memcache">
-            <binding.http uri="memcache"/>
-        </service>
         <property name="server">localhost:11211</property>
         <property name="server">localhost:11212</property>
     </component>
@@ -162,25 +134,16 @@
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
         <property name="dbname">data</property>
         <property name="format">scheme</property>
-        <service name="Database">
-            <binding.http uri="database"/>
-        </service>
     </component>
 
     <component name="Documents">
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
         <property name="dbname">data</property>
         <property name="format">xml</property>
-        <service name="Documents">
-            <binding.http uri="documents"/>
-        </service>
     </component>
 
     <component name="Log">
         <implementation.python script="log.py"/>
-        <service name="Log">
-            <binding.http uri="log"/>
-        </service>        
     </component>
     
 </composite>

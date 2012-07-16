@@ -33,7 +33,7 @@ rm -rf tmp
 ../../modules/http/httpd-conf tmp www.example.com 8090 htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
 
-./oauth-conf tmp
+./oauth12-conf tmp
 ./oauth-memcached-conf tmp www.example.com 11212
 ./oauth-memcached-conf tmp www.example.com 11213
 
@@ -44,7 +44,9 @@ rm -rf tmp
 ./oauth2-appkey-conf tmp github.com app5678 secret8901
 
 # For this test to work you need to add your oauth user id to the
-# authorized user group
+# password file with a dummy 'password' password, and to the group
+# of authorized users
+../../modules/http/passwd-auth-conf tmp /oauth2/jane@example.com password
 ../../modules/http/group-auth-conf tmp jane@example.com
 
 ../../modules/server/server-conf tmp

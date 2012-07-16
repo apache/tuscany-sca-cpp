@@ -32,8 +32,10 @@ rm -rf tmp
 ./openid-memcached-conf tmp localhost 11213
 ./openid-step2-conf tmp
 
-# For this test to work you need to add your openid (or email address if
-# available from your openid attributes to the the authorized user group
+# For this test to work you need to add your openid user id to the
+# password file with a dummy 'password' password, and to the group
+# of authorized users
+../../modules/http/passwd-auth-conf tmp /openid/jane@example.com password
 ../../modules/http/group-auth-conf tmp jane@example.com
 
 ../../modules/server/server-conf tmp

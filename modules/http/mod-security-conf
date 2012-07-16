@@ -51,8 +51,8 @@ SecDefaultAction "phase:2,pass,nolog,auditlog"
 #SecDebugLog $root/logs//modsec_debug_log
 #SecDebugLogLevel 3
 
-# Allow mod-security to access request bodies
-SecRequestBodyAccess On
+# Process request bodies
+SecRequestBodyAccess Off
 SecRule REQUEST_HEADERS:Content-Type "text/xml" "phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
 SecRule REQUEST_HEADERS:Content-Type "application/xml" "phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
 SecRequestBodyLimit 13107200
@@ -90,8 +90,8 @@ SecRule RESPONSE_STATUS "@streq 408" "phase:5,t:none,nolog,pass, setvar:ip.slow_
 SecRule IP:SLOW_DOS_COUNTER "@gt 5" "phase:1,t:none,log,drop, msg:'Client Connection Dropped due to high # of slow DoS alerts'"
 SecWriteStateLimit 50
 
-# Allow mod-security to access response bodies
-SecResponseBodyAccess On
+# Process response bodies
+SecResponseBodyAccess Off
 SecResponseBodyMimeType text/plain text/html text/xml application/xml
 SecResponseBodyLimit 524288
 SecResponseBodyLimitAction ProcessPartial
@@ -157,28 +157,28 @@ SecRule &TX:REAL_IP "@eq 0"  "phase:1,id:'981218',t:none,pass,nolog,initcol:glob
 
 # Include all base mod-security CRS rules
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_20_protocol_violations.conf
-Include ${modsecurity_prefix}/base_rules/modsecurity_crs_41_xss_attacks.conf
-Include ${modsecurity_prefix}/base_rules/modsecurity_crs_50_outbound.conf
+#Include ${modsecurity_prefix}/base_rules/modsecurity_crs_41_xss_attacks.conf
+#Include ${modsecurity_prefix}/base_rules/modsecurity_crs_50_outbound.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_35_bad_robots.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_47_common_exceptions.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_60_correlation.conf
-Include ${modsecurity_prefix}/base_rules/modsecurity_crs_40_generic_attacks.conf
+#Include ${modsecurity_prefix}/base_rules/modsecurity_crs_40_generic_attacks.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_21_protocol_anomalies.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_30_http_policy.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_49_inbound_blocking.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_41_sql_injection_attacks.conf
-Include ${modsecurity_prefix}/base_rules/modsecurity_crs_45_trojans.conf
+#Include ${modsecurity_prefix}/base_rules/modsecurity_crs_45_trojans.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_59_outbound_blocking.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_23_request_limits.conf
 Include ${modsecurity_prefix}/base_rules/modsecurity_crs_42_tight_security.conf
 
 # Include some optional mod-security CRS rules
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_10_ignore_static.conf
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_13_xml_enabler.conf
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_25_cc_known.conf
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_42_comment_spam.conf
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_47_skip_outbound_checks.conf
-Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_55_application_defects.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_10_ignore_static.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_13_xml_enabler.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_25_cc_known.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_42_comment_spam.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_47_skip_outbound_checks.conf
+#Include ${modsecurity_prefix}/optional_rules/modsecurity_crs_55_application_defects.conf
 
 EOF
 

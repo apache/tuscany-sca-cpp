@@ -38,7 +38,7 @@ rm -rf tmp
 ../openid/openid-memcached-conf tmp www.example.com 11212
 ../openid/openid-memcached-conf tmp www.example.com 11213
 
-./oauth-conf tmp
+./oauth12-conf tmp
 ./oauth-memcached-conf tmp www.example.com 11212
 ./oauth-memcached-conf tmp www.example.com 11213
 
@@ -48,13 +48,16 @@ rm -rf tmp
 ./oauth2-appkey-conf tmp facebook.com app1234 secret6789
 ./oauth2-appkey-conf tmp github.com app5678 secret8901
 
-../http/open-auth-conf tmp
-../http/passwd-auth-conf tmp foo foo
+../../modules/http/open-auth-conf tmp
 
-# For this test to work you need to add your form, oauth and open id ids
-# to the authorized user group
+# For this test to work you need to add your oauth and openid user ids to
+# the password file with a dummy 'password' password, and to the group
+# of authorized users
+../../modules/http/passwd-auth-conf tmp foo foo
 ../../modules/http/group-auth-conf tmp foo
+../../modules/http/passwd-auth-conf tmp /openid/123456 password
 ../../modules/http/group-auth-conf tmp 123456
+../../modules/http/passwd-auth-conf tmp /oauth2/jane@example.com password
 ../../modules/http/group-auth-conf tmp jane@example.com
 
 ../../modules/server/server-conf tmp

@@ -19,7 +19,7 @@ if WANT_OAUTH
 
 INCLUDES = -I${HTTPD_INCLUDE} -I${LIBOAUTH_INCLUDE}
 
-dist_mod_SCRIPTS = oauth-conf oauth-memcached-conf oauth1-appkey-conf oauth2-appkey-conf
+dist_mod_SCRIPTS = oauth-conf oauth12-conf oauth-memcached-conf oauth1-appkey-conf oauth2-appkey-conf
 moddir=$(prefix)/modules/oauth
 
 mod_LTLIBRARIES = libmod_tuscany_oauth1.la libmod_tuscany_oauth2.la

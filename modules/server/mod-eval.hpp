@@ -43,6 +43,10 @@
 #include "../http/http.hpp"
 #include "../http/httpd.hpp"
 
+#include "apr_md5.h"
+#include "ap_provider.h"
+#include "mod_auth.h"
+
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_eval;
 }
@@ -75,8 +79,10 @@ public:
     string domain;
     string contribPath;
     string composName;
-    string providerName;
-    value provider;
+    string contributorName;
+    value contributor;
+    string authenticatorName;
+    value authenticator;
 };
 
 /**
@@ -115,7 +121,7 @@ public:
     ServerConf() {
     }
 
-    ServerConf(apr_pool_t* p, const server_rec* s) : p(p), server(s) {
+    ServerConf(apr_pool_t* p, const server_rec* s) : p(p), server(s), timeout(0) {
     }
 
     const gc_pool p;
@@ -123,6 +129,7 @@ public:
     lambda<value(const list<value>&)> lifecycle;
     ContribConf contribc;
     SSLConf sslc;
+    int timeout;
     VhostConf vhostc;
     Composite compos;
 };
@@ -145,7 +152,12 @@ public:
 };
 
 /**
- * Convert a result represented as a content + failure pair to a
+ * Authentication cache store function.
+ */
+static APR_OPTIONAL_FN_TYPE(ap_authn_cache_store) *authnCacheStore = NULL;
+
+/**
+ * Convert a result represented as a (content reason? code?) tuple to a
  * failable monad.
  */
 const failable<value> failableResult(const list<value>& v) {
@@ -177,9 +189,9 @@ public:
 /**
  * Make an HTTP proxy lambda to an absolute URI
  */
-const value mkhttpProxy(const string& uri, const gc_pool& p) {
+const value mkhttpProxy(const string& uri, const int timeout, const gc_pool& p) {
     debug(uri, "modeval::mkhttpProxy::uri");
-    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", p));
+    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", timeout, p));
 }
 
 /**
@@ -187,7 +199,7 @@ const value mkhttpProxy(const string& uri, const gc_pool& p) {
  */
 class implProxy {
 public:
-    implProxy(const value& name, const list<value>& impls, const SSLConf& sslc) : name(name), impls(impls), sslc(sslc) {
+    implProxy(const value& name, const list<value>& impls, const SSLConf& sslc, const int timeout) : name(name), impls(impls), sslc(sslc), timeout(timeout) {
     }
 
     const value callImpl(const value& cname, const list<value>& aparams) const {
@@ -229,7 +241,7 @@ public:
                     ostringstream appuri;
                     appuri << httpd::scheme(currentRequest) << "://" << substr(uri, 6) << "." << http::topDomain(httpd::hostName(currentRequest)) << ":" << httpd::port(currentRequest) << "/";
                     debug(str(appuri), "modeval::implProxy::httpproxy::appuri");
-                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(str(appuri), sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), p));
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(str(appuri), sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), timeout, p));
                     return px(aparams);
                 }
                 
@@ -237,13 +249,13 @@ public:
                 // only if the target is in the same top level domain
                 if (http::topDomain(http::hostName(uri, p)) == http::topDomain(httpd::hostName(currentRequest))) {
                     debug(uri, "modeval::implProxy::httpproxy::samedomain");
-                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), p));
+                    const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, sslc.ca, sslc.cert, sslc.key, httpd::cookie(currentRequest), timeout, p));
                     return px(aparams);
                 }
 
                 // No SSL certificate or cookie on a cross domain call
                 debug(uri, "modeval::implProxy::httpproxy::crossdomain");
-                const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", p));
+                const lambda<value(const list<value>&)> px = lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", "", timeout, p));
                 return px(aparams);
             }
 
@@ -259,11 +271,12 @@ private:
     const value name;
     const list<value>& impls;
     const SSLConf& sslc;
+    const int timeout;
 };
 
-const value mkimplProxy(const value& name, const list<value>& impls, const SSLConf& sslc) {
+const value mkimplProxy(const value& name, const list<value>& impls, const SSLConf& sslc, const int timeout) {
     debug(name, "modeval::implProxy::impl");
-    return lambda<value(const list<value>&)>(implProxy(name, impls, sslc));
+    return lambda<value(const list<value>&)>(implProxy(name, impls, sslc, timeout));
 }
 
 /**
@@ -303,7 +316,7 @@ const value mkunwiredProxy(const string& ref) {
 /**
  * Convert a list of component references to a list of proxy lambdas.
  */
-const value mkrefProxy(const value& ref, const list<value>& impls, const SSLConf& sslc, const gc_pool& p) {
+const value mkrefProxy(const value& ref, const list<value>& impls, const SSLConf& sslc, const int timeout, const gc_pool& p) {
     const value target = scdl::target(ref);
     const bool wbyimpl = scdl::wiredByImpl(ref);
     debug(ref, "modeval::mkrefProxy::ref");
@@ -312,18 +325,18 @@ const value mkrefProxy(const value& ref, const list<value>& impls, const SSLConf
 
     // Use an HTTP proxy or an internal proxy to the component implementation
     if (wbyimpl)
-        return mkimplProxy(value(), impls, sslc);
+        return mkimplProxy(value(), impls, sslc, timeout);
     if (isNil(target))
         return mkunwiredProxy(scdl::name(ref));
     if (http::isAbsolute(target))
-        return mkhttpProxy(target, p);
-    return mkimplProxy(car(pathValues(target)), impls, sslc);
+        return mkhttpProxy(target, timeout, p);
+    return mkimplProxy(car(pathValues(target)), impls, sslc, timeout);
 }
 
-const list<value> refProxies(const list<value>& refs, const list<value>& impls, const SSLConf& sslc, const gc_pool& p) {
+const list<value> refProxies(const list<value>& refs, const list<value>& impls, const SSLConf& sslc, const int timeout, const gc_pool& p) {
     if (isNil(refs))
         return refs;
-    return cons(mkrefProxy(car(refs), impls, sslc, p), refProxies(cdr(refs), impls, sslc, p));
+    return cons(mkrefProxy(car(refs), impls, sslc, timeout, p), refProxies(cdr(refs), impls, sslc, timeout, p));
 }
 
 /**
@@ -422,11 +435,25 @@ struct realmPropProxy {
         const char* env = apr_table_get(currentRequest->subprocess_env, "REALM");
         if (env == NULL)
             return v;
-        const char* realm = strncmp(env, "www.", 4) == 0? env + 4 : env;
-        if (*realm == '\0')
+        const string realm = httpd::realm(string(env));
+        if (length(realm) == 0)
             return v;
-        const value r = string(realm);
+        const value r = realm;
         debug(r, "modeval::realmPropProxy::value");
+        return r;
+    }
+};
+
+struct timeoutPropProxy {
+    const value v;
+    timeoutPropProxy(const value& v) : v(atoi(c_str((string)v))) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        if (currentRequest == NULL)
+            return v;
+        const ServerConf& sc = httpd::serverConf<ServerConf>(currentRequest, &mod_tuscany_eval);
+        const value r = sc.timeout;
+        debug(r, "modeval::timeoutPropProxy::value");
         return r;
     }
 };
@@ -461,6 +488,8 @@ const value mkpropProxy(const value& prop) {
         return lambda<value(const list<value>&)>(userPropProxy(v));
     if (n == "realm")
         return lambda<value(const list<value>&)>(realmPropProxy(v));
+    if (n == "timeout")
+        return lambda<value(const list<value>&)>(timeoutPropProxy(v));
     if (n == "email")
         return lambda<value(const list<value>&)>(envPropProxy("EMAIL", v));
     if (n == "nickname")
@@ -499,7 +528,7 @@ struct implementationFailure {
     }
 };
 
-const value evalComponent(const string& contribPath, const value& comp, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
+const value evalComponent(const string& contribPath, const value& comp, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const int timeout, const gc_pool& p) {
     extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle);
 
     const value impl = scdl::implementation(comp);
@@ -507,7 +536,7 @@ const value evalComponent(const string& contribPath, const value& comp, const li
     debug(impl, "modeval::evalComponent::impl");
 
     // Convert component references to configured proxy lambdas
-    const list<value> rpx(refProxies(scdl::references(comp), impls, sslc, p));
+    const list<value> rpx(refProxies(scdl::references(comp), impls, sslc, timeout, p));
 
     // Convert component properties to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
@@ -522,12 +551,12 @@ const value evalComponent(const string& contribPath, const value& comp, const li
 /**
  * Return a list of component-name + configured-implementation pairs.
  */
-const list<value> componentToImplementationAssoc(const list<value>& c, const string& contribPath, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
+const list<value> componentToImplementationAssoc(const list<value>& c, const string& contribPath, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const int timeout, const gc_pool& p) {
     if (isNil(c))
         return c;
     return cons<value>(mklist<value>(scdl::name(car(c)),
-                evalComponent(contribPath, car(c), impls, lifecycle, sslc, p)),
-                    componentToImplementationAssoc(cdr(c), contribPath, impls, lifecycle, sslc, p));
+                evalComponent(contribPath, car(c), impls, lifecycle, sslc, timeout, p)),
+                    componentToImplementationAssoc(cdr(c), contribPath, impls, lifecycle, sslc, timeout, p));
 }
 
 /**
@@ -541,16 +570,17 @@ const failable<list<value> > readComponents(const string& path) {
 }
 
 /**
- * Get the components returned by a provider.
+ * Get the components returned by a contributor.
  */
-const failable<list<value> > getComponents(const lambda<value(const list<value>&)>& provider, const string& name) {
-    const failable<value> val = failableResult(provider(cons<value>("get", mklist<value>(mklist<value>(name)))));
+const failable<list<value> > getComponents(const lambda<value(const list<value>&)>& contributor, const string& name) {
+    const failable<value> val = failableResult(contributor(cons<value>("get", mklist<value>(mklist<value>(name)))));
     if (!hasContent(val))
         return mkfailure<list<value> >(val);
-    const list<value> c = assoc<value>(value("content"), (list<list<value> >)cdr<value>(content(val)));
+    const list<value> c = assoc<value>(value("composite"), assoc<value>(value("content"), (list<list<value> >)cdr<value>(car<value>(content(val)))));
+    debug(c, "modeval::getComponents::comp");
     if (isNil(c))
         return mkfailure<list<value> >(string("Could not get composite: ") + name);
-    const failable<list<string> > x = writeXML(car<value>(valuesToElements(mklist<value>(mklist<value>(cadr(c))))));
+    const failable<list<string> > x = writeXML(car<value>(valuesToElements(mklist<value>(mklist<value>(c)))));
     if (!hasContent(x))
         return mkfailure<list<value> >(x);
     return scdl::components(readXML(content(x)));
@@ -631,16 +661,16 @@ const list<value> uriToComponentAssoc(const list<value>& c) {
 /**
  * Configure the components declared in the deployed composite.
  */
-const failable<Composite> confComponents(const string& contribPath, const string& composName, const value& provider, const string& vhost, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const gc_pool& p) {
+const failable<Composite> confComponents(const string& contribPath, const string& composName, const value& contributor, const string& vhost, const list<value>& impls, const lambda<value(const list<value>&)> lifecycle, const SSLConf& sslc, const int timeout, const gc_pool& p) {
     debug(contribPath, "modeval::confComponents::contribPath");
     debug(composName, "modeval::confComponents::composName");
-    debug(provider, "modeval::confComponents::provider");
+    debug(contributor, "modeval::confComponents::contributor");
     debug(vhost, "modeval::confComponents::vhost");
     debug(impls, "modeval::confComponents::impls");
 
-    const failable<list<value> > fcomps = isNil(provider)?
+    const failable<list<value> > fcomps = isNil(contributor)?
         readComponents(scdl::resourcePath(length(vhost) != 0? contribPath + vhost + "/" : contribPath, composName)) :
-        getComponents(provider, vhost);
+        getComponents(contributor, vhost);
     if (!hasContent(fcomps))
         return mkfailure<Composite>(fcomps);
 
@@ -654,8 +684,8 @@ const failable<Composite> confComponents(const string& contribPath, const string
     debug(flatten(svcs), "modeval::confComponents::svcs");
 
     const list<value> cimpls = mkbtree(sort(componentToImplementationAssoc(comps,
-                    isNil(provider)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
-                    impls, lifecycle, sslc, p)));
+                    isNil(contributor)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
+                    impls, lifecycle, sslc, timeout, p)));
     debug(flatten(cimpls), "modeval::confComponents::impls");
 
     return Composite(refs, svcs, cimpls);
@@ -720,6 +750,10 @@ const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<v
     const value c = content(val);
     debug(c, "modeval::get::content");
 
+    // Return a nil value as a not found status
+    if (!isList(c) && isNil(c))
+        return HTTP_NOT_FOUND;
+
     // Check if the client requested a specific format
     const list<value> fmt = assoc<value>("format", args);
 
@@ -735,6 +769,7 @@ const failable<int> get(const list<value>& rpath, request_rec* r, const lambda<v
             debug(lc, "modeval::get::symbol");
             return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
         }
+
         const list<value> lc = mklist<value>(mklist<value>("value", c));
         debug(lc, "modeval::get::value");
         return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
@@ -1041,9 +1076,9 @@ const int translateRequest(request_rec* r, const list<value>& rpath, const list<
 
     // Attempt to map a request targeting the main host to an actual file
     if (isNil(vpath)) {
-        const failable<request_rec*, int> fnr = httpd::internalSubRequest(r->uri, r);
+        const failable<request_rec*> fnr = httpd::internalSubRequest(r->uri, r);
         if (!hasContent(fnr))
-            return HTTP_INTERNAL_SERVER_ERROR;
+            return rcode(fnr);
         request_rec* nr = content(fnr);
         nr->uri = r->filename;
         const int tr = ap_core_translate(nr);
@@ -1082,7 +1117,6 @@ int translate(request_rec *r) {
     if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
         return DECLINED;
 
-    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
 
     debug_httpdRequest(r, "modeval::translate::input");
@@ -1103,9 +1137,9 @@ int translate(request_rec *r) {
 
     // If the request is targeting a virtual host, configure the components
     // in that virtual host
-    if (length(sc.vhostc.domain) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.provider)) && httpd::isVhostRequest(sc.server, sc.vhostc.domain, r)) {
+    if (length(sc.vhostc.domain) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.contributor)) && httpd::isVhostRequest(sc.server, sc.vhostc.domain, r)) {
         const string vname = http::subDomain(httpd::hostName(r));
-        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.provider, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.p);
+        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.contributor, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.timeout, sc.p);
         if (!hasContent(fvcompos))
             return DECLINED;
         const Composite vcompos = content(fvcompos);
@@ -1124,9 +1158,9 @@ int translate(request_rec *r) {
         return rc;
 
     // Attempt to map the first segment of the request path to a virtual host
-    if (length(prefix) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.provider))) {
+    if (length(prefix) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.contributor))) {
         const string vname = prefix;
-        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.provider, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.p);
+        const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.contributor, vname, reqc.impls, sc.lifecycle, sc.sslc, sc.timeout, sc.p);
         if (!hasContent(fvcompos))
             return DECLINED;
         const Composite vcompos = content(fvcompos);
@@ -1150,9 +1184,9 @@ const int handleRequest(const list<value>& rpath, request_rec *r, const list<val
         mkfailure<int>(string("Couldn't find component implementation: ") + cadr(rpath));
         return HTTP_NOT_FOUND;
     }
+    const lambda<value(const list<value>&)> l(cadr<value>(impl));
 
     // Handle HTTP method
-    const lambda<value(const list<value>&)> l(cadr<value>(impl));
     if (r->header_only)
          return OK;
     if(r->method_number == M_GET)
@@ -1182,7 +1216,7 @@ int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
 
-    // Create a scoped memory pool and a scope for the current request
+    // Create a scope for the current request
     gc_scoped_pool pool(r->pool);
     ScopedRequest sr(r);
 
@@ -1228,6 +1262,61 @@ int handler(request_rec *r) {
 }
 
 /**
+ * Call an authenticator component to check a user's password.
+ */
+authn_status checkPassword(request_rec* r, const char* u, const char* p) {
+    gc_scoped_pool pool(r->pool);
+
+    // Prevent FakeBasicAuth spoofing
+    const string user = u;
+    const string password = p;
+    debug(user, "modeval::checkPassword::user");
+    if (substr(user, 0, 1) != "/" && find(user, "/") != length(user) && password == "password") {
+        mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
+        return AUTH_DENIED;
+    }
+
+    // Get the server configuration
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
+    if (isNil(sc.vhostc.authenticator)) {
+        mkfailure<int>("SCA authenticator not configured");
+        return AUTH_GENERAL_ERROR;
+    }
+
+    // Retrieve the user's password hash
+    const list<value> uid = pathValues(user);
+    const failable<value> val = failableResult(sc.vhostc.authenticator(cons<value>("get", mklist<value>(uid))));
+    if (!hasContent(val)) {
+        mkfailure<int>(string("SCA authentication check user failed, user not found: ") + user);
+        return AUTH_USER_NOT_FOUND;
+    }
+    const value hval = content(val);
+    const list<value> hcontent = isList(hval) && !isNil(hval) && isList(car<value>(hval)) && !isNil(car<value>(hval))?  assoc<value>(value("content"), cdr<value>(car<value>(hval))) : list<value>();
+    const list<value> hassoc = isNil(hcontent)? list<value>() : assoc<value>(value("hash"), cdr<value>(hcontent));
+    if (isNil(hassoc)) {
+        mkfailure<int>(string("SCA authentication check user failed, hash not found: ") + user);
+        return AUTH_USER_NOT_FOUND;
+    }
+    const string hash = cadr<value>(hassoc);
+    if (length(hash) == 0) {
+        mkfailure<int>(string("SCA authentication check user failed: ") + user);
+        return AUTH_USER_NOT_FOUND;
+    }
+
+    // Cache the hash in the auth cache provider, if available
+    if (authnCacheStore != NULL)
+        authnCacheStore(r, "component", u, NULL, c_str(hash));
+
+    // Validate the presented password against the hash
+    const apr_status_t rv = apr_password_validate(p, c_str(hash));
+    if (rv != APR_SUCCESS) {
+        mkfailure<int>(string("SCA authentication user password check failed: ") + user);
+        return AUTH_DENIED;
+    }
+    return AUTH_GRANTED;
+}
+
+/**
  * Cleanup callback, called when the server is stopped or restarted.
  */
 apr_status_t serverCleanup(void* v) {
@@ -1262,6 +1351,7 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     if (sc.sslc.ca == "") sc.sslc.ca = mainsc.sslc.ca;
     if (sc.sslc.cert == "") sc.sslc.cert = mainsc.sslc.cert;
     if (sc.sslc.key == "") sc.sslc.key = mainsc.sslc.key;
+    sc.timeout = mainsc.timeout;
     sc.compos = mainsc.compos;
     return postConfigMerge(mainsc, s->next);
 }
@@ -1311,7 +1401,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     }
 
     // Configure the deployed components
-    const failable<Composite> compos = confComponents(sc.contribc.contribPath, sc.contribc.composName, value(), "", sc.compos.impls, sc.lifecycle, sc.sslc, sc.p);
+    const failable<Composite> compos = confComponents(sc.contribc.contribPath, sc.contribc.composName, value(), "", sc.compos.impls, sc.lifecycle, sc.sslc, sc.timeout, sc.p);
     if (!hasContent(compos)) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         return -1;
@@ -1326,28 +1416,49 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
 }
 
 /**
+ * Exit after a failure.
+ */
+void failureExitChild() {
+    cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+    exit(APEXIT_CHILDFATAL);
+}
+
+/**
  * Child process initialization.
  */
 void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
+
     ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_eval);
-    if(psc == NULL) {
-        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
-        exit(APEXIT_CHILDFATAL);
-    }
+    if(psc == NULL)
+        failureExitChild();
     ServerConf& sc = *psc;
 
     // Start the components in the child process
     const failable<list<value> > fsimpls = startComponents(sc.compos.impls);
-    if (!hasContent(fsimpls)) {
-        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
-        exit(APEXIT_CHILDFATAL);
-    }
+    if (!hasContent(fsimpls))
+        failureExitChild();
     sc.compos.impls = content(fsimpls);
     
-    // Create a proxy for the vhost provider if needed
-    if (length(sc.vhostc.providerName) != 0) 
-        sc.vhostc.provider = mkimplProxy(sc.vhostc.providerName, sc.compos.impls, sc.sslc);
+    // Get the vhost contributor component implementation lambda
+    if (length(sc.vhostc.contributorName) != 0) {
+        const list<value> impl(assoctree<value>(sc.vhostc.contributorName, sc.compos.impls));
+        if (isNil(impl)) {
+            mkfailure<int>(string("Couldn't find contributor component implementation: ") + sc.vhostc.contributorName);
+            failureExitChild();
+        }
+        sc.vhostc.contributor = cadr<value>(impl);
+    }
+
+    // Get the vhost authenticator component implementation lambda
+    if (length(sc.vhostc.authenticatorName) != 0) {
+        const list<value> impl(assoctree<value>(sc.vhostc.authenticatorName, sc.compos.impls));
+        if (isNil(impl)) {
+            mkfailure<int>(string("Couldn't find authenticator component implementation: ") + sc.vhostc.authenticatorName);
+            failureExitChild();
+        }
+        sc.vhostc.authenticator = cadr<value>(impl);
+    }
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
@@ -1383,16 +1494,22 @@ const char* confVirtualContribution(cmd_parms *cmd, unused void *c, const char *
     sc.vhostc.contribPath = arg;
     return NULL;
 }
-const char* confVirtualprovider(cmd_parms *cmd, unused void *c, const char *arg) {
+const char* confVirtualContributor(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.vhostc.providerName = arg;
+    sc.vhostc.contributorName = arg;
     return NULL;
 }
 const char* confVirtualComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
     sc.vhostc.composName = arg;
+    return NULL;
+}
+const char* confAuthenticator(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.vhostc.authenticatorName = arg;
     return NULL;
 }
 const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
@@ -1413,6 +1530,12 @@ const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.sslc.key = arg;
     return NULL;
 }
+const char* confTimeout(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.timeout = atoi(arg);
+    return NULL;
+}
 const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, const char *value) {
     gc_scoped_pool pool(cmd->pool);
     setenv(name, value != NULL? value : "", 1);
@@ -1427,20 +1550,33 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     AP_INIT_TAKE1("SCAVirtualDomain", (const char*(*)())confVirtualDomain, NULL, RSRC_CONF, "SCA virtual host domain"),
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution path"),
-    AP_INIT_TAKE1("SCAVirtualContributor", (const char*(*)())confVirtualprovider, NULL, RSRC_CONF, "SCA virtual host provider component"),
+    AP_INIT_TAKE1("SCAVirtualContributor", (const char*(*)())confVirtualContributor, NULL, RSRC_CONF, "SCA virtual host contributor component"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
+    AP_INIT_TAKE1("SCAAuthenticator", (const char*(*)())confAuthenticator, NULL, RSRC_CONF, "SCA authenticator component"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
     AP_INIT_TAKE1("SCAWiringSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SCA wiring SSL CA certificate file"),
     AP_INIT_TAKE1("SCAWiringSSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SCA wiring SSL certificate file"),
     AP_INIT_TAKE1("SCAWiringSSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SCA wiring SSL certificate key file"),
+    AP_INIT_TAKE1("SCAWiringTimeout", (const char*(*)())confTimeout, NULL, RSRC_CONF, "SCA wiring timeout"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
+
+const authn_provider AuthnProvider = {
+    &checkPassword,
+    NULL
+};
+
+void retrieveAuthnCacheStore() {
+    authnCacheStore = APR_RETRIEVE_OPTIONAL_FN(ap_authn_cache_store);
+}
 
 void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_register_auth_provider(p, AUTHN_PROVIDER_GROUP, "component", AUTHN_PROVIDER_VERSION, &AuthnProvider, AP_AUTH_INTERNAL_PER_CONF);
+    ap_hook_optional_fn_retrieve(retrieveAuthnCacheStore, NULL, NULL, APR_HOOK_MIDDLE);
 }
 
 }

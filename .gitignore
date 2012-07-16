@@ -148,6 +148,7 @@ hosting/server/nuvem
 hosting/server/lib
 hosting/server/data/apps/*/nuvem
 hosting/server/data/apps/*/lib
+hosting/server/data/authn
 chat-send
 opencl-shell
 opencl-test

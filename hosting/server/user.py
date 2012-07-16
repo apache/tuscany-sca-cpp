@@ -21,9 +21,7 @@
 def get(i, user, email, nick, full, first, last, realm, host):
     if email.eval() != '?':
         return email.eval()
-    if nick.eval() != '?':
-        return nick.eval() + '@' + realm.eval()
     if user.eval() != '?':
-        return user.eval() + '@' + realm.eval()
-    return 'anonymous@' + host.eval();
+        return user.eval()
+    return 'anonymous'
 

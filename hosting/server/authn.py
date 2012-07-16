@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
-mkdir -p $1
-root=`echo "import os; print os.path.realpath('$1')" | python`
-user=$2
-pass=$3
+# User authenticator implementation
+from time import strftime
+from util import *
 
-httpd_prefix=`cat $here/httpd.prefix`
+# Convert a particular user id to an authentication id
+def authnid(id):
+    return append(append(('authn',), id), ('user.authn',))
 
-# Create password file
-touch $root/conf/httpd.passwd
-$httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd "$user" "$pass" 2>/dev/null
+# Get a user's authentication
+def get(id, cache):
+    authn = cache.get(authnid(id))
+    if isNil(authn) or authn is None:
+        return None
+    return authn
+
+# Update a user's authentication
+def put(id, authn, cache):
+    return cache.put(authnid(id), authn)
+
+# Delete a user's authentication
+def delete(id, cache):
+    return cache.delete(authnid(id))
 

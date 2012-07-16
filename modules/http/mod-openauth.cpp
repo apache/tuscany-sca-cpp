@@ -44,6 +44,7 @@
 #include "http.hpp"
 #include "openauth.hpp"
 
+
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_openauth;
 }
@@ -64,6 +65,20 @@ public:
 };
 
 /**
+ * Authentication provider configuration.
+ */
+class AuthnProviderConf {
+public:
+    AuthnProviderConf() : name(), provider(NULL) {
+    }
+    AuthnProviderConf(const string name, const authn_provider* provider) : name(name), provider(provider) {
+    }
+
+    string name;
+    const authn_provider* provider;
+};
+
+/**
  * Directory configuration.
  */
 class DirConf {
@@ -75,6 +90,7 @@ public:
     const char* dir;
     bool enabled;
     string login;
+    list<AuthnProviderConf> apcs;
 };
 
 #ifdef WANT_MAINTAINER_LOG
@@ -101,10 +117,39 @@ const bool debugSession(request_rec* r, session_rec* z) {
 #endif
 
 /**
+ * Run the authnz hooks to authenticate a request.
+ */
+const failable<int> checkAuthnzProviders(const string& user, const string& pw, request_rec* r, const list<AuthnProviderConf>& apcs) {
+    if (isNil(apcs))
+        return mkfailure<int>("Authentication failure for: " + user);
+    const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
+    if (apc.provider == NULL || !apc.provider->check_password)
+        return checkAuthnzProviders(user, pw, r, cdr(apcs));
+
+    apr_table_setn(r->notes, AUTHN_PROVIDER_NAME_NOTE, c_str(apc.name));
+    const authn_status auth_result = apc.provider->check_password(r, c_str(user), c_str(pw));
+    apr_table_unset(r->notes, AUTHN_PROVIDER_NAME_NOTE);
+    if (auth_result != AUTH_GRANTED)
+        return checkAuthnzProviders(user, pw, r, cdr(apcs));
+    return OK;
+}
+
+const failable<int> checkAuthnz(const string& user, const string& pw, request_rec* r, const DirConf& dc) {
+    if (substr(user, 0, 1) == "/" && pw == "password")
+        return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
+
+    if (isNil(dc.apcs)) {
+        const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
+        return checkAuthnzProviders(user, pw, r, mklist<AuthnProviderConf>(AuthnProviderConf(AUTHN_DEFAULT_PROVIDER, provider)));
+    }
+    return checkAuthnzProviders(user, pw, r, dc.apcs);
+}
+
+/**
  * Return the user info from a form auth encrypted session cookie.
  */
 static int (*ap_session_load_fn) (request_rec * r, session_rec ** z) = NULL;
-static void (*ap_session_get_fn) (request_rec * r, session_rec * z, const char *key, const char **value) = NULL;
+static int (*ap_session_get_fn) (request_rec * r, session_rec * z, const char *key, const char **value) = NULL;
 
 const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
     debug("modopenauth::userInfoFromSession");
@@ -186,36 +231,23 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
 }
 
 /**
- * Run the authnz hooks to try to authenticate a request.
- */
-const failable<int> checkAuthnz(const string& user, const string& pw, request_rec* r) {
-    const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
-    if (!provider || !provider->check_password)
-        return mkfailure<int>("No Authn provider configured");
-    apr_table_setn(r->notes, AUTHN_PROVIDER_NAME_NOTE, AUTHN_DEFAULT_PROVIDER);
-    const authn_status auth_result = provider->check_password(r, c_str(user), c_str(pw));
-    apr_table_unset(r->notes, AUTHN_PROVIDER_NAME_NOTE);
-    if (auth_result != AUTH_GRANTED)
-        return mkfailure<int>("Authentication failure for: " + user);
-    return OK;
-}
-
-/**
  * Check user authentication.
  */
 static int checkAuthn(request_rec *r) {
+    gc_scoped_pool pool(r->pool);
+
     // Decline if we're not enabled or AuthType is not set to Open
     const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
     if (!dc.enabled)
         return DECLINED;
     const char* atype = ap_auth_type(r);
-    debug(atype, "modopenauth::checkAuthn::auth_type");
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
-
-    // Create a scoped memory pool
-    gc_scoped_pool pool(r->pool);
     debug_httpdRequest(r, "modopenauth::checkAuthn::input");
+    debug(atype, "modopenauth::checkAuthn::auth_type");
+
+    // Get the request args
+    const list<list<value> > args = httpd::queryArgs(r);
 
     // Get session id from the request
     const maybe<string> sid = sessionID(r, "TuscanyOpenAuth");
@@ -231,17 +263,17 @@ static int checkAuthn(request_rec *r) {
             return httpd::reportStatus(mkfailure<int>("Missing AuthName"));
 
         // Extract user info from the session id
-        const failable<value> info = userInfoFromCookie(content(sid), aname, r);
-        if (hasContent(info)) {
+        const failable<value> userinfo = userInfoFromCookie(content(sid), aname, r);
+        if (hasContent(userinfo)) {
 
             // Try to authenticate the request
-            const value uinfo = content(info);
-            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r);
+            const value uinfo = content(userinfo);
+            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r, dc);
             if (!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
                 r->ap_auth_type = const_cast<char*>(atype);
-                return httpd::reportStatus(login(dc.login, r));
+                return httpd::reportStatus(login(dc.login, value(), 1, r));
             }
 
             // Successfully authenticated, store the user info in the request
@@ -265,12 +297,12 @@ static int checkAuthn(request_rec *r) {
 
             // Try to authenticate the request
             const value uinfo = content(info);
-            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r);
+            const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r, dc);
             if (!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
                 r->ap_auth_type = const_cast<char*>(atype);
-                return httpd::reportStatus(login(dc.login, r));
+                return httpd::reportStatus(login(dc.login, value(), 1, r));
             }
 
             // Successfully authenticated, store the user info in the request
@@ -278,9 +310,6 @@ static int checkAuthn(request_rec *r) {
             return httpd::reportStatus(authenticated(uinfo, r));
         }
     }
-
-    // Get the request args
-    const list<list<value> > args = httpd::queryArgs(r);
 
     // Decline if the request is for another authentication provider
     if (!isNil(assoc<value>("openid_identifier", args)))
@@ -291,57 +320,59 @@ static int checkAuthn(request_rec *r) {
         hasContent(sessionID(r, "TuscanyOAuth1")) ||
         hasContent(sessionID(r, "TuscanyOAuth2")))
         return DECLINED;
+
     r->ap_auth_type = const_cast<char*>(atype);
-    return httpd::reportStatus(login(dc.login, r));
+    return httpd::reportStatus(login(dc.login, value(), value(), r));
 }
 
 /**
- * Fixup cache control.
+ * Save the auth session cookie in the response.
  */
-bool filterCacheControl(const string& tok) {
-    return tok != "no-cache";
+static int sessionCookieSave(request_rec* r, session_rec* z) {
+    gc_scoped_pool pool(r->pool);
+
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
+    if (!dc.enabled)
+        return DECLINED;
+
+    debug(c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))), "modopenauth::setcookie");
+    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))));
+    return OK;
 }
 
-static apr_status_t outputFilter(ap_filter_t * f, apr_bucket_brigade * in) {
-    request_rec *r = f->r->main;
-    if (!r)
-        r = f->r;
-    for (; r != NULL; r = r->next) {
-        if (r->status != HTTP_OK && r->status != HTTP_NOT_MODIFIED) {
+/**
+ * Load the auth session cookie from the request. Similar
+ */
+static int sessionCookieLoad(request_rec* r, session_rec** z) {
+    gc_scoped_pool pool(r->pool);
 
-            // Don't cache errors and redirects
-            debug("no-cache", "modopenauth::outputFilter::nokCacheControl");
-            apr_table_set(r->headers_out, "Cache-Control", "no-cache");
-            continue;
-        }
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
+    if (!dc.enabled)
+        return DECLINED;
 
-        // Cache OK content
-        const char* cc = apr_table_get(r->headers_out, "Cache-Control");
-        if (cc == NULL) {
-            debug("modopenauth::outputFilter::noCacheControl");
-            continue;
-        }
-        debug(cc, "modopenauth::outputFilter::cacheControl");
-        const string ncc = join(", ", filter<string>(filterCacheControl, tokenize(", ", cc)));
-        if (length(ncc) == 0) {
-            debug("modopenauth::outputFilter::noCacheControl");
-            apr_table_unset(r->headers_out, "Cache-Control");
-            continue;
-        }
-
-        debug(ncc, "modopenauth::outputFilter::okCacheControl");
-        apr_table_set(r->headers_out, "Cache-Control", c_str(ncc));
+    // First look in the notes
+    const char* note = apr_pstrcat(r->pool, "mod_openauth", "TuscanyOpenAuth", NULL);
+    session_rec* zz = (session_rec*)(void*)apr_table_get(r->notes, note);
+    if (zz != NULL) {
+        *z = zz;
+        return OK;
     }
 
-    ap_remove_output_filter(f);
-    return ap_pass_brigade(f->next, in);
-}
+    // Parse the cookie
+    const maybe<string> sid = openauth::sessionID(r, "TuscanyOpenAuth");
 
-/**
- * Insert our cache control output filter.
- */
-static void insertOutputFilter(request_rec * r) {
-    ap_add_output_filter("mod_openauth", NULL, r, r->connection);
+    // Create a new session
+    zz = (session_rec*)apr_pcalloc(r->pool, sizeof(session_rec));
+    zz->pool = r->pool;
+    zz->entries = apr_table_make(r->pool, 10);
+    zz->encoded = hasContent(sid)? c_str(content(sid)) : NULL;
+    zz->uuid = (apr_uuid_t *) apr_pcalloc(r->pool, sizeof(apr_uuid_t));
+    *z = zz;
+
+    // Store it in the notes
+    apr_table_setn(r->notes, note, (char*)zz);
+
+    return OK;
 }
 
 /**
@@ -357,6 +388,7 @@ int postConfigMerge(ServerConf& mainsc, server_rec* s) {
 
 int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
     gc_scoped_pool pool(p);
+
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_openauth);
     debug(httpd::serverName(s), "modopenauth::postConfig::serverName");
 
@@ -369,6 +401,7 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
  */
 void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
+
     ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_openauth);
     if(psc == NULL) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_openauth loading failed. Causing apache to stop loading." << endl;
@@ -395,11 +428,25 @@ const char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
     dc.login = arg;
     return NULL;
 }
+const char* confAuthnProvider(cmd_parms *cmd, void *c, const char* arg) {
+    gc_scoped_pool pool(cmd->pool);
+    DirConf& dc = httpd::dirConf<DirConf>(c);
+
+    // Lookup and cache the Authn provider
+    const authn_provider* provider = (authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, arg, AUTHN_PROVIDER_VERSION);
+    if (provider == NULL)
+        return apr_psprintf(cmd->pool, "Unknown Authn provider: %s", arg);
+    if (!provider->check_password)
+        return apr_psprintf(cmd->pool, "The '%s' Authn provider doesn't support password authentication", arg);
+    dc.apcs = append<AuthnProviderConf>(dc.apcs, mklist<AuthnProviderConf>(AuthnProviderConf(arg, provider)));
+    return NULL;
+}
 
 /**
  * HTTP server module declaration.
  */
 const command_rec commands[] = {
+    AP_INIT_ITERATE("AuthOpenAuthProvider", (const char*(*)())confAuthnProvider, NULL, OR_AUTHCFG, "Auth providers for a directory or location"),
     AP_INIT_FLAG("AuthOpenAuth", (const char*(*)())confEnabled, NULL, OR_AUTHCFG, "Tuscany Open Auth authentication On | Off"),
     AP_INIT_TAKE1("AuthOpenAuthLoginPage", (const char*(*)())confLogin, NULL, OR_AUTHCFG, "Tuscany Open Auth login page"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
@@ -409,8 +456,8 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_authn(checkAuthn, NULL, NULL, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
-    ap_register_output_filter("mod_openauth", outputFilter, NULL, AP_FTYPE_CONTENT_SET);
-    ap_hook_insert_filter(insertOutputFilter, NULL, NULL, APR_HOOK_LAST);
+    ap_hook_session_load(sessionCookieLoad, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_session_save(sessionCookieSave, NULL, NULL, APR_HOOK_MIDDLE);
 }
 
 }

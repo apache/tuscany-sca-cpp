@@ -77,7 +77,7 @@ const string cookie(const string& key, const string& sid, const string& domain) 
     const time_t t = time(NULL) + 86400;
     char exp[32];
     strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + domain + "; path=/";
+    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + httpd::realm(domain) + "; path=/";
     debug(c, "openauth::cookie");
     return c;
 }
@@ -85,9 +85,11 @@ const string cookie(const string& key, const string& sid, const string& domain) 
 /**
  * Redirect to the configured login page.
  */
-const failable<int> login(const string& page, request_rec* r) {
-    const list<list<value> > largs = mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(r->uri, r))));
-    const string loc = httpd::url(page, r) + string("?") + http::queryString(largs);
+const failable<int> login(const string& page, const value& ref, const value& attempt, request_rec* r) {
+    const list<list<value> > rarg = ref == string("/")? list<list<value> >() : mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(isNil(ref)? r->uri : ref, r))));
+    const list<list<value> > aarg = isNil(attempt)? list<list<value> >() : mklist<list<value> >(mklist<value>("openauth_attempt", attempt));
+    const list<list<value> > largs = append<list<value> >(rarg, aarg);
+    const string loc = isNil(largs)? httpd::url(page, r) : httpd::url(page, r) + string("?") + http::queryString(largs);
     debug(loc, "openauth::login::uri");
     return httpd::externalRedirect(loc, r);
 }

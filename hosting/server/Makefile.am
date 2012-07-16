@@ -18,16 +18,18 @@
 if WANT_PYTHON
 
 moddir = $(prefix)/hosting/server
-dist_mod_SCRIPTS = start stop ssl-start mkapplinks config-backup data-backup
+dist_mod_SCRIPTS = start stop ssl-start mkapplinks config-backup data-backup put-auth get-auth delete-auth
 
-not_minified = htdocs/public/iframe.html htdocs/create/index.html htdocs/page/index.html htdocs/login/index.html htdocs/public/notfound/index.html htdocs/public/oops/index.html htdocs/proxy/public/oops/index.html htdocs/graph/index.html htdocs/public/notauth/index.html htdocs/account/index.html htdocs/home/index.html htdocs/index.html htdocs/public/notyet/index.html htdocs/clone/index.html htdocs/delete/index.html htdocs/stats/index.html htdocs/app/index.html htdocs/store/index.html htdocs/config.js htdocs/public/config.js
+not_minified = htdocs/public/iframe.html htdocs/create/index.html htdocs/page/index.html htdocs/login/index.html htdocs/public/notfound/index.html htdocs/public/oops/index.html htdocs/proxy/public/oops/index.html htdocs/graph/index.html htdocs/public/notauth/index.html htdocs/account/index.html htdocs/home/index.html htdocs/index.html htdocs/public/notyet/index.html htdocs/clone/index.html htdocs/delete/index.html htdocs/stats/index.html htdocs/app/index.html htdocs/store/index.html htdocs/config.js htdocs/public/config.js htdocs/cache-template.cmf htdocs/app/cache-template.cmf htdocs/cache-template.cmf htdocs/app/cache-template.cmf 
 
 minified = htdocs/public/iframe-min.html htdocs/create/index-min.html htdocs/page/index-min.html htdocs/login/index-min.html htdocs/public/notfound/index-min.html htdocs/public/oops/index-min.html htdocs/proxy/public/oops/index-min.html htdocs/graph/index-min.html htdocs/public/notauth/index-min.html htdocs/account/index-min.html htdocs/home/index-min.html htdocs/index-min.html htdocs/public/notyet/index-min.html htdocs/clone/index-min.html htdocs/delete/index-min.html htdocs/stats/index-min.html htdocs/app/index-min.html htdocs/store/index-min.html htdocs/config-min.js htdocs/public/config-min.js
 
-resources = server.composite *.py htdocs/*.cmf htdocs/*.ico htdocs/home/*.png htdocs/app/*.cmf htdocs/home/*.b64 htdocs/*.txt htdocs/public/*.png htdocs/public/*.b64 data/palettes/*/palette.composite data/accounts/*/*.account data/apps/*/app.composite data/apps/*/app.stats data/apps/*/htdocs/app.html data/dashboards/*/user.apps data/store/*/store.apps ${not_minified} ${minified}
+js_minified = ../../modules/js/htdocs/all-min.js ../../modules/js/htdocs/ui-min.css
+
+resources = server.composite *.py data/palettes/*/palette.composite data/accounts/*/*.account data/apps/*/app.composite data/apps/*/app.stats data/apps/*/htdocs/app.html data/dashboards/*/user.apps data/store/*/store.apps htdocs/cache-manifest.cmf htdocs/app/cache-manifest.cmf htdocs/*.ico htdocs/home/*.png htdocs/home/*.b64 htdocs/*.txt htdocs/public/*.png htdocs/public/*.b64 ${minified}
 
 nobase_dist_mod_DATA = ${resources}
-EXTRA_DIST = ${resources}
+EXTRA_DIST = ${resources} ${not_minified}
 
 SUFFIXES = -min.html -min.js
 .html-min.html:
@@ -36,9 +38,29 @@ SUFFIXES = -min.html -min.js
 .js-min.js:
 	../../modules/http/minify-js $< $@
 
-CLEANFILES = ${minified}
+htdocs/cache-manifest.cmf: htdocs/cache-template.cmf ${minified} ${js_minified}
+	../../modules/http/cache-manifest htdocs $^
 
-dist_noinst_SCRIPTS = server-test test.py
-TESTS = server-test
+htdocs/app/cache-manifest.cmf: htdocs/app/cache-template.cmf ${minified} ${js_minified}
+	../../modules/http/cache-manifest htdocs/app $^
+
+nuvem:
+	ln -s "../../../nuvem/nuvem-parallel/nuvem" "nuvem"
+
+lib:
+	ln -s "../../components" "lib"
+
+install-data-hook:
+	cd $(moddir); rm -f nuvem; ln -s "../../../nuvem/nuvem-parallel/nuvem" "nuvem"
+	cd $(moddir); rm -f lib; ln -s "../../components" "lib"
+
+CLEANFILES = ${minified} nuvem lib htdocs/cache-manifest.cmf htdocs/app/cache-manifest.cmf
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+dist_noinst_SCRIPTS = logic-test server-test test.py
+noinst_PROGRAMS = client-test
+TESTS = logic-test
 
 endif
