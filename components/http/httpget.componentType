@@ -22,6 +22,7 @@
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components">
         
+    <property name="timeout"/>
     <service name="httpget"/>
     <reference name="url"/>
 

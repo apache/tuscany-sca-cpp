@@ -39,7 +39,7 @@ namespace filedb {
 const string uri("http://localhost:8090/filedb");
 
 bool testFileDB() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
@@ -93,8 +93,8 @@ bool testFileDB() {
 struct getLoop {
     const string path;
     const value entry;
-    http::CURLSession cs;
-    getLoop(const string& path, const value& entry, http::CURLSession cs) : path(path), entry(entry), cs(cs) {
+    http::CURLSession& cs;
+    getLoop(const string& path, const value& entry, http::CURLSession& cs) : path(path), entry(entry), cs(cs) {
     }
     const bool operator()() const {
         const failable<value> val = http::get(uri + path, cs);
@@ -113,7 +113,7 @@ bool testGetPerf() {
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
     const string p = path(content(id));

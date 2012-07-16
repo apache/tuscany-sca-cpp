@@ -102,6 +102,7 @@
    <component x="80" y="10" name="post1" title="post" color="green1">
     <implementation.cpp path="lib/http" library="libhttppost"/>
     <service name="post"/>
+    <property name="timeout" visible="false"/>
     <reference target="format4" name="url"/>
     <reference target="list21" name="content"/>
    </component>

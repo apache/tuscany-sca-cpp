@@ -43,7 +43,7 @@ const string partition1uri("http://localhost:8090/partitioner/a");
 const string partition2uri("http://localhost:8090/partitioner/b");
 
 bool testCache(const string& uri) {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
@@ -103,7 +103,7 @@ bool testDatacache() {
 }
 
 bool testMemocache() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> res = http::evalExpr(mklist<value>(string("add"), 33, 22), memocacheuri, cs);
     assert(hasContent(res));
@@ -117,7 +117,7 @@ bool testMemocache() {
 }
 
 bool testPartitioner() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> res1 = http::get(partition1uri, cs);
     assert(hasContent(res1));
@@ -133,8 +133,8 @@ bool testPartitioner() {
 struct getLoop {
     const string path;
     const value entry;
-    http::CURLSession cs;
-    getLoop(const string& path, const value& entry, http::CURLSession cs) : path(path), entry(entry), cs(cs) {
+    http::CURLSession& cs;
+    getLoop(const string& path, const value& entry, http::CURLSession& cs) : path(path), entry(entry), cs(cs) {
     }
     const bool operator()() const {
         const failable<value> val = http::get(memcacheuri + path, cs);
@@ -153,7 +153,7 @@ bool testGetPerf() {
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
     const failable<value> id = http::post(a, memcacheuri, cs);
     assert(hasContent(id));
     const string p = path(content(id));

@@ -39,7 +39,7 @@ namespace smtp {
 const string postURI("http://localhost:8090/smtppost");
 
 bool testPost() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> val = http::get(postURI, cs);
     assert(hasContent(val));

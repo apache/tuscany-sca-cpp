@@ -39,7 +39,7 @@ namespace log {
 const string uri("http://localhost:8090/log");
 
 bool testLog() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
@@ -58,8 +58,8 @@ bool testLog() {
 struct logLoop {
     const value a;
     const string uri;
-    http::CURLSession cs;
-    logLoop(const value& a, const string& uri, http::CURLSession cs) : a(a), uri(uri), cs(cs) {
+    http::CURLSession& cs;
+    logLoop(const value& a, const string& uri, http::CURLSession& cs) : a(a), uri(uri), cs(cs) {
     }
     const bool operator()() const {
         const failable<value> id = http::post(a, uri, cs);
@@ -77,7 +77,7 @@ bool testLogPerf() {
             + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
 
@@ -88,7 +88,7 @@ bool testLogPerf() {
 }
 
 bool testLogger() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> res = http::evalExpr(mklist<value>(string("sum"), 33, 22), string("http://localhost:8090/client"), cs);
     assert(hasContent(res));

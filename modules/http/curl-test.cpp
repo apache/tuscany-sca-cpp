@@ -40,7 +40,7 @@ ostream* curlWriter(const string& s, ostream* os) {
 }
 
 const bool testGet() {
-    CURLSession ch("", "", "", "");
+    CURLSession ch("", "", "", "", 0);
     {
         ostringstream os;
         const failable<list<ostream*> > r = get<ostream*>(curlWriter, &os, testURI, ch);
@@ -69,7 +69,7 @@ struct getLoop {
 };
 
 const bool testGetPerf() {
-    CURLSession ch("", "", "", "");
+    CURLSession ch("", "", "", "", 0);
     lambda<bool()> gl = getLoop(ch);
     cout << "Static GET test " << time(gl, 5, 200) << " ms" << endl;
     return true;
@@ -79,8 +79,9 @@ const bool testGetPerf() {
 }
 
 int main() {
+    tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
-    tuscany::http::testURI = tuscany::string("http://") + tuscany::http::hostName() + ":8090";
+    //tuscany::http::testURI = tuscany::string("http://") + tuscany::http::hostName() + ":8090";
 
     tuscany::http::testGet();
     tuscany::http::testGetPerf();

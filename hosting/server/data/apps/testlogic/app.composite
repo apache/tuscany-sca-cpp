@@ -64,6 +64,7 @@
    <component name="get" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text5" name="url"/>
    </component>
    <component name="greater" title="gt" color="cyan1">

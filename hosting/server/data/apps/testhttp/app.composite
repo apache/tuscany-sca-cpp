@@ -51,36 +51,43 @@
    <component x="20" y="10" name="get" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text" name="url"/>
    </component>
    <component x="20" y="60" name="get2" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text2" name="url"/>
    </component>
    <component x="20" y="100" name="get3" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text3" name="url"/>
    </component>
    <component x="310" y="10" name="get4" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text4" name="url"/>
    </component>
    <component x="200" y="10" name="get5" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text5" name="url"/>
    </component>
    <component x="20" y="140" name="get6" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text6" name="url"/>
    </component>
    <component name="get7" title="get" color="green1">
     <implementation.cpp path="lib/http" library="libhttpget"/>
     <service name="get"/>
+    <property name="timeout" visible="false"/>
     <reference target="text7" name="url"/>
    </component>
    <component name="item2" title="{propval}:" color="orange1">

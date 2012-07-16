@@ -42,7 +42,7 @@ const string putURI("http://localhost:8090/httpput");
 const string deleteURI("http://localhost:8090/httpdelete");
 
 bool testGet() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> val = http::get(getURI, cs);
     assert(hasContent(val));
@@ -50,8 +50,8 @@ bool testGet() {
 }
 
 struct getLoop {
-    http::CURLSession cs;
-    getLoop(http::CURLSession cs) : cs(cs) {
+    http::CURLSession& cs;
+    getLoop(http::CURLSession& cs) : cs(cs) {
     }
     const bool operator()() const {
         const failable<value> val = http::get(getURI, cs);
@@ -61,7 +61,7 @@ struct getLoop {
 };
 
 bool testGetPerf() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const lambda<bool()> gl = getLoop(cs);
     cout << "HTTP get test " << time(gl, 5, 200) << " ms" << endl;
@@ -70,7 +70,7 @@ bool testGetPerf() {
 }
 
 bool testPost() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> val = http::get(postURI, cs);
     assert(hasContent(val));
@@ -78,7 +78,7 @@ bool testPost() {
 }
 
 bool testPut() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> val = http::get(putURI, cs);
     assert(hasContent(val));
@@ -86,7 +86,7 @@ bool testPut() {
 }
 
 bool testDelete() {
-    http::CURLSession cs("", "", "", "");
+    http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> val = http::get(deleteURI, cs);
     assert(hasContent(val));

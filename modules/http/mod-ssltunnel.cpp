@@ -104,6 +104,7 @@ int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
 
 int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
     gc_scoped_pool pool(p);
+
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
     debug(httpd::serverName(s), "modssltunnel::postConfig::serverName");
 
@@ -147,7 +148,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
     apr_socket_t* csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
 
     // Open connection to target
-    http::CURLSession cs(ca, cert, key, "");
+    http::CURLSession cs(ca, cert, key, "", 0);
     const failable<bool> crc = http::connect(url, cs);
     if (!hasContent(crc))
         return abort(conn, csock, reason(crc));
@@ -271,9 +272,9 @@ int processConnection(conn_rec *conn) {
     if (ap_get_module_config(conn->base_server->module_config, &mod_tuscany_ssltunnel) == NULL)
         return DECLINED;
 
-    // Create a scoped memory pool
-    gc_scoped_pool pool;
+    gc_scoped_pool pool(conn->pool);
 
+    // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(conn->base_server, &mod_tuscany_ssltunnel);
     if (length(sc.pass) == 0)
         return DECLINED;
@@ -296,7 +297,6 @@ int handler(request_rec* r) {
     if (strcmp(r->server->server_scheme, "https"))
         return DECLINED;
 
-    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
 
     // Build the target URL

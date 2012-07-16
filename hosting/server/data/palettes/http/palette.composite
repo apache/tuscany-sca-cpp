@@ -40,6 +40,7 @@
  <component x="80" y="220" name="delete" title="delete" color="green1">
   <implementation.cpp path="lib/http" library="libhttpdelete"/>
   <service name="delete"/>
+  <property name="timeout" visible="false"/>
   <reference name="url"/>
  </component>
  <component x="140" y="110" name="email" title="email" color="green1">
@@ -50,6 +51,7 @@
  <component x="80" y="170" name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
+  <property name="timeout" visible="false"/>
   <reference name="url"/>
  </component>
  <component x="130" y="10" name="host" title="host" color="green1">
@@ -77,6 +79,7 @@
  <component x="260" y="170" name="patch" title="patch" color="green1">
   <implementation.cpp path="lib/http" library="libhttppatch"/>
   <service name="patch"/>
+  <property name="timeout" visible="false"/>
   <reference name="url"/>
   <reference name="content"/>
  </component>
@@ -88,12 +91,14 @@
  <component x="200" y="170" name="post" title="post" color="green1">
   <implementation.cpp path="lib/http" library="libhttppost"/>
   <service name="post"/>
+  <property name="timeout" visible="false"/>
   <reference name="url"/>
   <reference name="content"/>
  </component>
  <component x="140" y="170" name="put" title="put" color="green1">
   <implementation.cpp path="lib/http" library="libhttpput"/>
   <service name="put"/>
+  <property name="timeout" visible="false"/>
   <reference name="url"/>
   <reference name="content"/>
  </component>

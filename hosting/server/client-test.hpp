@@ -31,12 +31,12 @@
 #include "string.hpp"
 #include "parallel.hpp"
 #include "perf.hpp"
-#include "../http/http.hpp"
+#include "../../modules/http/http.hpp"
 
 namespace tuscany {
 namespace server {
 
-string testURI = "http://localhost:8090/scheme";
+string testURI = "http://localhost:8090";
 bool testBlobs = true;
 
 ostream* curlWriter(const string& s, ostream* os) {
@@ -44,41 +44,98 @@ ostream* curlWriter(const string& s, ostream* os) {
     return os;
 }
 
-const bool testGet() {
+const bool testGetDoc() {
     gc_scoped_pool pool;
     http::CURLSession ch("", "", "", "", 0);
     {
         ostringstream os;
-        const failable<list<ostream*> > r = http::get<ostream*>(curlWriter, &os, "http://localhost:8090/index.html", ch);
+        const failable<list<ostream*> > r = http::get<ostream*>(curlWriter, &os, testURI + "/", ch);
         assert(hasContent(r));
         assert(contains(str(os), "HTTP/1.1 200") || contains(str(os), "HTTP/1.0 200"));
-        assert(contains(str(os), "It works"));
+        assert(contains(str(os), "<base href=\"/\"/>"));
     }
     {
-        const failable<value> r = http::getcontent("http://localhost:8090/index.html", ch);
+        const failable<value> r = http::getcontent(testURI + "/", ch);
         assert(hasContent(r));
-        assert(contains(car(reverse(list<value>(content(r)))), "It works"));
+        assert(contains(car(list<value>(content(r))), "<base href=\"/\"/>"));
     }
     return true;
 }
 
-struct getLoop {
+struct getDocLoop {
     http::CURLSession& ch;
-    getLoop(http::CURLSession& ch) : ch(ch) {
+    getDocLoop(http::CURLSession& ch) : ch(ch) {
     }
     const bool operator()() const {
-        const failable<value> r = http::getcontent("http://localhost:8090/index.html", ch);
+        const failable<value> r = http::getcontent(testURI + "/", ch);
         assert(hasContent(r));
-        assert(contains(car(reverse(list<value>(content(r)))), "It works"));
+        assert(contains(car(list<value>(content(r))), "<base href=\"/\"/>"));
         return true;
     }
 };
 
-const bool testGetPerf() {
+const bool testGetDocPerf() {
     gc_scoped_pool pool;
     http::CURLSession ch("", "", "", "", 0);
-    const lambda<bool()> gl = getLoop(ch);
-    cout << "Static GET test " << time(gl, 5, 200) << " ms" << endl;
+    const lambda<bool()> gl = getDocLoop(ch);
+    cout << "GET doc test " << time(gl, 10, 50) << " ms" << endl;
+    return true;
+}
+
+struct getCompositeLoop {
+    http::CURLSession& ch;
+    getCompositeLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value> r = http::getcontent(testURI + "/r/Editor/composites/test", ch);
+        assert(hasContent(r));
+        return true;
+    }
+};
+
+const bool testGetCompositePerf() {
+    gc_scoped_pool pool;
+    http::CURLSession ch("", "", "", "", 0);
+    const lambda<bool()> gl = getCompositeLoop(ch);
+    cout << "GET composite test " << time(gl, 10, 50) << " ms" << endl;
+    return true;
+}
+
+struct getPageLoop {
+    http::CURLSession& ch;
+    getPageLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value> r = http::getcontent(testURI + "/r/Editor/pages/test", ch);
+        assert(hasContent(r));
+        return true;
+    }
+};
+
+const bool testGetPagePerf() {
+    gc_scoped_pool pool;
+    http::CURLSession ch("", "", "", "", 0);
+    const lambda<bool()> gl = getPageLoop(ch);
+    cout << "GET page test " << time(gl, 10, 50) << " ms" << endl;
+    return true;
+}
+
+struct getAppLoop {
+    http::CURLSession& ch;
+    getAppLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value> r = http::getcontent(testURI + "/r/Editor/apps/test", ch);
+        assert(hasContent(r));
+        return true;
+    }
+};
+
+const bool testGetAppPerf() {
+    gc_scoped_pool pool;
+    http::CURLSession ch("", "", "", "", 0);
+    const lambda<bool()> gl = getAppLoop(ch);
+    cout << "GET app test " << time(gl, 10, 50) << " ms" << endl;
     return true;
 }
 
@@ -352,12 +409,18 @@ const bool testDel() {
 }
 
 const bool testServer() {
-    tuscany::server::testGet();
+    tuscany::server::testGetDoc();
+#ifdef FOO
     tuscany::server::testPost();
     tuscany::server::testPut();
     tuscany::server::testDel();
     tuscany::server::testEval();
-    tuscany::server::testGetPerf();
+#endif
+    tuscany::server::testGetDocPerf();
+    tuscany::server::testGetCompositePerf();
+    tuscany::server::testGetPagePerf();
+    tuscany::server::testGetAppPerf();
+#ifdef FOO
     tuscany::server::testPostPerf();
 #ifdef WANT_THREADS
     tuscany::server::testPostThreadPerf();
@@ -365,6 +428,7 @@ const bool testServer() {
     tuscany::server::testPostForkPerf();
 #endif
     tuscany::server::testEvalPerf();
+#endif
     return true;
 }
 

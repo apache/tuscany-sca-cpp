@@ -38,7 +38,7 @@ namespace smtppost {
 /**
  * Post/send an email message using SMTP.
  */
-const failable<value> post(const string& url, const string& user, const string& pass, const string& from, const string& to, const string& subject, const value& val, const http::CURLSession& cs) {
+const failable<value> post(const string& url, const string& user, const string& pass, const string& from, const string& to, const string& subject, const value& val, http::CURLSession& cs) {
     // Convert value to a content request
     const failable<list<list<string> > > freq = http::contentRequest(val, url);
     if (!hasContent(freq))
@@ -48,8 +48,10 @@ const failable<value> post(const string& url, const string& user, const string& 
 
     // Setup the CURL session
     const failable<CURL*> fch = http::setup(url, cs);
-    if (!hasContent(fch))
+    if (!hasContent(fch)) {
+        http::cleanup(cs);
         return mkfailure<value>(fch);
+    }
     CURL* ch = content(fch);
     curl_easy_setopt(ch, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
 
@@ -80,18 +82,22 @@ const failable<value> post(const string& url, const string& user, const string& 
     curl_slist_free_all(rcpt);
 
     // Return the CURL return code or true
-    if (rc)
+    if (rc) {
+        http::cleanup(cs);
         return mkfailure<value>(string(curl_easy_strerror(rc)));
+    }
+
+    http::cleanup(cs);
     return value(true);
 }
 
 /**
  * Evaluate an SMTP post/send.
  */
-const failable<value> get(const lambda<value(const list<value>&)> url,
-        const lambda<value(const list<value>&)> user, const lambda<value(const list<value>&)> pass,
-        const lambda<value(const list<value>&)> from, const lambda<value(const list<value>&)> to,
-        const lambda<value(const list<value>&)> subject, const lambda<value(const list<value>&)> val,
+const failable<value> get(const lambda<value(const list<value>&)>& url,
+        const lambda<value(const list<value>&)>& user, const lambda<value(const list<value>&)>& pass,
+        const lambda<value(const list<value>&)>& from, const lambda<value(const list<value>&)>& to,
+        const lambda<value(const list<value>&)>& subject, const lambda<value(const list<value>&)>& val,
         http::CURLSession& ch) {
     debug("smtppost::get");
     const value u = url(mklist<value>("get", list<value>()));
@@ -116,11 +122,11 @@ const failable<value> get(const lambda<value(const list<value>&)> url,
  */
 class applysmtp {
 public:
-    applysmtp(const lambda<value(const list<value>&)> url,
-            const lambda<value(const list<value>&)> user, const lambda<value(const list<value>&)> pass,
-            const lambda<value(const list<value>&)> from, const lambda<value(const list<value>&)> to,
-            const lambda<value(const list<value>&)> subject, const lambda<value(const list<value>&)> val,
-            const perthread_ptr<http::CURLSession>& ch) :
+    applysmtp(const lambda<value(const list<value>&)>& url,
+            const lambda<value(const list<value>&)>& user, const lambda<value(const list<value>&)>& pass,
+            const lambda<value(const list<value>&)>& from, const lambda<value(const list<value>&)>& to,
+            const lambda<value(const list<value>&)>& subject, const lambda<value(const list<value>&)>& val,
+            perthread_ptr<http::CURLSession>& ch) :
         url(url), user(user), pass(pass), from(from), to(to), subject(subject), val(val), ch(ch) {
     }
 
@@ -147,7 +153,7 @@ private:
  * Create a new CURL session.
  */
 const gc_ptr<http::CURLSession> newsession() {
-    return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "");
+    return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "", 0);
 }
 
 /**
@@ -155,7 +161,7 @@ const gc_ptr<http::CURLSession> newsession() {
  */
 const failable<value> start(const list<value>& params) {
     // Create a CURL session
-    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession));
+    perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applysmtp(car(params), cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params), ch)));

@@ -38,7 +38,7 @@ namespace httppost {
 /**
  * Evaluate an HTTP post.
  */
-const failable<value> get(const lambda<value(const list<value>&)> url, const lambda<value(const list<value>&)> val, http::CURLSession& ch) {
+const failable<value> get(const lambda<value(const list<value>&)>& url, const lambda<value(const list<value>&)>& val, http::CURLSession& ch) {
     debug("httppost::get");
     const value u = url(mklist<value>("get", list<value>()));
     const value v = val(mklist<value>("get", list<value>()));
@@ -52,7 +52,7 @@ const failable<value> get(const lambda<value(const list<value>&)> url, const lam
  */
 class applyhttp {
 public:
-    applyhttp(const lambda<value(const list<value>&)> url, const lambda<value(const list<value>&)> val, const perthread_ptr<http::CURLSession>& ch) : url(url), val(val), ch(ch) {
+    applyhttp(const lambda<value(const list<value>&)>& url, const lambda<value(const list<value>&)>& val, const perthread_ptr<http::CURLSession>& ch) : url(url), val(val), ch(ch) {
     }
 
     const value operator()(const list<value>& params) const {
@@ -72,16 +72,24 @@ private:
 /**
  * Create a new CURL session.
  */
-const gc_ptr<http::CURLSession> newsession() {
-    return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "");
-}
+class newsession {
+public:
+    newsession(const lambda<value(const list<value>&)>& timeout) : timeout(timeout) {
+    }
+    const gc_ptr<http::CURLSession> operator()() const {
+        const int t = atoi(c_str((string)timeout(list<value>())));
+        return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "", t);
+    }
+private:
+    const lambda<const value(const list<value>&)> timeout;
+};
 
 /**
  * Start the component.
  */
 const failable<value> start(const list<value>& params) {
     // Create a CURL session
-    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession));
+    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(caddr(params))));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyhttp(car(params), cadr(params), ch)));

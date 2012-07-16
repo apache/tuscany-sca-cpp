@@ -23,6 +23,7 @@
         
     <component name="httpget">
         <implementation.cpp path="." library="libhttpget"/>
+        <property name="timeout">0</property>
         <service name="httpget">
             <binding.http uri="httpget"/>
         </service>
@@ -31,6 +32,7 @@
 
     <component name="httppost">
         <implementation.cpp path="." library="libhttppost"/>
+        <property name="timeout">0</property>
         <service name="httppost">
             <binding.http uri="httppost"/>
         </service>
@@ -40,6 +42,7 @@
 
     <component name="httpput">
         <implementation.cpp path="." library="libhttpput"/>
+        <property name="timeout">0</property>
         <service name="httpput">
             <binding.http uri="httpput"/>
         </service>
@@ -49,6 +52,7 @@
 
     <component name="httppatch">
         <implementation.cpp path="." library="libhttppatch"/>
+        <property name="timeout">0</property>
         <service name="httppatch">
             <binding.http uri="httppatch"/>
         </service>
@@ -58,6 +62,7 @@
 
     <component name="httpdelete">
         <implementation.cpp path="." library="libhttpdelete"/>
+        <property name="timeout">0</property>
         <service name="httpdelete">
             <binding.http uri="httpdelete"/>
         </service>
