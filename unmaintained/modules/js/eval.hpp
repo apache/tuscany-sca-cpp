@@ -32,7 +32,7 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
-#include <jsapi.h>
+#include "jsapi.h"
 #ifdef WANT_MAINTAINER_WARNINGS
 #pragma GCC diagnostic warning "-Wunused-parameter"
 #pragma GCC diagnostic warning "-Wsign-compare"
@@ -65,7 +65,12 @@ public:
     JSRuntime() {
         // Create JS runtime
         debug("js::jsruntime");
-        rt = JS_NewRuntime(1L * 512L * 1024L);
+        pthread_mutex_init(&mutex, NULL);
+#ifdef WANT_THREADS
+        rt = JS_NewRuntime(32L * 1024L * 1024L);
+#else
+        rt = JS_NewRuntime(8L * 1024L * 1024L);
+#endif
         if(rt == NULL)
             cleanup();
     }
@@ -78,6 +83,16 @@ public:
         debug("js::~jsruntime");
     }
 
+    bool lock() {
+        //pthread_mutex_lock(&mutex);
+        return true;
+    }
+
+    bool unlock() {
+        //pthread_mutex_unlock(&mutex);
+        return true;
+    }
+
 private:
     bool cleanup() {
         if(rt != NULL) {
@@ -88,6 +103,7 @@ private:
         return true;
     }
 
+    pthread_mutex_t mutex;
     ::JSRuntime* rt;
 } jsRuntime;
 
@@ -110,36 +126,49 @@ perthread_ptr<JSContext> jsContext;
 class JSContext {
 public:
     JSContext() {
-        // Create JS context if necessary
         debug("js::jscontext");
+        jsRuntime.lock();
+
+        // Create JS context if necessary
         if (jsContext != NULL) {
             cx = jsContext;
+            debug(cx, "js::jscontext::beginRequest::cx");
+            JS_SetContextThread(cx);
             JS_BeginRequest(cx);
             return;
         }
-        debug("js::jsnewcontext");
+
+        debug("js::jscontext::newcontext");
         cx = JS_NewContext(jsRuntime, 8192);
-        if(cx == NULL)
+        if(cx == NULL) {
+            jsRuntime.unlock();
             return;
+        }
+        debug(cx, "js::jscontext::beginRequest::cx");
+        JS_SetContextThread(cx);
         JS_BeginRequest(cx);
 
-        JS_SetOptions(cx, JSOPTION_VAROBJFIX | JSOPTION_JIT | JSOPTION_METHODJIT);
+        JS_SetOptions(cx, JSOPTION_VAROBJFIX /*| JSOPTION_JIT | JSOPTION_METHODJIT*/);
         JS_SetVersion(cx, JSVERSION_LATEST);
         JS_SetErrorReporter(cx, reportError);
-        //JS_SetGCZeal(cx, 2);
+        JS_SetGCZeal(cx, 0);
 
         // Create global JS object
         global = JS_NewCompartmentAndGlobalObject(cx, &jsGlobalClass, NULL);
         if(global == NULL) {
+            JS_DestroyContext(cx);
+            cleanup();
+            return;
+        }
+        JS_SetGlobalObject(cx, global);
+
+        // Populate global object with the standard globals, like Object and Array
+        if(!JS_InitStandardClasses(cx, global)) {
+            JS_DestroyContext(cx);
             cleanup();
             return;
         }
 
-        // Populate global object with the standard globals, like Object and Array
-        if(!JS_InitStandardClasses(cx, global)) {
-            cleanup();
-            return;
-        }
         jsContext = cx;
     }
 
@@ -159,14 +188,23 @@ public:
 private:
     bool cleanup() {
         if(cx != NULL) {
-            JS_MaybeGC(cx);
-            JS_EndRequest(cx);
             if (cx != jsContext) {
-                debug("js::jsdestroycontext");
+                debug(cx, "js::jscontext::endrequest::cx");
+                JS_EndRequest(cx);
+                JS_ClearContextThread(cx);
+                debug(cx, "js::jscontext::destroycontext::cx");
                 JS_DestroyContext(cx);
+                jsContext = NULL;
+            } else {
+                //debug(cx, "js::jscontext::maybegc::cx");
+                //JS_MaybeGC(cx);
+                debug(cx, "js::jscontext::endrequest::cx");
+                JS_EndRequest(cx);
+                JS_ClearContextThread(cx);
             }
             cx = NULL;
         }
+        jsRuntime.unlock();
         return true;
     }
 
@@ -241,7 +279,7 @@ const value jsValToValue(const jsval& jsv, const js::JSContext& cx) {
         return value((bool)JSVAL_TO_BOOLEAN(jsv));
     }
     case JSTYPE_NUMBER: {
-        jsdouble jsd;
+        double jsd;
         JS_ValueToNumber(cx, jsv, &jsd);
         return value((double)jsd);
     }
@@ -290,15 +328,18 @@ const jsval valueToJSVal(const value& val, const js::JSContext& cx) {
         return BOOLEAN_TO_JSVAL((bool)val);
     }
     case value::Number: {
-        jsval jsv;
-        if (!JS_NewNumberValue(cx, (jsdouble)val, &jsv))
-            return DOUBLE_TO_JSVAL(0);
+        jsval jsv = DOUBLE_TO_JSVAL((double)val);
         return jsv;
     }
     case value::List: {
-        if (isJSArray(val))
-            return OBJECT_TO_JSVAL(valuesToJSElements(JS_NewArrayObject(cx, 0, NULL), val, 0, cx));
-        return OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), val, cx));
+        if (isJSArray(val)) {
+            JSObject* array = JS_NewArrayObject(cx, 0, NULL);
+            //debug(array, "js::valueToJSVal::new::array");
+            return OBJECT_TO_JSVAL(valuesToJSElements(array, val, 0, cx));
+        }
+        JSObject* child = JS_NewObject(cx, NULL, NULL, NULL);
+        //debug(child, "js::valueToJSVal::new::child");
+        return OBJECT_TO_JSVAL(valuesToJSProperties(child, val, cx));
     }
     case value::Nil: {
         return JSVAL_NULL;
@@ -334,6 +375,7 @@ JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const js::JSCo
 
             // Write a parent element
             JSObject* child = JS_NewObject(cx, NULL, NULL, NULL);
+            //debug(child, "js::valuesToJSProperties::new::child");
             jsval pv = OBJECT_TO_JSVAL(child);
             JS_SetProperty(cx, o, c_str(string(elementName(token))), &pv);
 
@@ -352,7 +394,7 @@ JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const js::JSCo
 const failable<value> evalScript(const string& s) {
     js::JSContext cx;
     jsval rval;
-    JSBool rc = JS_EvaluateScript(cx, cx.getGlobal(), c_str(s), (uintN)length(s), "eval.js", 1, &rval);
+    JSBool rc = JS_EvaluateScript(cx, cx.getGlobal(), c_str(s), (unsigned int)length(s), "eval.js", 1, &rval);
     if (rc != JS_TRUE) {
         return mkfailure<value>("Couldn't evaluate Javascript script.");
     }

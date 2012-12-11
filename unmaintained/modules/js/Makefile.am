@@ -16,30 +16,16 @@
 #  under the License.
 
 
-jsfiles = htdocs/util.js htdocs/elemutil.js htdocs/xmlutil.js htdocs/atomutil.js htdocs/jsonutil.js htdocs/scdl.js htdocs/ui.js htdocs/component.js
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/js
 
-BUILT_SOURCES = htdocs/all.js
-htdocs/all.js: ${jsfiles}
-	cat $^ >htdocs/all.js
-
-minified = htdocs/all-min.js htdocs/ui-min.css
-
-SUFFIXES = -min.html -min.js -min.css
-.html-min.html:
-	../../modules/http/minify-html $< $@
-
-.js-min.js:
-	../../modules/http/minify-js $< $@
-
-.css-min.css:
-	../../modules/http/minify-css $< $@
-
-CLEANFILES = htdocs/all.js ${minified}
-
-dist_mod_SCRIPTS = js-conf
 moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = ${minified}
-EXTRA_DIST = ${jsfiles} htdocs/ui.css
 
-dist_noinst_SCRIPTS = util-test
+js_test_SOURCES = js-test.cpp
+js_test_LDFLAGS = -ljansson 
+
+js_shell_SOURCES = js-shell.cpp
+js_shell_LDFLAGS = -ljansson 
+
+mod_PROGRAMS = js-shell
 

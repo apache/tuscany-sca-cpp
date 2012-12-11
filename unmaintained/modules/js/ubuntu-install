@@ -1,0 +1,48 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Build Mozilla Portable Runtime
+curl -OL http://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v4.8.8/src/nspr-4.8.8.tar.gz
+tar xzf nspr-4.8.8.tar.gz
+cd nspr-4.8.8/mozilla/nsprpub
+./configure --prefix=$build/nspr-4.8.8-bin --enable-64bit
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build SpiderMonkey
+sudo apt-get -y install zip unzip
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+curl -OL http://ftp.mozilla.org/pub/mozilla.org/js/js185-1.0.0.tar.gz
+tar xzf js185-1.0.0.tar.gz
+cd js-1.8.5/js/src
+export LD_RUN_PATH=$build/nspr-4.8.8-bin/lib
+./configure --prefix=$build/js-1.8.5-bin --enable-threadsafe --with-system-nspr --with-nspr-prefix=$build/nspr-4.8.8-bin
+make
+make install
+unset LD_RUN_PATH
+ln -s $build/js-1.8.5-bin/lib/libmozjs185.so $build/js-1.8.5-bin/lib/libmozjs.so
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+

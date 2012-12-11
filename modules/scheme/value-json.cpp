@@ -32,9 +32,8 @@
 namespace tuscany {
 namespace scheme {
 
-int valueJSON() {
-    const js::JSContext cx;
-    failable<list<string> > s = json::writeJSON(readValue(cin), cx);
+const int valueJSON() {
+    const failable<list<string> > s = json::writeValue(content(readValue(cin)));
     if (!hasContent(s)) {
         cerr << reason(s) << " : " << rcode(s);
         return 1;

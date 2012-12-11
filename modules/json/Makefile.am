@@ -19,7 +19,7 @@ incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/json
 
 json_test_SOURCES = json-test.cpp
-json_test_LDFLAGS = -lmozjs 
+json_test_LDFLAGS = -ljansson 
 
 noinst_PROGRAMS = json-test
 TESTS = json-test

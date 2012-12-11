@@ -1,0 +1,11 @@
+--- src/strconv.c
++++ src/strconv.c
+@@ -79,7 +79,7 @@
+     char *start, *end;
+     size_t length;
+ 
+-    ret = snprintf(buffer, size, "%.17g", value);
++    ret = snprintf(buffer, size, "%g", value);
+     if(ret < 0)
+         return -1;
+ 

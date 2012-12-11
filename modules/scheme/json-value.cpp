@@ -32,14 +32,13 @@
 namespace tuscany {
 namespace scheme {
 
-int jsonValue() {
-    const js::JSContext cx;
-    const failable<list<value> > lv = json::readJSON(streamList(cin), cx);
-    if (!hasContent(lv)) {
-        cerr << reason(lv) << " : " << rcode(lv);
+const int jsonValue() {
+    const failable<value> v = json::readValue(streamList(cin));
+    if (!hasContent(v)) {
+        cerr << reason(v) << " : " << rcode(v);
         return 1;
     }
-    cout << writeValue(content(lv));
+    write(content(writeValue(content(v))), cout);
     return 0;
 }
 

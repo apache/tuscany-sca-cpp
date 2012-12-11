@@ -26,15 +26,36 @@
 #include <assert.h>
 #include "stream.hpp"
 #include "string.hpp"
+#include "parallel.hpp"
+#include "perf.hpp"
 #include "eval.hpp"
 
 namespace tuscany {
 namespace js {
 
-bool testJSEval() {
+bool testEval() {
+    gc_scoped_pool pool;
     failable<value> v = evalScript("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
     assert(hasContent(v));
     assert(content(v) == value(5));
+    return true;
+}
+
+struct evalLoop {
+    evalLoop() {
+    }
+    const bool operator()() const {
+        failable<value> v = evalScript("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
+        assert(hasContent(v));
+        assert(content(v) == value(5));
+        return true;
+    }
+};
+
+const bool testEvalPerf() {
+    gc_scoped_pool pool;
+    const lambda<bool()> el = evalLoop();
+    cout << "JS eval test " << time(el, 5, 5) << " ms" << endl;
     return true;
 }
 
@@ -45,7 +66,8 @@ int main() {
     tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::js::testJSEval();
+    tuscany::js::testEval();
+    tuscany::js::testEvalPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 
