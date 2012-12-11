@@ -38,14 +38,14 @@ namespace sqldb {
 /**
  * Get an item from the database.
  */
-const failable<value> get(const list<value>& params, pgsql::PGSql& pg) {
+const failable<value> get(const list<value>& params, const pgsql::PGSql& pg) {
     return pgsql::get(car(params), pg);
 }
 
 /**
  * Post an item to the database.
  */
-const failable<value> post(const list<value>& params, pgsql::PGSql& pg) {
+const failable<value> post(const list<value>& params, const pgsql::PGSql& pg) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = pgsql::post(id, cadr(params), pg);
     if (!hasContent(val))
@@ -56,7 +56,7 @@ const failable<value> post(const list<value>& params, pgsql::PGSql& pg) {
 /**
  * Put an item into the database.
  */
-const failable<value> put(const list<value>& params, pgsql::PGSql& pg) {
+const failable<value> put(const list<value>& params, const pgsql::PGSql& pg) {
     const failable<bool> val = pgsql::put(car(params), cadr(params), pg);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -66,7 +66,7 @@ const failable<value> put(const list<value>& params, pgsql::PGSql& pg) {
 /**
  * Delete an item from the database.
  */
-const failable<value> del(const list<value>& params, pgsql::PGSql& pg) {
+const failable<value> del(const list<value>& params, const pgsql::PGSql& pg) {
     const failable<bool> val = pgsql::del(car(params), pg);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -74,14 +74,23 @@ const failable<value> del(const list<value>& params, pgsql::PGSql& pg) {
 }
 
 /**
- * Component implementation lambda function.
+ * Start the component.
  */
-class applySqldb {
-public:
-    applySqldb(const perthread_ptr<pgsql::PGSql>& pg) : pg(pg) {
-    }
+const failable<value> start(const list<value>& params) {
+    // Connect to the configured database and table
+    debug("sqldb::start");
+    const gc_pool cp(gc_current_pool());
+    const value conninfo = ((lvvlambda)car(params))(nilListValue);
+    const value table = ((lvvlambda)cadr(params))(nilListValue);
+    const lambda<const gc_ptr<pgsql::PGSql>()> newPGSql = [conninfo, table, cp]() -> const gc_ptr<pgsql::PGSql> {
+        debug("sqldb::newPGSql");
+        const gc_scoped_pool sp(pool(cp));
+        return new (gc_new<pgsql::PGSql>()) pgsql::PGSql(conninfo, table);
+    };
+    const perthread_ptr<pgsql::PGSql> pg = *(new (gc_new<perthread_ptr<pgsql::PGSql> >()) perthread_ptr<pgsql::PGSql>(newPGSql));
 
-    const value operator()(const list<value>& params) const {
+    // Return the component implementation lambda function
+    const lvvlambda applySqldb = [pg](const list<value>& params) -> const value {
         const value func(car(params));
         if (func == "get")
             return get(cdr(params), *pg);
@@ -92,40 +101,8 @@ public:
         if (func == "delete")
             return del(cdr(params), *pg);
         return mkfailure<value>();
-    }
-
-private:
-    const perthread_ptr<pgsql::PGSql> pg;
-};
-
-/**
- * Lambda function that creates a new database connection.
- */
-class newPGSql {
-public:
-    newPGSql(const string& conninfo, const string& table) : conninfo(conninfo), table(table) {
-    }
-
-    const gc_ptr<pgsql::PGSql> operator()() const {
-        return new (gc_new<pgsql::PGSql>()) pgsql::PGSql(conninfo, table);
-    }
-
-private:
-    const string conninfo;
-    const string table;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(unused const list<value>& params) {
-    // Connect to the configured database and table
-    const value conninfo = ((lambda<value(const list<value>&)>)car(params))(list<value>());
-    const value table = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
-    const perthread_ptr<pgsql::PGSql> pg(lambda<gc_ptr<pgsql::PGSql>()>(newPGSql(conninfo, table)));
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applySqldb(pg)));
+    };
+    return value(applySqldb);
 }
 
 }

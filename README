@@ -6,8 +6,8 @@ in C++ and integrated with the Apache HTTPD server.
 
 It supports SCA components written in C++ and Python. Experimental support
 for other programming languages is under construction. SCA bindings are
-available for the JSON-RPC, ATOMPub and RSS protocols. User signin is
-implemented using OpenID and OAuth.
+available for REST services and the JSON-RPC, ATOMPub and RSS protocols.
+User signin is implemented using OpenID and OAuth.
 
 Several useful SCA components are provided on top of the SCA runtime, which
 can be used to help assemble distributed SCA composite applications:
@@ -18,7 +18,6 @@ Constdb: fast persistent store for mostly constant data, using TinyCDB;
 Filedb: key/value persistent store, using plain files;
 Http: HTTP client, using Libcurl;
 Smtp: SMTP client, using Libcurl;
-Kvdb: fast key/value persistent store, using LevelDB;
 Log: distributed logger, using Facebook Scribe;
 Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL and PgBouncer;
@@ -78,7 +77,6 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- constdb          TinyCDB constant persistent store
  |   |   |-- filedb           Plain file persistent store
  |   |   |-- http             HTTP client
- |   |   |-- kvdb             LevelDB key/value persistent store
  |   |   |-- log              Scribe logger
  |   |   |-- queue            AMQP message queue
  |   |   |-- smtp             SMTP client
@@ -99,6 +97,7 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- macos                Automated install on Mac OS X 10.7.4
  |   |-- ubuntu               Automated install on Ubuntu 12.04
  |   |-- patches              Temporary patches to some of the dependencies
+ |   |-- unmaintained         Unmaintained or outdated modules
  |
  |-- branches                 Topic and release branches
  |

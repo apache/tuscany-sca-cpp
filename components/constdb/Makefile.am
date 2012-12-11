@@ -41,7 +41,7 @@ tinycdb_test_SOURCES = tinycdb-test.cpp
 tinycdb_test_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = constdb-test server-test
 noinst_PROGRAMS = tinycdb-test client-test

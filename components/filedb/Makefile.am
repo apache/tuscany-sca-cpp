@@ -26,15 +26,15 @@ comp_LTLIBRARIES = libfiledb.la
 noinst_DATA = libfiledb${libsuffix}
 
 libfiledb_la_SOURCES = filedb.cpp
-libfiledb_la_LDFLAGS = -lxml2 -lmozjs
+libfiledb_la_LDFLAGS = -lxml2 -ljansson
 libfiledb${libsuffix}:
 	ln -s .libs/libfiledb${libsuffix}
 
 file_test_SOURCES = file-test.cpp
-file_test_LDFLAGS = -lxml2 -lmozjs
+file_test_LDFLAGS = -lxml2 -ljansson
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = filedb-test server-test
 noinst_PROGRAMS = file-test client-test

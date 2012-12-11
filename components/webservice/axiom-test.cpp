@@ -45,11 +45,11 @@ const string customerElement =
 "<account><id>4567</id><balance>3000</balance></account>"
 "</customer>";
 
-const string echo("<ns1:echoString xmlns:ns1=\"http://ws.apache.org/axis2/services/echo\">\n"
-        " <text>Hello World!</text>\n"
+const string echo("<ns1:echoString xmlns:ns1=\"http://ws.apache.org/axis2/services/echo\">"
+        "<text>Hello World!</text>"
         "</ns1:echoString>");
 
-bool testAxiom() {
+const bool testAxiom() {
     const Axis2Context ax;
     {
         const failable<axiom_node_t*> n = stringToAxiomNode(customerElement, ax);
@@ -60,9 +60,9 @@ bool testAxiom() {
     }
     {
         const list<value> arg = mklist<value>(
-                list<value>() + "ns1:echoString"
-                + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
-                + (list<value>() + "text" + string("Hello World!")));
+                nilListValue + "ns1:echoString"
+                + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+                + (nilListValue + "text" + string("Hello World!")));
         const failable<axiom_node_t*> n = valuesToAxiomNode(arg, ax);
         assert(hasContent(n));
         const failable<const string> x = axiomNodeToString(content(n), ax);

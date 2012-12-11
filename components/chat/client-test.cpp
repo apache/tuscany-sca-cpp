@@ -45,12 +45,12 @@ const value pass2("sca2");
 const value jid3("sca3@localhost");
 const value pass3("sca3");
 
-const list<value> item = list<value>() + "content" + (list<value>() + "item" 
-    + (list<value>() + "name" + string("Apple"))
-    + (list<value>() + "price" + string("$2.99")));
-const list<value> entry = list<value>() + (list<value>() + "entry" 
-    + (list<value>() + "title" + string("item"))
-    + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+const list<value> item = nilListValue + "content" + (nilListValue + "item" 
+    + (nilListValue + "name" + string("Apple"))
+    + (nilListValue + "price" + string("$2.99")));
+const list<value> entry = nilListValue + (nilListValue + "entry" 
+    + (nilListValue + "title" + string("item"))
+    + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
     + item);
 
 worker w(2);
@@ -63,36 +63,29 @@ const failable<bool> listener(const value& from, const value& val, unused XMPPCl
     return false;
 }
 
-struct subscribe {
-    XMPPClient& xc;
-    subscribe(XMPPClient& xc) : xc(xc) {
-    }
-    const failable<bool> operator()() const {
-        const lambda<failable<bool>(const value&, const value&, XMPPClient&)> l(listener);
-        listen(l, xc);
-        return true;
-    }
-};
-
-bool testListen() {
+const bool testListen() {
     received = false;
     XMPPClient& xc = *(new (gc_new<XMPPClient>()) XMPPClient(jid3, pass3));
     const failable<bool> c = connect(xc);
     assert(hasContent(c));
-    const lambda<failable<bool>()> subs = subscribe(xc);
+    const lambda<const failable<bool>()> subs = [&xc]() -> const failable<bool> {
+        const lambda<const failable<bool>(const value&, const value&, XMPPClient&)> l(listener);
+        listen(l, xc);
+        return true;
+    };
     submit(w, subs);
     return true;
 }
 
-bool testPost() {
-    gc_scoped_pool pool;
-    http::CURLSession ch("", "", "", "", 0);
+const bool testPost() {
+    const gc_scoped_pool pool;
+    const http::CURLSession ch("", "", "", "", 0);
     const failable<value> id = http::post(entry, "http://localhost:8090/print-sender/sca2@localhost", ch);
     assert(hasContent(id));
     return true;
 }
 
-bool testReceived() {
+const bool testReceived() {
     shutdown(w);
     assert(received == true);
     return true;

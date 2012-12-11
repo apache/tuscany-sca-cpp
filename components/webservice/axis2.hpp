@@ -46,8 +46,8 @@
 #include "sstream.hpp"
 #include "list.hpp"
 #include "value.hpp"
-#include "xml.hpp"
 #include "monad.hpp"
+#include "../../modules/xml/xml.hpp"
 
 namespace tuscany {
 namespace webservice {
@@ -65,16 +65,9 @@ public:
         debug("webservice::axis2context::copy");
     }
 
-    const Axis2Context& operator=(const Axis2Context& ax) {
-        debug("webservice::axis2context::operator=");
-        if(this == &ax)
-            return *this;
-        env = ax.env;
-        owner = false;
-        return *this;
-    }
+    Axis2Context& operator=(const Axis2Context& ax) = delete;
 
-    Axis2Context(const axutil_env_t* env) : env(const_cast<axutil_env_t*>(env)), owner(false) {
+    Axis2Context(const axutil_env_t* const env) : env(const_cast<axutil_env_t*>(env)), owner(false) {
         debug("webservice::axis2context::env");
     }
 
@@ -86,13 +79,13 @@ public:
     }
 
 private:
-    axutil_env_t* env;
-    bool owner;
+    axutil_env_t* const env;
+    const bool owner;
 
-    friend const axutil_env_t* env(const Axis2Context& ax);
+    friend const axutil_env_t* const env(const Axis2Context& ax);
 };
 
-const axutil_env_t* env(const Axis2Context& ax) {
+const axutil_env_t* const env(const Axis2Context& ax) {
     return ax.env;
 }
 
@@ -109,7 +102,7 @@ const string axis2Error(const Axis2Context& ax) {
  * Convert a string to an Axiom node.
  */
 const failable<axiom_node_t*> stringToAxiomNode(const string& s, const Axis2Context& ax) {
-    axiom_node_t* node = axiom_node_create_from_buffer(env(ax), const_cast<axis2_char_t*>(c_str(s)));
+    axiom_node_t* const node = axiom_node_create_from_buffer(env(ax), const_cast<axis2_char_t*>(c_str(s)));
     if (node == NULL)
         return mkfailure<axiom_node_t*>(string("Couldn't convert XML to Axiom node: ") + axis2Error(ax));
     return node;
@@ -119,7 +112,7 @@ const failable<axiom_node_t*> stringToAxiomNode(const string& s, const Axis2Cont
  * Convert a list of values representing XML elements to an Axiom node.
  */
 const failable<axiom_node_t*> valuesToAxiomNode(const list<value>& l, const Axis2Context& ax) {
-    const failable<list<string> > xml = writeXML(valuesToElements(l), false);
+    const failable<list<string> > xml = xml::writeElements(valuesToElements(l), false);
     if (!hasContent(xml))
         return mkfailure<axiom_node_t*>(xml);
     ostringstream os;
@@ -130,8 +123,8 @@ const failable<axiom_node_t*> valuesToAxiomNode(const list<value>& l, const Axis
 /**
  * Convert an axiom node to a string.
  */
-const failable<const string> axiomNodeToString(axiom_node_t* node, const Axis2Context& ax) {
-    const char* c = axiom_node_to_string(node, env(ax));
+const failable<const string> axiomNodeToString(axiom_node_t* const node, const Axis2Context& ax) {
+    const char* const c = axiom_node_to_string(node, env(ax));
     if (c == NULL)
         return mkfailure<const string>(string("Couldn't convert Axiom node to XML: ") + axis2Error(ax));
     const string s(c);
@@ -142,12 +135,12 @@ const failable<const string> axiomNodeToString(axiom_node_t* node, const Axis2Co
 /**
  * Convert an axiom node to a list of values representing XML elements.
  */
-const failable<const list<value> > axiomNodeToValues(axiom_node_t* node, const Axis2Context& ax) {
+const failable<const list<value> > axiomNodeToValues(axiom_node_t* const node, const Axis2Context& ax) {
     const failable<const string> s = axiomNodeToString(node, ax);
     if (!hasContent(s))
         return mkfailure<const list<value> >(s);
     istringstream is(content(s));
-    const failable<const list<value> > l = readXML(streamList(is));
+    const failable<const list<value> > l = content(xml::readElements(streamList(is)));
     if (!hasContent(l))
         return l;
     return elementsToValues(content(l));
@@ -166,11 +159,11 @@ const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
     const value uri(caddr<value>(expr));
 
     // Create Axis2 client
-    axis2_svc_client_t *client = axis2_svc_client_create(env(ax), getenv("AXIS2C_HOME"));
+    axis2_svc_client_t* const client = axis2_svc_client_create(env(ax), getenv("AXIS2C_HOME"));
     if (client == NULL)
         return mkfailure<value>("Couldn't create Axis2 client: " + axis2Error(ax));
-    axis2_endpoint_ref_t *epr = axis2_endpoint_ref_create(env(ax), c_str(uri));
-    axis2_options_t *opt = axis2_options_create(env(ax));
+    axis2_endpoint_ref_t* const epr = axis2_endpoint_ref_create(env(ax), c_str(uri));
+    axis2_options_t* const opt = axis2_options_create(env(ax));
     axis2_options_set_to(opt, env(ax), epr);
     axis2_options_set_action(opt, env(ax), (const axis2_char_t*)c_str(func));
     axis2_svc_client_set_options(client, env(ax), opt);
@@ -182,7 +175,7 @@ const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
         return mkfailure<value>(req);
 
     // Call the Web service
-    axiom_node_t* res = axis2_svc_client_send_receive(client, env(ax), content(req));
+    axiom_node_t* const res = axis2_svc_client_send_receive(client, env(ax), content(req));
     if (res == NULL) {
         axis2_svc_client_free(client, env(ax));
         return mkfailure<value>("Couldn't invoke Axis2 service: " + axis2Error(ax));

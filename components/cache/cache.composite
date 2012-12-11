@@ -81,7 +81,7 @@
         <service name="selector">
             <binding.http uri="selector"/>
         </service>
-    </component>     
+    </component>
 
     <component name="partition1">
         <implementation.scheme script="partition1-test.scm"/>

@@ -48,10 +48,10 @@ pgsql_standby_test_SOURCES = pgsql-standby-test.cpp
 pgsql_standby_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = sqldb-test standby-test server-test
 noinst_PROGRAMS = pgsql-test pgsql-standby-test client-test
-TESTS = sqldb-test standby-test server-test
+TESTS = sqldb-test server-test
 
 endif

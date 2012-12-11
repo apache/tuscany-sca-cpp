@@ -74,21 +74,11 @@ public:
         init(host, port);
     }
 
-    Scribe(const Scribe& c) : owner(false) {
+    Scribe(const Scribe& c) : owner(false), client(c.client), transport(c.transport) {
         debug("scribe::scribe::copy");
-        client = c.client;
-        transport = c.transport;
     }
     
-    const Scribe& operator=(const Scribe& c) {
-        debug("scribe::scribe::operator=");
-        if(this == &c)
-            return *this;
-        owner = false;
-        client = c.client;
-        transport = c.transport;
-        return *this;
-    }
+    Scribe& operator=(const Scribe& c) = delete;
 
     ~Scribe() {
         if (!owner)
@@ -102,7 +92,7 @@ public:
     }
 
 private:
-    bool owner;
+    const bool owner;
     ::scribe::thrift::scribeClient* client;
     boost::shared_ptr<apache::thrift::transport::TTransport> transport;
 
@@ -135,8 +125,8 @@ const failable<bool> log(const value& val, const string& host, const value& cate
     debug(category, "scribe::log::category");
 
     const value cat = isString(category)? value(c_str(category)):category;
-    const string cs(scheme::writeValue(cat));
-    const string vs(scheme::writeValue(val));
+    const string cs(write(content(scheme::writeValue(cat))));
+    const string vs(write(content(scheme::writeValue(val))));
     ostringstream os;
     os << "[" << host << "] " << vs;
 
@@ -147,8 +137,8 @@ const failable<bool> log(const value& val, const string& host, const value& cate
         std::vector< ::scribe::thrift::LogEntry> msgs;
         msgs.push_back(entry);
 
-        int result = sc.client->Log(msgs);
-        if (result != ::scribe::thrift::OK)
+        const int result = sc.client->Log(msgs);
+        if (result != ::scribe::thrift::ResultCode::OK)
             return mkfailure<bool>("Could not log value, retry later");
     } catch (const std::exception& e) {
         return mkfailure<bool>(e.what());
@@ -165,24 +155,24 @@ const failable<string> status(const Scribe& sc) {
     debug("scribe::status");
 
     try {
-        ::facebook::fb303::fb_status s = sc.client->getStatus();
+        ::facebook::fb303::fb_status::type s = sc.client->getStatus();
         switch(s) {
-        case ::facebook::fb303::DEAD:
+        case ::facebook::fb303::fb_status::DEAD:
             debug("DEAD", "scribe::status::result");
             return string("DEAD");
-        case ::facebook::fb303::STARTING:
+        case ::facebook::fb303::fb_status::STARTING:
             debug("STARTING", "scribe::status::result");
             return string("STARTING");
-        case ::facebook::fb303::ALIVE:
+        case ::facebook::fb303::fb_status::ALIVE:
             debug("ALIVE", "scribe::status::result");
             return string("ALIVE");
-        case ::facebook::fb303::STOPPING:
+        case ::facebook::fb303::fb_status::STOPPING:
             debug("STOPPING", "scribe::status::result");
             return string("STOPPING");
-        case ::facebook::fb303::STOPPED:
+        case ::facebook::fb303::fb_status::STOPPED:
             debug("STOPPED", "scribe::status::result");
             return string("STOPPED");
-        case ::facebook::fb303::WARNING:
+        case ::facebook::fb303::fb_status::WARNING:
             debug("WARNING", "scribe::status::result");
             return string("WARNING");
         }

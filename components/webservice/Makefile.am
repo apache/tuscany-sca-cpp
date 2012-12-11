@@ -62,10 +62,11 @@ axis2_test_SOURCES = axis2-test.cpp
 axis2_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
 
 dist_noinst_SCRIPTS = echo-test server-test
 noinst_PROGRAMS = axiom-test axis2-test client-test
-TESTS = axiom-test echo-test server-test
+#TESTS = axiom-test echo-test server-test
+TESTS = axiom-test
 
 endif

@@ -51,45 +51,38 @@ const failable<value> post(const list<value>& params, XMPPClient& xc) {
 }
 
 /**
- * Subscribe and listen to an XMPP session.
+ * Start the component.
  */
-class noop {
-public:
-    noop() {
-    }
+const failable<value> start(const list<value>& params) {
+    // Extract the the XMPP JID and password
+    const list<value> props = params;
+    const value jid = ((lvvlambda)car(props))(nilListValue);
+    const value pass = ((lvvlambda)cadr(props))(nilListValue);
 
-    const failable<bool> operator()(unused const value& jid, unused const value& val, unused XMPPClient& xc) const {
-        return true;
-    }
-};
+    // Create an XMPP client session
+    XMPPClient xc(jid, pass, false);
+    const failable<bool> r = connect(xc);
+    if (!hasContent(r))
+        return mkfailure<value>(r);
 
-class subscribe {
-public:
-    subscribe(XMPPClient& xc) : xc(xc) {
-    }
-
-    const failable<bool> operator()() const {
-        gc_pool pool;
+    // Subscribe and listen to XMPP session
+    const lambda<const failable<bool>()> subscribe = [xc]() -> const failable<bool> {
+        const gc_pool pool;
         debug("chat::subscribe::listen");
-        const failable<bool> r = listen(noop(), const_cast<XMPPClient&>(xc));
+        const lambda<const failable<bool>(const value&, const value&, XMPPClient&)> noop = [](unused const value& jid, unused const value& val, unused XMPPClient& xc) -> const failable<bool> {
+            return true;
+        };
+        const failable<bool> r = listen(noop, const_cast<XMPPClient&>(xc));
         debug("chat::subscribe::stopped");
         return r;
-    }
+    };
 
-private:
-    const lambda<failable<bool>(const value&, const value&, XMPPClient&)> l;
-    XMPPClient xc;
-};
+    // Listen and relay messages in a worker thread
+    worker w(3);
+    submit<failable<bool> >(w, subscribe);
 
-/**
- * Chatter component lambda function
- */
-class chatSender {
-public:
-    chatSender(XMPPClient& xc, worker& w) : xc(xc), w(w) {
-    }
-
-    const value operator()(const list<value>& params) const {
+    // Return the chat sender component lambda function
+    const lvvlambda chatSender = [xc, w](const list<value>& params) -> const value {
         const tuscany::value func(car(params));
         if (func == "post")
             return post(cdr(params), const_cast<XMPPClient&>(xc));
@@ -104,35 +97,9 @@ public:
         cancel(const_cast<worker&>(w));
         debug("chat::sender::stopped");
 
-        return failable<value>(value(lambda<value(const list<value>&)>()));
-    }
-
-private:
-    const XMPPClient xc;
-    worker w;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Extract the the XMPP JID and password
-    const list<value> props = params;
-    const value jid = ((lambda<value(const list<value>&)>)car(props))(list<value>());
-    const value pass = ((lambda<value(const list<value>&)>)cadr(props))(list<value>());
-
-    // Create an XMPP client session
-    XMPPClient xc(jid, pass, false);
-    const failable<bool> r = connect(xc);
-    if (!hasContent(r))
-        return mkfailure<value>(r);
-
-    // Listen and relay messages in a worker thread
-    worker w(3);
-    submit<failable<bool> >(w, lambda<failable<bool>()>(subscribe(xc)));
-
-    // Return the chat sender component lambda function
-    return value(lambda<value(const list<value>&)>(chatSender(xc, w)));
+        return failable<value>(value(lvvlambda()));
+    };
+    return value(chatSender);
 }
 
 }

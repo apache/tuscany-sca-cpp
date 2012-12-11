@@ -46,15 +46,15 @@ namespace queue {
 const value key(mklist<value>(string("report")));
 const string qname("reportq");
 
-const list<value> item = list<value>() + "content" + (list<value>() + "item" 
-    + (list<value>() + "name" + string("Apple"))
-    + (list<value>() + "price" + string("$2.99")));
-const list<value> entry = list<value>() + (list<value>() + "entry" 
-    + (list<value>() + "title" + string("item"))
-    + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+const list<value> item = nilListValue + "content" + (nilListValue + "item" 
+    + (nilListValue + "name" + string("Apple"))
+    + (nilListValue + "price" + string("$2.99")));
+const list<value> entry = nilListValue + (nilListValue + "entry" 
+    + (nilListValue + "title" + string("item"))
+    + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
     + item);
 
-bool testDeclareQueue() {
+const bool testDeclareQueue() {
     QpidConnection qc;
     QpidSession qs(qc);
     const failable<bool> r = declareQueue(key, qname, qs);
@@ -69,18 +69,18 @@ const bool listener(const value& k, const value& v) {
     return false;
 }
 
-bool testListen() {
+const bool testListen() {
     QpidConnection qc;
     QpidSession qs(qc);
     QpidSubscription qsub(qs);
-    const lambda<bool(const value&, const value&)> l(listener);
+    const lambda<const bool(const value&, const value&)> l(listener);
     listen(qname, l, qsub);
     return true;
 }
 
-bool testPost() {
-    gc_scoped_pool pool;
-    http::CURLSession ch("", "", "", "");
+const bool testPost() {
+    const gc_scoped_pool pool;
+    const http::CURLSession ch("", "", "", "", 0);
     const failable<value> id = http::post(entry, "http://localhost:8090/print-sender", ch);
     assert(hasContent(id));
     return true;

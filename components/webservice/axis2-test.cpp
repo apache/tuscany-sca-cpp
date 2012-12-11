@@ -36,22 +36,23 @@
 namespace tuscany {
 namespace webservice {
 
-bool testEval() {
+const bool testEval() {
     const Axis2Context ax;
 
     const value func = "http://ws.apache.org/axis2/c/samples/echoString";
     const list<value> arg = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (nilListValue + "text" + string("Hello World!")));
 
     const failable<value> rval = evalExpr(mklist<value>(func, arg, string("http://localhost:9090/axis2/services/echo")), ax);
     assert(hasContent(rval));
 
     const list<value> r = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
+            + (nilListValue + "text" + string("Hello World!")));
+    cerr << content(rval) << endl;
     assert(content(rval) == r);
 
     return true;

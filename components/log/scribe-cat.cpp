@@ -36,14 +36,14 @@
 namespace tuscany {
 namespace scribecat {
 
-int cat(const string& host, const string& category, const string& type) {
+const int cat(const string& host, const string& category, const string& type) {
     // Connect to Scribe
     scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe(host, 1464));
 
     // Read lines from stdin and log them
     char buf[8193];
     for (;;) {
-        gc_scoped_pool p;
+        const gc_scoped_pool p;
 
         // Write line prefix
         ostringstream os;
@@ -54,7 +54,7 @@ int cat(const string& host, const string& category, const string& type) {
         strcpy(buf, c_str(prefix));
 
         // Read log line
-        const char* s = fgets(buf + pl, 8192 - pl, stdin);
+        const char* const s = fgets(buf + pl, 8192 - pl, stdin);
         if (s == NULL)
             return 0;
 
@@ -73,7 +73,7 @@ int cat(const string& host, const string& category, const string& type) {
 }
 }
 
-int main(const int argc, const char** argv) {
+int main(const int argc, const char** const argv) {
     return tuscany::scribecat::cat(argc < 2? "localhost" : argv[1], argc < 3? "default" : argv[2], argc < 4? "" : argv[3]);
 }
 

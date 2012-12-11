@@ -41,7 +41,7 @@ namespace sender {
 /**
  * Post an item to an XMPP JID.
  */
-const failable<value> post(const lambda<value(const list<value>&)>& jid, const lambda<value(const list<value>&)>& pass, const lambda<value(const list<value>&)>& to, const lambda<value(const list<value>&)>& msg, const list<value>& params) {
+const failable<value> post(const lvvlambda& jid, const lvvlambda& pass, const lvvlambda& to, const lvvlambda& msg, const list<value>& params) {
 
     const value vjid = jid(mklist<value>("get", params));
     const value vpass = pass(mklist<value>("get", params));
@@ -65,14 +65,16 @@ const failable<value> post(const lambda<value(const list<value>&)>& jid, const l
 }
 
 /**
- * Chat sender component lambda function
+ * Start the component.
  */
-class chatSender {
-public:
-    chatSender(const lambda<value(const list<value>&)>& jid, const lambda<value(const list<value>&)>& pass, const lambda<value(const list<value>&)>& to, const lambda<value(const list<value>&)>& msg) : jid(jid), pass(pass), to(to), msg(msg) {
-    }
+const failable<value> start(const list<value>& params) {
 
-    const value operator()(const list<value>& params) const {
+    // Return the chat sender component lambda function
+    const lvvlambda jid = car(params);
+    const lvvlambda pass = cadr(params);
+    const lvvlambda to = caddr(params);
+    const lvvlambda msg = cadddr(params);
+    const lvvlambda sender = [jid, pass, to, msg](const list<value>& params) -> const value {
         const tuscany::value func(car(params));
         if (func == "get")
             return post(jid, pass, to, msg, cdr(params));
@@ -81,23 +83,9 @@ public:
         if (func != "stop")
             return mkfailure<value>();
         debug("chat::sender::stop");
-        return failable<value>(value(lambda<value(const list<value>&)>()));
-    }
-
-private:
-    const lambda<value(const list<value>&)> jid;
-    const lambda<value(const list<value>&)> pass;
-    const lambda<value(const list<value>&)> to;
-    const lambda<value(const list<value>&)> msg;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-
-    // Return the chat sender component lambda function
-    return value(lambda<value(const list<value>&)>(chatSender(car(params), cadr(params), caddr(params), cadddr(params))));
+        return failable<value>(value(lvvlambda()));
+    };
+    return value(sender);
 }
 
 }

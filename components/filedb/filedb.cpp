@@ -37,14 +37,14 @@ namespace filedb {
 /**
  * Get an item from the database.
  */
-const failable<value> get(const list<value>& params, filedb::FileDB& db) {
+const failable<value> get(const list<value>& params, const filedb::FileDB& db) {
     return filedb::get(car(params), db);
 }
 
 /**
  * Post an item to the database.
  */
-const failable<value> post(const list<value>& params, filedb::FileDB& db) {
+const failable<value> post(const list<value>& params, const filedb::FileDB& db) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = filedb::post(id, cadr(params), db);
     if (!hasContent(val))
@@ -55,7 +55,7 @@ const failable<value> post(const list<value>& params, filedb::FileDB& db) {
 /**
  * Put an item into the database.
  */
-const failable<value> put(const list<value>& params, filedb::FileDB& db) {
+const failable<value> put(const list<value>& params, const filedb::FileDB& db) {
     const failable<bool> val = filedb::put(car(params), cadr(params), db);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -65,7 +65,7 @@ const failable<value> put(const list<value>& params, filedb::FileDB& db) {
 /**
  * Delete an item from the database.
  */
-const failable<value> del(const list<value>& params, filedb::FileDB& db) {
+const failable<value> del(const list<value>& params, const filedb::FileDB& db) {
     const failable<bool> val = filedb::del(car(params), db);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -73,14 +73,17 @@ const failable<value> del(const list<value>& params, filedb::FileDB& db) {
 }
 
 /**
- * Component implementation lambda function.
+ * Start the component.
  */
-class applyfiledb {
-public:
-    applyfiledb(filedb::FileDB& db) : db(db) {
-    }
+const failable<value> start(const list<value>& params) {
+    // Connect to the configured database and table
+    const value dbname = ((lvvlambda)car(params))(nilListValue);
+    const value format = ((lvvlambda)cadr(params))(nilListValue);
 
-    const value operator()(const list<value>& params) const {
+    const filedb::FileDB& db = *(new (gc_new<filedb::FileDB>()) filedb::FileDB(absdbname(dbname), format));
+
+    // Return the component implementation lambda function
+    const lvvlambda applyfiledb = [db](const list<value>& params) -> const value {
         const value func(car(params));
         if (func == "get")
             return get(cdr(params), db);
@@ -91,24 +94,8 @@ public:
         if (func == "delete")
             return del(cdr(params), db);
         return mkfailure<value>();
-    }
-
-private:
-    filedb::FileDB& db;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Connect to the configured database and table
-    const value dbname = ((lambda<value(const list<value>&)>)car(params))(list<value>());
-    const value format = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
-
-    filedb::FileDB& db = *(new (gc_new<filedb::FileDB>()) filedb::FileDB(absdbname(dbname), format));
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyfiledb(db)));
+    };
+    return value(applyfiledb);
 }
 
 }

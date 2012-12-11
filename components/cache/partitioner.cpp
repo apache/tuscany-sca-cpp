@@ -22,7 +22,7 @@
 /**
  * A partitioner component implementation which forwards data access requests to a
  * dynamically selected data store component. The selection is externalized, performed
- * by a selector component, responsible for selecting the target data store given the
+ * by a selector component, responsible for selecting the target data stores given the
  * data access request key and a list of references to available data store components.
  * This pattern can be used for sharding or load balancing for example.
  */
@@ -38,54 +38,89 @@ namespace tuscany {
 namespace partitioner {
 
 /**
- * Return the target partition for a key.
+ * Return a list of target partitions for a key.
  */
-const failable<lambda<value(const list<value>&)> > partition(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
+const failable<list<value> > partition(const value& key, const lvvlambda& selector, const list<value>& partitions) {
 
-    // Call the selector component to convert the given key to a partition number
+    // Call the selector component to convert the given key to a list of partitions
     const value p = selector(mklist<value>("get", key, partitions));
     if (isNil(p)) {
         ostringstream os;
-        os << "Couldn't get partition number: " << key;
-        return mkfailure<lambda<value(const list<value>&)> >(str(os), -1, false);
+        os << "Couldn't get partition: " << key;
+        return mkfailure<list<value> >(str(os), -1, false);
     }
-    return (const lambda<value(const list<value>&)>)p;
+    return (list<value>)p;
+}
+
+
+/**
+ * Get lists of items from a list of partitions.
+ */
+const failable<list<value> > getlist(const value& key, const list<value>& partitions) {
+    if (isNil(partitions))
+        return nilListValue;
+
+    const lvvlambda l = car(partitions);
+    const value val = l(mklist<value>("get", key));
+    if (isNil(val))
+        return getlist(key, cdr(partitions));
+    if (!isList(val)) {
+        ostringstream os;
+        os << "Couldn't get list of entries from partition: " << key;
+        return mkfailure<list<value> >(str(os), 500, false);
+    }
+
+    const failable<list<value> > cdrval = getlist(key, cdr(partitions));
+    if (!hasContent(cdrval))
+        return cdrval;
+
+    return append<value>((list<value>)val, content(cdrval));
 }
 
 /**
  * Get an item from a partition.
  */
-const failable<value> get(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
+const failable<value> get(const value& key, const lvvlambda& selector, const list<value>& partitions) {
 
     // Select partition
-    const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
-    if (!hasContent(p))
-        return mkfailure<value>(p);
+    const failable<list<value> > fp = partition(key, selector, partitions);
+    if (!hasContent(fp))
+        return mkfailure<value>(fp);
+    const list<value> p = content(fp);
 
-    // Get from selected partition
-    const value val = content(p)(mklist<value>("get", key));
-    if (isNil(val)) {
-        ostringstream os;
-        os << "Couldn't get entry from partition: " << key;
-        return mkfailure<value>(str(os), 404, false);
+    // Get a single item from the selected partition
+    if (length(p) == 1) {
+        const lvvlambda l = car(p);
+        const value val = l(mklist<value>("get", key));
+        if (isNil(val)) {
+            ostringstream os;
+            os << "Couldn't get entry from partition: " << key;
+            return mkfailure<value>(str(os), 404, false);
+        }
+        return val;
     }
 
-    return val;
+    // Get list of items from the list of selected partitions
+    const failable<list<value> > val = getlist(key, p);
+    if (!hasContent(val))
+        return mkfailure<value>(val);
+    return (value)content(val);
 }
 
 /**
  * Post an item to a partition.
  */
-const failable<value> post(const value& key, const value& val, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
+const failable<value> post(const value& key, const value& val, const lvvlambda& selector, const list<value>& partitions) {
     const value id = append<value>(key, mklist(mkuuid()));
 
     // Select partition
-    const failable<lambda<value(const list<value>&)> > p = partition(id, selector, partitions);
+    const failable<list<value> > p = partition(id, selector, partitions);
     if (!hasContent(p))
         return mkfailure<value>(p);
 
     // Put into select partition
-    content(p)(mklist<value>("put", id, val));
+    const lvvlambda l = car(content(p));
+    l(mklist<value>("post", id, val));
 
     return id;
 }
@@ -93,33 +128,35 @@ const failable<value> post(const value& key, const value& val, const lambda<valu
 /**
  * Put an item into a partition.
  */
-const failable<value> put(const value& key, const value& val, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
+const failable<value> put(const value& key, const value& val, const lvvlambda& selector, const list<value>& partitions) {
 
     // Select partition
-    const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
+    const failable<list<value> > p = partition(key, selector, partitions);
     if (!hasContent(p))
         return mkfailure<value>(p);
 
     // Put into selected partition
-    content(p)(mklist<value>("put", key, val));
+    const lvvlambda l = car(content(p));
+    l(mklist<value>("put", key, val));
 
-    return value(true);
+    return trueValue;
 }
 
 /**
  * Delete an item from a partition.
  */
-const failable<value> del(const value& key, const lambda<value(const list<value>&)>& selector, const list<value>& partitions) {
+const failable<value> del(const value& key, const lvvlambda& selector, const list<value>& partitions) {
 
     // Select partition
-    const failable<lambda<value(const list<value>&)> > p = partition(key, selector, partitions);
+    const failable<list<value> > p = partition(key, selector, partitions);
     if (!hasContent(p))
         return mkfailure<value>(p);
 
     // Delete from selected partition
-    content(p)(mklist<value>("delete", key));
+    const lvvlambda l = car(content(p));
+    l(mklist<value>("delete", key));
 
-    return value(true);
+    return trueValue;
 }
 
 }

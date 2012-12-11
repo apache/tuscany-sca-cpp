@@ -48,7 +48,7 @@ qpid_test_SOURCES = qpid-test.cpp
 qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
 
 dist_noinst_SCRIPTS = send-test server-test
 noinst_PROGRAMS = qpid-test client-test

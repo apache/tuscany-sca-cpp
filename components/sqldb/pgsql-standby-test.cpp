@@ -32,7 +32,7 @@
 namespace tuscany {
 namespace pgsql {
 
-bool testPGSql() {
+const bool testPGSql() {
     PGSql wpg("host=localhost port=6432 dbname=db", "test");
     PGSql rpg("host=localhost port=6433 dbname=db", "test");
     const value k = mklist<value>("a");
@@ -50,25 +50,17 @@ bool testPGSql() {
     return true;
 }
 
-struct getLoop {
-    const value k;
-    PGSql& pg;
-    getLoop(const value& k, PGSql& pg) : k(k), pg(pg) {
-    }
-    const bool operator()() const {
-        assert((get(k, pg)) == value(string("CCC")));
-        return true;
-    }
-};
-
-bool testGetPerf() {
+const bool testGetPerf() {
     const value k = mklist<value>("c");
     PGSql wpg("host=localhost port=6432 dbname=db", "test");
     PGSql rpg("host=localhost port=6433 dbname=db", "test");
     assert(hasContent(post(k, string("CCC"), wpg)));
     sleep(1);
 
-    const lambda<bool()> gl = getLoop(k, rpg);
+    const blambda gl = [k, rpg]() -> const bool {
+        assert((get(k, rpg)) == value(string("CCC")));
+        return true;
+    };
     cout << "PGSql get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }

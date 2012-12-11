@@ -33,6 +33,7 @@ EOF
 
 axis2_prefix=`cat axis2c.prefix`
 export AXIS2C_HOME=$axis2_prefix
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$axis2_prefix/lib
 axis2="$axis2_prefix/bin/axis2_http_server"
 pwd=`pwd`
 cd "$axis2_prefix/bin"

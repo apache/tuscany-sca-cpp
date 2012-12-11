@@ -70,7 +70,7 @@ scribe_status_SOURCES = scribe-status.cpp
 scribe_status_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = scribe-test server-test
 noinst_PROGRAMS = client-test

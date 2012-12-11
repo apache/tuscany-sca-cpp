@@ -65,14 +65,7 @@ public:
         debug("queue::qpidonnection::copy");
     }
 
-    const QpidConnection& operator=(const QpidConnection& qc) {
-        debug("queue::qpidonnection::operator=");
-        if(this == &c)
-            return *this;
-        owner = false;
-        c = qc.c;
-        return *this;
-    }
+    QpidConnection& operator=(const QpidConnection& qc) = delete;
 
     ~QpidConnection() {
         debug("queue::~qpidonnection");
@@ -148,7 +141,7 @@ const failable<bool> close(QpidSession& qs) {
  * Declare a key / AMQP queue pair.
  */
 const failable<bool> declareQueue(const value& key, const string& name, QpidSession& qs) {
-    const string ks(scheme::writeValue(key));
+    const string ks(write(content(scheme::writeValue(key))));
     try {
         qs.s.queueDeclare(qpid::client::arg::queue=c_str(name));
         qs.s.exchangeBind(qpid::client::arg::exchange="amq.direct", qpid::client::arg::queue=c_str(name), qpid::client::arg::bindingKey=c_str(ks));
@@ -164,8 +157,8 @@ const failable<bool> declareQueue(const value& key, const string& name, QpidSess
 const failable<bool> post(const value& key, const value& val, QpidSession& qs) {
 
     // Send in a message with the given key.
-    const string ks(scheme::writeValue(key));
-    const string vs(scheme::writeValue(val));
+    const string ks(write(content(scheme::writeValue(key))));
+    const string vs(write(content(scheme::writeValue(val))));
     try {
         qpid::client::Message message;
         message.getDeliveryProperties().setRoutingKey(c_str(ks));
@@ -202,7 +195,7 @@ public:
     }
 
 private:
-    friend const failable<bool> listen(const string& name, const lambda<bool(const value&, const value&)>& l, QpidSubscription& qsub);
+    friend const failable<bool> listen(const string& name, const lambda<const bool(const value&, const value&)>& l, QpidSubscription& qsub);
     friend const failable<bool> stop(QpidSubscription& qsub);
 
     const bool owner;
@@ -214,14 +207,14 @@ private:
  */
 class Listener : public qpid::client::MessageListener {
 public:
-    Listener(const lambda<bool(const value&, const value&)> l, qpid::client::SubscriptionManager& subs) : l(l), subs(subs) {
+    Listener(const lambda<const bool(const value&, const value&)> l, qpid::client::SubscriptionManager& subs) : l(l), subs(subs) {
     }
 
     virtual void received(qpid::client::Message& msg) {
 
         // Call the listener function
-        const value k(scheme::readValue(msg.getDeliveryProperties().getRoutingKey().c_str()));
-        const value v(scheme::readValue(msg.getData().c_str()));
+        const value k(content(scheme::readValue(msg.getDeliveryProperties().getRoutingKey().c_str())));
+        const value v(content(scheme::readValue(msg.getData().c_str())));
         const bool r = l(k, v);
         if (!r) {
             try {
@@ -233,12 +226,12 @@ public:
     }
 
 private:
-    const lambda<bool(const value&, const value&)> l;
+    const lambda<const bool(const value&, const value&)> l;
     qpid::client::SubscriptionManager& subs;
 };
 
 
-const failable<bool> listen(const string& name, const lambda<bool(const value&, const value&)>& l, QpidSubscription& qsub) {
+const failable<bool> listen(const string& name, const lambda<const bool(const value&, const value&)>& l, QpidSubscription& qsub) {
     debug("queue::listen");
     Listener listener(l, qsub.subs);
     try {

@@ -42,10 +42,10 @@ const failable<value> apply(const value& func, const list<value>& params) {
 
     // Extract parameters
     const value doc = car<value>(params);
-    const lambda<value(const list<value>&)> l = cadr<value>(params);
+    const lvvlambda l = cadr<value>(params);
 
     // Call the URI property lambda function to get the configured URI
-    const value uri = l(list<value>());
+    const value uri = l(nilListValue);
 
     // Evaluate using Axis2
     return evalExpr(mklist<value>(func, doc, uri), ax);

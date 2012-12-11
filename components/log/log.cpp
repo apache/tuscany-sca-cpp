@@ -38,7 +38,7 @@ namespace log {
 /**
  * Post an item to the Scribe log.
  */
-const failable<value> post(const list<value>& params, const value& host, const value& category, scribe::Scribe& sc) {
+const failable<value> post(const list<value>& params, const value& host, const value& category, const scribe::Scribe& sc) {
     debug(cadr(params), "log::post::value");
     const failable<bool> val = scribe::log(cadr(params), host, category, sc);
     if (!hasContent(val))
@@ -47,41 +47,26 @@ const failable<value> post(const list<value>& params, const value& host, const v
 }
 
 /**
- * Component implementation lambda function.
- */
-class applyLog {
-public:
-    applyLog(const value& host, const value& category, scribe::Scribe& sc) : host(host), category(category), sc(sc) {
-    }
-
-    const value operator()(const list<value>& params) const {
-        const value func(car(params));
-        if (func == "post")
-            return post(cdr(params), host, category, sc);
-        return mkfailure<value>();
-    }
-
-private:
-    const value host;
-    const value category;
-    scribe::Scribe& sc;
-};
-
-/**
  * Start the component.
  */
 const failable<value> start(const list<value>& params) {
     // Connect to Scribe
-    scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
+    const scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
 
     // Extract the configured category
-    const value host = ((lambda<value(const list<value>&)>)car(params))(list<value>());
-    const value category = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
+    const value host = ((lvvlambda)car(params))(nilListValue);
+    const value category = ((lvvlambda)cadr(params))(nilListValue);
     debug(host, "log::start::host");
     debug(category, "log::start::category");
 
     // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyLog(host, category, sc)));
+    const lvvlambda applyLog = [host, category, sc](const list<value>& params) -> const value {
+        const value func(car(params));
+        if (func == "post")
+            return post(cdr(params), host, category, sc);
+        return mkfailure<value>();
+    };
+    return value(applyLog);
 }
 
 }

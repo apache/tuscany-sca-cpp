@@ -17,5 +17,5 @@
 
 ; Partition selector test case
 
-(define (get key partitions) (if (= (car key) "a") (car partitions) (cadr partitions)))
+(define (get key partitions) (if (= (car key) "a") (list (car partitions)) (list (cadr partitions))))
 

@@ -33,7 +33,7 @@ namespace tuscany {
 namespace memcache {
 
 bool testMemCached() {
-    MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
+    const MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), ch)));
@@ -46,24 +46,16 @@ bool testMemCached() {
     return true;
 }
 
-struct getLoop {
-    const value k;
-    MemCached& ch;
-    getLoop(const value& k, MemCached& ch) : k(k), ch(ch) {
-    }
-    const bool operator()() const {
-        gc_scoped_pool p;
-        assert(get(k, ch) == value(string("CCC")));
-        return true;
-    }
-};
-
-bool testGetPerf() {
+const bool testGetPerf() {
     const value k = mklist<value>("c");
-    MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
+    const MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
     assert(hasContent(post(k, string("CCC"), ch)));
 
-    const lambda<bool()> gl = getLoop(k, ch);
+    const blambda gl = [k, ch]() -> const bool {
+        const gc_scoped_pool p;
+        assert(get(k, ch) == value(string("CCC")));
+        return true;
+    };
     cout << "Memcached get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }
@@ -72,7 +64,7 @@ bool testGetPerf() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::memcache::testMemCached();

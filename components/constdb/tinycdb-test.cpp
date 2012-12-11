@@ -32,8 +32,8 @@
 namespace tuscany {
 namespace tinycdb {
 
-bool testTinyCDB() {
-    TinyCDB cdb("tmp/test.cdb");
+const bool testTinyCDB() {
+    const TinyCDB cdb("tmp/test.cdb");
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), cdb)));
@@ -46,23 +46,15 @@ bool testTinyCDB() {
     return true;
 }
 
-struct getLoop {
-    const value k;
-    TinyCDB& cdb;
-    getLoop(const value& k, TinyCDB& cdb) : k(k), cdb(cdb) {
-    }
-    const bool operator()() const {
-        assert((get(k, cdb)) == value(string("CCC")));
-        return true;
-    }
-};
-
-bool testGetPerf() {
+const bool testGetPerf() {
     const value k = mklist<value>("c");
-    TinyCDB cdb("tmp/test.cdb");
+    const TinyCDB cdb("tmp/test.cdb");
     assert(hasContent(post(k, string("CCC"), cdb)));
 
-    const lambda<bool()> gl = getLoop(k, cdb);
+    const blambda gl = [k, cdb]() -> const bool {
+        assert((get(k, cdb)) == value(string("CCC")));
+        return true;
+    };
     cout << "TinyCDB get test " << time(gl, 5, 100000) << " ms" << endl;
     return true;
 }

@@ -51,56 +51,46 @@ const failable<value> post(const list<value>& params, XMPPClient& xc) {
 }
 
 /**
- * A relay function that posts the XMPP messages it receives to a relay component reference.
+ * Start the component.
  */
-class relay {
-public:
-    relay(const lambda<value(const list<value>&)>& rel) : rel(rel) {
-    }
+const failable<value> start(const list<value>& params) {
+    // Extract the relay reference and the XMPP JID and password
+    const bool hasRelay = !isNil(cddr(params));
+    const lvvlambda rel = hasRelay? (lvvlambda)car(params) : lvvlambda();
+    const list<value> props = hasRelay? cdr(params) : params;
+    const value jid = ((lvvlambda)car(props))(nilListValue);
+    const value pass = ((lvvlambda)cadr(props))(nilListValue);
 
-    const failable<bool> operator()(const value& jid, const value& val, unused XMPPClient& xc) const {
+    // Create an XMPP client session
+    XMPPClient xc(jid, pass, false);
+    const failable<bool> r = connect(xc);
+    if (!hasContent(r))
+        return mkfailure<value>(r);
+
+    // Listen and relay messages in a worker thread
+    worker w(3);
+    const lambda<const failable<bool>(const value&, const value&, XMPPClient&)> rl = [rel](const value& jid, const value& val, unused XMPPClient& xc) -> const failable<bool> {
+        // A relay function that posts the XMPP messages it receives to a relay component reference.
         if (isNil(rel))
             return true;
         debug(jid, "chat::relay::jid");
         debug(val, "chat::relay::value");
         const value res = rel(mklist<value>("post", mklist<value>(jid), val));
         return true;
-    }
+    };
 
-private:
-    const lambda<value(const list<value>&)> rel;
-};
-
-/**
- * Subscribe and listen to an XMPP session.
- */
-class subscribe {
-public:
-    subscribe(const lambda<failable<bool>(const value&, const value&, XMPPClient&)>& l, XMPPClient& xc) : l(l), xc(xc) {
-    }
-
-    const failable<bool> operator()() const {
-        gc_pool pool;
+    // Subscribe and listen to the XMPP session.
+    const lambda<const failable<bool>()> subscribe = [rl, xc]() -> const failable<bool> {
+        const gc_pool pool;
         debug("chat::subscribe::listen");
-        const failable<bool> r = listen(l, const_cast<XMPPClient&>(xc));
+        const failable<bool> r = listen(rl, const_cast<XMPPClient&>(xc));
         debug("chat::subscribe::stopped");
         return r;
-    }
+    };
+    submit<failable<bool> >(w, subscribe);
 
-private:
-    const lambda<failable<bool>(const value&, const value&, XMPPClient&)> l;
-    XMPPClient xc;
-};
-
-/**
- * Chat sender/receiver component lambda function
- */
-class chatSenderReceiver {
-public:
-    chatSenderReceiver(XMPPClient& xc, worker& w) : xc(xc), w(w) {
-    }
-
-    const value operator()(const list<value>& params) const {
+    // Return the chat sender/receiver component lambda function
+    const lvvlambda senderReceiver = [xc, w](const list<value>& params) -> const value {
         const tuscany::value func(car(params));
         if (func == "post")
             return post(cdr(params), const_cast<XMPPClient&>(xc));
@@ -115,38 +105,9 @@ public:
         cancel(const_cast<worker&>(w));
         debug("chat::sendreceiver::stopped");
 
-        return failable<value>(value(lambda<value(const list<value>&)>()));
-    }
-
-private:
-    const XMPPClient xc;
-    worker w;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Extract the relay reference and the XMPP JID and password
-    const bool hasRelay = !isNil(cddr(params));
-    const value rel = hasRelay? car(params) : value(lambda<value(const list<value>&)>());
-    const list<value> props = hasRelay? cdr(params) : params;
-    const value jid = ((lambda<value(const list<value>&)>)car(props))(list<value>());
-    const value pass = ((lambda<value(const list<value>&)>)cadr(props))(list<value>());
-
-    // Create an XMPP client session
-    XMPPClient xc(jid, pass, false);
-    const failable<bool> r = connect(xc);
-    if (!hasContent(r))
-        return mkfailure<value>(r);
-
-    // Listen and relay messages in a worker thread
-    worker w(3);
-    const lambda<failable<bool>(const value&, const value&, XMPPClient&)> rl = relay(rel);
-    submit<failable<bool> >(w, lambda<failable<bool>()>(subscribe(rl, xc)));
-
-    // Return the chat sender/receiver component lambda function
-    return value(lambda<value(const list<value>&)>(chatSenderReceiver(xc, w)));
+        return failable<value>(value(lvvlambda()));
+    };
+    return value(senderReceiver);
 }
 
 }

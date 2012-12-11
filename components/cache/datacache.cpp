@@ -44,7 +44,7 @@ namespace datacache {
 /**
  * Get an item from the cache.
  */
-const failable<value> get(const value& key, const lambda<value(const list<value>&)>& rcache1, const lambda<value(const list<value>&)>& wcache1, const lambda<value(const list<value>&)>& rcache2, unused const lambda<value(const list<value>&)>& wcache2) {
+const failable<value> get(const value& key, const lvvlambda& rcache1, const lvvlambda& wcache1, const lvvlambda& rcache2, unused const lvvlambda& wcache2) {
 
     // Lookup level1 cache
     const value val1 = rcache1(mklist<value>("get", key));
@@ -68,7 +68,7 @@ const failable<value> get(const value& key, const lambda<value(const list<value>
 /**
  * Post an item to the cache.
  */
-const failable<value> post(const value& key, const value& val, unused const lambda<value(const list<value>&)>& rcache1, const lambda<value(const list<value>&)>& wcache1, unused const lambda<value(const list<value>&)>& rcache2, const lambda<value(const list<value>&)>& wcache2) {
+const failable<value> post(const value& key, const value& val, unused const lvvlambda& rcache1, const lvvlambda& wcache1, unused const lvvlambda& rcache2, const lvvlambda& wcache2) {
     const value id = append<value>(key, mklist(mkuuid()));
 
     // Update level1 cache
@@ -83,7 +83,7 @@ const failable<value> post(const value& key, const value& val, unused const lamb
 /**
  * Put an item into the cache.
  */
-const failable<value> put(const value& key, const value& val, unused const lambda<value(const list<value>&)>& rcache1, const lambda<value(const list<value>&)>& wcache1, unused const lambda<value(const list<value>&)>& rcache2, const lambda<value(const list<value>&)>& wcache2) {
+const failable<value> put(const value& key, const value& val, unused const lvvlambda& rcache1, const lvvlambda& wcache1, unused const lvvlambda& rcache2, const lvvlambda& wcache2) {
 
     // Update level1 cache
     wcache1(mklist<value>("put", key, val));
@@ -91,13 +91,13 @@ const failable<value> put(const value& key, const value& val, unused const lambd
     // Update level2 cache
     wcache2(mklist<value>("put", key, val));
 
-    return value(true);
+    return trueValue;
 }
 
 /**
  * Delete an item from the cache.
  */
-const failable<value> del(const value& key, unused const lambda<value(const list<value>&)>& rcache1, const lambda<value(const list<value>&)>& wcache1, unused const lambda<value(const list<value>&)>& rcache2, const lambda<value(const list<value>&)>& wcache2) {
+const failable<value> del(const value& key, unused const lvvlambda& rcache1, const lvvlambda& wcache1, unused const lvvlambda& rcache2, const lvvlambda& wcache2) {
 
     // Delete from level1 cache
     wcache1(mklist<value>("delete", key));
@@ -105,7 +105,7 @@ const failable<value> del(const value& key, unused const lambda<value(const list
     // Delete from level2 cache
     wcache2(mklist<value>("delete", key));
 
-    return value(true);
+    return trueValue;
 }
 
 }

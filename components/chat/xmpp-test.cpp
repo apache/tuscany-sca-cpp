@@ -52,28 +52,21 @@ const failable<bool> listener(const value& from, const value& val, unused XMPPCl
     return false;
 }
 
-struct subscribe {
-    XMPPClient& xc;
-    subscribe(XMPPClient& xc) : xc(xc) {
-    }
-    const failable<bool> operator()() const {
-        const lambda<failable<bool>(const value&, const value&, XMPPClient&)> l(listener);
-        listen(l, xc);
-        return true;
-    }
-};
-
-bool testListen() {
+const bool testListen() {
     received = false;
     XMPPClient& xc = *(new (gc_new<XMPPClient>()) XMPPClient(jid2, pass2));
     const failable<bool> c = connect(xc);
     assert(hasContent(c));
-    const lambda<failable<bool>()> subs = subscribe(xc);
+    const lambda<const failable<bool>()> subs = [&xc]() -> const failable<bool> {
+        const lambda<const failable<bool>(const value&, const value&, XMPPClient&)> l(listener);
+        listen(l, xc);
+        return true;
+    };
     submit(w, subs);
     return true;
 }
 
-bool testPost() {
+const bool testPost() {
     XMPPClient xc(jid1, pass1);
     const failable<bool> c = connect(xc);
     assert(hasContent(c));
@@ -82,7 +75,7 @@ bool testPost() {
     return true;
 }
 
-bool testReceived() {
+const bool testReceived() {
     shutdown(w);
     assert(received == true);
     return true;

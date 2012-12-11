@@ -32,8 +32,8 @@
 #include "monad.hpp"
 #include "fstream.hpp"
 #include "element.hpp"
-#include "xml.hpp"
 #include "../../modules/scheme/eval.hpp"
+#include "../../modules/xml/xml.hpp"
 #include "../../modules/json/json.hpp"
 
 namespace tuscany {
@@ -68,30 +68,22 @@ public:
         debug("filedb::filedb::copy");
     }
 
-    const FileDB& operator=(const FileDB& c) {
-        debug("filedb::filedb::operator=");
-        if(this == &c)
-            return *this;
-        owner = false;
-        name = c.name;
-        format = c.format;
-        return *this;
-    }
+    FileDB& operator=(const FileDB& c) = delete;
 
     ~FileDB() {
     }
 
 private:
-    bool owner;
-    string name;
-    string format;
+    const bool owner;
+    const string name;
+    const string format;
 
     friend const failable<bool> write(const value& v, ostream& os, const string& format);
     friend const failable<value> read(istream& is, const string& format);
-    friend const failable<bool> post(const value& key, const value& val, FileDB& db);
-    friend const failable<bool> put(const value& key, const value& val, FileDB& db);
-    friend const failable<value> get(const value& key, FileDB& db);
-    friend const failable<bool> del(const value& key, FileDB& db);
+    friend const failable<bool> post(const value& key, const value& val, const FileDB& db);
+    friend const failable<bool> put(const value& key, const value& val, const FileDB& db);
+    friend const failable<value> get(const value& key, const FileDB& db);
+    friend const failable<bool> del(const value& key, const FileDB& db);
 };
 
 /**
@@ -100,7 +92,7 @@ private:
 const string filename(const list<value>& path, const string& root) {
     if (isNil(path))
         return root;
-    const string name = root + "/" + (isString(car(path))? (string)car(path) : scheme::writeValue(car(path)));
+    const string name = root + "/" + (isString(car(path))? (string)car(path) : write(content(scheme::writeValue(car(path)))));
     return filename(cdr(path), name);
 }
 
@@ -116,7 +108,7 @@ const string filename(const value& key, const string& root) {
 const failable<bool> mkdirs(const list<value>& path, const string& root) {
     if (isNil(cdr(path)))
         return true;
-    const string dir = root + "/" + (isString(car(path))? (string)car(path) : scheme::writeValue(car(path)));
+    const string dir = root + "/" + (isString(car(path))? (string)car(path) : write(content(scheme::writeValue(car(path)))));
     mkdir(c_str(dir), S_IRWXU);
     return mkdirs(cdr(path), dir);
 }
@@ -126,20 +118,19 @@ const failable<bool> mkdirs(const list<value>& path, const string& root) {
  */
 const failable<bool> write(const value& v, ostream& os, const string& format) {
     if (format == "scheme") {
-        const string vs(scheme::writeValue(v));
+        const string vs(write(content(scheme::writeValue(v))));
         os << vs;
         return true;
     }
     if (format == "xml") {
-        failable<list<string> > s = writeXML(valuesToElements(v));
+        failable<list<string> > s = xml::writeElements(valuesToElements(v));
         if (!hasContent(s))
             return mkfailure<bool>(s);
         write(content(s), os);
         return true;
     }
     if (format == "json") {
-        js::JSContext jscx;
-        failable<list<string> > s = json::writeJSON(valuesToElements(v), jscx);
+        failable<list<string> > s = json::writeValue(v);
         if (!hasContent(s))
             return mkfailure<bool>(s);
         write(content(s), os);
@@ -153,19 +144,17 @@ const failable<bool> write(const value& v, ostream& os, const string& format) {
  */
 const failable<value> read(istream& is, const string& format) {
     if (format == "scheme") {
-        return scheme::readValue(is);
+        return scheme::readValue(streamList(is));
     }
     if (format == "xml") {
-        const value v = elementsToValues(readXML(streamList(is)));
-        return v;
-    }
-    if (format == "json") {
-        js::JSContext jscx;
-        const failable<list<value> > fv = json::readJSON(streamList(is), jscx);
+        const failable<list<value> > fv = xml::readElements(streamList(is));
         if (!hasContent(fv))
             return mkfailure<value>(fv);
         const value v = elementsToValues(content(fv));
         return v;
+    }
+    if (format == "json") {
+        return json::readValue(streamList(is));
     }
     return mkfailure<value>(string("Unsupported database format: ") + format);
 }
@@ -173,7 +162,7 @@ const failable<value> read(istream& is, const string& format) {
 /**
  * Post a new item to the database.
  */
-const failable<bool> post(const value& key, const value& val, FileDB& db) {
+const failable<bool> post(const value& key, const value& val, const FileDB& db) {
     debug(key, "filedb::post::key");
     debug(val, "filedb::post::value");
     debug(db.name, "filedb::post::dbname");
@@ -197,7 +186,7 @@ const failable<bool> post(const value& key, const value& val, FileDB& db) {
 /**
  * Update an item in the database. If the item doesn't exist it is added.
  */
-const failable<bool> put(const value& key, const value& val, FileDB& db) {
+const failable<bool> put(const value& key, const value& val, const FileDB& db) {
     debug(key, "filedb::put::key");
     debug(val, "filedb::put::value");
     debug(db.name, "filedb::put::dbname");
@@ -221,7 +210,7 @@ const failable<bool> put(const value& key, const value& val, FileDB& db) {
 /**
  * Get an item from the database.
  */
-const failable<value> get(const value& key, FileDB& db) {
+const failable<value> get(const value& key, const FileDB& db) {
     debug(key, "filedb::get::key");
     debug(db.name, "filedb::get::dbname");
 
@@ -242,7 +231,7 @@ const failable<value> get(const value& key, FileDB& db) {
 /**
  * Delete an item from the database
  */
-const failable<bool> del(const value& key, FileDB& db) {
+const failable<bool> del(const value& key, const FileDB& db) {
     debug(key, "filedb::delete::key");
     debug(db.name, "filedb::delete::dbname");
 

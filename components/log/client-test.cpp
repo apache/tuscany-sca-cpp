@@ -38,15 +38,15 @@ namespace log {
 
 const string uri("http://localhost:8090/log");
 
-bool testLog() {
-    http::CURLSession cs("", "", "", "", 0);
+const bool testLog() {
+    const http::CURLSession cs("", "", "", "", 0);
 
-    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
-            + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99")));
-    const list<value> a = list<value>() + (list<value>() + "entry" 
-            + (list<value>() + "title" + string("item"))
-            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+    const list<value> i = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$2.99")));
+    const list<value> a = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
     const failable<value> id = http::post(a, uri, cs);
@@ -55,40 +55,31 @@ bool testLog() {
     return true;
 }
 
-struct logLoop {
-    const value a;
-    const string uri;
-    http::CURLSession& cs;
-    logLoop(const value& a, const string& uri, http::CURLSession& cs) : a(a), uri(uri), cs(cs) {
-    }
-    const bool operator()() const {
-        const failable<value> id = http::post(a, uri, cs);
-        assert(hasContent(id));
-        return true;
-    }
-};
-
-bool testLogPerf() {
-    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
-            + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99")));
-    const list<value> a = list<value>() + (list<value>() + "entry" 
-            + (list<value>() + "title" + string("item"))
-            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+const bool testLogPerf() {
+    const list<value> i = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$2.99")));
+    const list<value> a = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "", "", 0);
+    const http::CURLSession cs("", "", "", "", 0);
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
 
-    const lambda<bool()> ll = logLoop(a, uri, cs);
+    const blambda ll = [a, uri, cs]() -> const bool {
+        const failable<value> id = http::post(a, uri, cs);
+        assert(hasContent(id));
+        return true;
+    };
     cout << "Log test " << time(ll, 5, 200) << " ms" << endl;
 
     return true;
 }
 
-bool testLogger() {
-    http::CURLSession cs("", "", "", "", 0);
+const bool testLogger() {
+    const http::CURLSession cs("", "", "", "", 0);
 
     const failable<value> res = http::evalExpr(mklist<value>(string("sum"), 33, 22), string("http://localhost:8090/client"), cs);
     assert(hasContent(res));

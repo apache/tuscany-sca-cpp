@@ -22,11 +22,16 @@ if WANT_JAVA
 dist_sample_SCRIPTS = start stop ssl-start
 sampledir=$(prefix)/samples/store-java
 
-AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
 dist_sample_JAVA = store/*.java
+
+SUFFIXES = .class
+AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
+.java.class:
+	${JAVAC} ${AM_JAVACFLAGS} store/*.java
+
 CLEANFILES = *.stamp store/*.class
 
-nobase_dist_sample_DATA = store.composite htdocs/*.html store/*.*
+nobase_dist_sample_DATA = store.composite htdocs/*.html store/*.java store/CurrencyConverterImpl.class  store/CurrencyConverter.class  store/FruitsCatalogImpl.class  store/ShoppingCartImpl.class
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

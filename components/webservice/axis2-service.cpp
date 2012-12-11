@@ -50,7 +50,7 @@ int AXIS2_CALL serviceFree(axis2_svc_skeleton_t* svc_skeleton, const axutil_env_
 
 typedef struct axis2_apache2_out_transport_info {
     axis2_http_out_transport_info_t out_transport_info;
-    request_rec *request;
+    request_rec* request;
     axis2_char_t *encoding;
 } axis2_apache2_out_transport_info_t;
 
@@ -66,25 +66,25 @@ axiom_node_t *AXIS2_CALL serviceInvoke(unused axis2_svc_skeleton_t* svc_skeleton
     // Check that we have an input node
     if (node == NULL || axiom_node_get_node_type(node, env) != AXIOM_ELEMENT)
         return NULL;
-    axiom_element_t *e = (axiom_element_t *) axiom_node_get_data_element(node, env);
+    axiom_element_t* const e = (axiom_element_t*) axiom_node_get_data_element(node, env);
     if (e == NULL)
         return NULL;
 
     // Get the function name
-    const char* func = axiom_element_get_localname(e, env);
+    const char* const func = axiom_element_get_localname(e, env);
     if (func == NULL)
         return NULL;
 
     // Get the target endpoint address
-    const axis2_endpoint_ref_t* epr = axis2_msg_ctx_get_from(msg_ctx, env);
+    const axis2_endpoint_ref_t* const epr = axis2_msg_ctx_get_from(msg_ctx, env);
     if (epr == NULL)
         return NULL;
-    string address = axis2_endpoint_ref_get_address(epr, env);
+    unused const string address = axis2_endpoint_ref_get_address(epr, env);
 
     // Get the underlying HTTPD request
-    axis2_out_transport_info_t* tinfo = axis2_msg_ctx_get_out_transport_info(msg_ctx, env);
-    axis2_apache2_out_transport_info_t* httpinfo = (axis2_apache2_out_transport_info_t*)tinfo;
-    request_rec* r = httpinfo->request;
+    axis2_out_transport_info_t* const tinfo = axis2_msg_ctx_get_out_transport_info(msg_ctx, env);
+    axis2_apache2_out_transport_info_t* const httpinfo = (axis2_apache2_out_transport_info_t*)tinfo;
+    request_rec* const r = httpinfo->request;
     debug_httpdRequest(r, "webservice::serviceInvoke");
 
     // Parse the request Axiom node and construct request expression
@@ -96,9 +96,9 @@ axiom_node_t *AXIS2_CALL serviceInvoke(unused axis2_svc_skeleton_t* svc_skeleton
     debug(expr, "webservice::serviceInvoke::expr");
 
     // Retrieve the target lambda function from the HTTPD request and invoke it
-    const value* rv = const_cast<const value*>((value*)ap_get_module_config(r->request_config, &axis2_module));
+    const value* const rv = const_cast<const value*>((value*)ap_get_module_config(r->request_config, &axis2_module));
     cout << "relay: " << rv << endl;
-    const lambda<value(const list<value>&)> relay = *rv;
+    const lvvlambda relay = *rv;
     const value res = relay(expr);
     debug(res, "webservice::serviceInvoke::result");
 

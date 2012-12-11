@@ -1,6 +1,6 @@
 --- lib/cpp/src/server/TNonblockingServer.cpp
 +++ lib/cpp/src/server/TNonblockingServer.cpp
-@@ -622,8 +622,8 @@
+@@ -989,8 +989,8 @@
    hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
    sprintf(port, "%d", port_);
  
@@ -14,26 +14,28 @@
 
 --- lib/cpp/src/server/TNonblockingServer.h
 +++ lib/cpp/src/server/TNonblockingServer.h
-@@ -65,6 +65,9 @@
-   // Server socket file descriptor
+@@ -126,6 +126,9 @@
+   /// Server socket file descriptor
    int serverSocket_;
  
-+  // Host server runs on
++  /// Host server runs on
 +  std::string host_;
 +
-   // Port server runs on
+   /// Port server runs on
    int port_;
  
-@@ -117,10 +120,12 @@
+@@ -294,11 +297,13 @@
+   TNonblockingServer(
+       const boost::shared_ptr<Processor>& processor,
+       const boost::shared_ptr<TProtocolFactory>& protocolFactory,
++      const std::string host,
+       int port,
+       const boost::shared_ptr<ThreadManager>& threadManager =
+         boost::shared_ptr<ThreadManager>(),
+       THRIFT_OVERLOAD_IF(Processor, TProcessor)) :
+-    TServer(processor) {
++    TServer(processor),
++    host_(host) {
  
-   TNonblockingServer(boost::shared_ptr<TProcessor> processor,
-                      boost::shared_ptr<TProtocolFactory> protocolFactory,
-+                     std::string host,
-                      int port,
-                      boost::shared_ptr<ThreadManager> threadManager = boost::shared_ptr<ThreadManager>()) :
-     TServer(processor),
-     serverSocket_(-1),
-+    host_(host),
-     port_(port),
-     threadManager_(threadManager),
-     eventBase_(NULL),
+     init(port);
+ 

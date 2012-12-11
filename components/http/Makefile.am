@@ -23,32 +23,32 @@ comp_LTLIBRARIES = libhttpget.la libhttpdelete.la libhttppost.la libhttpput.la l
 noinst_DATA = libhttpget${libsuffix} libhttpdelete${libsuffix} libhttppost${libsuffix} libhttpput${libsuffix} libhttppatch${libsuffix}
 
 libhttpget_la_SOURCES = httpget.cpp
-libhttpget_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttpget_la_LDFLAGS = -lxml2 -ljansson -curl
 libhttpget${libsuffix}:
 	ln -s .libs/libhttpget${libsuffix}
 
 libhttpdelete_la_SOURCES = httpdelete.cpp
-libhttpdelete_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttpdelete_la_LDFLAGS = -lxml2 -ljansson -curl
 libhttpdelete${libsuffix}:
 	ln -s .libs/libhttpdelete${libsuffix}
 
 libhttppost_la_SOURCES = httppost.cpp
-libhttppost_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttppost_la_LDFLAGS = -lxml2 -ljansson -curl
 libhttppost${libsuffix}:
 	ln -s .libs/libhttppost${libsuffix}
 
 libhttpput_la_SOURCES = httpput.cpp
-libhttpput_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttpput_la_LDFLAGS = -lxml2 -ljansson -curl
 libhttpput${libsuffix}:
 	ln -s .libs/libhttpput${libsuffix}
 
 libhttppatch_la_SOURCES = httppatch.cpp
-libhttppatch_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttppatch_la_LDFLAGS = -lxml2 -ljansson -curl
 libhttppatch${libsuffix}:
 	ln -s .libs/libhttppatch${libsuffix}
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = server-test
 noinst_PROGRAMS = client-test

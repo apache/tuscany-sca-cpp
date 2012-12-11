@@ -32,37 +32,38 @@
 namespace tuscany {
 namespace pgsql {
 
-bool testPGSql() {
+const bool testPGSql() {
     PGSql pg("host=localhost port=6432 dbname=db", "test");
     const value k = mklist<value>("a");
+    const value lk = mklist<value>(mklist<value>("like", "%"), mklist<value>("limit", "2"));
+    const value rx = mklist<value>(mklist<value>("regex", "a"), mklist<value>("limit", "2"));
+    const value ts = mklist<value>(mklist<value>("textsearch", "AAA"), mklist<value>("limit", "2"));
+    const value rxts = mklist<value>(mklist<value>("regex", "a"), mklist<value>("textsearch", "AAA"), mklist<value>("limit", "2"));
 
     assert(hasContent(post(k, string("AAA"), pg)));
-    assert((get(k, pg)) == value(string("AAA")));
+    assert(content(get(k, pg)) == value(string("AAA")));
+    assert(cadr<value>(car<value>(content(get(lk, pg)))) == value(string("AAA")));
+    assert(cadr<value>(car<value>(content(get(rx, pg)))) == value(string("AAA")));
+    assert(cadr<value>(car<value>(content(get(ts, pg)))) == value(string("AAA")));
+    assert(cadr<value>(car<value>(content(get(rxts, pg)))) == value(string("AAA")));
+
     assert(hasContent(put(k, string("aaa"), pg)));
-    assert((get(k, pg)) == value(string("aaa")));
+    assert(content(get(k, pg)) == value(string("aaa")));
     assert(hasContent(del(k, pg)));
     assert(!hasContent(get(k, pg)));
 
     return true;
 }
 
-struct getLoop {
-    const value k;
-    PGSql& pg;
-    getLoop(const value& k, PGSql& pg) : k(k), pg(pg) {
-    }
-    const bool operator()() const {
-        assert((get(k, pg)) == value(string("CCC")));
-        return true;
-    }
-};
-
-bool testGetPerf() {
+const bool testGetPerf() {
     const value k = mklist<value>("c");
     PGSql pg("host=localhost port=6432 dbname=db", "test");
     assert(hasContent(post(k, string("CCC"), pg)));
 
-    const lambda<bool()> gl = getLoop(k, pg);
+    const blambda gl = [k, pg]() -> const bool {
+        assert(content(get(k, pg)) == value(string("CCC")));
+        return true;
+    };
     cout << "PGSql get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }

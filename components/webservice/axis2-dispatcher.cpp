@@ -105,7 +105,7 @@ const axis2_module_ops_t dispatchOps = {
     dispatchFuncMap
 };
 
-axis2_module_t * dispatchModule(const axutil_env_t* env) {
+axis2_module_t* dispatchModule(const axutil_env_t* env) {
     axis2_module_t *module = (axis2_module_t*)AXIS2_MALLOC(env->allocator, sizeof(axis2_module_t));
     if (module == NULL)
         return NULL;

@@ -38,43 +38,43 @@ namespace tuscany {
 namespace webservice {
 
 
-bool testModAxis2() {
+const bool testModAxis2() {
     const Axis2Context ax;
 
     const value func = "http://ws.apache.org/axis2/c/samples/echoString";
     const list<value> arg = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (nilListValue + "text" + string("Hello World!")));
 
     const failable<value> rval = evalExpr(mklist<value>(func, arg, string("http://localhost:8090/echo-listener")), ax);
     assert(hasContent(rval));
 
     const list<value> r = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (nilListValue + "text" + string("Hello World!")));
     assert(content(rval) == r);
 
     return true;
 }
 
-bool testEval() {
-    http::CURLSession cs("", "", "", "");
+const bool testEval() {
+    const http::CURLSession cs("", "", "", "", 0);
 
     const value func = "http://ws.apache.org/axis2/c/samples/echoString";
     const list<value> arg = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (nilListValue + "text" + string("Hello World!")));
 
     const failable<value> rval = http::evalExpr(mklist<value>(func, arg), "http://localhost:8090/echo-client", cs);
     assert(hasContent(rval));
 
     const list<value> r = mklist<value>(
-            list<value>() + "ns1:echoString"
-            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
-            + (list<value>() + "text" + string("Hello World!")));
+            nilListValue + "ns1:echoString"
+            + (nilListValue + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
+            + (nilListValue + "text" + string("Hello World!")));
     assert(content(rval) == r);
     return true;
 }

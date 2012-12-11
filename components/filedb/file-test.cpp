@@ -32,12 +32,12 @@
 namespace tuscany {
 namespace filedb {
 
-bool testFileDB(const string& dbname, const string& format) {
-    FileDB db(dbname, format);
+const bool testFileDB(const string& dbname, const string& format) {
+    const FileDB db(dbname, format);
     const value k = mklist<value>("a", "b");
 
-    const list<value> a = mklist<value>(list<value>() + "ns1:a" + (list<value>() + "@xmlns:ns1" + string("http://aaa")) + (list<value>() + "text" + string("Hey!")));
-    const list<value> b = mklist<value>(list<value>() + "ns1:b" + (list<value>() + "@xmlns:ns1" + string("http://bbb")) + (list<value>() + "text" + string("Hey!")));
+    const list<value> a = mklist<value>(nilListValue + "ns1:a" + (nilListValue + "@xmlns:ns1" + string("http://aaa")) + (nilListValue + "text" + string("Hey!")));
+    const list<value> b = mklist<value>(nilListValue + "ns1:b" + (nilListValue + "@xmlns:ns1" + string("http://bbb")) + (nilListValue + "text" + string("Hey!")));
 
     assert(hasContent(post(k, a, db)));
     assert((get(k, db)) == value(a));
@@ -50,27 +50,17 @@ bool testFileDB(const string& dbname, const string& format) {
     return true;
 }
 
-struct getLoop {
-    const value k;
-    FileDB& db;
-    const list<value> c;
-    getLoop(const value& k, FileDB& db) : k(k), db(db),
-        c(mklist<value>(list<value>() + "ns1:c" + (list<value>() + "@xmlns:ns1" + string("http://ccc")) + (list<value>() + "text" + string("Hey!")))) {
-    }
-    const bool operator()() const {
-        assert((get(k, db)) == value(c));
-        return true;
-    }
-};
-
-bool testGetPerf(const string& dbname, const string& format) {
-    FileDB db(dbname, format);
+const bool testGetPerf(const string& dbname, const string& format) {
+    const FileDB db(dbname, format);
 
     const value k = mklist<value>("c");
-    const list<value> c = mklist<value>(list<value>() + "ns1:c" + (list<value>() + "@xmlns:ns1" + string("http://ccc")) + (list<value>() + "text" + string("Hey!")));
+    const list<value> c = mklist<value>(nilListValue + "ns1:c" + (nilListValue + "@xmlns:ns1" + string("http://ccc")) + (nilListValue + "text" + string("Hey!")));
     assert(hasContent(post(k, c, db)));
 
-    const lambda<bool()> gl = getLoop(k, db);
+    const blambda gl = [k, c, db]() -> const bool {
+        assert((get(k, db)) == value(c));
+        return true;
+    };
     cout << "FileDB get test " << time(gl, 5, 5000) << " ms" << endl;
     return true;
 }

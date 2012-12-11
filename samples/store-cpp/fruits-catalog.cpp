@@ -35,27 +35,19 @@ namespace store {
 /**
  * Returns the catalog.
  */
-struct convert {
-    const lambda<value(const list<value>&)> converter;
-    const string currency;
-    convert(const lambda<value(const list<value>&)>& converter, const string& currency) : converter(converter), currency(currency) {
-    }
-    const value operator()(const value& price) const {
-        return converter(mklist<value>("convert", string("USD"), currency, price));
-    }
-};
-
 const list<value> mkfruit(const string& name, const string& code, const string& symbol, const double price) {
-    return list<value>() +
+    return nilListValue +
         mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
 }
 
-const failable<value> items(const lambda<value(const list<value>&)>& converter, const lambda<value(const list<value>&)>& currencyCode) {
-    const string currency(currencyCode(list<value>()));
+const failable<value> items(const lvvlambda& converter, const lvvlambda& currencyCode) {
+    const string currency(currencyCode(nilListValue));
     const string symbol(converter(mklist<value>("symbol", currency)));
-    const lambda<value(const value&)> conv(convert(converter, currency));
+    const vvlambda conv = [converter, currency](const value& price) -> const value {
+        return converter(mklist<value>("convert", string("USD"), currency, price));
+    };
 
-    return value(list<value>() +
+    return value(nilListValue +
         mkfruit("Apple", currency, symbol, conv(2.99)) +
         mkfruit("Orange", currency, symbol, conv(3.55)) +
         mkfruit("Pear", currency, symbol, conv(1.55)));

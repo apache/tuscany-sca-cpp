@@ -37,14 +37,21 @@ namespace tuscany {
 namespace logger {
 
 /**
- * Component implementation lambda function.
+ * Start the component.
  */
-class applyLog {
-public:
-    applyLog(const lambda<value(const list<value>&)>& relay, const value& host, const value& category, scribe::Scribe& sc) : relay(relay), host(host), category(category), sc(sc) {
-    }
+const failable<value> start(const list<value>& params) {
+    // Connect to Scribe
+    const scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
 
-    const value operator()(const list<value>& params) const {
+    // Extract the configured relay service and category
+    const value relay = car(params);
+    const value host = ((lvvlambda)cadr(params))(nilListValue);
+    const value category = ((lvvlambda)caddr(params))(nilListValue);
+    debug(host, "logger::start::host");
+    debug(category, "logger::start::category");
+
+    // Return the component implementation lambda function
+    const lvvlambda applyLog = [relay, host, category, sc](const list<value>& params) -> const value {
         // Log the function params
         debug(params, "logger::apply::params");
         scribe::log(params, host, category, sc);
@@ -55,31 +62,8 @@ public:
         // Log the result
         scribe::log(res, host, category, sc);
         return res;
-    }
-
-private:
-    const lambda<value(const list<value>&)> relay;
-    const value host;
-    const value category;
-    scribe::Scribe& sc;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Connect to Scribe
-    scribe::Scribe& sc = *(new (gc_new<scribe::Scribe>()) scribe::Scribe("localhost", 1464));
-
-    // Extract the configured relay service and category
-    const value rel = car(params);
-    const value host = ((lambda<value(const list<value>&)>)cadr(params))(list<value>());
-    const value category = ((lambda<value(const list<value>&)>)caddr(params))(list<value>());
-    debug(host, "logger::start::host");
-    debug(category, "logger::start::category");
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyLog(rel, host, category, sc)));
+    };
+    return value(applyLog);
 }
 
 }

@@ -44,10 +44,10 @@ extern "C" {
     extern module axis2_module;
 }
 
-const value redirectToAxis2(const string& uri, request_rec* r, const value& relay) {
-    const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);
+const failable<value> redirectToAxis2(const string& uri, request_rec* const r, const value& relay) {
+    const failable<request_rec*> nr = httpd::internalRedirectRequest(uri, r);
     if (!hasContent(nr))
-        return value(reason(nr), rcode(nr));
+        return mkfailure<value>(reason(nr), rcode(nr));
     ap_set_module_config(content(nr)->request_config, &axis2_module, const_cast<void*>((const void*)&relay));
     return value(httpd::internalRedirect(content(nr)));
 }
@@ -58,7 +58,7 @@ const value redirectToAxis2(const string& uri, request_rec* r, const value& rela
 const failable<value> handle(const list<value>& params) {
 
     // Extract HTTPD request from the params
-    request_rec* r = httpd::request(car(params));
+    request_rec* const r = httpd::request(car(params));
     debug_httpdRequest(r, "webservice::handle");
 
     // Extract the relay lambda from the params and store it in the HTTPD request,
@@ -67,7 +67,7 @@ const failable<value> handle(const list<value>& params) {
     cout << "relay: " << &relay << endl;
 
     // Redirect HTTPD request to Mod-axis2
-    return redirectToAxis2(string("/axis2") + r->uri + r->args != NULL? string("?") + r->args : string(""), r, relay);
+    return redirectToAxis2(string("/axis2") + r->uri + r->args != NULL? string("?") + r->args : emptyString, r, relay);
 }
 
 }

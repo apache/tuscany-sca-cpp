@@ -10,6 +10,23 @@
  #include <boost/filesystem/operations.hpp>
  #include <boost/filesystem/convenience.hpp>
 
+--- src/conn_pool.cpp
++++ src/conn_pool.cpp
+@@ -271,11 +271,11 @@
+        ++iter) {
+     msgs.push_back(**iter);
+   }
+-  ResultCode result = TRY_LATER;
++  ResultCode::type result = ResultCode::TRY_LATER;
+   try {
+     result = resendClient->Log(msgs);
+ 
+-    if (result == OK) {
++    if (result == ResultCode::OK) {
+       if (g_Handler) {
+         g_Handler->incrementCounter("sent", size);
+       }
+
 --- src/file.cpp
 +++ src/file.cpp
 @@ -74,9 +74,21 @@
@@ -56,6 +73,32 @@
  
      LOG_OPER("Starting scribe server on port %lu", g_Handler->port);
      fflush(stderr);
+@@ -409,13 +411,13 @@
+ }
+ 
+ 
+-ResultCode scribeHandler::Log(const vector<LogEntry>&  messages) {
+-  ResultCode result;
++ResultCode::type scribeHandler::Log(const vector<LogEntry>&  messages) {
++  ResultCode::type result;
+ 
+   scribeHandlerLock.acquireRead();
+ 
+   if (throttleRequest(messages)) {
+-    result = TRY_LATER;
++    result = ResultCode::TRY_LATER;
+     goto end;
+   }
+ 
+@@ -463,7 +465,7 @@
+     addMessage(*msg_iter, store_list);
+   }
+ 
+-  result = OK;
++  result = ResultCode::OK;
+ 
+  end:
+   scribeHandlerLock.release();
 @@ -583,6 +585,8 @@
        throw runtime_error("No port number configured");
      }
@@ -68,6 +111,15 @@
 
 --- src/scribe_server.h
 +++ src/scribe_server.h
+@@ -42,7 +42,7 @@
+   void initialize();
+   void reinitialize();
+ 
+-  scribe::thrift::ResultCode Log(const std::vector<scribe::thrift::LogEntry>& messages);
++  scribe::thrift::ResultCode::type Log(const std::vector<scribe::thrift::LogEntry>& messages);
+ 
+   void getVersion(std::string& _return) {_return = "2.2";}
+   facebook::fb303::fb_status getStatus();
 @@ -51,6 +51,7 @@
    void setStatusDetails(const std::string& new_status_details);
  
@@ -76,3 +128,4 @@
  
    // number of threads processing new Thrift connections
    size_t numThriftServerThreads;
+

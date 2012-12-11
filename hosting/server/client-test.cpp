@@ -27,7 +27,7 @@
 #include "string.hpp"
 #include "client-test.hpp"
 
-int main(const int argc, const char** argv) {
+int main(const int argc, const char** const argv) {
     tuscany::cout << "Testing..." << tuscany::endl;
     tuscany::server::testURI = argc > 1? argv[1] : "https://jane:jane@www.example.com:8453";
 

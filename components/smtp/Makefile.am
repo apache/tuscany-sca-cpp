@@ -23,12 +23,12 @@ comp_LTLIBRARIES = libsmtppost.la
 noinst_DATA = libsmtppost${libsuffix}
 
 libsmtppost_la_SOURCES = smtppost.cpp
-libsmtppost_la_LDFLAGS = -lxml2 -lmozjs -curl
+libsmtppost_la_LDFLAGS = -lxml2 -ljansson -curl
 libsmtppost${libsuffix}:
 	ln -s .libs/libsmtppost${libsuffix}
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = server-test
 noinst_PROGRAMS = client-test

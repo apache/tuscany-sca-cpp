@@ -38,15 +38,15 @@ namespace filedb {
 
 const string uri("http://localhost:8090/filedb");
 
-bool testFileDB() {
-    http::CURLSession cs("", "", "", "", 0);
+const bool testFileDB() {
+    const http::CURLSession cs("", "", "", "", 0);
 
-    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
-            + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99")));
-    const list<value> a = list<value>() + (list<value>() + "entry" 
-            + (list<value>() + "title" + string("item"))
-            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+    const list<value> i = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$2.99")));
+    const list<value> a = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
     const failable<value> id = http::post(a, uri, cs);
@@ -59,18 +59,18 @@ bool testFileDB() {
         assert(content(val) == a);
     }
 
-    const list<value> j = list<value>() + "content" + (list<value>() + "item" 
-            + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$3.55")));
-    const list<value> b = list<value>() + (list<value>() + "entry" 
-            + (list<value>() + "title" + string("item"))
-            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+    const list<value> j = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$3.55")));
+    const list<value> b = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + j);
 
     {
         const failable<value> r = http::put(b, uri + p, cs);
         assert(hasContent(r));
-        assert(content(r) == value(true));
+        assert(content(r) == trueValue);
     }
     {
         const failable<value> val = http::get(uri + p, cs);
@@ -80,7 +80,7 @@ bool testFileDB() {
     {
         const failable<value> r = http::del(uri + p, cs);
         assert(hasContent(r));
-        assert(content(r) == value(true));
+        assert(content(r) == trueValue);
     }
     {
         const failable<value> val = http::get(uri + p, cs);
@@ -90,35 +90,26 @@ bool testFileDB() {
     return true;
 }
 
-struct getLoop {
-    const string path;
-    const value entry;
-    http::CURLSession& cs;
-    getLoop(const string& path, const value& entry, http::CURLSession& cs) : path(path), entry(entry), cs(cs) {
-    }
-    const bool operator()() const {
-        const failable<value> val = http::get(uri + path, cs);
-        assert(hasContent(val));
-        assert(content(val) == entry);
-        return true;
-    }
-};
-
-bool testGetPerf() {
-    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
-            + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$4.55")));
-    const list<value> a = list<value>() + (list<value>() + "entry" 
-            + (list<value>() + "title" + string("item"))
-            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+const bool testGetPerf() {
+    const list<value> i = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$4.55")));
+    const list<value> a = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
             + i);
 
-    http::CURLSession cs("", "", "", "", 0);
+    const http::CURLSession cs("", "", "", "", 0);
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
     const string p = path(content(id));
 
-    const lambda<bool()> gl = getLoop(p, a, cs);
+    const blambda gl = [p, a, cs]() -> const bool {
+        const failable<value> val = http::get(uri + p, cs);
+        assert(hasContent(val));
+        assert(content(val) == a);
+        return true;
+    };
     cout << "FileDB get test " << time(gl, 5, 200) << " ms" << endl;
 
     return true;

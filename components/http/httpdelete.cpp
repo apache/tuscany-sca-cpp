@@ -37,58 +37,37 @@ namespace httpdelete {
 /**
  * Evaluate an HTTP delete.
  */
-const failable<value> get(const lambda<value(const list<value>&)>& url, http::CURLSession& ch) {
+const failable<value> get(const lvvlambda& url, const http::CURLSession& ch) {
     debug("httpdelete::get");
-    const value u = url(mklist<value>("get", list<value>()));
+    const value u = url(mklist<value>("get", nilListValue));
     debug(u, "httpdelete::get::url");
     return http::del(u, ch);
 }
-
-/**
- * Component implementation lambda function.
- */
-class applyhttp {
-public:
-    applyhttp(const lambda<value(const list<value>&)>& url, const perthread_ptr<http::CURLSession>& ch) : url(url), ch(ch) {
-    }
-
-    const value operator()(const list<value>& params) const {
-        debug(params, "httpdelete::applyhttp::params");
-        const value func(car(params));
-        if (func == "get")
-            return get(url, *ch);
-        return mkfailure<value>();
-    }
-
-private:
-    const lambda<value(const list<value>&)> url;
-    perthread_ptr<http::CURLSession> ch;
-};
-
-/**
- * Create a new CURL session.
- */
-class newsession {
-public:
-    newsession(const lambda<value(const list<value>&)>& timeout) : timeout(timeout) {
-    }
-    const gc_ptr<http::CURLSession> operator()() const {
-        const int t = atoi(c_str((string)timeout(list<value>())));
-        return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "", t);
-    }
-private:
-    const lambda<value(const list<value>&)> timeout;
-};
 
 /**
  * Start the component.
  */
 const failable<value> start(const list<value>& params) {
     // Create a CURL session
-    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(cadr(params))));
+    const lvvlambda timeout = cadr(params);
+    const gc_pool cp(gc_current_pool());
+    const lambda<const gc_ptr<http::CURLSession>()> newsession = [timeout, cp]() -> const gc_ptr<http::CURLSession> {
+        const gc_scoped_pool sp(pool(cp));
+        const int t = atoi(c_str((string)timeout(nilListValue)));
+        return new (gc_new<http::CURLSession>()) http::CURLSession(emptyString, emptyString, emptyString, emptyString, t);
+    };
+    const perthread_ptr<http::CURLSession> ch = *(new (gc_new<perthread_ptr<http::CURLSession> >()) perthread_ptr<http::CURLSession>(newsession));
 
     // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyhttp(car(params), ch)));
+    const lvvlambda url = car(params);
+    const lvvlambda applyhttp = [url, ch](const list<value>& params) -> const value {
+        debug(params, "httpdelete::applyhttp::params");
+        const value func(car(params));
+        if (func == "get")
+            return get(url, *ch);
+        return mkfailure<value>();
+    };
+    return value(applyhttp);
 }
 
 }

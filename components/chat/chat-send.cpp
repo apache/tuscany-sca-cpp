@@ -37,7 +37,7 @@
 namespace tuscany {
 namespace chat {
 
-bool sendmsg(const string& jid, const string& pass, const string& to, const string& msg) {
+const bool sendmsg(const string& jid, const string& pass, const string& to, const string& msg) {
     XMPPClient xc(jid, pass);
     const failable<bool> c = connect(xc);
     assert(hasContent(c));
@@ -49,7 +49,7 @@ bool sendmsg(const string& jid, const string& pass, const string& to, const stri
 }
 }
 
-int main(unused const int argc, const char** argv) {
+int main(unused const int argc, const char** const argv) {
     tuscany::chat::sendmsg(argv[1], argv[2], argv[3], argv[4]);
     return 0;
 }

@@ -60,7 +60,7 @@ const int status(const string& host, const int port) {
 }
 }
 
-int main(const int argc, const char** argv) {
+int main(const int argc, const char** const argv) {
     return tuscany::scribestatus::status(argc < 2? "localhost" : argv[1], argc < 3? 1463 : atoi(argv[2]));
 }
 

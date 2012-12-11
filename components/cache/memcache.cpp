@@ -37,14 +37,14 @@ namespace cache {
 /**
  * Get an item from the cache.
  */
-const failable<value> get(const list<value>& params, memcache::MemCached& ch) {
+const failable<value> get(const list<value>& params, const memcache::MemCached& ch) {
     return memcache::get(car(params), ch);
 }
 
 /**
  * Post an item to the cache.
  */
-const failable<value> post(const list<value>& params, memcache::MemCached& ch) {
+const failable<value> post(const list<value>& params, const memcache::MemCached& ch) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = memcache::post(id, cadr(params), ch);
     if (!hasContent(val))
@@ -55,7 +55,7 @@ const failable<value> post(const list<value>& params, memcache::MemCached& ch) {
 /**
  * Put an item into the cache.
  */
-const failable<value> put(const list<value>& params, memcache::MemCached& ch) {
+const failable<value> put(const list<value>& params, const memcache::MemCached& ch) {
     const failable<bool> val = memcache::put(car(params), cadr(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -65,7 +65,7 @@ const failable<value> put(const list<value>& params, memcache::MemCached& ch) {
 /**
  * Delete an item from the cache.
  */
-const failable<value> del(const list<value>& params, memcache::MemCached& ch) {
+const failable<value> del(const list<value>& params, const memcache::MemCached& ch) {
     const failable<bool> val = memcache::del(car(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -73,14 +73,24 @@ const failable<value> del(const list<value>& params, memcache::MemCached& ch) {
 }
 
 /**
- * Component implementation lambda function.
+ * Convert a list of properties to a list of server addresses.
  */
-class applyCache {
-public:
-    applyCache(memcache::MemCached& ch) : ch(ch) {
-    }
+const list<string> servers(const list<value>& params) {
+    if (isNil(params))
+        return list<string>();
+    const value s = ((lvvlambda)car(params))(nilListValue);
+    return cons<string>(s, servers(cdr(params)));
+}
 
-    const value operator()(const list<value>& params) const {
+/**
+ * Start the component.
+ */
+const failable<value> start(const list<value>& params) {
+    // Connect to memcached
+    const memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(servers(params)));
+
+    // Return the component implementation lambda function
+    const lvvlambda applyCache = [ch](const list<value>& params) -> const value {
         const value func(car(params));
         if (func == "get")
             return get(cdr(params), ch);
@@ -91,31 +101,8 @@ public:
         if (func == "delete")
             return del(cdr(params), ch);
         return mkfailure<value>();
-    }
-
-private:
-    memcache::MemCached& ch;
-};
-
-/**
- * Convert a list of properties to a list of server addresses.
- */
-const list<string> servers(const list<value>& params) {
-    if (isNil(params))
-        return list<string>();
-    const value s = ((lambda<value(const list<value>&)>)car(params))(list<value>());
-    return cons<string>(s, servers(cdr(params)));
-}
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Connect to memcached
-    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(servers(params)));
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyCache(ch)));
+    };
+    return value(applyCache);
 }
 
 }

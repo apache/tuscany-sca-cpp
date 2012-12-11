@@ -38,7 +38,7 @@ const string cartId("1234");
  * Get the shopping cart from the cache. Return an empty
  * cart if not found.
  */
-const list<value> getcart(const value& id, const lambda<value(const list<value>&)>& cache) {
+const list<value> getcart(const value& id, const lvvlambda& cache) {
     const value cart = cache(mklist<value>("get", mklist<value>(id)));
     cerr << "cart value: " << cart << "\n";
     const failable<value> fcart = cart;
@@ -46,14 +46,14 @@ const list<value> getcart(const value& id, const lambda<value(const list<value>&
     cerr << "cart content: " << content(fcart) << "\n";
     cerr << "cart reason: " << reason(fcart) << "\n";
     if (isNil(cart))
-        return value(list<value>());
+        return value(nilListValue);
     return (list<value>)cart;
 }
 
 /**
  * Post a new item to the cart. Create a new cart if necessary.
  */
-const failable<value> post(unused const list<value>& collection, const value& item, const lambda<value(const list<value>&)>& cache) {
+const failable<value> post(unused const list<value>& collection, const value& item, const lvvlambda& cache) {
     const value id(mkuuid());
     const list<value> newItem(mklist<value>("entry", cadr<value>(car<value>(item)), mklist<value>("id", id), cadddr<value>(car<value>(item))));
     const list<value> cart(cons<value>(newItem, getcart(cartId, cache)));
@@ -75,7 +75,7 @@ const value find(const value& id, const list<value>& cart) {
 /**
  * Return items from the cart.
  */
-const failable<value> get(const list<value>& id, const lambda<value(const list<value>&)>& cache) {
+const failable<value> get(const list<value>& id, const lvvlambda& cache) {
     if (isNil(id))
         return value(mklist<value>(append(mklist<value>("feed", mklist<value>("title", string("Your Cart")), mklist<value>("id", cartId)), getcart(cartId, cache))));
     return find(car(id), getcart(cartId, cache));
@@ -84,10 +84,10 @@ const failable<value> get(const list<value>& id, const lambda<value(const list<v
 /**
  * Delete items from the cart.
  */
-const failable<value> del(const list<value>& id, unused const lambda<value(const list<value>&)>& cache) {
+const failable<value> del(const list<value>& id, unused const lvvlambda& cache) {
     if (isNil(id))
         return cache(mklist<value>("delete", mklist<value>(cartId)));
-    return value(true);
+    return trueValue;
 }
 
 /**
@@ -109,7 +109,7 @@ const double sum(const list<value>& items) {
 /**
  * Return the total price of the items in the cart.
  */
-const failable<value> total(const lambda<value(const list<value>&)>& cache) {
+const failable<value> total(const lvvlambda& cache) {
     const list<value> cart(getcart(cartId, cache));
     return value(sum(cart));
 }

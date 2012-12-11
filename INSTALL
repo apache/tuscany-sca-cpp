@@ -31,11 +31,11 @@ The installation script will display each command as it's executed.
 That's all you need to do to build and install the Tuscany SCA runtime on
 Ubuntu Server.
 
-Automated installation on Max OS X 10.7.4
-=========================================
+Automated installation on Max OS X 10.8
+=======================================
 
-Tuscany provides an automated install script for Mac OS X 10.7.4 and Xcode 4.1.
-You can start with a fresh Mac OS X 10.7.4 + Xcode 4.1 system and the script
+Tuscany provides an automated install script for Mac OS X 10.8 and Xcode 4.4.
+You can start with a fresh Mac OS X 10.8 + Xcode 4.4 system and the script
 will take care of all the download, build and installation steps for you.
 
 macos/macos-install:
@@ -89,12 +89,11 @@ XML:
 libxml2-2.7.7 (http://xmlsoft.org/)
 
 CURL:
-curl-7-24.0
+curl-7-28.0 (http://curl.haxx.se)
+built with c-ares-1.9.1 (http://c-ares.haxx.se)
 
 JSON:
-Mozilla SpiderMonkey libmozjs 1.8.5 and
-(https://developer.mozilla.org/en/SpiderMonkey)
-built with Mozilla nspr-4.8.8
+Jansson 2.4 (http://www.digip.org/jansson/)
 
 Key/value persistent store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
@@ -143,16 +142,13 @@ Apache Vysper 0.5 (http://mina.apache.org/)
 Libstrophe (http://code.stanziq.com/strophe/)
 build it from source at git://github.com/jsdelfino/libstrophe.git
 
-Key/value persistent store:
-Google LevelDB 1.2 (http://code.google.com/p/leveldb/)
-
 SQL database:
 PostgreSQL 9.1.2 (http://www.postgresql.org/)
 PgBouncer 1.5 (http://wiki.postgresql.org/wiki/PgBouncer)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
-requires Apache Thrift 0.2.0 (http://incubator.apache.org/thrift/)
+requires Apache Thrift 0.8.0 (http://incubator.apache.org/thrift/)
 
 Cloud deployment:
 Apache Libcloud 0.3.1 (http://incubator.apache.org/libcloud/)
@@ -228,7 +224,7 @@ most useful options and the corresponding dependencies installed under $build:
 
 ./configure --prefix=$build/tuscany-sca-cpp-bin \
 --enable-threads --enable-maintainer-mode \
---with-curl=$build/curl-7.24.0-bin --with-libxml2=$build/libxml2-2.7.7-bin \
+--with-curl=$build/curl-7.28.0-bin --with-libxml2=$build/libxml2-2.7.7-bin \
 --with-apr=$build/apr-1.4.6-bin --with-apr-util=$build/apr-util-1.4.1-bin \
 --with-httpd=$build/httpd-2.4.2-bin \
 --with-memcached=$build/memcached-1.4.7-bin \
@@ -238,7 +234,7 @@ most useful options and the corresponding dependencies installed under $build:
 --enable-python --with-python=$build/python-2.7.3-bin \
 --enable-sqldb --with-pgsql=$build/postgresql-9.1.2-bin \
 --with-pgbouncer=$build/pgbouncer-1.5-bin \
---enable-log --with-thrift=$build/thrift-0.2.0-bin \
+--enable-log --with-thrift=$build/thrift-0.8.0-bin \
 --with-scribe=$build/scribe-2.2-bin \
 --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin \
 --enable-mod-security --with-mod-security=$build/modsecurity-apache-2.6.6-bin \

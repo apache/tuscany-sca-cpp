@@ -37,14 +37,14 @@ namespace constdb {
 /**
  * Get an item from the database.
  */
-const failable<value> get(const list<value>& params, tinycdb::TinyCDB& cdb) {
+const failable<value> get(const list<value>& params, const tinycdb::TinyCDB& cdb) {
     return tinycdb::get(car(params), cdb);
 }
 
 /**
  * Post an item to the database.
  */
-const failable<value> post(const list<value>& params, tinycdb::TinyCDB& cdb) {
+const failable<value> post(const list<value>& params, const tinycdb::TinyCDB& cdb) {
     const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = tinycdb::post(id, cadr(params), cdb);
     if (!hasContent(val))
@@ -55,7 +55,7 @@ const failable<value> post(const list<value>& params, tinycdb::TinyCDB& cdb) {
 /**
  * Put an item into the database.
  */
-const failable<value> put(const list<value>& params, tinycdb::TinyCDB& cdb) {
+const failable<value> put(const list<value>& params, const tinycdb::TinyCDB& cdb) {
     const failable<bool> val = tinycdb::put(car(params), cadr(params), cdb);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -65,7 +65,7 @@ const failable<value> put(const list<value>& params, tinycdb::TinyCDB& cdb) {
 /**
  * Delete an item from the database.
  */
-const failable<value> del(const list<value>& params, tinycdb::TinyCDB& cdb) {
+const failable<value> del(const list<value>& params, const tinycdb::TinyCDB& cdb) {
     const failable<bool> val = tinycdb::del(car(params), cdb);
     if (!hasContent(val))
         return mkfailure<value>(val);
@@ -73,14 +73,15 @@ const failable<value> del(const list<value>& params, tinycdb::TinyCDB& cdb) {
 }
 
 /**
- * Component implementation lambda function.
+ * Start the component.
  */
-class applyConstDb {
-public:
-    applyConstDb(tinycdb::TinyCDB& cdb) : cdb(cdb) {
-    }
+const failable<value> start(unused const list<value>& params) {
+    // Connect to the configured database and table
+    const value dbname = ((lvvlambda)car(params))(nilListValue);
+    const tinycdb::TinyCDB& cdb = *(new (gc_new<tinycdb::TinyCDB>()) tinycdb::TinyCDB(dbname));
 
-    const value operator()(const list<value>& params) const {
+    // Return the component implementation lambda function
+    const lvvlambda applyConstDb = [cdb](const list<value>& params) -> const value {
         const value func(car(params));
         if (func == "get")
             return get(cdr(params), cdb);
@@ -91,22 +92,8 @@ public:
         if (func == "delete")
             return del(cdr(params), cdb);
         return mkfailure<value>();
-    }
-
-private:
-    tinycdb::TinyCDB& cdb;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(unused const list<value>& params) {
-    // Connect to the configured database and table
-    const value dbname = ((lambda<value(const list<value>&)>)car(params))(list<value>());
-    tinycdb::TinyCDB& cdb = *(new (gc_new<tinycdb::TinyCDB>()) tinycdb::TinyCDB(dbname));
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyConstDb(cdb)));
+    };
+    return value(applyConstDb);
 }
 
 }

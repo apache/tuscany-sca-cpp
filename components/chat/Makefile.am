@@ -58,7 +58,7 @@ xmpp_test_SOURCES = xmpp-test.cpp
 xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
 
 comp_PROGRAMS = chat-send
 
@@ -67,12 +67,18 @@ dist_noinst_SCRIPTS = server-test
 
 if WANT_VYSPER
 
+noinst_DATA += test/TestVysperServer.class
+
 AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath ${VYSPER_PREFIX}`${JAVAROOT}
 dist_noinst_JAVA = test/*.java
+.java.class:
+	${JAVAC} ${AM_JAVACFLAGS} test/*.java
+
 CLEANFILES = test/*.class
 
 dist_noinst_SCRIPTS += echo-test
-TESTS = echo-test server-test
+#TESTS = echo-test server-test
+
 endif
 
 endif

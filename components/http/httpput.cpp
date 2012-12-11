@@ -38,61 +38,40 @@ namespace httpput {
 /**
  * Evaluate an HTTP put.
  */
-const failable<value> get(const lambda<value(const list<value>&)>& url, const lambda<value(const list<value>&)>& val, http::CURLSession& ch) {
+const failable<value> get(const lvvlambda& url, const lvvlambda& val, const http::CURLSession& ch) {
     debug("httpput::get");
-    const value u = url(mklist<value>("get", list<value>()));
-    const value v = val(mklist<value>("get", list<value>()));
+    const value u = url(mklist<value>("get", nilListValue));
+    const value v = val(mklist<value>("get", nilListValue));
     debug(u, "httpput::get::url");
     debug(v, "httpput::get::val");
     return http::put(v, u, ch);
 }
 
 /**
- * Component implementation lambda function.
+ * Start the component.
  */
-class applyhttp {
-public:
-    applyhttp(const lambda<value(const list<value>&)>& url, const lambda<value(const list<value>&)>& val, const perthread_ptr<http::CURLSession>& ch) : url(url), val(val), ch(ch) {
-    }
+const failable<value> start(const list<value>& params) {
+    // Create a CURL session
+    const lvvlambda timeout = caddr(params);
+    const gc_pool cp(gc_current_pool());
+    const lambda<const gc_ptr<http::CURLSession>()> newsession = [timeout, cp]() -> const gc_ptr<http::CURLSession> {
+        const gc_scoped_pool sp(pool(cp));
+        const int t = atoi(c_str((string)timeout(nilListValue)));
+        return new (gc_new<http::CURLSession>()) http::CURLSession(emptyString, emptyString, emptyString, emptyString, t);
+    };
+    const perthread_ptr<http::CURLSession> ch = *(new (gc_new<perthread_ptr<http::CURLSession> >()) perthread_ptr<http::CURLSession>(newsession));
 
-    const value operator()(const list<value>& params) const {
+    // Return the component implementation lambda function
+    const lvvlambda url = car(params);
+    const lvvlambda val = cadr(params);
+    const lvvlambda applyhttp = [url, val, ch](const list<value>& params) -> const value {
         debug(params, "httpput::applyhttp::params");
         const value func(car(params));
         if (func == "get")
             return get(url, val, *ch);
         return mkfailure<value>();
-    }
-
-private:
-    const lambda<value(const list<value>&)> url;
-    const lambda<value(const list<value>&)> val;
-    perthread_ptr<http::CURLSession> ch;
-};
-
-/**
- * Create a new CURL session.
- */
-class newsession {
-public:
-    newsession(const lambda<value(const list<value>&)>& timeout) : timeout(timeout) {
-    }
-    const gc_ptr<http::CURLSession> operator()() const {
-        const int t = atoi(c_str((string)timeout(list<value>())));
-        return new (gc_new<http::CURLSession>()) http::CURLSession("", "", "", "", t);
-    }
-private:
-    const lambda<value(const list<value>&)> timeout;
-};
-
-/**
- * Start the component.
- */
-const failable<value> start(const list<value>& params) {
-    // Create a CURL session
-    const perthread_ptr<http::CURLSession> ch = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(caddr(params))));
-
-    // Return the component implementation lambda function
-    return value(lambda<value(const list<value>&)>(applyhttp(car(params), cadr(params), ch)));
+    };
+    return value(applyhttp);
 }
 
 }

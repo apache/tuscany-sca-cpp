@@ -28,16 +28,16 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "list.hpp"
-#include "xml.hpp"
-#include "../../modules/scheme/driver.hpp"
+#include "../../modules/xml/xml.hpp"
 #include "../../modules/json/json.hpp"
+#include "../../modules/scheme/driver.hpp"
 
 namespace store {
 
 using namespace tuscany;
 
-bool testScript() {
-    gc_scoped_pool pool;
+const bool testScript() {
+    const gc_scoped_pool pool;
 
     ifstream is("script-test.scm");
     ostringstream os;
@@ -49,9 +49,9 @@ bool testScript() {
     return true;
 }
 
-bool testEval() {
+const bool testEval() {
     {
-        gc_scoped_pool pool;
+        const gc_scoped_pool pool;
         ifstream is("script-test.scm");
         ostringstream os;
         scheme::setupDisplay(os);
@@ -65,7 +65,7 @@ bool testEval() {
     }
 
     {
-        gc_scoped_pool pool;
+        const gc_scoped_pool pool;
         ifstream is("script-test.scm");
         ostringstream os;
         scheme::setupDisplay(os);

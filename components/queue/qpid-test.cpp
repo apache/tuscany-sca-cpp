@@ -45,7 +45,7 @@ namespace queue {
 const value key(mklist<value>("test"));
 const string qname("testq");
 
-bool testDeclareQueue() {
+const bool testDeclareQueue() {
     QpidConnection qc;
     QpidSession qs(qc);
     const failable<bool> r = declareQueue(key, qname, qs);
@@ -53,12 +53,12 @@ bool testDeclareQueue() {
     return true;
 }
 
-const list<value> item = list<value>()
-        + (list<value>() + "name" + string("Apple"))
-        + (list<value>() + "price" + string("$2.99"));
+const list<value> item = nilListValue
+        + (nilListValue + "name" + string("Apple"))
+        + (nilListValue + "price" + string("$2.99"));
 const list<value> entry = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), item);
 
-bool testPost() {
+const bool testPost() {
     QpidConnection qc;
     QpidSession qs(qc);
     const failable<bool> r = post(key, entry, qs);
@@ -72,11 +72,11 @@ const bool listener(const value& k, const value& v) {
     return false;
 }
 
-bool testListen() {
+const bool testListen() {
     QpidConnection qc;
     QpidSession qs(qc);
     QpidSubscription qsub(qs);
-    const lambda<bool(const value&, const value&)> l(listener);
+    const lambda<const bool(const value&, const value&)> l(listener);
     listen(qname, l, qsub);
     return true;
 }

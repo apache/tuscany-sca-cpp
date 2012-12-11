@@ -119,7 +119,7 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
 if test "${want_maintainer_mode}" = "true"; then
   cxxflags="${cxxflags} -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Waddress -Wredundant-decls -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -O1 -stdlib=libc++"
+    cxxflags="${cxxflags} -O2 -stdlib=libc++ -Qunused-arguments -Wno-return-type-c-linkage"
   else
     cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion"
   fi
@@ -128,7 +128,7 @@ if test "${want_maintainer_mode}" = "true"; then
 else
   cxxflags="${cxxflags} -g -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -O1 -stdlib=libc++"
+    cxxflags="${cxxflags} -O2 -stdlib=libc++ -Qunused-arguments"
   else
     cxxflags="${cxxflags} -O2"
   fi
@@ -286,28 +286,21 @@ AC_SUBST(LIBXML2_LIB)
 LIBS="-L${LIBXML2_LIB} ${defaultlibs}"
 AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
 
-# Configure path to libmozjs includes and lib.
-AC_MSG_CHECKING([for js-include])
-AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
-             [default=/usr/include]])], [
-  JS_INCLUDE="${withval}"
+# Configure path to jansson includes and lib.
+AC_MSG_CHECKING([for jansson])
+AC_ARG_WITH([jansson], [AC_HELP_STRING([--with-jansson=PATH], [path to installed jansson [default=/usr]])], [
+  JANSSON_INCLUDE="${withval}/include"
+  JANSSON_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_INCLUDE="/usr/include"
-  AC_MSG_RESULT(/usr/include)
+  JANSSON_INCLUDE="/usr/include"
+  JANSSON_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
 ])
-AC_MSG_CHECKING([for js-lib])
-AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib]])], [
-  JS_LIB="${withval}"
-  AC_MSG_RESULT("${withval}")
-], [
-  JS_LIB="/usr/lib"
-  AC_MSG_RESULT(/usr/lib)
-])
-AC_SUBST(JS_INCLUDE)
-AC_SUBST(JS_LIB)
-LIBS="-L${JS_LIB} ${defaultlibs}"
-AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
+AC_SUBST(JANSSON_INCLUDE)
+AC_SUBST(JANSSON_LIB)
+LIBS="-L${JANSSON_LIB} ${defaultlibs}"
+AC_CHECK_LIB([jansson], [json_loads], [], [AC_MSG_ERROR([couldn't find a suitable libjansson, use --with-jansson=PATH])])
 
 # Configure path to Apache APR and HTTPD includes and libs.
 AC_MSG_CHECKING([for apr])
@@ -411,9 +404,9 @@ LIBS="-L${TINYCDB_LIB} ${defaultlibs}"
 AC_CHECK_LIB([cdb], [cdb_make_start], [], [AC_MSG_ERROR([couldn't find a suitable libcdb, use --with-tinycdb=PATH])])
 
 # Configure default includes and ldflags
-cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${APRUTIL_INCLUDE} -I${HTTPD_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${LIBCURL_INCLUDE}"
+cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${APRUTIL_INCLUDE} -I${HTTPD_INCLUDE} -I${LIBXML2_INCLUDE} -I${JANSSON_INCLUDE} -I${LIBCURL_INCLUDE}"
 ldflags="${ldflags} -ldl -L${APR_LIB} -R${APR_LIB} -lapr-1 -L${APRUTIL_LIB} -R${APRUTIL_LIB} -laprutil-1"
-ldflags="${ldflags} -L${LIBCURL_LIB} -R${LIBCURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
+ldflags="${ldflags} -L${LIBCURL_LIB} -R${LIBCURL_LIB} -L${JANSSON_LIB} -R${JANSSON_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
 
 # Enable Python support.
 AC_MSG_CHECKING([whether to enable Python support])
@@ -597,7 +590,7 @@ if test "${want_java}" = "true"; then
       # IBM J9 VM
       AC_MSG_NOTICE([checking for J9 Java VM])
       JAVA_LIBJVM=`dirname "${JAVA_LIBJVM_SO}"`
-      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -R${JAVA_LIBJVM}"
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -Wl,-R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -Wl,-R${JAVA_LIBJVM}"
       LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -ljsig"], [], [-ljvm -ljsig])
       if test "${JAVA_LDFLAGS}" != ""; then
@@ -609,7 +602,7 @@ if test "${want_java}" = "true"; then
       JAVA_LIBJVM_SO=`find ${JAVA_PREFIX}/jre/lib -name libjvm.so | grep server`
       JAVA_LIBJVM=`dirname "${JAVA_LIBJVM_SO}"`
       AC_MSG_NOTICE([libjava ${JAVA_LIBJAVA} libjvm ${LIBJVM}])
-      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -R${JAVA_LIBJVM}"
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -Wl,-R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -Wl,-R${JAVA_LIBJVM}"
       LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -lverify"], [], [-ljvm -lverify])
       if test "${JAVA_LDFLAGS}" != ""; then
@@ -623,7 +616,7 @@ if test "${want_java}" = "true"; then
       JAVA_LIBHARMONYVM=`dirname "${JAVA_LIBHARMONYVM_SO}"`
       JAVA_LIBJAVA=`dirname "${JAVA_LIBHARMONYVM}"`
       AC_MSG_NOTICE([checking for Apache Harmony Java VM])
-      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBHARMONYVM} -R${JAVA_LIBHARMONYVM}"
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -Wl,-R${JAVA_LIBJAVA} -L${JAVA_LIBHARMONYVM} -Wl,-R${JAVA_LIBHARMONYVM}"
       LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm -lhythr -licuuc -lch ${JAVA_LIBHARMONYVM}/libicudata.so.34"], [], [-lhythr -licuuc -lch ${JAVA_LIBHARMONYVM}/libicudata.so.34])
       if test "${JAVA_LDFLAGS}" != ""; then
@@ -1006,7 +999,7 @@ if test "${want_chat}" = "true"; then
     AC_MSG_RESULT(${HOME}/vysper-1.0.0)
   ])
   AC_SUBST(VYSPER_PREFIX)
-  AC_CHECK_FILE([${VYSPER_PREFIX}/lib/vysper-core-0.5.jar], [want_vysper=true], [])
+  AC_CHECK_FILE([${VYSPER_PREFIX}/lib/vysper-core-0.6.jar], [want_vysper=true], [])
   if test "${want_vysper}" = "true"; then
     AM_CONDITIONAL([WANT_VYSPER], true)
   else
@@ -1117,6 +1110,7 @@ AC_CONFIG_FILES([Makefile
                  modules/openid/Makefile
                  modules/oauth/Makefile
                  modules/wsgi/Makefile
+                 modules/xml/Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/log/Makefile
