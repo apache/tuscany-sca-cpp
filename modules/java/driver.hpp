@@ -37,7 +37,7 @@ namespace java {
 
 const value evalDriverLoop(const JavaRuntime& jr, const JavaClass jc, istream& in, ostream& out) {
     scheme::promptForInput(scheme::evalInputPrompt, out);
-    value input = scheme::readValue(in);
+    const value input = content(scheme::readValue(in));
     if (isNil(input))
         return input;
     const failable<value> output = evalClass(jr, input, jc);
@@ -46,7 +46,7 @@ const value evalDriverLoop(const JavaRuntime& jr, const JavaClass jc, istream& i
     return evalDriverLoop(jr, jc, in, out);
 }
 
-const bool evalDriverRun(const char* name, istream& in, ostream& out) {
+const bool evalDriverRun(const char* const name, istream& in, ostream& out) {
     scheme::setupDisplay(out);
     JavaRuntime javaRuntime;
     const failable<JavaClass> jc = readClass(javaRuntime, ".", name);

@@ -53,17 +53,17 @@ namespace modssltunnel {
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
+    ServerConf(apr_pool_t* const p, server_rec* const s) : p(p), server(s) {
     }
 
     const gc_pool p;
-    server_rec* server;
-    string pass;
-    string host;
-    string path;
-    string ca;
-    string cert;
-    string key;
+    server_rec* const server;
+    gc_mutable_ref<string> pass;
+    gc_mutable_ref<string> host;
+    gc_mutable_ref<string> path;
+    gc_mutable_ref<string> ca;
+    gc_mutable_ref<string> cert;
+    gc_mutable_ref<string> key;
 };
 
 extern "C" {
@@ -74,7 +74,7 @@ extern module AP_DECLARE_DATA core_module;
  * Process the module configuration.
  */
 int M_SSLTUNNEL;
-int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
+int postConfigMerge(const ServerConf& mainsc, apr_pool_t* const p, server_rec* const s) {
     if (s == NULL)
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
@@ -102,10 +102,10 @@ int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
     return postConfigMerge(mainsc, p, s->next);
 }
 
-int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
-    gc_scoped_pool pool(p);
+int postConfig(apr_pool_t* const p, unused apr_pool_t* const plog, unused apr_pool_t* const ptemp, server_rec* const s) {
+    const gc_scoped_pool sp(p);
 
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
     debug(httpd::serverName(s), "modssltunnel::postConfig::serverName");
 
     // Register the SSLTUNNEL method
@@ -118,7 +118,7 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 /**
  * Close a connection.
  */
-const int close(conn_rec* conn, apr_socket_t* csock) {
+const int close(conn_rec* const conn, apr_socket_t* const csock) {
     debug("modssltunnel::close");
     apr_socket_close(csock);
     conn->aborted = 1;
@@ -128,7 +128,7 @@ const int close(conn_rec* conn, apr_socket_t* csock) {
 /**
  * Abort a connection.
  */
-const int abort(conn_rec* conn, apr_socket_t* csock, const string& reason) {
+const int abort(conn_rec* const conn, apr_socket_t* const csock, const string& reason) {
     debug("modssltunnel::abort");
     apr_socket_close(csock);
     conn->aborted = 1;
@@ -138,21 +138,21 @@ const int abort(conn_rec* conn, apr_socket_t* csock, const string& reason) {
 /**
  * Tunnel traffic from a client connection to a target URL.
  */
-int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& key, const string& url, const string& preamble, const gc_pool& p, unused ap_filter_t* ifilter, ap_filter_t* ofilter) {
+int tunnel(conn_rec* const conn, const string& ca, const string& cert, const string& key, const string& url, const string& preamble, const gc_pool& p, unused ap_filter_t* const ifilter, ap_filter_t* const ofilter) {
 
     // Create input/output bucket brigades
-    apr_bucket_brigade* ib = apr_brigade_create(pool(p), conn->bucket_alloc);
-    apr_bucket_brigade* ob = apr_brigade_create(pool(p), conn->bucket_alloc);
+    apr_bucket_brigade* const ib = apr_brigade_create(pool(p), conn->bucket_alloc);
+    apr_bucket_brigade* const ob = apr_brigade_create(pool(p), conn->bucket_alloc);
 
     // Get client connection socket
-    apr_socket_t* csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
+    apr_socket_t* const csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
 
     // Open connection to target
-    http::CURLSession cs(ca, cert, key, "", 0);
+    const http::CURLSession cs(ca, cert, key, emptyString, 0);
     const failable<bool> crc = http::connect(url, cs);
     if (!hasContent(crc))
         return abort(conn, csock, reason(crc));
-    apr_socket_t* tsock = http::sock(cs);
+    apr_socket_t* const tsock = http::sock(cs);
 
     // Send preamble
     if (length(preamble) != 0) {
@@ -164,7 +164,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
 
     // Create a pollset for the client and target sockets
     apr_pollset_t* pollset;
-    apr_status_t cprc = apr_pollset_create(&pollset, 2, pool(p), 0);
+    const apr_status_t cprc = apr_pollset_create(&pollset, 2, pool(p), 0);
     if (cprc != APR_SUCCESS)
         return abort(conn, csock, http::apreason(cprc));
     const apr_pollfd_t* cpollfd = http::pollfd(csock, APR_POLLIN, p);
@@ -241,7 +241,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
 
         // Poll the client and target sockets
         debug("modssltunnel::tunnel::poll");
-        apr_status_t pollrc = apr_pollset_poll(pollset, -1, &pollcount, &pollfds);
+        const apr_status_t pollrc = apr_pollset_poll(pollset, -1, &pollcount, &pollfds);
         if (pollrc != APR_SUCCESS)
             return abort(conn, csock, "Couldn't poll sockets");
         debug(pollcount, "modssltunnel::tunnel::pollfds");
@@ -254,7 +254,7 @@ int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& k
 /**
  * Return the first connection filter in a list of filters.
  */
-ap_filter_t* connectionFilter(ap_filter_t* f) {
+ap_filter_t* const connectionFilter(ap_filter_t* const f) {
     if (f == NULL)
         return f;
     if (f->frec->ftype < AP_FTYPE_CONNECTION)
@@ -265,14 +265,14 @@ ap_filter_t* connectionFilter(ap_filter_t* f) {
 /**
  * Process a client connection and relay it to a tunnel.
  */
-int processConnection(conn_rec *conn) {
+int processConnection(conn_rec* conn) {
     // Only allow configured virtual hosts
     if (!conn->base_server->is_virtual)
         return DECLINED;
     if (ap_get_module_config(conn->base_server->module_config, &mod_tuscany_ssltunnel) == NULL)
         return DECLINED;
 
-    gc_scoped_pool pool(conn->pool);
+    const gc_scoped_pool sp(conn->pool);
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(conn->base_server, &mod_tuscany_ssltunnel);
@@ -297,41 +297,41 @@ int handler(request_rec* r) {
     if (strcmp(r->server->server_scheme, "https"))
         return DECLINED;
 
-    gc_scoped_pool pool(r->pool);
+    const gc_scoped_pool sp(r->pool);
 
     // Build the target URL
     debug(r->uri, "modssltunnel::handler::uri");
     const list<value> path(pathValues(r->uri));
-    const string url = string(cadr(path)) + ":" + caddr(path);
+    const string url = string(cadr(path)) + ":" + (string)caddr(path);
     debug(url, "modssltunnel::handler::target");
 
     // Run the tunnel
-    return tunnel(r->connection, "", "", "", url, "", gc_pool(r->pool), connectionFilter(r->proto_input_filters), connectionFilter(r->proto_output_filters));
+    return tunnel(r->connection, emptyString, emptyString, emptyString, url, emptyString, gc_pool(r->pool), connectionFilter(r->proto_input_filters), connectionFilter(r->proto_output_filters));
 }
 
 /**
  * Configuration commands.
  */
-const char* confTunnelPass(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confTunnelPass(cmd_parms *cmd, unused void *c, const char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_ssltunnel);
     sc.pass = arg;
     return NULL;
 }
-const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_ssltunnel);
     sc.ca = arg;
     return NULL;
 }
-const char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_ssltunnel);
     sc.cert = arg;
     return NULL;
 }
-const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_ssltunnel);
     sc.key = arg;
     return NULL;

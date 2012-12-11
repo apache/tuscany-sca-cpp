@@ -40,38 +40,30 @@ namespace server {
 namespace modpython {
 
 /**
- * Apply a Python component implementation function.
- */
-struct applyImplementation {
-    PyObject* impl;
-    const list<value> px;
-    python::PythonRuntime& py;
-    applyImplementation(PyObject* impl, const list<value>& px, python::PythonRuntime& py) : impl(impl), px(px), py(py) {
-    }
-    const value operator()(const list<value>& params) const {
-        const value expr = append<value>(params, px);
-        debug(expr, "modeval::python::applyImplementation::input");
-        const failable<value> res = python::evalScript(expr, impl, py);
-        const value val = !hasContent(res)? mklist<value>(value(), reason(res), rcode(res)) : mklist<value>(content(res));
-        debug(val, "modeval::python::applyImplementation::result");
-        return val;
-    }
-};
-
-/**
  * Evaluate a Python component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, python::PythonRuntime& py) {
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px, python::PythonRuntime& py) {
     const string spath(attributeValue("script", impl));
     const string fpath(path + spath);
     ifstream is(fpath);
     if (fail(is))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
-    const failable<PyObject*> script = python::readScript(python::moduleName(spath), fpath, is, py);
-    if (!hasContent(script))
-        return mkfailure<lambda<value(const list<value>&)> >(script);
-    return lambda<value(const list<value>&)>(applyImplementation(content(script), px, py));
+        return mkfailure<lvvlambda >(string("Could not read implementation: ") + fpath);
+    const failable<PyObject*> fscript = python::readScript(python::moduleName(spath), fpath, is, py);
+    if (!hasContent(fscript))
+        return mkfailure<lvvlambda >(fscript);
+    PyObject* const script = content(fscript);
+
+    const lvvlambda applyImplementation = [script, px, &py](const list<value>& params) -> const value {
+        // Apply a Python component implementation function
+        const value expr = append<value>(params, px);
+        debug(expr, "modeval::python::applyImplementation::input");
+        const failable<value> res = python::evalScript(expr, script, py);
+        const value val = !hasContent(res)? mklist<value>(nilValue, reason(res), rcode(res)) : mklist<value>(content(res));
+        debug(val, "modeval::python::applyImplementation::result");
+        return val;
+    };
+    return applyImplementation;
 }
 
 }

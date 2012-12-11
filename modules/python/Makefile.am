@@ -35,7 +35,7 @@ EXTRA_DIST = domain-test.composite client-test.py server-test.py
 
 mod_LTLIBRARIES = libmod_tuscany_python.la
 libmod_tuscany_python_la_SOURCES = mod-python.cpp
-libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython${PYTHON_VERSION}
+libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -ljansson -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython${PYTHON_VERSION}
 noinst_DATA = libmod_tuscany_python${libsuffix}
 libmod_tuscany_python${libsuffix}:
 	ln -s .libs/libmod_tuscany_python${libsuffix}
@@ -47,7 +47,7 @@ python_shell_SOURCES = python-shell.cpp
 python_shell_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython${PYTHON_VERSION}
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = server-test wiring-test
 noinst_PROGRAMS = python-test client-test

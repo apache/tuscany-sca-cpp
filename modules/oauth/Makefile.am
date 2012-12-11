@@ -26,12 +26,12 @@ mod_LTLIBRARIES = libmod_tuscany_oauth1.la libmod_tuscany_oauth2.la
 noinst_DATA = libmod_tuscany_oauth1${libsuffix} libmod_tuscany_oauth2${libsuffix}
 
 libmod_tuscany_oauth1_la_SOURCES = mod-oauth1.cpp
-libmod_tuscany_oauth1_la_LDFLAGS = -L${LIBOAUTH_LIB} -R${LIBOAUTH_LIB} -loauth -lxml2 -lcurl -lmozjs
+libmod_tuscany_oauth1_la_LDFLAGS = -L${LIBOAUTH_LIB} -R${LIBOAUTH_LIB} -loauth -lxml2 -lcurl -ljansson
 libmod_tuscany_oauth1${libsuffix}:
 	ln -s .libs/libmod_tuscany_oauth1${libsuffix}
 
 libmod_tuscany_oauth2_la_SOURCES = mod-oauth2.cpp
-libmod_tuscany_oauth2_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_oauth2_la_LDFLAGS = -lxml2 -lcurl -ljansson
 libmod_tuscany_oauth2${libsuffix}:
 	ln -s .libs/libmod_tuscany_oauth2${libsuffix}
 

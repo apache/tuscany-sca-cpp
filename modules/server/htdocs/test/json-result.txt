@@ -1,4 +1,1 @@
-{
- "id": 1,
- "result": "Hello"
-}
+{"id":1,"result":"Hello"}

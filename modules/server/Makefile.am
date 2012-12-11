@@ -29,7 +29,7 @@ mod_LTLIBRARIES = libmod_tuscany_eval.la
 noinst_DATA = libmod_tuscany_eval${libsuffix}
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
-libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -ljansson
 libmod_tuscany_eval${libsuffix}:
 	ln -s .libs/libmod_tuscany_eval${libsuffix}
 
@@ -42,7 +42,7 @@ libimpl-test${libsuffix}:
 	ln -s .libs/libimpl-test${libsuffix}
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = httpd-test server-test wiring-test
 noinst_PROGRAMS = client-test

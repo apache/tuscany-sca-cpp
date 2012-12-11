@@ -57,11 +57,11 @@ namespace openauth {
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
+    ServerConf(apr_pool_t* const p, server_rec* const s) : p(p), server(s) {
     }
 
     const gc_pool p;
-    server_rec* server;
+    server_rec* const server;
 };
 
 /**
@@ -71,11 +71,11 @@ class AuthnProviderConf {
 public:
     AuthnProviderConf() : name(), provider(NULL) {
     }
-    AuthnProviderConf(const string name, const authn_provider* provider) : name(name), provider(provider) {
+    AuthnProviderConf(const string name, const authn_provider* const provider) : name(name), provider(provider) {
     }
 
-    string name;
-    const authn_provider* provider;
+    const string name;
+    const authn_provider* const provider;
 };
 
 /**
@@ -83,14 +83,14 @@ public:
  */
 class DirConf {
 public:
-    DirConf(apr_pool_t* p, char* d) : p(p), dir(d), enabled(false), login("") {
+    DirConf(apr_pool_t* const p, const char* d) : p(p), dir(d), enabled(false), login(emptyString) {
     }
 
     const gc_pool p;
-    const char* dir;
+    const char* const dir;
     bool enabled;
-    string login;
-    list<AuthnProviderConf> apcs;
+    gc_mutable_ref<string> login;
+    gc_mutable_ref<list<AuthnProviderConf> > apcs;
 };
 
 #ifdef WANT_MAINTAINER_LOG
@@ -98,17 +98,17 @@ public:
 /**
  * Log session entries.
  */
-int debugSessionEntry(unused void* r, const char* key, const char* value) {
+int debugSessionEntry(unused void* r, const char* const key, const char* const value) {
     cdebug << "  session key: " << key << ", value: " << value << endl;
     return 1;
 }
 
-const bool debugSession(request_rec* r, session_rec* z) {
+const bool debugSession(request_rec* const r, const session_rec* const z) {
     apr_table_do(debugSessionEntry, r, z->entries, NULL);
     return true;
 }
 
-#define debug_authSession(r, z) if (debug_islogging()) openauth::debugSession(r, z)
+#define debug_authSession(r, z) if(debug_islogging()) openauth::debugSession(r, z)
 
 #else
 
@@ -117,28 +117,35 @@ const bool debugSession(request_rec* r, session_rec* z) {
 #endif
 
 /**
+ * Session hook functions.
+ */
+static int (*ap_session_load_fn) (request_rec * r, session_rec ** z) = NULL;
+static apr_status_t (*ap_session_get_fn) (request_rec * r, session_rec * z, const char *key, const char **value) = NULL;
+static apr_status_t (*ap_session_set_fn)(request_rec * r, session_rec * z, const char *key, const char *value) = NULL;
+
+/**
  * Run the authnz hooks to authenticate a request.
  */
-const failable<int> checkAuthnzProviders(const string& user, const string& pw, request_rec* r, const list<AuthnProviderConf>& apcs) {
-    if (isNil(apcs))
-        return mkfailure<int>("Authentication failure for: " + user);
+const failable<int> checkAuthnzProviders(const string& user, const string& pw, request_rec* const r, const list<AuthnProviderConf>& apcs) {
+    if(isNil(apcs))
+        return mkfailure<int>("Authentication failure for: " + user, HTTP_UNAUTHORIZED);
     const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
-    if (apc.provider == NULL || !apc.provider->check_password)
+    if(apc.provider == NULL || !apc.provider->check_password)
         return checkAuthnzProviders(user, pw, r, cdr(apcs));
 
     apr_table_setn(r->notes, AUTHN_PROVIDER_NAME_NOTE, c_str(apc.name));
     const authn_status auth_result = apc.provider->check_password(r, c_str(user), c_str(pw));
     apr_table_unset(r->notes, AUTHN_PROVIDER_NAME_NOTE);
-    if (auth_result != AUTH_GRANTED)
+    if(auth_result != AUTH_GRANTED)
         return checkAuthnzProviders(user, pw, r, cdr(apcs));
     return OK;
 }
 
-const failable<int> checkAuthnz(const string& user, const string& pw, request_rec* r, const DirConf& dc) {
-    if (substr(user, 0, 1) == "/" && pw == "password")
+const failable<int> checkAuthnz(const string& user, const string& pw, request_rec* const r, const DirConf& dc) {
+    if(substr(user, 0, 1) == "/" && pw == "password")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
-    if (isNil(dc.apcs)) {
+    if(isNil((const list<AuthnProviderConf>)dc.apcs)) {
         const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
         return checkAuthnzProviders(user, pw, r, mklist<AuthnProviderConf>(AuthnProviderConf(AUTHN_DEFAULT_PROVIDER, provider)));
     }
@@ -148,54 +155,47 @@ const failable<int> checkAuthnz(const string& user, const string& pw, request_re
 /**
  * Return the user info from a form auth encrypted session cookie.
  */
-static int (*ap_session_load_fn) (request_rec * r, session_rec ** z) = NULL;
-static int (*ap_session_get_fn) (request_rec * r, session_rec * z, const char *key, const char **value) = NULL;
-
-const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
+const failable<value> userInfoFromSession(const string& realm, request_rec* const r) {
     debug("modopenauth::userInfoFromSession");
-    if (ap_session_load_fn == NULL)
-        ap_session_load_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_load);
     session_rec *z = NULL;
     ap_session_load_fn(r, &z);
-    if (z == NULL)
-        return mkfailure<value>("Couldn't retrieve user session");
+    if(z == NULL)
+        return mkfailure<value>("Couldn't retrieve user session", HTTP_UNAUTHORIZED);
     debug_authSession(r, z);
 
-    if (ap_session_get_fn == NULL)
-        ap_session_get_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_get);
     const char* user = NULL;
     ap_session_get_fn(r, z, c_str(realm + "-user"), &user);
-    if (user == NULL)
-        return mkfailure<value>("Couldn't retrieve user id");
+    if(user == NULL)
+        return mkfailure<value>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
     const char* pw = NULL;
     ap_session_get_fn(r, z, c_str(realm + "-pw"), &pw);
-    if (pw == NULL)
-        return mkfailure<value>("Couldn't retrieve password");
+    if(pw == NULL)
+        return mkfailure<value>("Couldn't retrieve password", HTTP_UNAUTHORIZED);
     return value(mklist<value>(mklist<value>("realm", realm), mklist<value>("id", string(user)), mklist<value>("password", string(pw))));
 }
 
 /**
  * Return the user info from a form auth session cookie.
  */
-const failable<value> userInfoFromCookie(const value& sid, const string& realm, request_rec* r) {
+const failable<value> userInfoFromCookie(const value& sid, const string& realm, request_rec* const r) {
     const list<list<value>> info = httpd::queryArgs(sid);
     debug(info, "modopenauth::userInfoFromCookie::info");
     const list<value> user = assoc<value>(realm + "-user", info);
-    if (isNil(user))
+    if(isNil(user))
         return userInfoFromSession(realm, r);
     const list<value> pw = assoc<value>(realm + "-pw", info);
-    if (isNil(pw))
-        return mkfailure<value>("Couldn't retrieve password");
+    if(isNil(pw))
+        return mkfailure<value>("Couldn't retrieve password", HTTP_UNAUTHORIZED);
     return value(mklist<value>(mklist<value>("realm", realm), mklist<value>("id", cadr(user)), mklist<value>("password", cadr(pw))));
 }
 
 /**
  * Return the user info from a basic auth header.
  */
-const failable<value> userInfoFromHeader(const char* header, const string& realm, request_rec* r) {
+const failable<value> userInfoFromHeader(const char* header, const string& realm, request_rec* const r) {
     debug(header, "modopenauth::userInfoFromHeader::header");
-    if (strcasecmp(ap_getword(r->pool, &header, ' '), "Basic"))
-        return mkfailure<value>("Wrong authentication scheme");
+    if(strcasecmp(ap_getword(r->pool, &header, ' '), "Basic"))
+        return mkfailure<value>("Wrong authentication scheme", HTTP_UNAUTHORIZED);
 
     while (apr_isspace(*header))
         header++;
@@ -212,18 +212,18 @@ const failable<value> userInfoFromHeader(const char* header, const string& realm
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& info, request_rec* r) {
+const failable<int> authenticated(const list<list<value> >& info, request_rec* const r) {
     debug(info, "modopenauth::authenticated::info");
 
     // Store user info in the request
     const list<value> realm = assoc<value>("realm", info);
-    if (isNil(realm) || isNil(cdr(realm)))
-        return mkfailure<int>("Couldn't retrieve realm");
+    if(isNil(realm) || isNil(cdr(realm)))
+        return mkfailure<int>("Couldn't retrieve realm", HTTP_UNAUTHORIZED);
     apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "REALM"), apr_pstrdup(r->pool, c_str(cadr(realm))));
 
     const list<value> id = assoc<value>("id", info);
-    if (isNil(id) || isNil(cdr(id)))
-        return mkfailure<int>("Couldn't retrieve user id");
+    if(isNil(id) || isNil(cdr(id)))
+        return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
     r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
 
     apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, c_str(cadr(id))));
@@ -233,17 +233,18 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
 /**
  * Check user authentication.
  */
-static int checkAuthn(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
+static int checkAuthn(request_rec* const r) {
+    const gc_scoped_pool sp(r->pool);
 
     // Decline if we're not enabled or AuthType is not set to Open
     const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
-    if (!dc.enabled)
+    if(!dc.enabled)
         return DECLINED;
     const char* atype = ap_auth_type(r);
-    if (atype == NULL || strcasecmp(atype, "Open"))
-        return DECLINED;
     debug_httpdRequest(r, "modopenauth::checkAuthn::input");
+    debug(atype, "modopenauth::checkAuthn::auth_type");
+    if(atype == NULL || strcasecmp(atype, "Open"))
+        return DECLINED;
     debug(atype, "modopenauth::checkAuthn::auth_type");
 
     // Get the request args
@@ -251,109 +252,94 @@ static int checkAuthn(request_rec *r) {
 
     // Get session id from the request
     const maybe<string> sid = sessionID(r, "TuscanyOpenAuth");
-    if (hasContent(sid)) {
+    if(hasContent(sid)) {
         // Decline if the session id was not created by this module
         const string stype = substr(content(sid), 0, 7);
-        if (stype == "OAuth2_" || stype == "OAuth1_" || stype == "OpenID_")
+        if(stype == "OAuth2_" || stype == "OAuth1_" || stype == "OpenID_")
             return DECLINED;
 
         // Retrieve the auth realm
         const char* aname = ap_auth_name(r);
-        if (aname == NULL)
-            return httpd::reportStatus(mkfailure<int>("Missing AuthName"));
+        if(aname == NULL)
+            return reportStatus(mkfailure<int>("Missing AuthName", HTTP_UNAUTHORIZED), dc.login, nilValue, r);
 
         // Extract user info from the session id
         const failable<value> userinfo = userInfoFromCookie(content(sid), aname, r);
-        if (hasContent(userinfo)) {
+        if(hasContent(userinfo)) {
 
             // Try to authenticate the request
             const value uinfo = content(userinfo);
             const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r, dc);
-            if (!hasContent(authz)) {
+            if(!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
                 r->ap_auth_type = const_cast<char*>(atype);
-                return httpd::reportStatus(login(dc.login, value(), 1, r));
+                return reportStatus(authz, dc.login, 1, r);
             }
 
             // Successfully authenticated, store the user info in the request
             r->ap_auth_type = const_cast<char*>(atype);
-            return httpd::reportStatus(authenticated(uinfo, r));
+            return reportStatus(authenticated(uinfo, r), dc.login, nilValue, r);
         }
     }
 
     // Get basic auth header from the request
-    const char* header = apr_table_get(r->headers_in, (PROXYREQ_PROXY == r->proxyreq) ? "Proxy-Authorization" : "Authorization");
-    if (header != NULL) {
+    const char* const header = apr_table_get(r->headers_in, (PROXYREQ_PROXY == r->proxyreq) ? "Proxy-Authorization" : "Authorization");
+    if(header != NULL) {
 
         // Retrieve the auth realm
-        const char* aname = ap_auth_name(r);
-        if (aname == NULL)
-            return httpd::reportStatus(mkfailure<int>("Missing AuthName"));
+        const char* const aname = ap_auth_name(r);
+        if(aname == NULL)
+            return reportStatus(mkfailure<int>("Missing AuthName", HTTP_UNAUTHORIZED), dc.login, nilValue, r);
 
         // Extract user info from the session id
         const failable<value> info = userInfoFromHeader(header, aname, r);
-        if (hasContent(info)) {
+        if(hasContent(info)) {
 
             // Try to authenticate the request
             const value uinfo = content(info);
             const failable<int> authz = checkAuthnz(cadr(assoc<value>("id", uinfo)), cadr(assoc<value>("password", uinfo)), r, dc);
-            if (!hasContent(authz)) {
+            if(!hasContent(authz)) {
 
                 // Authentication failed, redirect to login page
                 r->ap_auth_type = const_cast<char*>(atype);
-                return httpd::reportStatus(login(dc.login, value(), 1, r));
+                return reportStatus(authz, dc.login, 1, r);
             }
 
             // Successfully authenticated, store the user info in the request
             r->ap_auth_type = const_cast<char*>(atype);
-            return httpd::reportStatus(authenticated(uinfo, r));
+            return reportStatus(authenticated(uinfo, r), dc.login, nilValue, r);
         }
     }
 
     // Decline if the request is for another authentication provider
-    if (!isNil(assoc<value>("openid_identifier", args)))
+    if(!isNil(assoc<value>("openid_identifier", args)))
         return DECLINED;
 
     // Redirect to the login page, unless we have a session id from another module
-    if (hasContent(sessionID(r, "TuscanyOpenIDAuth")) ||
+    if(hasContent(sessionID(r, "TuscanyOpenIDAuth")) ||
         hasContent(sessionID(r, "TuscanyOAuth1")) ||
         hasContent(sessionID(r, "TuscanyOAuth2")))
         return DECLINED;
 
     r->ap_auth_type = const_cast<char*>(atype);
-    return httpd::reportStatus(login(dc.login, value(), value(), r));
+    return httpd::reportStatus(login(dc.login, nilValue, nilValue, r));
 }
 
 /**
- * Save the auth session cookie in the response.
+ * Load the auth session cookie from the request.
  */
-static int sessionCookieSave(request_rec* r, session_rec* z) {
-    gc_scoped_pool pool(r->pool);
+static int sessionCookieLoad(request_rec* const r, session_rec** const z) {
+    const gc_scoped_pool sp(r->pool);
 
     const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
-    if (!dc.enabled)
-        return DECLINED;
-
-    debug(c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))), "modopenauth::setcookie");
-    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))));
-    return OK;
-}
-
-/**
- * Load the auth session cookie from the request. Similar
- */
-static int sessionCookieLoad(request_rec* r, session_rec** z) {
-    gc_scoped_pool pool(r->pool);
-
-    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
-    if (!dc.enabled)
+    if(!dc.enabled)
         return DECLINED;
 
     // First look in the notes
-    const char* note = apr_pstrcat(r->pool, "mod_openauth", "TuscanyOpenAuth", NULL);
+    const char* const note = apr_pstrcat(r->pool, "mod_openauth", "TuscanyOpenAuth", NULL);
     session_rec* zz = (session_rec*)(void*)apr_table_get(r->notes, note);
-    if (zz != NULL) {
+    if(zz != NULL) {
         *z = zz;
         return OK;
     }
@@ -376,21 +362,85 @@ static int sessionCookieLoad(request_rec* r, session_rec** z) {
 }
 
 /**
+ * Save the auth session cookie in the response.
+ */
+static int sessionCookieSave(request_rec* const r, session_rec* const z) {
+    const gc_scoped_pool sp(r->pool);
+
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
+    if(!dc.enabled)
+        return DECLINED;
+    if(z->encoded == NULL || *(z->encoded) == '\0') {
+        const maybe<string> sid = sessionID(r, "TuscanyOpenAuth");
+        if(!hasContent(sid))
+            return OK;
+    }
+
+    debug(c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))), "modopenauth::sessioncookiesave::setcookie");
+    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenAuth", z->encoded, httpd::hostName(r))));
+    return OK;
+}
+
+/**
+ * Logout request handler.
+ */
+int logoutHandler(request_rec* const r) {
+    if(r->handler == NULL || strcmp(r->handler, "mod_tuscany_openauth_logout"))
+        return DECLINED;
+
+    const gc_scoped_pool sp(r->pool);
+    debug_httpdRequest(r, "modopenauth::handler::input");
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_openauth);
+    if(!dc.enabled)
+        return DECLINED;
+
+    // Clear the current session
+    if(hasContent(sessionID(r, "TuscanyOpenAuth"))) {
+        const char* const authname = ap_auth_name(r);
+        session_rec* z = NULL;
+        ap_session_load_fn(r, &z);
+        if(z != NULL && authname != NULL) {
+            ap_session_set_fn(r, z, apr_pstrcat(r->pool, authname, "-user", NULL), NULL);
+            ap_session_set_fn(r, z, apr_pstrcat(r->pool, authname, "-pw", NULL), NULL);
+            ap_session_set_fn(r, z, apr_pstrcat(r->pool, authname, "-site", NULL), NULL);
+        } else
+            apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenAuth", emptyString, httpd::hostName(r))));
+    }
+    if(hasContent(sessionID(r, "TuscanyOpenIDAuth")))
+        apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenIDAuth", emptyString, httpd::hostName(r))));
+    if(hasContent(sessionID(r, "TuscanyOAuth1")))
+        apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOAuth1", emptyString, httpd::hostName(r))));
+    if(hasContent(sessionID(r, "TuscanyOAuth2")))
+        apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOAuth2", emptyString, httpd::hostName(r))));
+
+    // Redirect to the login page
+    return httpd::reportStatus(login(dc.login, "/", nilValue, r));
+}
+
+/**
  * Process the module configuration.
  */
-int postConfigMerge(ServerConf& mainsc, server_rec* s) {
-    if (s == NULL)
+int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
+    if(s == NULL)
         return OK;
     debug(httpd::serverName(s), "modopenauth::postConfigMerge::serverName");
 
     return postConfigMerge(mainsc, s->next);
 }
 
-int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
-    gc_scoped_pool pool(p);
+int postConfig(apr_pool_t* const p, unused apr_pool_t* const plog, unused apr_pool_t* const ptemp, server_rec* const s) {
+    const gc_scoped_pool sp(p);
 
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_openauth);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_openauth);
     debug(httpd::serverName(s), "modopenauth::postConfig::serverName");
+
+    // Retrieve session hook functions
+    if(ap_session_load_fn == NULL)
+        ap_session_load_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_load);
+    if(ap_session_get_fn == NULL)
+        ap_session_get_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_get);
+    if(ap_session_set_fn == NULL)
+        ap_session_set_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_set);
 
     // Merge server configurations
     return postConfigMerge(sc, s);
@@ -399,15 +449,15 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 /**
  * Child process initialization.
  */
-void childInit(apr_pool_t* p, server_rec* s) {
-    gc_scoped_pool pool(p);
+void childInit(apr_pool_t* const p, server_rec* const s) {
+    const gc_scoped_pool sp(p);
 
-    ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_openauth);
+    const ServerConf* const psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_openauth);
     if(psc == NULL) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_openauth loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
-    ServerConf& sc = *psc;
+    const ServerConf& sc = *psc;
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
@@ -416,27 +466,27 @@ void childInit(apr_pool_t* p, server_rec* s) {
 /**
  * Configuration commands.
  */
-const char* confEnabled(cmd_parms *cmd, void *c, const int arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confEnabled(cmd_parms* cmd, void *c, const int arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
     dc.enabled = (bool)arg;
     return NULL;
 }
-const char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
     dc.login = arg;
     return NULL;
 }
-const char* confAuthnProvider(cmd_parms *cmd, void *c, const char* arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confAuthnProvider(cmd_parms *cmd, void *c, const char* arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
 
     // Lookup and cache the Authn provider
     const authn_provider* provider = (authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, arg, AUTHN_PROVIDER_VERSION);
-    if (provider == NULL)
+    if(provider == NULL)
         return apr_psprintf(cmd->pool, "Unknown Authn provider: %s", arg);
-    if (!provider->check_password)
+    if(!provider->check_password)
         return apr_psprintf(cmd->pool, "The '%s' Authn provider doesn't support password authentication", arg);
     dc.apcs = append<AuthnProviderConf>(dc.apcs, mklist<AuthnProviderConf>(AuthnProviderConf(arg, provider)));
     return NULL;
@@ -458,6 +508,7 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_check_authn(checkAuthn, NULL, NULL, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
     ap_hook_session_load(sessionCookieLoad, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_session_save(sessionCookieSave, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_handler(logoutHandler, NULL, NULL, APR_HOOK_MIDDLE);
 }
 
 }

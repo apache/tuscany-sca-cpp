@@ -36,7 +36,7 @@ endif
 
 #mod_LTLIBRARIES = libmod_tuscany_opencl.la
 #libmod_tuscany_opencl_la_SOURCES = mod-opencl.cpp
-#libmod_tuscany_opencl_la_LDFLAGS = -lxml2 -lcurl -lmozjs -framework OpenCL
+#libmod_tuscany_opencl_la_LDFLAGS = -lxml2 -lcurl -ljansson -framework OpenCL
 #noinst_DATA = libmod_tuscany_opencl${libsuffix}
 #libmod_tuscany_opencl${libsuffix}:
 #	ln -s .libs/libmod_tuscany_opencl${libsuffix}
@@ -48,7 +48,7 @@ opencl_shell_SOURCES = opencl-shell.cpp
 opencl_shell_LDFLAGS = ${OPENCL_FLAGS}
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = server-test
 noinst_PROGRAMS = opencl-test client-test

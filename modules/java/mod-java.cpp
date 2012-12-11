@@ -40,32 +40,25 @@ namespace modeval {
 /**
  * Apply a lifecycle start or restart event.
  */
-struct javaLifecycle {
-    javaLifecycle(java::JavaRuntime& jr) : jr(jr) {
-    }
-    const value operator()(const list<value>& params) const {
-        const value func = car(params);
-        if (func == "javaRuntime")
-            return (gc_ptr<value>)(value*)(void*)&jr;
-        return lambda<value(const list<value>&)>();
-    }
-    java::JavaRuntime& jr;
-};
-
 const value applyLifecycle(unused const list<value>& params) {
 
     // Create a Java runtime
-    java::JavaRuntime& jr = *(new (gc_new<java::JavaRuntime>()) java::JavaRuntime());
+    const java::JavaRuntime& jr = *(new (gc_new<java::JavaRuntime>()) java::JavaRuntime());
 
     // Return the function to invoke on subsequent events
-    return failable<value>(lambda<value(const list<value>&)>(javaLifecycle(jr)));
+    return failable<value>(lvvlambda([&jr](const list<value>& params) -> const value {
+        const value func = car(params);
+        if (func == "javaRuntime")
+            return (gc_ptr<value>)(value*)(void*)&jr;
+        return lvvlambda();
+    }));
 }
 
 /**
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle) {
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px, const lvvlambda& lifecycle) {
     const string itype(elementName(impl));
     if (contains(itype, ".java")) {
         const void* p = (gc_ptr<value>)lifecycle(mklist<value>("javaRuntime"));
@@ -74,8 +67,8 @@ const failable<lambda<value(const list<value>&)> > evalImplementation(const stri
     if (contains(itype, ".cpp"))
         return modcpp::evalImplementation(path, impl, px);
     if (contains(itype, ".widget"))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype, -1, false);
-    return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
+        return mkfailure<lvvlambda >(string("Unsupported implementation type: ") + itype, -1, false);
+    return mkfailure<lvvlambda >(string("Unsupported implementation type: ") + itype);
 }
 
 }

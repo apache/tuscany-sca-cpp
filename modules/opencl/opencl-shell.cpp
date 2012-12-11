@@ -29,8 +29,8 @@
 #include "string.hpp"
 #include "driver.hpp"
 
-int main(const int argc, char** argv) {
-    tuscany::gc_scoped_pool pool;
+int main(const int argc, char** const argv) {
+    const tuscany::gc_scoped_pool pool;
     if (argc != 2) {
         tuscany::cerr << "Usage: opencl-shell <kernel.cl>" << tuscany::endl;
         return 1;

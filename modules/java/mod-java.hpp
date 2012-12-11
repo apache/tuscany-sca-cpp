@@ -40,34 +40,26 @@ namespace server {
 namespace modjava {
 
 /**
- * Apply a Java component implementation function.
- */
-struct applyImplementation {
-    java::JavaClass impl;
-    const list<value> px;
-    java::JavaRuntime& jr;
-    applyImplementation(const java::JavaClass& impl, const list<value>& px, java::JavaRuntime& jr) : impl(impl), px(px), jr(jr) {
-    }
-    const value operator()(const list<value>& params) const {
-        const value expr = append<value>(params, px);
-        debug(expr, "modeval::java::applyImplementation::input");
-        const failable<value> res = java::evalClass(jr, expr, impl);
-        const value val = !hasContent(res)? mklist<value>(value(), reason(res), rcode(res)) : mklist<value>(content(res));
-        debug(val, "modeval::java::applyImplementation::result");
-        return val;
-    }
-};
-
-/**
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, java::JavaRuntime& jr) {
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px, const java::JavaRuntime& jr) {
     const string cn(attributeValue("class", impl));
-    const failable<java::JavaClass> jc = java::readClass(jr, path, cn);
-    if (!hasContent(jc))
-        return mkfailure<lambda<value(const list<value>&)> >(jc);
-    return lambda<value(const list<value>&)>(applyImplementation(content(jc), px, jr));
+    const failable<java::JavaClass> fjc = java::readClass(jr, path, cn);
+    if (!hasContent(fjc))
+        return mkfailure<lvvlambda >(fjc);
+
+    // Return Java component implementation lambda function
+    const java::JavaClass jc = content(fjc);
+    const lvvlambda applyImplementation = [jc, px, jr](const list<value>& params) -> const value {
+        const value expr = append<value>(params, px);
+        debug(expr, "modeval::java::applyImplementation::expr");
+        const failable<value> res = java::evalClass(jr, expr, jc);
+        const value val = !hasContent(res)? mklist<value>(nilValue, reason(res), rcode(res)) : mklist<value>(content(res));
+        debug(val, "modeval::java::applyImplementation::result");
+        return val;
+    };
+    return applyImplementation;
 }
 
 }

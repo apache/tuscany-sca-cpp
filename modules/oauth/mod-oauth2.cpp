@@ -50,18 +50,18 @@ namespace oauth2 {
  */
 class ServerConf {
 public:
-    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
+    ServerConf(apr_pool_t* const p, server_rec* const s) : p(p), server(s) {
     }
 
     const gc_pool p;
-    server_rec* server;
-    string ca;
-    string cert;
-    string key;
-    list<list<value> > appkeys;
-    list<string> mcaddrs;
-    memcache::MemCached mc;
-    perthread_ptr<http::CURLSession> cs;
+    server_rec* const server;
+    gc_mutable_ref<string> ca;
+    gc_mutable_ref<string> cert;
+    gc_mutable_ref<string> key;
+    gc_mutable_ref<list<list<value> > > appkeys;
+    gc_mutable_ref<list<string> > mcaddrs;
+    gc_mutable_ref<memcache::MemCached> mc;
+    gc_mutable_ref<perthread_ptr<http::CURLSession> > cs;
 };
 
 /**
@@ -74,7 +74,7 @@ public:
     AuthnProviderConf(const string name, const authn_provider* provider) : name(name), provider(provider) {
     }
 
-    string name;
+    const string name;
     const authn_provider* provider;
 };
 
@@ -83,21 +83,21 @@ public:
  */
 class DirConf {
 public:
-    DirConf(apr_pool_t* p, char* d) : p(p), dir(d), enabled(false), login("") {
+    DirConf(apr_pool_t* const p, const char* const d) : p(p), dir(d), enabled(false), login(emptyString) {
     }
 
     const gc_pool p;
-    const char* dir;
+    const char* const dir;
     bool enabled;
-    string login;
-    list<list<value> > scopeattrs;
-    list<AuthnProviderConf> apcs;
+    gc_mutable_ref<string> login;
+    gc_mutable_ref<list<list<value> > > scopeattrs;
+    gc_mutable_ref<list<AuthnProviderConf> > apcs;
 };
 
 /**
  * Run the authnz hooks to authenticate a request.
  */
-const failable<int> checkAuthnzProviders(const string& user, request_rec* r, const list<AuthnProviderConf>& apcs) {
+const failable<int> checkAuthnzProviders(const string& user, request_rec* const r, const list<AuthnProviderConf>& apcs) {
     if (isNil(apcs))
         return mkfailure<int>("Authentication failure for: " + user, HTTP_UNAUTHORIZED);
     const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
@@ -112,7 +112,7 @@ const failable<int> checkAuthnzProviders(const string& user, request_rec* r, con
     return OK;
 }
 
-const failable<int> checkAuthnz(const string& user, request_rec* r, const list<AuthnProviderConf>& apcs) {
+const failable<int> checkAuthnz(const string& user, request_rec* const r, const list<AuthnProviderConf>& apcs) {
     if (substr(user, 0, 1) == "/")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
@@ -133,7 +133,7 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& userinfo, const bool check, request_rec* r, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs) {
+const failable<int> authenticated(const list<list<value> >& userinfo, const bool check, request_rec* const r, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
     if (isNil(scopeattrs)) {
@@ -141,7 +141,7 @@ const failable<int> authenticated(const list<list<value> >& userinfo, const bool
         // Store user id in an environment variable
         const list<value> id = assoc<value>("id", userinfo);
         if (isNil(id) || isNil(cdr(id)))
-            return mkfailure<int>("Couldn't retrieve user id");
+            return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
         apr_table_set(r->subprocess_env, "OAUTH2_ID", apr_pstrdup(r->pool, c_str(cadr(id))));
 
         // If the request user field has not been mapped to another attribute, map the
@@ -151,7 +151,7 @@ const failable<int> authenticated(const list<list<value> >& userinfo, const bool
 
         // Run the authnz hooks to check the authenticated user
         if (check)
-            return checkAuthnz(r->user == NULL? "" : r->user, r, apcs);
+            return checkAuthnz(r->user == NULL? emptyString : r->user, r, apcs);
         return OK;
     }
 
@@ -172,7 +172,7 @@ const failable<int> authenticated(const list<list<value> >& userinfo, const bool
 /**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys) {
+const failable<int> authorize(const list<list<value> >& args, request_rec* const r, const list<list<value> >& appkeys) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> ref = assoc<value>("openauth_referrer", args);
     if (isNil(ref) || isNil(cdr(ref)))
@@ -206,11 +206,11 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
-        return mkfailure<int>(string("client id not found: ") + cadr(cid));
+        return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     list<value> appkey = cadr(app);
 
     // Redirect to the authorize URI
-    const list<value> adisplay = (isNil(display) || isNil(cdr(display)))? list<value>() : mklist<value>("display", cadr(display));
+    const list<value> adisplay = (isNil(display) || isNil(cdr(display)))? nilListValue : mklist<value>("display", cadr(display));
     const list<list<value> > aargs = mklist<list<value> >(mklist<value>("response_type", "code"), mklist<value>("client_id", car(appkey)), mklist<value>("scope", cadr(scope)), adisplay, mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("state", httpd::escape(state)));
     const string uri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(aargs);
     debug(uri, "modoauth2::authorize::uri");
@@ -229,7 +229,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const list<value>
 /**
  * Handle an access_token request.
  */
-const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const perthread_ptr<http::CURLSession>& cs, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
+const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const http::CURLSession& cs, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
 
     // Extract access_token URI, client ID and authorization code parameters
     const list<value> state = assoc<value>("state", args);
@@ -255,7 +255,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
     if (isNil(app) || isNil(cdr(app)))
-        return mkfailure<int>(string("client id not found: ") + cadr(cid));
+        return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     list<value> appkey = cadr(app);
 
     // Build the redirect URI
@@ -269,7 +269,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     const string turi = httpd::unescape(cadr(tok));
     debug(turi, "modoauth2::access_token::tokenuri");
     const value tval = mklist<value>(string("application/x-www-form-urlencoded;charset=UTF-8"), mklist<value>(tqs));
-    const failable<value> ftr = http::post(tval, turi, *(cs));
+    const failable<value> ftr = http::post(tval, turi, cs);
     if (!hasContent(ftr))
         return mkfailure<int>(ftr);
     const value tr = content(ftr);
@@ -288,7 +288,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + http::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
-    const failable<value> profres = http::get(iuri, *(cs));
+    const failable<value> profres = http::get(iuri, cs);
     if (!hasContent(profres))
         return mkfailure<int>("Couldn't retrieve user info");
     debug(content(profres), "modoauth2::access_token::info");
@@ -304,7 +304,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
         return authrc;
 
     // Store user info in memcached keyed by a session ID
-    const value sid = string("OAuth2_") + mkrand();
+    const value sid = string("OAuth2_") + (string)mkrand();
     const failable<bool> prc = memcache::put(mklist<value>("tuscanyOAuth2", sid), content(userinfo), mc);
     if (!hasContent(prc))
         return mkfailure<int>(prc);
@@ -319,7 +319,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
  * Check user authentication.
  */
 static int checkAuthn(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
+    const gc_scoped_pool sp(r->pool);
 
     // Decline if we're not enabled or AuthType is not set to Open
     const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth2);
@@ -329,7 +329,7 @@ static int checkAuthn(request_rec *r) {
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
     debug_httpdRequest(r, "modoauth2::checkAuthn::input");
-    debug(atype, "modopenauth::checkAuthn::auth_type");
+    debug(atype, "modoauth2::checkAuthn::auth_type");
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth2);
@@ -344,9 +344,9 @@ static int checkAuthn(request_rec *r) {
         // Extract the user info from the auth session
         const failable<value> userinfo = userInfo(content(sid), sc.mc);
         if (!hasContent(userinfo))
-            return httpd::reportStatus(mkfailure<int>(userinfo));
+            return openauth::reportStatus(mkfailure<int>(reason(userinfo), HTTP_UNAUTHORIZED), dc.login, nilValue, r);
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(authenticated(content(userinfo), false, r, dc.scopeattrs, dc.apcs));
+        return openauth::reportStatus(authenticated(content(userinfo), false, r, dc.scopeattrs, dc.apcs), dc.login, nilValue, r);
     }
 
     // Get the request args
@@ -355,19 +355,14 @@ static int checkAuthn(request_rec *r) {
     // Handle OAuth authorize request step
     if (string(r->uri) == "/oauth2/authorize/") {
         r->ap_auth_type = const_cast<char*>(atype);
-        return httpd::reportStatus(authorize(args, r, sc.appkeys));
+        return openauth::reportStatus(authorize(args, r, sc.appkeys), dc.login, 1, r);
     }
 
     // Handle OAuth access_token request step
     if (string(r->uri) == "/oauth2/access_token/") {
         r->ap_auth_type = const_cast<char*>(atype);
-        const failable<int> authrc = accessToken(args, r, sc.appkeys, sc.cs, dc.scopeattrs, dc.apcs, sc.mc);
-
-        // Redirect to the login page if user is not authorized
-        if (!hasContent(authrc) && rcode(authrc) == HTTP_UNAUTHORIZED)
-            return httpd::reportStatus(openauth::login(dc.login, string("/"), 1, r));
-
-        return httpd::reportStatus(authrc);
+        const failable<int> authrc = accessToken(args, r, sc.appkeys, *(*(perthread_ptr<http::CURLSession>*)sc.cs), dc.scopeattrs, dc.apcs, sc.mc);
+        return openauth::reportStatus(authrc, dc.login, 1, r);
     }
 
     // Redirect to the login page, unless we have a session id or an authorization
@@ -382,22 +377,22 @@ static int checkAuthn(request_rec *r) {
         return DECLINED;
 
     r->ap_auth_type = const_cast<char*>(atype);
-    return httpd::reportStatus(openauth::login(dc.login, value(), value(), r));
+    return httpd::reportStatus(openauth::login(dc.login, nilValue, nilValue, r));
 }
 
 /**
  * Process the module configuration.
  */
-int postConfigMerge(ServerConf& mainsc, server_rec* s) {
+int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
     if (s == NULL)
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth2);
     debug(httpd::serverName(s), "modoauth2::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil(sc.appkeys))
+    if (isNil((list<list<value> >)sc.appkeys))
         sc.appkeys = mainsc.appkeys;
-    if (isNil(sc.mcaddrs))
+    if (isNil((list<string>)sc.mcaddrs))
         sc.mcaddrs = mainsc.mcaddrs;
     sc.mc = mainsc.mc;
     sc.cs = mainsc.cs;
@@ -405,10 +400,10 @@ int postConfigMerge(ServerConf& mainsc, server_rec* s) {
     return postConfigMerge(mainsc, s->next);
 }
 
-int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
-    gc_scoped_pool pool(p);
+int postConfig(apr_pool_t* const p, unused apr_pool_t* const plog, unused apr_pool_t* const ptemp, server_rec* const s) {
+    const gc_scoped_pool sp(p);
 
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth2);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth2);
     debug(httpd::serverName(s), "modoauth2::postConfig::serverName");
 
     // Merge server configurations
@@ -416,30 +411,12 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 }
 
 /**
- * Lambda function that creates a new CURL session.
- */
-class newsession {
-public:
-    newsession(const string& ca, const string& cert, const string& key) : ca(ca), cert(cert), key(key) {
-    }
-
-    const gc_ptr<http::CURLSession> operator()() const {
-        return new (gc_new<http::CURLSession>()) http::CURLSession(ca, cert, key, "", 0);
-    }
-
-private:
-    const string ca;
-    const string cert;
-    const string key;
-};
-
-/**
  * Child process initialization.
  */
-void childInit(apr_pool_t* p, server_rec* s) {
-    gc_scoped_pool pool(p);
+void childInit(apr_pool_t* const p, server_rec* const s) {
+    const gc_scoped_pool sp(p);
 
-    ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_oauth2);
+    ServerConf* const psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_oauth2);
     if(psc == NULL) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_oauth2 loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
@@ -447,13 +424,21 @@ void childInit(apr_pool_t* p, server_rec* s) {
     ServerConf& sc = *psc;
 
     // Connect to Memcached
-    if (isNil(sc.mcaddrs))
+    if (isNil((list<string>)sc.mcaddrs))
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("localhost", 11211));
     else
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));
 
     // Setup a CURL session
-    sc.cs = perthread_ptr<http::CURLSession>(lambda<gc_ptr<http::CURLSession>()>(newsession(sc.ca, sc.cert, sc.key)));
+    const string ca = sc.ca;
+    const string cert = sc.cert;
+    const string key = sc.key;
+    const gc_pool cp = gc_current_pool();
+    const lambda<const gc_ptr<http::CURLSession>()> newsession = [ca, cert, key, cp]() -> const gc_ptr<http::CURLSession> {
+        const gc_scoped_pool sp(pool(cp));
+        return new (gc_new<http::CURLSession>()) http::CURLSession(ca, cert, key, emptyString, 0);
+    };
+    sc.cs = *(new (gc_new<perthread_ptr<http::CURLSession> >()) perthread_ptr<http::CURLSession>(newsession));
 
     // Merge the updated configuration into the virtual hosts
     postConfigMerge(sc, s->next);
@@ -462,56 +447,56 @@ void childInit(apr_pool_t* p, server_rec* s) {
 /**
  * Configuration commands.
  */
-const char* confAppKey(cmd_parms *cmd, unused void *c, const char *arg1, const char* arg2, const char* arg3) {
-    gc_scoped_pool pool(cmd->pool);
+char* confAppKey(cmd_parms *cmd, unused void *c, char *arg1, char* arg2, char* arg3) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
-    sc.appkeys = cons<list<value> >(mklist<value>(arg1, mklist<value>(arg2, arg3)), sc.appkeys);
+    sc.appkeys = cons<list<value> >(mklist<value>(arg1, mklist<value>(arg2, arg3)), (list<list<value> >)sc.appkeys);
     return NULL;
 }
-const char* confMemcached(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confMemcached(cmd_parms *cmd, unused void *c, char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
-    sc.mcaddrs = cons<string>(arg, sc.mcaddrs);
+    sc.mcaddrs = cons<string>(arg, (list<string>)sc.mcaddrs);
     return NULL;
 }
-const char* confEnabled(cmd_parms *cmd, void *c, const int arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confEnabled(cmd_parms *cmd, void *c, int arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
     dc.enabled = (bool)arg;
     return NULL;
 }
-const char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confLogin(cmd_parms *cmd, void *c, char* arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
     dc.login = arg;
     return NULL;
 }
-const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCAFile(cmd_parms *cmd, unused void *c, char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.ca = arg;
     return NULL;
 }
-const char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCertFile(cmd_parms *cmd, unused void *c, char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.cert = arg;
     return NULL;
 }
-const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confCertKeyFile(cmd_parms *cmd, unused void *c, char *arg) {
+    const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.key = arg;
     return NULL;
 }
-const char* confScopeAttr(cmd_parms *cmd, void* c, const char* arg1, const char* arg2) {
-    gc_scoped_pool pool(cmd->pool);
+char* confScopeAttr(cmd_parms *cmd, void* c, char* arg1, char* arg2) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
-    dc.scopeattrs = cons<list<value> >(mklist<value>(arg1, arg2), dc.scopeattrs);
+    dc.scopeattrs = cons<list<value> >(mklist<value>(arg1, arg2), (list<list<value> >)dc.scopeattrs);
     return NULL;
 }
-const char* confAuthnProvider(cmd_parms *cmd, void *c, const char* arg) {
-    gc_scoped_pool pool(cmd->pool);
+char* confAuthnProvider(cmd_parms *cmd, void *c, char* arg) {
+    const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
 
     // Lookup and cache the Authn provider

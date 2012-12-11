@@ -42,11 +42,12 @@ namespace openauth {
 /**
  * Return the session id from a request.
  */
-const char* cookieName(const char* cs) {
+const char* const cookieName(const char* const cs) {
     if (*cs != ' ')
         return cs;
     return cookieName(cs + 1);
 }
+
 const maybe<string> sessionID(const list<string>& c, const string& key) {
     if (isNil(c))
         return maybe<string>();
@@ -62,7 +63,7 @@ const maybe<string> sessionID(const list<string>& c, const string& key) {
     return sessionID(cdr(c), key);
 }
 
-const maybe<string> sessionID(const request_rec* r, const string& key) {
+const maybe<string> sessionID(const request_rec* const r, const string& key) {
     const string c = httpd::cookie(r);
     debug(c, "openauth::sessionid::cookies");
     if (length(c) == 0)
@@ -74,10 +75,15 @@ const maybe<string> sessionID(const request_rec* r, const string& key) {
  * Convert a session id to a cookie string.
  */
 const string cookie(const string& key, const string& sid, const string& domain) {
+    if (length(sid) == 0) {
+        const string c = key + string("=") + "; max-age=0; domain=." + httpd::realm(domain) + "; path=/; secure; httponly";
+        debug(c, "openauth::cookie");
+        return c;
+    }
     const time_t t = time(NULL) + 86400;
     char exp[32];
     strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + httpd::realm(domain) + "; path=/";
+    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + httpd::realm(domain) + "; path=/; secure; httponly";
     debug(c, "openauth::cookie");
     return c;
 }
@@ -85,13 +91,38 @@ const string cookie(const string& key, const string& sid, const string& domain) 
 /**
  * Redirect to the configured login page.
  */
-const failable<int> login(const string& page, const value& ref, const value& attempt, request_rec* r) {
+const failable<int> login(const string& page, const value& ref, const value& attempt, request_rec* const r) {
     const list<list<value> > rarg = ref == string("/")? list<list<value> >() : mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(isNil(ref)? r->uri : ref, r))));
     const list<list<value> > aarg = isNil(attempt)? list<list<value> >() : mklist<list<value> >(mklist<value>("openauth_attempt", attempt));
     const list<list<value> > largs = append<list<value> >(rarg, aarg);
     const string loc = isNil(largs)? httpd::url(page, r) : httpd::url(page, r) + string("?") + http::queryString(largs);
     debug(loc, "openauth::login::uri");
     return httpd::externalRedirect(loc, r);
+}
+
+/**
+ * Report a request auth status.
+ */
+const int reportStatus(const failable<int>& authrc, const string& page, const value& attempt, request_rec* const r) {
+    debug(authrc, "openauth::reportStatus::authrc");
+
+    // Redirect to the login page if not authorized
+    if (!hasContent(authrc) && rcode(authrc) == HTTP_UNAUTHORIZED) {
+
+        // Clear any auth cookies
+        if(hasContent(sessionID(r, "TuscanyOpenAuth")))
+            apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenAuth", emptyString, httpd::hostName(r))));
+        if(hasContent(sessionID(r, "TuscanyOpenIDAuth")))
+            apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOpenIDAuth", emptyString, httpd::hostName(r))));
+        if(hasContent(sessionID(r, "TuscanyOAuth1")))
+            apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOAuth1", emptyString, httpd::hostName(r))));
+        if(hasContent(sessionID(r, "TuscanyOAuth2")))
+            apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie("TuscanyOAuth2", emptyString, httpd::hostName(r))));
+
+        return httpd::reportStatus(login(page, string("/"), attempt, r));
+    }
+
+    return httpd::reportStatus(authrc);
 }
 
 }

@@ -54,47 +54,38 @@ const list<value> failableResult(const value& func, const list<value>& v) {
     const value reason = cadr(v);
     if (length(reason) == 0) {
         if (func == "start" || func == "stop")
-            return mklist<value>(lambda<value(const list<value>&)>());
-        return mklist<value>(value(), string("Function not supported: ") + func);
+            return mklist<value>(lvvlambda());
+        return mklist<value>(nilValue, string("Function not supported: ") + (string)func);
     }
     return v;
 }
-
-struct applyImplementation {
-    const lib ilib;
-    const lambda<value(const list<value>&)> impl;
-    const list<value> px;
-
-    applyImplementation(const lib& ilib, const lambda<value(const list<value>&)>& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
-    }
-
-    const value operator()(const list<value>& params) const {
-        debug(params, "modeval::cpp::applyImplementation::input");
-
-        // Apply the component implementation function
-        const value val = failableResult(car(params), impl(append(params, px)));
-
-        debug(val, "modeval::cpp::applyImplementation::result");
-        return val;
-    }
-};
 
 /**
  * Evaluate a C++ component implementation and convert it to
  * an applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px) {
 
     // Configure the implementation's lambda function
     const value ipath(attributeValue("path", impl));
     const value iname(attributeValue("library", impl));
-    const string fpath(isNil(ipath)? path + iname : path + ipath + "/" + iname);
+    const string fpath(isNil(ipath)? path + (string)iname : path + (string)ipath + "/" + (string)iname);
     const lib ilib(*(new (gc_new<lib>()) lib(fpath + dynlibExt)));
-    const failable<lambda<value(const list<value>&)> > evalf(dynlambda<value(const list<value>&)>("apply", ilib));
-    if (!hasContent(evalf))
-        return evalf;
-    const lambda<value(const list<value>&)> l(applyImplementation(ilib, content(evalf), px));
-    return l;
+    const failable<lvvlambda > fappl(dynlambda<const value(const list<value>&)>("apply", ilib));
+    if (!hasContent(fappl))
+        return fappl;
+    const lvvlambda appl = content(fappl);
+    
+    const lvvlambda applyImplementation = [ilib, appl, px](const list<value>& params) -> const value {
+        debug(params, "modeval::cpp::applyImplementation::params");
+
+        // Apply the component implementation function
+        const value val = failableResult(car(params), appl(append(params, px)));
+
+        debug(val, "modeval::cpp::applyImplementation::result");
+        return val;
+    };
+    return applyImplementation;
 }
 
 }

@@ -33,7 +33,7 @@ namespace tuscany {
 namespace http {
 
 const bool testGet(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
-    CURLSession ch(ca, cert, key, "", 0);
+    const CURLSession ch(ca, cert, key, "", 0);
     const failable<value> val = get(url, ch);
     assert(hasContent(val));
     cout << content(val) << endl;
@@ -43,7 +43,7 @@ const bool testGet(const string& url, const string& ca = "", const string& cert 
 }
 }
 
-int main(unused const int argc, const char** argv) {
+int main(unused const int argc, const char** const argv) {
     if (argc > 2)
         tuscany::http::testGet(tuscany::string(argv[1]), tuscany::string(argv[2]), tuscany::string(argv[3]), tuscany::string(argv[4]));
     else

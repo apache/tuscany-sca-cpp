@@ -42,22 +42,22 @@ namespace modeval {
  */
 const value applyLifecycle(unused const list<value>& params) {
     // Return a nil function as we don't need to handle any subsequent events
-    return failable<value>(lambda<value(const list<value>&)>());
+    return failable<value>(lvvlambda());
 }
 
 /**
  * Evaluate a Scheme or C++ component implementation and convert it to an
  * applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused const lambda<value(const list<value>&)>& lifecycle) {
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px, unused const lvvlambda& lifecycle) {
     const string itype(elementName(impl));
     if (contains(itype, ".scheme"))
         return modscheme::evalImplementation(path, impl, px);
     if (contains(itype, ".cpp"))
         return modcpp::evalImplementation(path, impl, px);
     if (contains(itype, ".widget"))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype, -1, false);
-    return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
+        return mkfailure<lvvlambda >(string("Unsupported implementation type: ") + itype, -1, false);
+    return mkfailure<lvvlambda >(string("Unsupported implementation type: ") + itype);
 }
 
 }

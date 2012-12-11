@@ -20,28 +20,28 @@ INCLUDES = -I${HTTPD_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
-dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf cache-conf cache-ssl-conf cache-manifest proxy-conf proxy-base-conf proxy-ssl-conf proxy-balancer-conf proxy-member-conf proxy-ssl-member-conf proxy-ssl-nossl-member-conf alt-host-conf mass-host-conf mass-host-ssl-conf httpd-tunnel-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf httpd-loglevel-conf minify-html minify-js minify-css
+dist_mod_SCRIPTS = httpd-conf httpd-addr httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf base64-encode basic-auth-conf cert-auth-conf form-auth-conf open-auth-conf passwd-auth-conf group-auth-conf cache-conf cache-ssl-conf cache-manifest proxy-conf proxy-base-conf proxy-ssl-conf proxy-balancer-conf proxy-member-conf proxy-ssl-member-conf proxy-ssl-nossl-member-conf alt-host-conf mass-host-conf mass-host-ssl-conf httpd-tunnel-ssl-conf tunnel-ssl-conf httpd-worker-conf httpd-event-conf httpd-loglevel-conf minify-html minify-js minify-css
 moddir = $(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp
-curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+curl_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 curl_get_SOURCES = curl-get.cpp
-curl_get_LDFLAGS = -lxml2 -lcurl -lmozjs
+curl_get_LDFLAGS = -lxml2 -lcurl -ljansson
 
 curl_connect_SOURCES = curl-connect.cpp
-curl_connect_LDFLAGS = -lxml2 -lcurl -lmozjs
+curl_connect_LDFLAGS = -lxml2 -lcurl -ljansson
 
 mod_LTLIBRARIES = libmod_tuscany_ssltunnel.la libmod_tuscany_openauth.la
 noinst_DATA = libmod_tuscany_ssltunnel${libsuffix} libmod_tuscany_openauth${libsuffix}
 
 libmod_tuscany_ssltunnel_la_SOURCES = mod-ssltunnel.cpp
-libmod_tuscany_ssltunnel_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_ssltunnel_la_LDFLAGS = -lxml2 -lcurl -ljansson
 libmod_tuscany_ssltunnel${libsuffix}:
 	ln -s .libs/libmod_tuscany_ssltunnel${libsuffix}
 
 libmod_tuscany_openauth_la_SOURCES = mod-openauth.cpp
-libmod_tuscany_openauth_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_openauth_la_LDFLAGS = -lxml2 -lcurl -ljansson
 libmod_tuscany_openauth${libsuffix}:
 	ln -s .libs/libmod_tuscany_openauth${libsuffix}
 
@@ -82,7 +82,7 @@ modsecuritydir = $(prefix)/modules/http
 
 endif
 
-dist_noinst_SCRIPTS = httpd-test http-test proxy-test
+dist_noinst_SCRIPTS = httpd-test http-test proxy-test httpd-memgrind httpd-callgrind
 noinst_PROGRAMS = curl-test curl-get curl-connect
 TESTS = httpd-test http-test proxy-test
 

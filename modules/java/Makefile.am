@@ -36,7 +36,7 @@ EXTRA_DIST = domain-test.composite
 
 mod_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
-libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs ${JAVA_LDFLAGS}
+libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -ljansson ${JAVA_LDFLAGS}
 noinst_DATA = libmod_tuscany_java${libsuffix}
 libmod_tuscany_java${libsuffix}:
 	ln -s .libs/libmod_tuscany_java${libsuffix}
@@ -55,12 +55,13 @@ jardir = ${prefix}/modules/java
 jarfile = libmod-tuscany-java-${PACKAGE_VERSION}.jar
 jar_DATA = ${jarfile}
 ${jarfile}: ${dist_mod_JAVA}
+	${JAVAC} ${dist_mod_JAVA}
 	${JAR} cf $@ org/apache/tuscany/*.class
 
 CLEANFILES = *.stamp ${jarfile} org/apache/tuscany/*.class	test/*.class
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 dist_noinst_SCRIPTS = server-test wiring-test
 noinst_PROGRAMS = jni-test java-test client-test

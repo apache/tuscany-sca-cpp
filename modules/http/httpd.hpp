@@ -46,14 +46,14 @@ extern "C" {
 #include <http_request.h>
 // Ignore conversion warnings in HTTPD 2.3.15 header
 #ifdef WANT_MAINTAINER_WARNINGS
-#ifndef IS_DARWIN
+#ifndef __clang__
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 #endif
 #include <http_protocol.h>
 // Re-enable conversion warnings
 #ifdef WANT_MAINTAINER_WARNINGS
-#ifndef IS_DARWIN
+#ifndef __clang__
 #pragma GCC diagnostic warning "-Wconversion"
 #endif
 #endif
@@ -94,15 +94,15 @@ template<typename C> void* makeServerConf(apr_pool_t* p, server_rec* s) {
     return new (gc_new<C>(p)) C(p, s);
 }
 
-template<typename C> const C& serverConf(const request_rec* r, const module* mod) {
+template<typename C> const C& serverConf(const request_rec* const r, const module* const mod) {
     return *(C*)ap_get_module_config(r->server->module_config, mod);
 }
 
-template<typename C> C& serverConf(const server_rec* s, const module* mod) {
+template<typename C> C& serverConf(const server_rec* const s, const module* const mod) {
     return *(C*)ap_get_module_config(s->module_config, mod);
 }
 
-template<typename C> C& serverConf(const cmd_parms* cmd, const module* mod) {
+template<typename C> C& serverConf(const cmd_parms* const cmd, const module* const mod) {
     return *(C*)ap_get_module_config(cmd->server->module_config, mod);
 }
 
@@ -113,25 +113,25 @@ template<typename C> void* makeDirConf(apr_pool_t *p, char* d) {
     return new (gc_new<C>(p)) C(p, d);
 }
 
-template<typename C> const C& dirConf(const request_rec* r, const module* mod) {
+template<typename C> const C& dirConf(const request_rec* const r, const module* const mod) {
     return *(C*)ap_get_module_config(r->per_dir_config, mod);
 }
 
-template<typename C> C& dirConf(const void* c) {
+template<typename C> C& dirConf(const void* const c) {
     return *(C*)c;
 }
 
 /**
  * Returns a request-scoped module configuration.
  */
-template<typename C> C& makeRequestConf(const request_rec* r, const module* mod) {
-    C* c = new (gc_new<C>(r->pool)) C(r->pool, r);
+template<typename C> C& makeRequestConf(const request_rec* const r, const module* const mod) {
+    C* const c = new (gc_new<C>(r->pool)) C(r->pool, r);
     ap_set_module_config(r->request_config, mod, c);
     return *c;
 }
 
-template<typename C> C& requestConf(const request_rec* r, const module* mod) {
-    C* c = (C*)ap_get_module_config(r->request_config, mod);
+template<typename C> C& requestConf(const request_rec* const r, const module* const mod) {
+    C* const c = (C*)ap_get_module_config(r->request_config, mod);
     if (c == NULL)
         return makeRequestConf<C>(r, mod);
     return *c;
@@ -140,18 +140,18 @@ template<typename C> C& requestConf(const request_rec* r, const module* mod) {
 /**
  * Return the host name for a server.
  */
-const string hostName(const server_rec* s, const string& def = "localhost") {
+const string hostName(const server_rec* const s, const string& def = "localhost") {
     return s->server_hostname != NULL? s->server_hostname : def;
 }
 
 /**
  * Return the host name from an HTTP request.
  */
-const string hostName(request_rec* r, const string& def = "localhost") {
-    const char* fh = apr_table_get(r->headers_in, "X-Forwarded-Server");
+const string hostName(request_rec* const r, const string& def = "localhost") {
+    const char* const fh = apr_table_get(r->headers_in, "X-Forwarded-Server");
     if (fh != NULL)
         return fh;
-    const char* h = ap_get_server_name(r);
+    const char* const h = ap_get_server_name(r);
     return h != NULL? h : (r->server->server_hostname != NULL? r->server->server_hostname : def);
 }
 
@@ -166,15 +166,15 @@ const string realm(const string& host) {
 /**
  * Return the protocol scheme for a server.
  */
-const string scheme(const server_rec* s, const string& def = "http") {
+const string scheme(const server_rec* const s, const string& def = "http") {
     return s->server_scheme != NULL? s->server_scheme : def;
 }
 
 /**
  * Return the protocol scheme from an HTTP request.
  */
-const string scheme(request_rec* r, const string& def = "http") {
-    const char* fs = apr_table_get(r->headers_in, "X-Forwarded-HTTPS");
+const string scheme(const request_rec* const r, const string& def = "http") {
+    const char* const fs = apr_table_get(r->headers_in, "X-Forwarded-HTTPS");
     if (fs != NULL)
         return !strcmp(fs, "on")? "https" : "http";
     return r->server->server_scheme != NULL? r->server->server_scheme : def;
@@ -183,15 +183,15 @@ const string scheme(request_rec* r, const string& def = "http") {
 /**
  * Return the port number for a server.
  */
-const int port(const server_rec* s, const int def = 80) {
+const int port(const server_rec* const s, const int def = 80) {
     return s->port != 0? s->port : def;
 }
 
 /**
  * Return the port number from an HTTP request.
  */
-const int port(request_rec* r, const int def = 80) {
-    const char* fp = apr_table_get(r->headers_in, "X-Forwarded-Port");
+const int port(const request_rec* const r, const int def = 80) {
+    const char* const fp = apr_table_get(r->headers_in, "X-Forwarded-Port");
     if (fp != NULL)
         return atoi(fp);
     const int p = ap_get_server_port(r);
@@ -201,7 +201,7 @@ const int port(request_rec* r, const int def = 80) {
 /**
  * Return the name of a server.
  */
-const string serverName(const server_rec* s, const string& def = "localhost") {
+const string serverName(server_rec* const s, const string& def = "localhost") {
     ostringstream n;
     const string sc = scheme(s);
     const string h = hostName(s, def);
@@ -209,14 +209,14 @@ const string serverName(const server_rec* s, const string& def = "localhost") {
     n << sc << "://" << h;
     if (!((sc == "http" && p == 80) || (sc == "https" && p == 443)))
         n << ":" << p;
-    n << (s->path != NULL? string(s->path, s->pathlen) : "");
+    n << (s->path != NULL? string(s->path, s->pathlen) : emptyString);
     return str(n);
 }
 
 /**
  * Determine the name of a server from an HTTP request.
  */
-const string serverName(request_rec* r, const string& def = "localhost") {
+const string serverName(request_rec* const r, const string& def = "localhost") {
     ostringstream n;
     const string s = scheme(r);
     const string h = hostName(r, def);
@@ -224,14 +224,14 @@ const string serverName(request_rec* r, const string& def = "localhost") {
     n << s << "://" << h;
     if (!((s == "http" && p == 80) || (s == "https" && p == 443)))
         n << ":" << p;
-    n << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : "");
+    n << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : emptyString);
     return str(n);
 }
 
 /**
  * Return true if a request is targeting a virtual host.
  */
-const bool isVhostRequest(const server_rec* s, const string& d, request_rec* r) {
+const bool isVhostRequest(const server_rec* const s, const string& d, request_rec* const r) {
     const string rh = hostName(r);
     return rh != hostName(s) && http::topDomain(rh) == d;
 }
@@ -239,20 +239,20 @@ const bool isVhostRequest(const server_rec* s, const string& d, request_rec* r) 
 /**
  * Return the content type of a request.
  */
-const string contentType(const request_rec* r) {
+const string contentType(const request_rec* const r) {
     const char* ct = apr_table_get(r->headers_in, "Content-Type");
     if (ct == NULL)
-        return "";
+        return emptyString;
     return ct;
 }
 
 /**
  * Return the cookie header of a request.
  */
-const string cookie(const request_rec* r) {
+const string cookie(const request_rec* const r) {
     const char* c = apr_table_get(r->headers_in, "Cookie");
     if (c == NULL)
-        return "";
+        return emptyString;
     return c;
 }
 
@@ -268,7 +268,7 @@ const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
 /**
  * Convert a URI to an absolute URL.
  */
-const string url(const string& uri, request_rec* r) {
+const string url(const string& uri, request_rec* const r) {
     if (contains(uri, "://"))
         return uri;
     ostringstream n;
@@ -285,8 +285,8 @@ const string url(const string& uri, request_rec* r) {
 /**
  * Convert a URI and a path to an absolute URL.
  */
-const string url(const string& uri, const list<value>& p, request_rec* r) {
-    return url(uri + path(p), r);
+const string url(const string& uri, const list<value>& p, request_rec* const r) {
+    return url(uri + (string)path(p), r);
 }
 
 /**
@@ -295,7 +295,7 @@ const string url(const string& uri, const list<value>& p, request_rec* r) {
 const char escape_c2x[] = "0123456789ABCDEF";
 const string escape(const string& uri) {
     debug(uri, "httpd::escape::uri");
-    char* copy = (char*)apr_palloc(gc_current_pool(), 3 * length(uri) + 3);
+    char* const copy = (char*)apr_palloc(gc_current_pool(), 3 * length(uri) + 3);
     const unsigned char* s = (const unsigned char *)c_str(uri);
     unsigned char* d = (unsigned char*)copy;
     unsigned c;
@@ -321,7 +321,7 @@ const string escape(const string& uri) {
  */
 const string unescape(const string& uri) {
     debug(uri, "httpd::unescape::uri");
-    char* b = const_cast<char*>(c_str(string(c_str(uri))));
+    char* const b = const_cast<char*>(c_str(string(c_str(uri))));
     ap_unescape_url(b);
     debug(b, "httpd::unescape::result");
     return b;
@@ -348,7 +348,7 @@ const list<value> queryArg(const string& s) {
     debug(s, "httpd::queryArg::string");
     const list<string> t = tokenize("=", s);
     if (isNil(cdr(t)))
-        return mklist<value>(c_str(car(t)), "");
+        return mklist<value>(c_str(car(t)), emptyString);
     return mklist<value>(c_str(car(t)), cadr(t));
 }
 
@@ -366,7 +366,7 @@ const list<list<value> > queryArgs(const string& a) {
 /**
  * Returns a list of key value pairs from the args in an HTTP request.
  */
-const list<list<value> > queryArgs(const request_rec* r) {
+const list<list<value> > queryArgs(const request_rec* const r) {
     if (r->args == NULL)
         return list<list<value> >();
     return queryArgs(r->args);
@@ -385,7 +385,7 @@ const list<list<value> > postArgs(const list<value>& a) {
 /**
  * Setup the HTTP read policy.
  */
-const int setupReadPolicy(request_rec* r) {
+const int setupReadPolicy(request_rec* const r) {
     const int rc = ap_setup_client_block(r, REQUEST_CHUNKED_DECHUNK);
     if(rc != OK)
         return rc;
@@ -399,7 +399,7 @@ const int setupReadPolicy(request_rec* r) {
 /**
  * Read the content of a POST or PUT.
  */
-const list<string> read(request_rec* r) {
+const list<string> read(request_rec* const r) {
     char b[1024];
     const size_t n = ap_get_client_block(r, b, sizeof(b));
     if (n <= 0)
@@ -410,7 +410,7 @@ const list<string> read(request_rec* r) {
 /**
  * Write an HTTP result.
  */
-const failable<int> writeResult(const failable<list<string> >& ls, const string& ct, request_rec* r) {
+const failable<int> writeResult(const failable<list<string> >& ls, const string& ct, request_rec* const r) {
     if (!hasContent(ls))
         return mkfailure<int>(ls);
     ostringstream os;
@@ -456,16 +456,16 @@ const int reportStatus(const failable<int>& rc) {
 }
 
 /**
- * Convert a value to an HTTPD request struc
+ * Convert a value to an HTTPD request struct.
  */
 request_rec* request(const value& v) {
     return (request_rec*)(long)(double)v;
 }
 
 /**
- * Convert an HTTPD request struct to a value
+ * Convert an HTTPD request struct to a value.
  */
-const value requestValue(request_rec* r) {
+const value requestValue(const request_rec* const r) {
     return value((double)(long)r);
 }
 
@@ -473,19 +473,37 @@ const value requestValue(request_rec* r) {
  * Update request filters  in an HTTPD redirect request.
  * Similar to httpd/modules/http/http_request.c::update_r_in_filters.
  */
-const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
-    if (f == NULL)
-        return true;
-    if (f->r == from)
-        f->r = to;
-    return redirectFilters(f->next, from, to);
+const bool internalUpdateFilters(ap_filter_t *f, const request_rec* const from,  request_rec* const to) {
+    while(f) {
+        if(f->r == from)
+            f->r = to;
+        f = f->next;
+    }
+    return true;
+}
+
+/**
+ * Rename original env in an HTTPD redirect request.
+ * Similar to httpd/modules/http/http_request.c::rename_original_env.
+ */
+apr_table_t* const internalRenameOriginalEnv(apr_pool_t* const p, apr_table_t* const t) {
+    const apr_array_header_t *env_arr = apr_table_elts(t);
+    const apr_table_entry_t *elts = (const apr_table_entry_t *) (void*)env_arr->elts;
+    apr_table_t *nt = apr_table_make(p, env_arr->nalloc);
+    int i;
+    for(i = 0; i < env_arr->nelts; ++i) {
+        if (!elts[i].key)
+            continue;
+        apr_table_setn(nt, apr_pstrcat(p, "REDIRECT_", elts[i].key, NULL), elts[i].val);
+    }
+    return nt;
 }
 
 /**
  * Create an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::internal_internal_redirect.
  */
-const failable<request_rec*> internalRedirectRequest(const string& nr_uri, request_rec* r) {
+const failable<request_rec*> internalRedirectRequest(const string& nr_uri, request_rec* const r) {
     if (ap_is_recursion_limit_exceeded(r))
         return mkfailure<request_rec*>("Redirect recursion limit exceeded", HTTP_INTERNAL_SERVER_ERROR);
 
@@ -498,11 +516,15 @@ const failable<request_rec*> internalRedirectRequest(const string& nr_uri, reque
     nr->method_number = r->method_number;
     nr->allowed_methods = ap_make_method_list(nr->pool, 2);
     ap_parse_uri(nr, apr_pstrdup(nr->pool, c_str(nr_uri)));
+    nr->parsed_uri.port_str = r->parsed_uri.port_str;
+    nr->parsed_uri.port = r->parsed_uri.port;
     nr->filename = apr_pstrdup(nr->pool, c_str(string("/redirected:") + nr_uri));
     nr->request_config = ap_create_request_config(r->pool);
     nr->per_dir_config = r->server->lookup_defaults;
     nr->prev = r;
     r->next = nr;
+    nr->useragent_addr = r->useragent_addr;
+    nr->useragent_ip = r->useragent_ip;
 
     // Run create request hook
     ap_run_create_request(nr);
@@ -520,10 +542,15 @@ const failable<request_rec*> internalRedirectRequest(const string& nr_uri, reque
     nr->main = r->main;
     nr->headers_in = r->headers_in;
     nr->headers_out = apr_table_make(r->pool, 12);
+    if (ap_is_HTTP_REDIRECT(nr->status)) {
+        const char *location = apr_table_get(r->headers_out, "Location");
+        if (location)
+            apr_table_setn(nr->headers_out, "Location", location);
+    }
     nr->err_headers_out = r->err_headers_out;
     nr->subprocess_env = r->subprocess_env;
+    nr->subprocess_env  = internalRenameOriginalEnv(r->pool, r->subprocess_env);
     nr->notes = apr_table_make(r->pool, 5);
-    nr->allowed_methods = ap_make_method_list(nr->pool, 2);
     nr->htaccess = r->htaccess;
     nr->no_cache = r->no_cache;
     nr->expecting_100 = r->expecting_100;
@@ -537,10 +564,28 @@ const failable<request_rec*> internalRedirectRequest(const string& nr_uri, reque
     nr->proto_input_filters   = r->proto_input_filters;
     nr->output_filters  = nr->proto_output_filters;
     nr->input_filters   = nr->proto_input_filters;
-    if (nr->main)
-        ap_add_output_filter_handle(ap_subreq_core_filter_handle, NULL, nr, nr->connection);
-    redirectFilters(nr->input_filters, r, nr);
-    redirectFilters(nr->output_filters, r, nr);
+    if (nr->main) {
+        ap_filter_t *f, *nextf;
+        nr->output_filters = r->output_filters;
+        f = nr->output_filters;
+        do {
+            nextf = f->next;
+            if (f->r == r && f->frec != ap_subreq_core_filter_handle) {
+                f->r = nr;
+                ap_remove_output_filter(f);
+            }
+            f = nextf;
+        } while(f && f != nr->proto_output_filters);
+    }
+    else {
+        nr->output_filters  = nr->proto_output_filters;
+    }
+    internalUpdateFilters(nr->input_filters, r, nr);
+    internalUpdateFilters(nr->output_filters, r, nr);
+
+    apr_table_setn(nr->subprocess_env, "REDIRECT_STATUS", apr_itoa(r->pool, r->status));
+    nr->used_path_info = AP_REQ_DEFAULT_PATH_INFO;
+
     const int rrc = ap_run_post_read_request(nr);
     if (rrc != OK && rrc != DECLINED)
         return mkfailure<request_rec*>("Error handling internal redirect", rrc);
@@ -552,7 +597,7 @@ const failable<request_rec*> internalRedirectRequest(const string& nr_uri, reque
  * Process an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::ap_internal_redirect.
  */
-const int internalRedirect(request_rec* nr) {
+const int internalRedirect(request_rec* const nr) {
     int status = ap_run_quick_handler(nr, 0);
     if (status == DECLINED) {
         status = ap_process_request_internal(nr);
@@ -570,8 +615,10 @@ const int internalRedirect(request_rec* nr) {
 /**
  * Create and process an HTTPD internal redirect request.
  */
-const int internalRedirect(const string& uri, request_rec* r) {
+const int internalRedirect(const string& uri, request_rec* const r) {
     debug(uri, "httpd::internalRedirect");
+    //ap_internal_redirect(c_str(uri), r);
+    //return OK;
     const failable<request_rec*> nr = httpd::internalRedirectRequest(uri, r);
     if (!hasContent(nr))
         return rcode(nr);
@@ -582,7 +629,7 @@ const int internalRedirect(const string& uri, request_rec* r) {
  * Create an HTTPD sub request.
  * Similar to httpd/server/request.c::make_sub_request
  */
-const failable<request_rec*> internalSubRequest(const string& nr_uri, request_rec* r) {
+const failable<request_rec*> internalSubRequest(const string& nr_uri, request_rec* const r) {
     if (ap_is_recursion_limit_exceeded(r))
         return mkfailure<request_rec*>("Redirect recursion limit exceeded", HTTP_INTERNAL_SERVER_ERROR);
 
@@ -647,7 +694,7 @@ const failable<request_rec*> internalSubRequest(const string& nr_uri, request_re
 /**
  * Return an HTTP external redirect request.
  */
-const int externalRedirect(const string& uri, request_rec* r) {
+const int externalRedirect(const string& uri, request_rec* const r) {
     debug(uri, "httpd::externalRedirect");
     r->status = HTTP_MOVED_TEMPORARILY;
     apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
@@ -660,7 +707,7 @@ const int externalRedirect(const string& uri, request_rec* r) {
 /**
  * Put a value in the process user data.
  */
-const bool putUserData(const string& k, const void* v, const server_rec* s) {
+const bool putUserData(const string& k, const void* const v, const server_rec* const s) {
     apr_pool_userdata_set((const void *)v, c_str(k), apr_pool_cleanup_null, s->process->pool);
     return true;
 }
@@ -668,7 +715,7 @@ const bool putUserData(const string& k, const void* v, const server_rec* s) {
 /**
  * Return a user data value.
  */
-const void* userData(const string& k, const server_rec* s) {
+const void* const userData(const string& k, const server_rec* const s) {
     void* v = NULL;
     apr_pool_userdata_get(&v, c_str(k), s->process->pool);
     return v;
@@ -683,7 +730,7 @@ const void* userData(const string& k, const server_rec* s) {
 /**
  * Log an optional value.
  */
-const char* debugOptional(const char* s) {
+const char* const debugOptional(const char* const s) {
     if (s == NULL)
         return "";
     return s;
@@ -692,7 +739,7 @@ const char* debugOptional(const char* s) {
 /**
  * Log a header
  */
-int debugHeader(unused void* r, const char* key, const char* value) {
+int debugHeader(unused void* r, const char* const key, const char* const value) {
     cdebug << "  header key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -700,7 +747,7 @@ int debugHeader(unused void* r, const char* key, const char* value) {
 /**
  * Log an environment variable
  */
-int debugEnv(unused void* r, const char* key, const char* value) {
+int debugEnv(unused void* r, const char* const key, const char* const value) {
     cdebug << "  var key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -708,7 +755,7 @@ int debugEnv(unused void* r, const char* key, const char* value) {
 /**
  * Log a note.
  */
-int debugNote(unused void* r, const char* key, const char* value) {
+int debugNote(unused void* r, const char* const key, const char* const value) {
     cdebug << "  note key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -716,8 +763,8 @@ int debugNote(unused void* r, const char* key, const char* value) {
 /**
  * Log a request.
  */
-const bool debugRequest(request_rec* r, const string& msg) {
-    gc_scoped_pool pool;
+const bool debugRequest(request_rec* const r, const string& msg) {
+    const gc_scoped_pool pool;
     cdebug << msg << ":" << endl;
     cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
     cdebug << "  uri: " << debugOptional(r->uri) << endl;

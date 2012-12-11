@@ -42,11 +42,11 @@ const failable<value> post(unused const list<value>& params) {
 }
 
 const failable<value> put(unused const list<value>& params) {
-    return value(true);
+    return trueValue;
 }
 
 const failable<value> del(unused const list<value>& params) {
-    return value(true);
+    return trueValue;
 }
 
 const failable<value> echo(const list<value>& params) {

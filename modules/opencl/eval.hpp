@@ -61,7 +61,7 @@ cl_ulong evaltime = 0;
 /**
  * Reset the OpenCL profiling counters.
  */
-bool resetOpenCLCounters() {
+const bool resetOpenCLCounters() {
     memtime = kernelqtime = kerneltime = preptime = evaltime = 0;
     return true;
 }
@@ -69,7 +69,7 @@ bool resetOpenCLCounters() {
 /**
  * Print the OpenCL profiling counters.
  */
-bool printOpenCLCounters(const long n) {
+const bool printOpenCLCounters(const long n) {
     cout << " kernelq " << ((double)kernelqtime / 1000000.0) / (double)n << " ms kernel " << ((double)kerneltime / 1000000.0) / (double)n << " ms memory " << ((double)memtime / 1000000.0) / (double)n << " ms prep " << ((double)preptime / 1000000.0) / (double)n << " ms eval " << ((double)evaltime / 1000000.0) / (double)n << " ms";
     return true;
 }
@@ -77,7 +77,7 @@ bool printOpenCLCounters(const long n) {
 /**
  * Profile a memory event.
  */
-failable<cl_ulong> profileMemEvent(const cl_event evt) {
+const failable<cl_ulong> profileMemEvent(const cl_event evt) {
     cl_ulong start = 0;
     const cl_int serr = clGetEventProfilingInfo(evt, CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &start, NULL);
     if (serr != CL_SUCCESS)
@@ -94,7 +94,7 @@ failable<cl_ulong> profileMemEvent(const cl_event evt) {
 /**
  * Profile a kernel event.
  */
-failable<cl_ulong> profileKernelEvent(const cl_event evt) {
+const failable<cl_ulong> profileKernelEvent(const cl_event evt) {
     cl_ulong queued = 0;
     const cl_int qerr = clGetEventProfilingInfo(evt, CL_PROFILING_COMMAND_QUEUED, sizeof(cl_ulong), &queued, NULL);
     if (qerr != CL_SUCCESS)
@@ -117,7 +117,7 @@ failable<cl_ulong> profileKernelEvent(const cl_event evt) {
 /**
  * Profile an array of memory events.
  */
-failable<cl_ulong> profileMemEvents(const cl_uint n, const cl_event* evt) {
+const failable<cl_ulong> profileMemEvents(const cl_uint n, const cl_event* const evt) {
     if (n == 0)
         return 0;
     const failable<cl_ulong> t = profileMemEvent(*evt);
@@ -219,6 +219,21 @@ public:
                 return;
             }
         }
+    }
+
+    OpenCLContext(const OpenCLContext& c) : dev(c.dev), ndevs(c.ndevs), ctx(c.ctx) {
+        for (cl_uint i = 0; i < ndevs; i++) {
+            devid[i] = c.devid[i];
+            cq[i] = c.cq[i];
+            if (cq[i] != 0) {
+                const cl_int rcqerr = clRetainCommandQueue(cq[i]);
+                if (rcqerr != CL_SUCCESS)
+                    mkfailure<bool>(string("Couldn't retain OpenCL command queue: ") + clError(rcqerr));
+            }
+        }
+        const cl_int rcerr = clRetainContext(ctx);
+        if (rcerr != CL_SUCCESS)
+            mkfailure<bool>(string("Couldn't retain OpenCL context: ") + clError(rcerr));
     }
 
     ~OpenCLContext() {
@@ -372,7 +387,7 @@ private:
 /**
  * Return a read-only memory buffer.
  */
-const failable<OpenCLBuffer> readOnlyBuffer(const size_t size, const void* p, const OpenCLContext& cl, const cl_command_queue cq) {
+const failable<OpenCLBuffer> readOnlyBuffer(const size_t size, const void* const p, const OpenCLContext& cl, const cl_command_queue cq) {
     if (cl.dev == OpenCLContext::CPU) {
         cl_int err;
         const cl_mem buf = clCreateBuffer(cl.ctx, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, size, const_cast<void*>(p), &err);
@@ -396,7 +411,7 @@ const failable<OpenCLBuffer> readOnlyBuffer(const size_t size, const void* p, co
 /**
  * Fill an array of write events for a given list of buffers.
  */
-const cl_uint writeBufferEvents(const list<OpenCLBuffer>& buf, cl_event* evt) {
+const cl_uint writeBufferEvents(const list<OpenCLBuffer>& buf, cl_event* const evt) {
     if (isNil(buf))
         return 0;
     const cl_event e = car(buf).evt;
@@ -427,7 +442,7 @@ const failable<OpenCLBuffer> writeOnlyBuffer(const size_t size, const OpenCLCont
 /**
  * Convert a value to a kernel arg.
  */
-const failable<OpenCLBuffer> valueToKernelArg(const cl_uint i, const size_t size, const void* p, const failable<OpenCLBuffer>& buf, const OpenCLKernel& kernel) {
+const failable<OpenCLBuffer> valueToKernelArg(const cl_uint i, const size_t size, const void* const p, const failable<OpenCLBuffer>& buf, const OpenCLKernel& kernel) {
     if (!hasContent(buf))
         return buf;
     if (p != NULL) {
@@ -446,7 +461,7 @@ const failable<OpenCLBuffer> valueToKernelArg(const cl_uint i, const size_t size
 const failable<OpenCLBuffer> valueToKernelArg(const value& v, const cl_uint i, const OpenCLKernel& kernel, const OpenCLContext& cl, const cl_command_queue cq) {
     switch (type(v)) {
     case value::Symbol: {
-        const string s = string("'") + v;
+        const string s = string("'") + (string)v;
         return valueToKernelArg(i, 0, NULL, readOnlyBuffer(length(s) + 1, c_str(s), cl, cq), kernel);
     }
     case value::String: {
@@ -489,28 +504,28 @@ const failable<list<OpenCLBuffer>> valuesToKernelArgs(const list<value>& v, cons
 /**
  * Convert a kernel result to a value.
  */
-const value kernelResultToValue(const void* p, const value::ValueType type) {
+const value kernelResultToValue(const void* const p, const value::ValueType type) {
     switch(type) {
     case value::Symbol: {
-        const char* s = static_cast<const char*>(p);
+        const char* const s = (const char*)p;
         const size_t l = strlen(s);
         if (l != 0 && *s == '\'')
             return value(s + 1);
         return value(s);
     }
     case value::String: {
-        const char* s = static_cast<const char*>(p);
+        const char* const s = (const char*)p;
         const size_t l = strlen(s);
         if (l != 0 && *s == '\'')
             return value(s + 1);
         return value(string(s, l));
     }
     case value::Number:
-        return (double)(*(static_cast<const cl_float*>(p)));
+        return (double)(*(const cl_float*)p);
     case value::Bool:
-        return (bool)(*(static_cast<const cl_int*>(p)));
+        return (bool)(*(const cl_int*)p);
     default:
-        return *(static_cast<const value*>(p));
+        return *(const value*)p;
     }
 }
 
@@ -582,9 +597,9 @@ const failable<OpenCLKernel> createKernel(const value& expr, const OpenCLProgram
 
         // The start, stop, and restart functions are optional
         //if (fn == "start" || fn == "stop")
-            //return value(lambda<value(const list<value>&)>());
+            //return value(lvvlambda());
 
-        return mkfailure<OpenCLKernel>(string("Couldn't find function: ") + car<value>(expr) + " : " + clError(ckerr));
+        return mkfailure<OpenCLKernel>(string("Couldn't find function: ") + (string)car<value>(expr) + " : " + clError(ckerr));
     }
     return OpenCLKernel(k);
 }

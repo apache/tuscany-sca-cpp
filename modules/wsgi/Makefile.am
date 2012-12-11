@@ -43,7 +43,7 @@ gae.prefix: $(top_builddir)/config.status
 EXTRA_DIST = domain-test.composite *.py htdocs/test/*.xml htdocs/test/*.txt htdocs/*.html
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -ljansson
 
 noinst_PROGRAMS = client-test
 

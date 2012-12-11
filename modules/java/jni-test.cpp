@@ -40,7 +40,7 @@ namespace java {
 #endif
 
 bool testJNI() {
-    gc_scoped_pool pool;
+    const gc_scoped_pool pool;
     JavaVM* jvm;
     JNIEnv* env;
 
@@ -50,7 +50,7 @@ bool testJNI() {
     JavaVMOption options[3];
     args.options = options;
     args.nOptions = 0;
-    const char* envcp = getenv("CLASSPATH");
+    const char* const envcp = getenv("CLASSPATH");
     const string cp = string("-Djava.class.path=") + (envcp == NULL? "." : envcp);
     options[args.nOptions].optionString = const_cast<char*>(c_str(cp));
     options[args.nOptions++].extraInfo = NULL;
@@ -60,9 +60,9 @@ bool testJNI() {
     JNI_CreateJavaVM(&jvm, (void**)&env, &args);
 #endif
 
-    jclass classClass = env->FindClass("java/lang/Class");
+    const jclass classClass = env->FindClass("java/lang/Class");
     assert(classClass != NULL);
-    jclass loaderClass = env->FindClass("org/apache/tuscany/ClassLoader");
+    const jclass loaderClass = env->FindClass("org/apache/tuscany/ClassLoader");
     assert(loaderClass != NULL);
     return true;
 }

@@ -49,39 +49,30 @@ const list<value> primitiveProcedures(const list<value>& l) {
 }
 
 /**
- * Apply a Scheme component implementation function.
- */
-struct applyImplementation {
-    const value impl;
-    const list<value> px;
-
-    applyImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
-    }
-
-    const value operator()(const list<value>& params) const {
-        const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
-        debug(expr, "modeval::scheme::applyImplementation::input");
-        scheme::Env env = scheme::setupEnvironment();
-        const value res = scheme::evalScript(expr, impl, env);
-        const value val = isNil(res)? mklist<value>(value(), string("Could not evaluate expression")) : mklist<value>(res);
-        debug(val, "modeval::scheme::applyImplementation::result");
-        return val;
-    }
-};
-
-/**
  * Evaluate a Scheme component implementation and convert it to an
  * applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
-    const string fpath(path + attributeValue("script", impl));
+const failable<lvvlambda > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+    const string fpath(path + (string)attributeValue("script", impl));
     ifstream is(fpath);
     if (fail(is))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
+        return mkfailure<lvvlambda >(string("Could not read implementation: ") + fpath);
     const value script = scheme::readScript(is);
     if (isNil(script))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
-    return lambda<value(const list<value>&)>(applyImplementation(script, px));
+        return mkfailure<lvvlambda >(string("Could not read implementation: ") + fpath);
+    const list<value> pxproc = scheme::quotedParameters(primitiveProcedures(px));
+
+    const lvvlambda applyImplementation = [script, pxproc](const list<value>& params) -> const value {
+        // Apply a Scheme component implementation function
+        const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), pxproc));
+        debug(expr, "modeval::scheme::applyImplementation::input");
+        scheme::Env env = scheme::setupEnvironment();
+        const value res = scheme::evalScript(expr, script, env);
+        const value val = isNil(res)? mklist<value>(nilValue, string("Could not evaluate expression")) : mklist<value>(res);
+        debug(val, "modeval::scheme::applyImplementation::result");
+        return val;
+    };
+    return applyImplementation;
 }
 
 }

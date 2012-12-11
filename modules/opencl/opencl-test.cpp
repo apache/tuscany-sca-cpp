@@ -159,8 +159,8 @@ const string testCharsParallelGPU =
         "    r[i] = i < ixl? x[i] : i < ixl + iyl? y[i - ixl] : '\\0';\n"
         "}\n";
 
-bool testTaskParallel(const OpenCLContext::DeviceType dev) {
-    gc_scoped_pool pool;
+const bool testTaskParallel(const OpenCLContext::DeviceType dev) {
+    const gc_scoped_pool pool;
     OpenCLContext cl(dev);
     if (!devices(cl) != 0)
         return true;
@@ -192,12 +192,12 @@ bool testTaskParallel(const OpenCLContext::DeviceType dev) {
         const value exp = mklist<value>("int_or", true, false);
         const failable<value> r = evalKernel(createKernel(exp, content(clprog)), exp, cl);
         assert(hasContent(r));
-        assert(content(r) == value(true));
+        assert(content(r) == trueValue);
 
         const value exp2 = mklist<value>("int_or", false, false);
         const failable<value> r2 = evalKernel(createKernel(exp2, content(clprog)), exp2, cl);
         assert(hasContent(r2));
-        assert(content(r2) == value(false));
+        assert(content(r2) == falseValue);
     }
     {
         istringstream is(dev == OpenCLContext::CPU? testCharsCPU : testCharsGPU);
@@ -223,41 +223,33 @@ bool testTaskParallel(const OpenCLContext::DeviceType dev) {
     return true;
 }
 
-struct evalTaskParallelLoop {
-    evalTaskParallelLoop(const OpenCLContext& cl, const OpenCLProgram& clprog) : cl(cl), clprog(clprog), exp(mklist<value>("add", 60, string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello "), 60, string("World World World World World World World World World World "))) {
-    }
-    const bool operator()() const {
-        const failable<value> r = evalKernel(createKernel(exp, clprog), exp, 1, value::String, 128, cl);
-        assert(hasContent(r));
-        assert(content(r) == value(string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello World World World World World World World World World World ")));
-        return true;
-    }
-
-    const OpenCLContext& cl;
-    const OpenCLProgram& clprog;
-    const value exp;
-};
-
 const bool testTaskParallelPerf(const OpenCLContext::DeviceType dev, const bool copy) {
-    gc_scoped_pool pool;
+    const gc_scoped_pool pool;
     OpenCLContext cl(dev);
     if (!devices(cl) != 0)
         return true;
 
     istringstream is(dev == OpenCLContext::CPU? testCharsCPU : copy? testCharsCopyGPU : testCharsGPU);
-    failable<OpenCLProgram> clprog = readProgram("kernel.cl", is, cl);
-    assert(hasContent(clprog));
+    failable<OpenCLProgram> fclprog = readProgram("kernel.cl", is, cl);
+    assert(hasContent(fclprog));
 
     resetOpenCLCounters();
-    const lambda<bool()> el = evalTaskParallelLoop(cl, content(clprog));
+    OpenCLProgram clprog = content(fclprog);
+    const value exp = mklist<value>("add", 60, string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello "), 60, string("World World World World World World World World World World "));
+    const blambda el = [cl, clprog, exp]() -> const bool {
+        const failable<value> r = evalKernel(createKernel(exp, clprog), exp, 1, value::String, 128, cl);
+        assert(hasContent(r));
+        assert(content(r) == value(string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello World World World World World World World World World World ")));
+        return true;
+    };
     cout << "OpenCL task-parallel eval " << (dev == OpenCLContext::CPU? "CPU" : "GPU") << (copy? " copy" : "") << " test " << time(el, 5, 500) << " ms";
     printOpenCLCounters(500);
     cout << endl;
     return true;
 }
 
-bool testDataParallel(const OpenCLContext::DeviceType dev) {
-    gc_scoped_pool pool;
+const bool testDataParallel(const OpenCLContext::DeviceType dev) {
+    const gc_scoped_pool pool;
     OpenCLContext cl(dev);
     if (!devices(cl) != 0)
         return true;
@@ -276,33 +268,25 @@ bool testDataParallel(const OpenCLContext::DeviceType dev) {
     return true;
 }
 
-struct evalDataParallelLoop {
-    evalDataParallelLoop(const OpenCLContext& cl, const OpenCLProgram& clprog) : cl(cl), clprog(clprog), exp(mklist<value>("add", 60, string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello "), 60, string("World World World World World World World World World World "))) {
-    }
-    const bool operator()() const {
-        const failable<value> r = evalKernel(createKernel(exp, clprog), exp, 121, value::String, 128, cl);
-        assert(hasContent(r));
-        assert(content(r) == value(string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello World World World World World World World World World World ")));
-        return true;
-    }
-
-    const OpenCLContext& cl;
-    const OpenCLProgram& clprog;
-    const value exp;
-};
-
 const bool testDataParallelPerf(const OpenCLContext::DeviceType dev, const bool copy) {
-    gc_scoped_pool pool;
+    const gc_scoped_pool pool;
     OpenCLContext cl(dev);
     if (!devices(cl) != 0)
         return true;
 
     istringstream is(dev == OpenCLContext::CPU? testCharsParallelCPU : copy? testCharsParallelCopyGPU : testCharsParallelGPU);
-    failable<OpenCLProgram> clprog = readProgram("kernel.cl", is, cl);
-    assert(hasContent(clprog));
+    failable<OpenCLProgram> fclprog = readProgram("kernel.cl", is, cl);
+    assert(hasContent(fclprog));
 
     resetOpenCLCounters();
-    const lambda<bool()> el = evalDataParallelLoop(cl, content(clprog));
+    OpenCLProgram clprog = content(fclprog);
+    const value exp = mklist<value>("add", 60, string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello "), 60, string("World World World World World World World World World World "));
+    const blambda el = [cl, clprog, exp]() -> const bool {
+        const failable<value> r = evalKernel(createKernel(exp, clprog), exp, 121, value::String, 128, cl);
+        assert(hasContent(r));
+        assert(content(r) == value(string("Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello World World World World World World World World World World ")));
+        return true;
+    };
     cout << "OpenCL data-parallel eval " << (dev == OpenCLContext::CPU? "CPU" : "GPU") << (copy? " copy" : "") << " test " << time(el, 5, 500) << " ms";
     printOpenCLCounters(500);
     cout << endl;

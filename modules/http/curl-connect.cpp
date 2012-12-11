@@ -34,14 +34,14 @@ namespace tuscany {
 namespace http {
 
 const bool testConnect(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
-    gc_scoped_pool p;
+    const gc_scoped_pool p;
 
-    CURLSession cs(ca, cert, key, "", 0);
+    const CURLSession cs(ca, cert, key, "", 0);
     const failable<bool> crc = connect(url, cs);
     assert(hasContent(crc));
 
     apr_pollset_t* pollset;
-    apr_status_t cprc = apr_pollset_create(&pollset, 2, pool(p), 0);
+    const apr_status_t cprc = apr_pollset_create(&pollset, 2, pool(p), 0);
     assert(cprc == APR_SUCCESS);
     apr_socket_t* csock = sock(0, p);
     const apr_pollfd_t* cpollfd = pollfd(csock, APR_POLLIN | APR_POLLERR | APR_POLLNVAL | APR_POLLHUP, p);
@@ -53,7 +53,7 @@ const bool testConnect(const string& url, const string& ca = "", const string& c
     const apr_pollfd_t* pollfds;
     apr_int32_t pollcount;
     for(;;) {
-        apr_status_t pollrc = apr_pollset_poll(pollset, -1, &pollcount, &pollfds);
+        const apr_status_t pollrc = apr_pollset_poll(pollset, -1, &pollcount, &pollfds);
         assert(pollrc == APR_SUCCESS);
 
         for (; pollcount > 0; pollcount--, pollfds++) {
@@ -88,7 +88,7 @@ const bool testConnect(const string& url, const string& ca = "", const string& c
 }
 }
 
-int main(unused const int argc, const char** argv) {
+int main(unused const int argc, const char** const argv) {
     if (argc > 2)
         tuscany::http::testConnect(tuscany::string(argv[1]), tuscany::string(argv[2]), tuscany::string(argv[3]), tuscany::string(argv[4]));
     else
