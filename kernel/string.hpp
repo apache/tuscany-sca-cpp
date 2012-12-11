@@ -41,16 +41,16 @@ namespace tuscany {
  */
 long countStringCopies = 0;
 
-bool resetStringCopyCounters() {
+inline const bool resetStringCopyCounters() {
     countStringCopies = 0;
     return true;
 }
 
-bool checkStringCopyCounters(long c) {
+inline const bool checkStringCopyCounters(long c) {
     return countStringCopies == c;
 }
 
-bool printStringCopyCounters() {
+inline const bool printStringCopyCounters() {
     printf("countStringCopies %ld\n", countStringCopies);
     return true;
 }
@@ -66,12 +66,18 @@ bool printStringCopyCounters() {
 /**
  * Instrumented memcpy.
  */
-void* string_memcpy(void* t, const void* s, const size_t n) {
 #ifdef WANT_MAINTAINER_COUNTERS
+
+inline void* string_memcpy(void* t, const void* s, const size_t n) {
     countStringCopies += 1;
-#endif
     return memcpy(t, s, n);
 }
+
+#else
+
+#define string_memcpy(t, s, n) memcpy(t, s, n)
+
+#endif
 
 char stringEmptyBuffer[1] = { '\0' };
 
@@ -80,56 +86,27 @@ char stringEmptyBuffer[1] = { '\0' };
  */
 class string {
 public:
-    string() : len(0) {
-        buf = stringEmptyBuffer;
+    inline string() noexcept : len(0), buf(stringEmptyBuffer) {
     }
 
-    string(const char* s) {
-        len = strlen(s);
-        if (len == 0) {
-            buf = stringEmptyBuffer;
-            return;
-        }
-        buf = gc_cnew(len + 1);
-        string_memcpy(buf, s, len + 1);
+    inline string(const char* const s) noexcept : len(strlen(s)), buf(mksbuf(s, len)) {
     }
 
-    string(const char* s, const size_t n) {
-        len = n;
-        if (len == 0) {
-            buf = stringEmptyBuffer;
-            return;
-        }
-        buf = gc_cnew(len + 1);
-        string_memcpy(buf, s, len);
-        buf[len] = '\0';
+    inline string(const char* const s, const size_t n) noexcept : len(n), buf(mksbuf(s, n)) {
     }
 
-    string(const size_t n, const char c) {
-        len = n;
-        if (len == 0) {
-            buf = stringEmptyBuffer;
-            return;
-        }
-        buf = gc_cnew(len + 1);
-        memset(buf, c, n);
-        buf[len] = '\0';
+    inline string(const char* const s, const size_t n, const bool copy) noexcept : len(n), buf(mksbuf(s, n, copy)) {
     }
 
-    string(const string& s) {
-        len = s.len;
-        buf = s.buf;
+    inline string(const size_t n, const char c) noexcept : len(n), buf(mkcbuf(c, n)) {
     }
 
-    const string& operator=(const string& s) {
-        if (&s == this)
-            return *this;
-        len = s.len;
-        buf = s.buf;
-        return *this;
+    inline string(const string& s) noexcept : len(s.len), buf(s.buf) {
     }
 
-    const bool operator==(const string& s) const {
+    string& operator=(const string& s) = delete;
+
+    inline const bool operator==(const string& s) const noexcept {
         if (len != s.len)
             return false;
         if (buf == s.buf)
@@ -137,21 +114,21 @@ public:
         return memcmp(buf, s.buf, len) == 0;
     }
 
-    const bool operator!=(const string& s) const {
+    inline const bool operator!=(const string& s) const noexcept {
         return !(*this == s);
     }
 
-    const bool operator==(const char* s) const {
+    inline const bool operator==(const char* const s) const noexcept {
         if (buf == s)
             return true;
         return strcmp(buf, s) == 0;
     }
 
-    const bool operator!=(const char* s) const {
+    inline const bool operator!=(const char* const s) const noexcept {
         return !(*this == s);
     }
 
-    const bool operator<(const string& s) const {
+    inline const bool operator<(const string& s) const noexcept {
         const size_t n = len < s.len? len : s.len;
         const int c = memcmp(buf, s.buf, n);
         if (c < 0)
@@ -161,9 +138,9 @@ public:
         return false;
     }
 
-    const bool operator>(const string& s) const {
+    inline const bool operator>(const string& s) const noexcept {
         const size_t n = len < s.len? len : s.len;
-        int c = memcmp(buf, s.buf, n);
+        const int c = memcmp(buf, s.buf, n);
         if (c > 0)
             return true;
         if (c == 0)
@@ -176,91 +153,137 @@ private:
     friend class odebugstream;
 #endif
     friend class ostringstream;
-    friend const string operator+(const string& a, const string& b);
-    friend const string operator+(const string& a, const char* b);
-    friend const size_t length(const string& s);
-    friend const char* c_str(const string& s);
-    friend const size_t find(const string& s1, const char* s2, const size_t start);
-    friend const string substr(const string& s, const size_t pos, const size_t n);
+    friend const string operator+(const string& a, const string& b) noexcept;
+    friend const string operator+(const string& a, const char* const b) noexcept;
+    friend const string operator+(const string& a, const char c) noexcept;
+    friend const size_t length(const string& s) noexcept;
+    friend const char* const c_str(const string& s) noexcept;
+    friend const size_t find(const string& s1, const char* const s2, const size_t start) noexcept;
+    friend const string substr(const string& s, const size_t pos, const size_t n) noexcept;
+    friend const bool setstring(string& target, const string& s);
 
-    size_t len;
-    char* buf;
+    const size_t len;
+    const char* const buf;
+
+    const char* const mkbuf(const size_t n) {
+        if (n == 0)
+            return stringEmptyBuffer;
+        char* const b = gc_cnew(n + 1);
+        b[n] = '\0';
+        return b;
+    }
+
+    const char* const mksbuf(const char* const s, const size_t n) {
+        if (n == 0)
+            return stringEmptyBuffer;
+        char* const b = gc_cnew(n + 1);
+        string_memcpy(b, s, n);
+        b[n] = '\0';
+        return b;
+    }
+
+    const char* const mksbuf(const char* const s, const size_t n, const bool copy) {
+        if (!copy)
+            return s;
+        if (n == 0)
+            return stringEmptyBuffer;
+        char* const b = gc_cnew(n + 1);
+        string_memcpy(b, s, n);
+        b[n] = '\0';
+        return b;
+    }
+
+    const char* const mkcbuf(const char c, const size_t n) {
+        if (n == 0)
+            return stringEmptyBuffer;
+        char* const b = gc_cnew(n + 1);
+        memset(b, c, n);
+        b[n] = '\0';
+        return b;
+    }
 };
 
 /**
  * Adds two strings.
  */
-const string operator+(const string& a, const string& b) {
-    string s;
-    s.len = a.len + b.len;
-    s.buf = gc_cnew(s.len + 1);
-    string_memcpy(s.buf, a.buf, a.len);
-    string_memcpy(s.buf + a.len, b.buf, b.len);
-    s.buf[s.len] = '\0';
-    return s;
+inline const string operator+(const string& sa, const string& sb) noexcept {
+    const size_t n = sa.len + sb.len;
+    char* const b = gc_cnew(n + 1);
+    string_memcpy(b, sa.buf, sa.len);
+    string_memcpy(b + sa.len, sb.buf, sb.len);
+    b[n] = '\0';
+    return string(b, n, false);
 }
 
-const string operator+(const string& a, const char* b) {
-    string s;
-    const size_t blen = strlen(b);
-    s.len = a.len + blen;
-    s.buf = gc_cnew(s.len + 1);
-    string_memcpy(s.buf, a.buf, a.len);
-    string_memcpy(s.buf + a.len, b, blen);
-    s.buf[s.len] = '\0';
-    return s;
+inline const string operator+(const string& sa, const char* const sb) noexcept {
+    const size_t bn = strlen(sb);
+    const size_t n = sa.len + bn;
+    char* const b = gc_cnew(n + 1);
+    string_memcpy(b, sa.buf, sa.len);
+    string_memcpy(b + sa.len, sb, bn);
+    b[n] = '\0';
+    return string(b, n, false);
+}
+
+inline const string operator+(const string& sa, const char c) noexcept {
+    const size_t n = sa.len + 1;
+    char* const b = gc_cnew(n + 1);
+    string_memcpy(b, sa.buf, sa.len);
+    b[n - 1] = c;
+    b[n] = '\0';
+    return string(b, n, false);
 }
 
 /**
  * Returns the length of a string.
  */
-const size_t length(const string& s) {
+inline const size_t length(const string& s) noexcept {
     return s.len;
 }
 
 /**
  * Returns a string as a C zero terminated string.
  */
-const char* c_str(const string& s) {
+inline const char* const c_str(const string& s) noexcept {
     return s.buf;
 }
 
 /**
  * Find the first occurrence of string s2 in s1, starting at the given position.
  */
-const size_t find(const string& s1, const char* s2, const size_t start) {
+inline const size_t find(const string& s1, const char* const s2, const size_t start) noexcept {
     if (start >= s1.len)
         return s1.len;
-    const char *f = strstr(s1.buf + start, s2);
+    const char* const f = strstr(s1.buf + start, s2);
     if (f == NULL)
         return s1.len;
     return f - s1.buf;
 }
 
-const size_t find(const string& s1, const char* s2) {
+inline const size_t find(const string& s1, const char* const s2) noexcept {
     return find(s1, s2, 0);
 }
 
 /**
  * Return true if string s1 contains s2.
  */
-const bool contains(const string& s1, const char* s2) {
+inline const bool contains(const string& s1, const char* const s2) noexcept {
     return find(s1, s2) != length(s1);
 }
 
 /**
  * Find the first occurence of any character from a string in a string.
  */
-const size_t find_first_of(const string& s1, const string& s2) {
+inline const size_t find_first_of(const string& s1, const string& s2) noexcept {
     return strcspn(c_str(s1), c_str(s2));
 }
 
 /**
  * Find the first occurence of a character in a string.
  */
-const size_t find(const string& s, const char c) {
-    const char* cs = c_str(s);
-    const char* f = strchr(cs, c);
+inline const size_t find(const string& s, const char c) noexcept {
+    const char* const cs = c_str(s);
+    const char* const f = strchr(cs, c);
     if (f == NULL)
         return length(s);
     return f - cs;
@@ -269,9 +292,9 @@ const size_t find(const string& s, const char c) {
 /**
  * Find the last occurence of a character in a string.
  */
-const size_t find_last(const string& s, const char c) {
-    const char* cs = c_str(s);
-    const char* f = strrchr(cs, c);
+inline const size_t find_last(const string& s, const char c) noexcept {
+    const char* const cs = c_str(s);
+    const char* const f = strrchr(cs, c);
     if (f == NULL)
         return length(s);
     return f - cs;
@@ -280,7 +303,7 @@ const size_t find_last(const string& s, const char c) {
 /**
  * Return a substring of a string.
  */
-const string substr(const string& s, const size_t pos, const size_t n) {
+inline const string substr(const string& s, const size_t pos, const size_t n) noexcept {
     if (pos >= s.len)
         return string();
     if (pos + n > s.len)
@@ -288,17 +311,29 @@ const string substr(const string& s, const size_t pos, const size_t n) {
     return string(s.buf + pos, n);
 }
 
-const string substr(const string& s, const size_t pos) {
+inline const string substr(const string& s, const size_t pos) noexcept {
     return substr(s, pos, length(s));
 }
 
 /**
+ * Set a string. Use with moderation.
+ */
+/*
+inline const bool setstring(string& target, const string& s) {
+    if (&target == &s)
+        return true;
+    memcpy((void*)&target.len, (void*)&s.len, sizeof(size_t));
+    memcpy((void*)&target.buf, (void*)&s.buf, sizeof(char*));
+    return true;
+}
+*/
+
+/**
  * Common string constants.
  */
-
-string trueString("true");
-string falseString("false");
-string emptyString("");
+const string trueString("true");
+const string falseString("false");
+const string emptyString("");
 
 }
 

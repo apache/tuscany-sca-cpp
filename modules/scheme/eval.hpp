@@ -147,7 +147,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments) {
         return evalSequence(procedureBody(procedure), env);
     }
     logStream() << "Unknown procedure type " << procedure << endl;
-    return value();
+    return nilValue;
 }
 
 const value sequenceToExp(const list<value> exps) {
@@ -209,16 +209,16 @@ const value expandClauses(const list<value>& clauses) {
         if(isNil(rest))
             return sequenceToExp(condActions(first));
         logStream() << "else clause isn't last " << clauses << endl;
-        return value();
+        return nilValue;
     }
     return makeIf(condPredicate(first), sequenceToExp(condActions(first)), expandClauses(rest));
 }
 
-value condToIf(const value& exp) {
+const value condToIf(const value& exp) {
     return expandClauses(condClauses(exp));
 }
 
-value evalIf(const value& exp, Env& env) {
+const value evalIf(const value& exp, Env& env) {
     if(isTrue(evalExpr(ifPredicate(exp), env)))
         return evalExpr(ifConsequent(exp), env);
     return evalExpr(ifAlternative(exp), env);
@@ -255,7 +255,7 @@ const value evalExpr(const value& exp, Env& env) {
         return applyProcedure(evalExpr(operat(exp), env), operandValues);
     }
     logStream() << "Unknown expression type " << exp << endl;
-    return value();
+    return nilValue;
 }
 
 const list<value> quotedParameters(const list<value>& p) {

@@ -23,6 +23,7 @@
  * Test kernel functions.
  */
 
+#include <functional>
 #include <assert.h>
 #include "string.hpp"
 #include "sstream.hpp"
@@ -36,58 +37,324 @@
 
 namespace tuscany {
 
-struct inc {
-    int i;
-    inc(int i) :
+const bool ptrPerf() {
+    int x = 1;
+    for (int i = 0; i < 10000; i++) {
+        int* const y = &x;
+        int z = *y + *y;
+        z = z + 1;
+    }
+    return true;
+}
+
+const bool gcptrPerf() {
+    int x = 1;
+    for (int i = 0; i < 10000; i++) {
+        const gc_ptr<int> y = &x;
+        int z = *y + *y;
+        z = z + 1;
+    }
+    return true;
+}
+
+const bool testPtrPerf() {
+    {
+        const gc_scoped_pool gcp;
+        const blambda pp = ptrPerf;
+        cout << "Pointer test " << (time(pp, 5, 10000) / 10000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda gpp = gcptrPerf;
+        cout << "GC Pointer test " << (time(gpp, 5, 10000) / 10000) << " ms" << endl;
+    }
+    return true;
+}
+
+class incFunctor {
+public:
+    incFunctor(const int i) :
         i(i) {
     }
     const int operator()(const int x) const {
         return x + i;
     }
+private:
+    const int i;
 };
 
 const int square(const int x) {
     return x * x;
 }
 
-int mapLambda(lambda<int(const int)> f, int v) {
+const int mapLambda(lambda<const int(const int)> f, int v) {
     return f(v);
 }
 
-bool testLambda() {
-    const lambda<int(const int)> sq(square);
-    assert(sq(2) == 4);
-    assert(mapLambda(sq, 2) == 4);
-    assert(mapLambda(square, 2) == 4);
+const lambda<const int(const int)> mksquare() {
+    return square;
+}
 
-    const lambda<int(const int)> incf(inc(10));
-    assert(incf(1) == 11);
-    assert(mapLambda(incf, 1) == 11);
-    assert(mapLambda(inc(10), 1) == 11);
-
-    lambda<int(const int)> l;
-    l = incf;
-    assert(l(1) == 11);
-    l = square;
-    assert(l(2) == 4);
+const bool testSizes() {
+    const gc_ptr<int> p(NULL);
+    cout << "sizeof gc_ptr " << sizeof(p) << endl;
+    const lambda<const int(const int)> sq(square);
+    cout << "sizeof C function lambda " << sizeof(sq) << endl;
+    const lambda<const int(const int)> incl(incFunctor(10));
+    cout << "sizeof functor lambda " << sizeof(incl) << endl;
+    const std::function<int(const int)> sqf(square);
+    cout << "sizeof C function std::function " << sizeof(sqf) << endl;
+    const std::function<int(const int)> incf(incFunctor(10));
+    cout << "sizeof functor std::function " << sizeof(incf) << endl;
+    const string s("abcd");
+    cout << "sizeof string " << sizeof(s) << endl;
+    const string v(s);
+    cout << "sizeof val " << sizeof(v) << endl;
+    const list<int> li = cons<int>(2, mklist<int>(3, 4));
+    cout << "sizeof list<int> " << sizeof(li) << endl;
+    const list<string> ls = cons<string>("a", mklist<string>("b", "c"));
+    cout << "sizeof list<string> " << sizeof(ls) << endl;
+    const list<value> lv = cons<value>("a", mklist<value>("b", "c"));
+    cout << "sizeof list<value> " << sizeof(lv) << endl;
     return true;
 }
 
-bool testLambdaGC() {
+const bool testLambda() {
+    const lambda<const int(const int)> sq(square);
+    assert(sq(2) == 4);
+
+    const lambda<const lambda<const int(const int)>()> mksq(mksquare);
+    assert(mksq()(2) == 4);
+
+    assert(mapLambda(sq, 2) == 4);
+    assert(mapLambda(square, 2) == 4);
+
+    const lambda<const int(const int)> incf(incFunctor(10));
+    assert(incf(1) == 11);
+    assert(mapLambda(incf, 1) == 11);
+    assert(mapLambda(incFunctor(10), 1) == 11);
+
+    const int base = 10;
+    auto incl11 = [base](const int i) { return base + i; };
+    const lambda<const int(const int)> incl(incl11);
+    assert(incl(1) == 11);
+    assert(mapLambda(incl, 1) == 11);
+    assert(mapLambda(incl11, 1) == 11);
+
+    const lambda<const int(const int)> il(incf);
+    assert(il(1) == 11);
+    const lambda<const int(const int)> sl(square);
+    assert(sl(2) == 4);
+    return true;
+}
+
+int constructCopiable = 0;
+int copyCopiable = 0;
+
+class Copiable {
+public:
+    Copiable() {
+        assert(false);
+    }
+
+    Copiable(const string& s) : s(s) {
+        constructCopiable++;
+    }
+
+    Copiable(const Copiable& c) : s(c.s) {
+        copyCopiable++;
+    }
+
+    Copiable& operator=(const Copiable& c) = delete;
+
+    ~Copiable() {
+    }
+
+    void doit() const {
+    }
+
+private:
+    const string s;
+};
+
+bool testLambdaRef(const Copiable& c) {
+    [&c] { c.doit(); }();
+    return true;
+}
+
+bool testLambdaCopy(const Copiable& c) {
+    [c] { c.doit(); }();
+    return true;
+}
+
+const bool testCopiable() {
+    const Copiable ac = Copiable("assigned");
+    ac.doit();
+    assert(constructCopiable = 1);
+    assert(copyCopiable = 1);
+
+    const Copiable ac2 = []{ return Copiable("returned"); }();
+    ac2.doit();
+    assert(constructCopiable = 2);
+    assert(copyCopiable = 2);
+
+    const Copiable rc = Copiable("captured by ref");
+    testLambdaRef(rc);
+    assert(constructCopiable = 3);
+    assert(copyCopiable = 3);
+
+    const Copiable cc = Copiable("captured by value");
+    testLambdaCopy(cc);
+    assert(constructCopiable = 4);
+    assert(copyCopiable = 5);
+
+    return true;
+}
+
+const bool testMutable() {
+    {
+        gc_mutable_ref<string> s = string("aaa");
+        s = "bbb";
+        assert(s == "bbb");
+    }
+    {
+        gc_mutable_ref<string> s;
+        assert(s == "");
+        s = "bbb";
+        assert(s == "bbb");
+    }
+    {
+        gc_mutable_ref<value> v;
+        assert(isNil((value)v));
+        v = 1;
+        assert(v == 1);
+    }
+    return true;
+}
+
+const bool testLambdaGC() {
     resetLambdaCounters();
     {
-        gc_scoped_pool gc;
+        const gc_scoped_pool gcp;
         testLambda();
     }
     assert(checkLambdaCounters());
     return true;
 }
 
+class sint {
+public:
+    sint(const int i) : i(i) {
+    }
+    const int i;
+    char b[4];
+};
+
+const int mult(const sint& a, const sint& b) {
+    return a.i * b.i;
+}
+
+const bool testCurry() {
+    const lambda<const int(const sint)> mult2 = curry((lambda<const int(const sint, const sint)>)mult, sint(2));
+    assert(6 == mult2(sint(3)));
+    return true;
+}
+
+const bool curryPerf() {
+    const sint a(2);
+    const sint b(3);
+    const lambda<const int(const sint)> mult2 = curry((lambda<const int(const sint, const sint)>)mult, a);
+    for(int i = 0; i < 1000; i++)
+        mult2(b);
+    return true;
+}
+
+class multFunctor {
+public:
+    multFunctor(const sint& a) : a(a) {
+    }
+    const int operator()(const sint& b) const {
+        return a.i * b.i;
+    }
+private:
+    const sint a;
+};
+
+const bool testFunctor() {
+    const lambda<const int(const sint)> mult2 = multFunctor(sint(2));
+    assert(6 == mult2(sint(3)));
+    return true;
+}
+
+const bool functorPerf() {
+    const sint a(2);
+    const sint b(3);
+    const lambda<const int(const sint)> mult2 = lambda<const int(const sint)>(multFunctor(a));
+    for(int i = 0; i < 1000; i++)
+        mult2(b);
+    return true;
+}
+
+const bool test11Lambda() {
+    const sint a(2);
+    assert(6 == [a](const sint& b) { return a.i * b.i; } (sint(3)));
+    return true;
+}
+
+const lambda<const sint(const sint)> multlambda11(const sint& a) {
+    return [a](const sint& b) { return a.i * b.i; };
+}
+
+const bool lambda11Perf() {
+    const sint a(2);
+    const sint b(3);
+    const lambda<const sint(const sint)> mult2 = multlambda11(a);
+    for(int i = 0; i < 1000; i++)
+        mult2(b);
+    return true;
+}
+
+const std::function<sint(const sint&)> multfunction11(const sint& a) {
+    return [a](const sint& b) { return a.i * b.i; };
+}
+
+const bool function11Perf() {
+    const sint a(2);
+    const sint b(3);
+    const std::function<sint(const sint&)> mult2 = multfunction11(a);
+    for(int i = 0; i < 1000; i++)
+        mult2(b);
+    return true;
+}
+
+const bool testFuncPerf() {
+    {
+        const gc_scoped_pool gcp;
+        const blambda cp = curryPerf;
+        cout << "Curry test " << (time(cp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda fp = functorPerf;
+        cout << "Functor test " << (time(fp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda lp = lambda11Perf;
+        cout << "Lambda11 test " << (time(lp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda lp = function11Perf;
+        cout << "Function11 test " << (time(lp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    return true;
+}
+
 int countElements = 0;
 
-struct Element {
-    int i;
-
+class Element {
+public:
     Element() : i(0) {
         countElements++;
     }
@@ -107,13 +374,16 @@ struct Element {
     const bool operator==(const Element& o) const {
         return o.i == i;
     }
+
+    int i;
 };
+
 ostream& operator<<(ostream& out, const Element& v) {
     out << v.i ;
     return out;
 }
 
-bool testCons() {
+const bool testCons() {
     assert(car(cons(2, mklist(3))) == 2);
     assert(car(cdr(cons(2, mklist(3)))) == 3);
     assert(isNil(cdr(cdr(cons(2, mklist(3))))));
@@ -122,12 +392,12 @@ bool testCons() {
     return true;
 }
 
-bool testListGC() {
+const bool testListGC() {
     resetLambdaCounters();
     resetListCounters();
     countElements = 0;
     {
-        gc_scoped_pool gc;
+        const gc_scoped_pool gcp;
         testCons();
     }
     assert(checkLambdaCounters());
@@ -136,7 +406,41 @@ bool testListGC() {
     return true;
 }
 
-bool testOut() {
+template<typename T> const list<T> listPerf(const T& v, const long int i) {
+    if (i == 0)
+        return list<T>();
+    return cons<T>(v, listPerf<T>(v, i -1));
+}
+
+const bool testListPerf() {
+    {
+        const gc_scoped_pool gcp;
+        const blambda lp = []() -> const bool {
+            listPerf<int>(0, 1000);
+            return true;
+        };
+        cout << "List<int> test " << (time(lp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda lp = []() -> const bool {
+            listPerf<string>(string("x"), 1000);
+            return true;
+        };
+        cout << "List<string> test " << (time(lp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    {
+        const gc_scoped_pool gcp;
+        const blambda lp = []() -> const bool {
+            listPerf<string>(value("x"), 1000);
+            return true;
+        };
+        cout << "List<value> test " << (time(lp, 5, 1000) / 1000) << " ms" << endl;
+    }
+    return true;
+}
+
+const bool testOut() {
     ostringstream os1;
     os1 << list<int> ();
     assert(str(os1) == "()");
@@ -147,7 +451,7 @@ bool testOut() {
     return true;
 }
 
-bool testEquals() {
+const bool testEquals() {
     assert(list<int>() == list<int>());
     assert(mklist(1, 2) == mklist(1, 2));
     assert(list<int>() != mklist(1, 2));
@@ -156,14 +460,14 @@ bool testEquals() {
     return true;
 }
 
-bool testLength() {
+const bool testLength() {
     assert(0 == length(list<int>()));
     assert(1 == length(mklist(1)));
     assert(2 == length(cons(1, mklist(2))));
     return true;
 }
 
-bool testAppend() {
+const bool testAppend() {
     assert(car(append(mklist(1), mklist(2))) == 1);
     assert(car(cdr(append(mklist(1), mklist(2)))) == 2);
     assert(car(cdr(cdr(append(mklist(1), mklist(2, 3))))) == 3);
@@ -173,21 +477,23 @@ bool testAppend() {
     return true;
 }
 
-struct Complex {
-    int x;
-    int y;
-    Complex() {
+class Complex {
+public:
+    Complex() : x(0), y(0) {
     }
-    Complex(int x, int y) :
-        x(x), y(y) {
+    Complex(const int x, const int y) : x(x), y(y) {
     }
+
+    const int x;
+    const int y;
 };
+
 ostream& operator<<(ostream& out, const Complex& v) {
     out << "[" << v.x << ":" << v.y << "]";
     return out;
 }
 
-bool testComplex() {
+const bool testComplex() {
     const list<Complex> p = mklist(Complex(1, 2), Complex(3, 4));
     assert(car(p).x == 1);
     assert(car(cdr(p)).x == 3);
@@ -195,7 +501,7 @@ bool testComplex() {
     return true;
 }
 
-bool testMap() {
+const bool testMap() {
     assert(isNil(map<int, int>(square, list<int>())));
 
     const list<int> m = map<int, int>(square, mklist(2, 3));
@@ -209,26 +515,26 @@ const int add(const int x, const int y) {
     return x + y;
 }
 
-bool testReduce() {
-    const lambda<int(const int, const int)> r(add);
+const bool testReduce() {
+    const lambda<const int(const int, const int)> r(add);
     assert(reduce(r, 0, mklist(1, 2, 3)) == 6);
     return true;
 }
 
-bool isPositive(const int x) {
+const bool isPositive(const int x) {
     if(x >= 0)
         return true;
     else
         return false;
 }
 
-bool testFilter() {
+const bool testFilter() {
     assert(car(filter<int>(isPositive, mklist(1, -1, 2, -2))) == 1);
     assert(cadr(filter<int>(isPositive, mklist(1, -1, 2, -2))) == 2);
     return true;
 }
 
-bool testMember() {
+const bool testMember() {
     assert(isNil(member(4, mklist(1, 2, 3))));
     assert(car(member(1, mklist(1, 2, 3))) == 1);
     assert(car(member(2, mklist(1, 2, 3))) == 2);
@@ -236,14 +542,14 @@ bool testMember() {
     return true;
 }
 
-bool testReverse() {
+const bool testReverse() {
     assert(isNil(reverse(list<int>())));
     assert(car(reverse(mklist(1, 2, 3))) == 3);
     assert(cadr(reverse(mklist(1, 2, 3))) == 2);
     return true;
 }
 
-bool testListRef() {
+const bool testListRef() {
     assert(listRef(mklist(1), 0) == 1);
     assert(listRef(mklist(1, 2, 3), 0) == 1);
     assert(listRef(mklist(1, 2, 3), 1) == 2);
@@ -251,7 +557,7 @@ bool testListRef() {
     return true;
 }
 
-bool testAssoc() {
+const bool testAssoc() {
     const list<list<string> > l = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"));
     assert(assoc<string>("a", l) == mklist<string>("a", "A"));
     assert(isNil(assoc<string>("z", l)));
@@ -261,10 +567,13 @@ bool testAssoc() {
 
     const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
     assert(assoc<value>("a", v) == mklist<value>("a", "A"));
+
+    const list<value> v2 = mklist<value>(mklist<value>("x", "X"), "a", mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
+    assert(assoc<value>("a", v2) == mklist<value>("a", "A"));
     return true;
 }
 
-bool testZip() {
+const bool testZip() {
     const list<string> k = mklist<string>("x", "a", "y", "a");
     const list<string> v = mklist<string>("X", "A", "Y", "AA");
     const list<list<string> > z = mklist(k, v);
@@ -274,7 +583,7 @@ bool testZip() {
     return true;
 }
 
-bool testTokenize() {
+const bool testTokenize() {
     assert(tokenize("/", "") == list<string>());
     assert(tokenize("/", "aaa") == mklist<string>("aaa"));
     assert(tokenize("/", "aaa/bbb/ccc/ddd") == mklist<string>("aaa", "bbb", "ccc", "ddd"));
@@ -292,11 +601,11 @@ bool testTokenize() {
     return true;
 }
 
-double testSeqMap(double x) {
+const double testSeqMap(const double x) {
     return x;
 }
 
-double testSeqReduce(unused double v, double accum) {
+double testSeqReduce(unused const double v, const double accum) {
     return accum + 1.0;
 }
 
@@ -316,16 +625,16 @@ bool testSeq() {
     return true;
 }
 
-value valueSquare(list<value> x) {
+const value valueSquare(const list<value>& x) {
     return (int)car(x) * (int)car(x);
 }
 
-bool testValue() {
-    assert(value(true) == value(true));
+const bool testValue() {
+    assert(value(true) == trueValue);
     assert(value(1) == value(1));
     assert(value("abcd") == value("abcd"));
-    lambda<value(const list<value>&)> vl(valueSquare);
-    assert(value(vl) == value(vl));
+    lvvlambda vl(valueSquare);
+    //assert(value(vl) == value(vl));
     assert(value(mklist<value>(1, 2)) == value(mklist<value>(1, 2)));
 
     const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"));
@@ -339,12 +648,12 @@ bool testValue() {
     return true;
 }
 
-bool testValueGC() {
+const bool testValueGC() {
     resetLambdaCounters();
     resetListCounters();
     resetValueCounters();
     {
-        gc_scoped_pool gc;
+        const gc_scoped_pool gcp;
         testValue();
     }
     assert(checkValueCounters());
@@ -353,8 +662,8 @@ bool testValueGC() {
     return true;
 }
 
-bool testTree() {
-    const list<value> t = mktree<value>("a", list<value>(), list<value>());
+const bool testTree() {
+    const list<value> t = mktree<value>("a", nilListValue, nilListValue);
     const list<value> ct = constree<value>("d", constree<value>("f", constree<value>("c", constree<value>("e", constree<value>("b", t)))));
     const list<value> mt = mktree(mklist<value>("d", "f", "c", "e", "b", "a"));
     assert(mt == ct);
@@ -371,8 +680,8 @@ const list<value> lta(const string& x) {
     return mklist<value>(c_str(x), c_str(x + x));
 }
 
-bool testTreeAssoc() {
-    const list<value> t = mktree<value>(lta("a"), list<value>(), list<value>());
+const bool testTreeAssoc() {
+    const list<value> t = mktree<value>(lta("a"), nilListValue, nilListValue);
     const list<value> at = constree<value>(lta("d"), constree<value>(lta("f"), constree<value>(lta("c"), constree<value>(lta("e"), constree<value>(lta("b"), t)))));
     const list<value> l = flatten<value>(at);
     assert(length(l) == 6);
@@ -387,58 +696,46 @@ bool testTreeAssoc() {
     return true;
 }
 
-double fib_aux(double n, double a, double b) {
+const double fib_aux(const double n, const double a, const double b) {
     if(n == 0.0)
         return a;
     return fib_aux(n - 1.0, b, a + b);
 }
 
-double fib(double n) {
+const double fib(const double n) {
     return fib_aux(n, 0.0, 1.0);
 }
 
-struct fibMapPerf {
-    const bool operator()() const {
-        list<double> s = seq(0.0, 999.0);
-        list<double> r = map<double, double>(fib, s);
-        assert(1000 == length(r));
-        return true;
-    }
-};
+const bool fibMapPerf() {
+    const list<double> s = seq(0.0, 999.0);
+    const list<double> r = map<double, double>(fib, s);
+    assert(1000 == length(r));
+    return true;
+}
 
-struct nestedFibMapPerf {
-    const lambda<double(const double)> fib;
-    nestedFibMapPerf(const lambda<double(const double)>& fib) : fib(fib) {
-    }
-    const bool operator()() const {
-        list<double> s = seq(0.0, 999.0);
-        list<double> r = map<double, double>(fib, s);
-        assert(1000 == length(r));
-        return true;
-    }
-};
-
-bool testCppPerf() {
+const bool testCppPerf() {
     {
-        const lambda<bool()> fml = fibMapPerf();
+        const gc_scoped_pool gcp;
+        const blambda fml = fibMapPerf;
         cout << "Fibonacci map test " << (time(fml, 1, 1) / 1000) << " ms" << endl;
     }
 
     {
-        struct nested {
-            static double fib(double n) {
-                struct nested {
-                    static double fib_aux(double n, double a, double b) {
-                        if(n == 0.0)
-                            return a;
-                        return fib_aux(n - 1.0, b, a + b);
-                    }
-                };
-                return nested::fib_aux(n, 0.0, 1.0);
-            }
+        const lambda<const double(const double n)> fib = [](const double n) -> const double {
+            const lambda<const double(const double, const double, const double)> fib_aux = [&fib_aux](double n, double a, double b) -> const double {
+                if(n == 0.0)
+                    return a;
+                return fib_aux(n - 1.0, b, a + b);
+            };
+            return fib_aux(n, 0.0, 1.0);
         };
 
-        const lambda<bool()> nfml = nestedFibMapPerf(lambda<double(const double)>(nested::fib));
+        const blambda nfml = [fib]() -> const bool {
+            const list<double> s = seq(0.0, 999.0);
+            const list<double> r = map<double, double>(fib, s);
+            assert(1000 == length(r));
+            return true;
+        };
         cout << "Nested Fibonacci map test " << (time(nfml, 1, 1) / 1000) << " ms" << endl;
     }
     return true;
@@ -456,7 +753,7 @@ const id<int> idH(const int v) {
     return idF(v) >> idG;
 }
 
-bool testIdMonad() {
+const bool testIdMonad() {
     const id<int> m(2);
     assert(m >> idF == idF(2));
     assert(m >> unit<int>() == m);
@@ -476,7 +773,7 @@ const maybe<int> maybeH(const int v) {
     return maybeF(v) >> maybeG;
 }
 
-bool testMaybeMonad() {
+const bool testMaybeMonad() {
     const maybe<int> m(2);
     assert(m >> maybeF == maybeF(2));
     assert((m >> just<int>()) == m);
@@ -498,7 +795,7 @@ const failable<int> failableH(const int v) {
     return failableF(v) >> failableG;
 }
 
-bool testFailableMonad() {
+const bool testFailableMonad() {
     const failable<int> m(2);
     assert(m >> failableF == failableF(2));
     assert((m >> success<int, string, int>()) == m);
@@ -515,23 +812,16 @@ bool testFailableMonad() {
     assert(rcode(vooops) == 500);
 
     const value v = value(vooops);
-    assert(car<value>(v) == value());
+    assert(car<value>(v) == nilValue);
     assert(cadr<value>(v) == string("test"));
     assert(caddr<value>(v) == value((double)500));
     return true;
 }
 
-struct tickInc {
-    const double v;
-    tickInc(const double v) : v(v) {
-    }
-    const scp<int, double> operator()(int s) const {
-        return scp<int, double>(s + 1, v);
-    }
-};
-
 const state<int, double> tick(const double v) {
-    return transformer<int, double>(tickInc(v));
+    return transformer<int, double>([v](const int s) {
+        return scp<int, double>(s + 1, v);
+    });
 }
 
 const state<int, double> stateF(const double v) {
@@ -546,8 +836,8 @@ const state<int, double> stateH(const double v) {
     return stateF(v) >> stateG;
 }
 
-bool testStateMonad() {
-    const lambda<state<int, double>(const double)> r(result<int, double>);
+const bool testStateMonad() {
+    const lambda<const state<int, double>(const double)> r(result<int, double>);
 
     state<int, double> m = result<int, double>(2.0);
     assert((m >> stateF)(0) == stateF(2.0)(0));
@@ -558,30 +848,40 @@ bool testStateMonad() {
     return true;
 }
 
-bool testDynLib() {
+const bool testDynLib() {
     const lib dl(string("./libdynlib-test") + dynlibExt);
-    const failable<lambda<int(const int)> > sq(dynlambda<int(const int)>("csquare", dl));
+    const failable<lambda<const int(const int)> > sq(dynlambda<const int(const int)>("csquare", dl));
     assert(hasContent(sq));
-    lambda<int(const int)> l(content(sq));
+    lambda<const int(const int)> l(content(sq));
     assert(l(2) == 4);
 
-    const failable<lambda<lambda<int(const int)>()> > sql(dynlambda<lambda<int(const int)>()>("csquarel", dl));
+    const failable<lambda<const lambda<const int(const int)>()> > sql(dynlambda<const lambda<const int(const int)>()>("csquarel", dl));
     assert(hasContent(sql));
-    lambda<lambda<int(const int)>()> ll(content(sql));
+    lambda<const lambda<const int(const int)>()> ll(content(sql));
     assert(ll()(3) == 9);
     return true;
 }
 
+
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
+    tuscany::testSizes();
+    tuscany::testCopiable();
+    tuscany::testMutable();
+    tuscany::testPtrPerf();
     tuscany::testLambda();
     tuscany::testLambdaGC();
+    tuscany::testCurry();
+    tuscany::testFunctor();
+    tuscany::test11Lambda();
+    tuscany::testFuncPerf();
     tuscany::testCons();
     tuscany::testListGC();
+    tuscany::testListPerf();
     tuscany::testOut();
     tuscany::testEquals();
     tuscany::testLength();

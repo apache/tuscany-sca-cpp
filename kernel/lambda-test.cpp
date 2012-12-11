@@ -34,7 +34,7 @@ namespace tuscany {
 #ifdef HAS_CXX0X_LAMBDAS
 
 const lambda<const int(const int)> inc(const int i) {
-    return [=](const int x)->const int {
+    return [i](const int x)->const int {
         return x + i;
     };
 }
@@ -43,27 +43,26 @@ const int square(const int x) {
     return x * x;
 }
 
-int mapLambda(const lambda<const int(const int)> f, int v) {
+const int mapLambda(const lambda<const int(const int)> f, int v) {
     return f(v);
 }
 
-bool testLambda() {
+const bool testLambda() {
     const lambda<const int(const int)> sq  = square;
     assert(sq(2) == 4);
     assert(mapLambda(square, 2) == 4);
     assert(mapLambda(sq, 2) == 4);
     assert(mapLambda([](const int x)->const int { return x * x; }, 2) == 4);
 
-    const lambda<int(int)> incf = inc(10);
+    const lambda<const int(const int)> incf = inc(10);
     assert(incf(1) == 11);
     assert(mapLambda(incf, 1) == 11);
     assert(mapLambda(inc(10), 1) == 11);
 
-    lambda<const int(const int)> l;
-    l = incf;
-    assert(l(1) == 11);
-    l = square;
-    assert(l(2) == 4);
+    const lambda<const int(const int)> il(incf);
+    assert(il(1) == 11);
+    const lambda<const int(const int)> sl(square);
+    assert(sl(2) == 4);
     return true;
 }
 
@@ -72,13 +71,13 @@ const double fib_aux(const double n, const double a, const double b) {
 }
 
 const bool fibMapPerf() {
-    list<double> s = seq(0.0, 4999.0);
-    list<double> r = map<double, double>([](const double n)->const double { return fib_aux(n, 0.0, 1.0); }, s);
+    const list<double> s = seq(0.0, 4999.0);
+    const list<double> r = map<double, double>([](const double n)->const double { return fib_aux(n, 0.0, 1.0); }, s);
     assert(5000 == length(r));
     return true;
 }
 
-bool testCppPerf() {
+const bool testCppPerf() {
     cout << "Fibonacci map test " << (time([]()->const bool { return fibMapPerf(); }, 1, 1) / 5000) << " ms" << endl;
     return true;
 }
@@ -87,7 +86,7 @@ bool testCppPerf() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
 #ifdef HAS_CXX0X_LAMBDAS

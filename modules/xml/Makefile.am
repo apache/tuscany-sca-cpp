@@ -16,32 +16,14 @@
 #  under the License.
 
 incl_HEADERS = *.hpp
-incldir = $(prefix)/include/modules/scheme
+incldir = $(prefix)/include/modules/xml
 
-moddir = $(prefix)/modules/scheme
+xml_test_SOURCES = xml-test.cpp
+xml_test_LDFLAGS = -lxml2
 
-scheme_test_SOURCES = scheme-test.cpp
+xsd_test_SOURCES = xsd-test.cpp
+xsd_test_LDFLAGS = -lxml2
 
-scheme_shell_SOURCES = scheme-shell.cpp
+noinst_PROGRAMS = xml-test xsd-test
+TESTS = xml-test
 
-value_element_SOURCES = value-element.cpp
-value_element_LDFLAGS = 
-
-element_value_SOURCES = element-value.cpp
-element_value_LDFLAGS = 
-
-xml_element_SOURCES = xml-element.cpp
-xml_element_LDFLAGS = -lxml2
-
-element_xml_SOURCES = element-xml.cpp
-element_xml_LDFLAGS = -lxml2
-
-json_value_SOURCES = json-value.cpp
-json_value_LDFLAGS = -ljansson 
-
-value_json_SOURCES = value-json.cpp
-value_json_LDFLAGS = -ljansson 
-
-noinst_PROGRAMS = scheme-test
-mod_PROGRAMS = scheme-shell element-value value-element xml-element element-xml json-value value-json
-TESTS = scheme-test

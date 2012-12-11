@@ -26,14 +26,16 @@
 #include <assert.h>
 #include "stream.hpp"
 #include "string.hpp"
+#include "perf.hpp"
 #include "driver.hpp"
+#include "scheme-test.hpp"
 
 namespace tuscany {
 namespace scheme {
 
-bool testEnv() {
-    gc_scoped_pool pool;
-    Env globalEnv = list<value>();
+const bool testEnv() {
+    const gc_scoped_pool pool;
+    Env globalEnv = nilListValue;
     Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv);
     defineVariable("x", env, env);
     assert(lookupVariableValue(value("x"), env) == env);
@@ -41,7 +43,7 @@ bool testEnv() {
     return true;
 }
 
-bool testEnvGC() {
+const bool testEnvGC() {
     resetLambdaCounters();
     resetListCounters();
     resetValueCounters();
@@ -52,49 +54,49 @@ bool testEnvGC() {
     return true;
 }
 
-bool testRead() {
+const bool testRead() {
     istringstream is("abcd");
-    assert(readValue(is) == "abcd");
+    assert(content(readValue(is)) == "abcd");
 
     istringstream is2("123");
-    assert(readValue(is2) == value(123));
+    assert(content(readValue(is2)) == value(123));
 
     istringstream is3("(abcd)");
-    assert(readValue(is3) == mklist(value("abcd")));
+    assert(content(readValue(is3)) == mklist(value("abcd")));
 
     istringstream is4("(abcd xyz)");
-    assert(readValue(is4) == mklist<value>("abcd", "xyz"));
+    assert(content(readValue(is4)) == mklist<value>("abcd", "xyz"));
 
     istringstream is5("(abcd (xyz tuv))");
-    assert(readValue(is5) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
+    assert(content(readValue(is5)) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
 
     return true;
 }
 
-bool testWrite() {
+const bool testWrite() {
     {
-        const list<value> i = list<value>()
-                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    + (list<value>() + "item"
-                        + (list<value>() + "name" + "Apple")
-                        + (list<value>() + "price" + "$2.99")))
-                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    + (list<value>() + "item"
-                        + (list<value>() + "name" + "Orange")
-                        + (list<value>() + "price" + "$3.55")));
+        const list<value> i = nilListValue
+                + (nilListValue + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                    + (nilListValue + "item"
+                        + (nilListValue + "name" + "Apple")
+                        + (nilListValue + "price" + "$2.99")))
+                + (nilListValue + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                    + (nilListValue + "item"
+                        + (nilListValue + "name" + "Orange")
+                        + (nilListValue + "price" + "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("feed-1234", i));
         ostringstream os;
         writeValue(a, os);
         istringstream is(str(os));
-        assert(readValue(is) == a);
+        assert(content(readValue(is)) == a);
     }
     {
-        const list<value> i = mklist<value>("x", value());
+        const list<value> i = mklist<value>("x", nilValue);
         const list<value> a = mklist<value>(i);
         ostringstream os;
         writeValue(a, os);
         istringstream is(str(os));
-        assert(readValue(is) == a);
+        assert(content(readValue(is)) == a);
     }
     return true;
 }
@@ -147,8 +149,8 @@ const string evalOutput(const string& scm) {
     return str(os);
 }
 
-bool testEval() {
-    gc_scoped_pool pool;
+const bool testEval() {
+    const gc_scoped_pool pool;
     assert(contains(evalOutput(testSchemeNumber), "testNumber ok"));
     assert(contains(evalOutput(testSchemeString), "testString ok"));
     assert(contains(evalOutput(testSchemeDefinition), "testDefinition ok"));
@@ -161,8 +163,8 @@ bool testEval() {
     return true;
 }
 
-bool testEvalExpr() {
-    gc_scoped_pool pool;
+const bool testEvalExpr() {
+    const gc_scoped_pool pool;
     const value exp = mklist<value>("+", 2, 3);
     Env env = setupEnvironment();
     const value r = evalExpr(exp, env);
@@ -170,8 +172,8 @@ bool testEvalExpr() {
     return true;
 }
 
-bool testEvalRun() {
-    gc_scoped_pool pool;
+const bool testEvalRun() {
+    const gc_scoped_pool pool;
     evalDriverRun(cin, cout);
     return true;
 }
@@ -188,8 +190,8 @@ const string testReturnLambda(
 const string testCallLambda(
   "(define (testCallLambda l x y) (l x y))");
 
-bool testEvalLambda() {
-    gc_scoped_pool pool;
+const bool testEvalLambda() {
+    const gc_scoped_pool pool;
     Env env = setupEnvironment();
 
     const value trl = mklist<value>("testReturnLambda");
@@ -208,7 +210,18 @@ bool testEvalLambda() {
     return true;
 }
 
-bool testEvalGC() {
+const bool testEvalScript() {
+    const gc_scoped_pool pool;
+    Env env = setupEnvironment();
+    ifstream is("test.scm");
+    const value script = readScript(is);
+    const value expr = mklist<value>("echo", string("x"));
+    const value res = evalScript(expr, script, env);
+    assert(res == string("x"));
+    return true;
+}
+
+const bool testEvalGC() {
     resetLambdaCounters();
     resetListCounters();
     resetValueCounters();
@@ -221,11 +234,55 @@ bool testEvalGC() {
     return true;
 }
 
+const string testCustomer = "((customer (@name \"jdoe\") (account (id \"1234\") (@balance 1000)) (address (@city \"san francisco\") (@state \"ca\"))))";
+
+const bool testReadWrite() {
+    const gc_scoped_pool pool;
+
+    istringstream is(testCustomer);
+    const value r = content(readValue(is));
+
+    ostringstream os;
+    writeValue(r, os);
+    //assert(str(os) == testCustomer);
+    return true;
+}
+
+const bool testReadWritePerf() {
+    const gc_scoped_pool pool;
+
+    const blambda rwl = blambda(testReadWrite);
+    cout << "Scheme read + write test " << time(rwl, 5, 200) << " ms" << endl;
+
+    return true;
+}
+
+const bool testReadWriteBigDoc() {
+    const gc_scoped_pool pool;
+
+    istringstream is(testBigDoc);
+    const value r = content(readValue(is));
+
+    ostringstream os;
+    writeValue(r, os);
+    //assert(str(os) == testBigDoc);
+    return true;
+}
+
+const bool testReadWriteBigDocPerf() {
+    const gc_scoped_pool pool;
+
+    const blambda rwl = blambda(testReadWriteBigDoc);
+    cout << "Scheme big doc read + write test " << time(rwl, 5, 200) << " ms" << endl;
+
+    return true;
+}
+
 }
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::scheme::testEnv();
@@ -235,7 +292,10 @@ int main() {
     tuscany::scheme::testEval();
     tuscany::scheme::testEvalExpr();
     tuscany::scheme::testEvalLambda();
+    tuscany::scheme::testEvalScript();
     tuscany::scheme::testEvalGC();
+    tuscany::scheme::testReadWritePerf();
+    tuscany::scheme::testReadWriteBigDocPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
     return 0;

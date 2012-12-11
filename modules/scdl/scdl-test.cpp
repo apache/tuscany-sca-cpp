@@ -33,15 +33,15 @@
 namespace tuscany {
 namespace scdl {
 
-bool testComposite() {
+const bool testComposite() {
     ifstream is("test.composite");
-    const list<value> c = readXML(streamList(is));
+    const list<value> c = content(xml::readElements(streamList(is)));
     return true;
 }
 
-bool testComponents() {
+const bool testComponents() {
     ifstream is("test.composite");
-    const list<value> c = components(readXML(streamList(is)));
+    const list<value> c = components(content(xml::readElements(streamList(is))));
     assert(length(c) == 4);
 
     const value store = car(c);
@@ -58,9 +58,9 @@ bool testComponents() {
     return true;
 }
 
-bool testServices() {
+const bool testServices() {
     ifstream is("test.composite");
-    const list<value> c = components(readXML(streamList(is)));
+    const list<value> c = components(content(xml::readElements(streamList(is))));
     const value store = car(c);
 
     assert(length(services(store)) == 1);
@@ -74,9 +74,9 @@ bool testServices() {
     return true;
 }
 
-bool testReferences() {
+const bool testReferences() {
     ifstream is("test.composite");
-    const list<value> c = components(readXML(streamList(is)));
+    const list<value> c = components(content(xml::readElements(streamList(is))));
     const value store = car(c);
 
     assert(length(references(store)) == 3);
@@ -86,7 +86,7 @@ bool testReferences() {
 
     assert(length(bindings(catalog)) == 1);
     const value binding = car(bindings(catalog));
-    assert(uri(binding) == value());
+    assert(uri(binding) == nilValue);
     assert(bindingType(binding) == "binding.jsonrpc");
 
     const list<value> t = mkbtree(sort(referenceToTargetAssoc(references(store))));
@@ -94,9 +94,9 @@ bool testReferences() {
     return true;
 }
 
-bool testProperties() {
+const bool testProperties() {
     ifstream is("test.composite");
-    const list<value> c = components(readXML(streamList(is)));
+    const list<value> c = components(content(xml::readElements(streamList(is))));
     const value catalog = named(string("Catalog"), c);
 
     assert(length(properties(catalog)) == 1);
@@ -110,7 +110,7 @@ bool testProperties() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::scdl::testComposite();

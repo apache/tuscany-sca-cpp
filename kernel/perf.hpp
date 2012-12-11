@@ -37,21 +37,15 @@ namespace tuscany
 /**
  * Measure the time required to perform a function in msec.
  */
-struct timeLambda {
-    const lambda<bool()> f;
-    timeLambda(const lambda<bool()>& f) : f(f) {
-    }
-    bool operator()(const long count) const {
+inline const double time(const blambda& f, const long warmup, const long count) {
+    struct timeval start;
+    struct timeval end;
+
+    const lambda<const bool(const long)> tl = [f](const long count) -> const bool {
         for (long i = 0; i < count; i++)
             f();
         return true;
-    }
-};
-
-const double time(const lambda<bool()>& f, const long warmup, const long count) {
-    const lambda<bool(long)> tl = timeLambda(f);
-    struct timeval start;
-    struct timeval end;
+    };
 
     tl(warmup);
     gettimeofday(&start, NULL);
@@ -62,13 +56,13 @@ const double time(const lambda<bool()>& f, const long warmup, const long count) 
     return (double)t / (double)count;
 }
 
-const unsigned long timems() {
+inline const unsigned long timems() {
     struct timeval t;
     gettimeofday(&t, NULL);
     return (unsigned long)(t.tv_sec * 1000 + t.tv_usec / 1000);
 }
 
-const unsigned long timens() {
+inline const unsigned long timens() {
     struct timeval t;
     gettimeofday(&t, NULL);
     return (unsigned long)(t.tv_sec * 1000000000 + t.tv_usec * 1000);

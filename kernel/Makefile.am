@@ -37,14 +37,8 @@ mem_test_SOURCES = mem-test.cpp
 
 parallel_test_SOURCES = parallel-test.cpp
 
-xml_test_SOURCES = xml-test.cpp
-xml_test_LDFLAGS = -lxml2
-
-xsd_test_SOURCES = xsd-test.cpp
-xsd_test_LDFLAGS = -lxml2
-
 hash_test_SOURCES = hash-test.cpp
 
-noinst_PROGRAMS = string-test kernel-test lambda-test hash-test mem-test parallel-test xml-test xsd-test
-TESTS = string-test kernel-test lambda-test hash-test mem-test parallel-test xml-test
+noinst_PROGRAMS = string-test kernel-test lambda-test hash-test mem-test parallel-test
+TESTS = string-test kernel-test lambda-test hash-test mem-test parallel-test
 

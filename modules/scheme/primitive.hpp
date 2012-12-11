@@ -40,7 +40,7 @@ const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
 #ifdef WANT_THREADS
-perthread_ptr<ostream> displayOutStream;
+const perthread_ptr<ostream> displayOutStream;
 #else
 ostream* displayOutStream = NULL;
 #endif
@@ -51,49 +51,49 @@ perthread_ptr<ostream> logOutStream;
 ostream* logOutStream = NULL;
 #endif
 
-const bool setupDisplay(ostream& out) {
+inline const bool setupDisplay(ostream& out) {
     displayOutStream = &out;
     return true;
 }
 
-ostream& displayStream() {
+inline ostream& displayStream() {
     if (displayOutStream == NULL)
         return cout;
     return *displayOutStream;
 }
 
-const bool setupLog(ostream& out) {
+inline const bool setupLog(ostream& out) {
     logOutStream = &out;
     return true;
 }
 
-ostream& logStream() {
+inline ostream& logStream() {
     if (logOutStream == NULL)
         return cerr;
     return *logOutStream;
 }
 
-const value carProc(const list<value>& args) {
+inline const value carProc(const list<value>& args) {
     return car((list<value> )car(args));
 }
 
-const value cdrProc(const list<value>& args) {
+inline const value cdrProc(const list<value>& args) {
     return cdr((list<value> )car(args));
 }
 
-const value consProc(const list<value>& args) {
+inline const value consProc(const list<value>& args) {
     return cons(car(args), (list<value> )cadr(args));
 }
 
-const value listProc(const list<value>& args) {
+inline const value listProc(const list<value>& args) {
     return args;
 }
 
-const value assocProc(const list<value>& args) {
+inline const value assocProc(const list<value>& args) {
     return assoc(car(args), (list<list<value> >)cadr(args));
 }
 
-const value nulProc(const list<value>& args) {
+inline const value nulProc(const list<value>& args) {
     const value v(car(args));
     if (isNil(v))
         return true;
@@ -102,31 +102,31 @@ const value nulProc(const list<value>& args) {
     return false;
 }
 
-const value equalProc(const list<value>& args) {
+inline const value equalProc(const list<value>& args) {
     return (bool)(car(args) == cadr(args));
 }
 
-const value addProc(const list<value>& args) {
+inline const value addProc(const list<value>& args) {
     if (isNil(cdr(args)))
         return (double)car(args);
     return (double)car(args) + (double)cadr(args);
 }
 
-const value subProc(const list<value>& args) {
+inline const value subProc(const list<value>& args) {
     if (isNil(cdr(args)))
         return (double)0 - (double)car(args);
     return (double)car(args) - (double)cadr(args);
 }
 
-const value mulProc(const list<value>& args) {
+inline const value mulProc(const list<value>& args) {
     return (double)car(args) * (double)cadr(args);
 }
 
-const value divProc(const list<value>& args) {
+inline const value divProc(const list<value>& args) {
     return (double)car(args) / (double)cadr(args);
 }
 
-const value displayProc(const list<value>& args) {
+inline const value displayProc(const list<value>& args) {
     if (isNil(args)) {
         displayStream() << endl;
         return true;
@@ -135,7 +135,7 @@ const value displayProc(const list<value>& args) {
     return displayProc(cdr(args));
 }
 
-const value logProc(const list<value>& args) {
+inline const value logProc(const list<value>& args) {
     if (isNil(args)) {
         logStream() << endl;
         return true;
@@ -144,52 +144,52 @@ const value logProc(const list<value>& args) {
     return logProc(cdr(args));
 }
 
-const value uuidProc(unused const list<value>& args) {
+inline const value uuidProc(unused const list<value>& args) {
     return mkuuid();
 }
 
-const value cadrProc(const list<value>& args) {
+inline const value cadrProc(const list<value>& args) {
     return cadr((list<value> )car(args));
 }
 
-const value caddrProc(const list<value>& args) {
+inline const value caddrProc(const list<value>& args) {
     return caddr((list<value> )car(args));
 }
 
-const value cadddrProc(const list<value>& args) {
+inline const value cadddrProc(const list<value>& args) {
     return cadddr((list<value> )car(args));
 }
 
-const value cddrProc(const list<value>& args) {
+inline const value cddrProc(const list<value>& args) {
     return cddr((list<value> )car(args));
 }
 
-const value cdddrProc(const list<value>& args) {
+inline const value cdddrProc(const list<value>& args) {
     return cdddr((list<value> )car(args));
 }
 
-const value appendProc(const list<value>& args) {
+inline const value appendProc(const list<value>& args) {
     return append((list<value> )car(args), (list<value>)cadr(args));
 }
 
-const value startProc(unused const list<value>& args) {
-    return lambda<value(const list<value>&)>();
+inline const value startProc(unused const list<value>& args) {
+    return lvvlambda();
 }
 
-const value stopProc(unused const list<value>& args) {
-    return lambda<value(const list<value>&)>();
+inline const value stopProc(unused const list<value>& args) {
+    return lvvlambda();
 }
 
-const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
-    const lambda<value(const list<value>&)> func(cadr((list<value>)proc));
+inline const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
+    const lvvlambda func(cadr((list<value>)proc));
     return func(args);
 }
 
-const bool isPrimitiveProcedure(const value& proc) {
+inline const bool isPrimitiveProcedure(const value& proc) {
     return isTaggedList(proc, primitiveSymbol);
 }
 
-const bool isSelfEvaluating(const value& exp) {
+inline const bool isSelfEvaluating(const value& exp) {
     if(isNil(exp))
         return true;
     if(isNumber(exp))
@@ -203,15 +203,15 @@ const bool isSelfEvaluating(const value& exp) {
     return false;
 }
 
-const value primitiveImplementation(const list<value>& proc) {
+inline const value primitiveImplementation(const list<value>& proc) {
     return car(cdr(proc));
 }
 
-template<typename F> const value primitiveProcedure(const F& f) {
-    return mklist<value>(primitiveSymbol, (lambda<value(const list<value>&)>)f);
+template<typename F> inline const value primitiveProcedure(const F& f) {
+    return mklist<value>(primitiveSymbol, (lvvlambda)f);
 }
 
-const list<value> primitiveProcedureNames() {
+inline const list<value> primitiveProcedureNames() {
     return mklist<value>("car")
     + "cdr"
     + "cons"
@@ -237,7 +237,7 @@ const list<value> primitiveProcedureNames() {
     + "stop";
 }
 
-const list<value> primitiveProcedureObjects() {
+inline const list<value> primitiveProcedureObjects() {
     return mklist(primitiveProcedure(carProc))
     + primitiveProcedure(cdrProc)
     + primitiveProcedure(consProc)
@@ -263,23 +263,23 @@ const list<value> primitiveProcedureObjects() {
     + primitiveProcedure(stopProc);
 }
 
-const bool isFalse(const value& exp) {
+inline const bool isFalse(const value& exp) {
     return (bool)exp == false;
 }
 
-const bool isTrue(const value& exp) {
+inline const bool isTrue(const value& exp) {
     return (bool)exp == true;
 }
 
-const bool isQuoted(const value& exp) {
+inline const bool isQuoted(const value& exp) {
     return isTaggedList(exp, quoteSymbol);
 }
 
-const value textOfQuotation(const value& exp) {
+inline const value textOfQuotation(const value& exp) {
     return car(cdr((list<value> )exp));
 }
 
-const value makeLambda(const list<value>& parameters, const list<value>& body) {
+inline const value makeLambda(const list<value>& parameters, const list<value>& body) {
     return cons(lambdaSymbol, cons<value>(parameters, body));
 }
 

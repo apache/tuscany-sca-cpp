@@ -37,39 +37,38 @@
 namespace tuscany {
 namespace scheme {
 
-const value rightParenthesis(mklist<value>(")"));
-const value leftParenthesis(mklist<value>("("));
-const value comment(mklist<value>(";"));
+const value rightParenthesis(")");
+const value leftParenthesis("(");
 
-const double stringToNumber(const string& str) {
+inline const double stringToNumber(const string& str) {
     return atof(c_str(str));
 }
 
-const bool isWhitespace(const char ch) {
+inline const bool isWhitespace(const char ch) {
     return ch != -1 && isspace(ch);
 }
 
-const bool isIdentifierStart(const char ch) {
+inline const bool isIdentifierStart(const char ch) {
     return ch != -1 && !isspace(ch) && !isdigit(ch);
 }
 
-const bool isIdentifierPart(const char ch) {
+inline const bool isIdentifierPart(const char ch) {
     return ch != -1 && !isspace(ch) && ch != '(' && ch != ')';
 }
 
-const bool isDigit(const char ch) {
+inline const bool isDigit(const char ch) {
     return isdigit(ch) || ch == '.';
 }
 
-const bool isLeftParenthesis(const value& token) {
+inline const bool isLeftParenthesis(const value& token) {
     return leftParenthesis == token;
 }
 
-const bool isRightParenthesis(const value& token) {
+inline const bool isRightParenthesis(const value& token) {
     return rightParenthesis == token;
 }
 
-const char readChar(istream& in) {
+inline const char readChar(istream& in) {
     if(in.eof()) {
         return -1;
     }
@@ -77,14 +76,14 @@ const char readChar(istream& in) {
     return c;
 }
 
-const char peekChar(istream& in) {
+inline const char peekChar(istream& in) {
     if(eof(in))
         return -1;
     char c = (char)peek(in);
     return c;
 }
 
-const bool isQuote(const value& token) {
+inline const bool isQuote(const value& token) {
     return token == quoteSymbol;
 }
 
@@ -93,9 +92,9 @@ const value readQuoted(istream& in);
 const value readIdentifier(const char chr, istream& in);
 const value readString(istream& in);
 const value readNumber(const char chr, istream& in);
-const value readValue(istream& in);
+const failable<value> readValue(istream& in);
 
-const failable<value> readToken(istream& in) {
+inline const failable<value> readToken(istream& in) {
     const char firstChar = readChar(in);
     if(isWhitespace(firstChar))
         return readToken(in);
@@ -119,18 +118,19 @@ const failable<value> readToken(istream& in) {
     return readToken(in);
 }
 
-const failable<value> skipComment(istream& in) {
-    const char nextChar = readChar(in);
-    if (nextChar == '\n')
-        return readToken(in);
-    return skipComment(in);
+inline const failable<value> skipComment(istream& in) {
+    while(true) {
+        const char nextChar = readChar(in);
+        if (nextChar == '\n')
+            return readToken(in);
+    }
 }
 
-const value readQuoted(istream& in) {
-    return mklist(quoteSymbol, readValue(in));
+inline const value readQuoted(istream& in) {
+    return mklist(quoteSymbol, content(readValue(in)));
 }
 
-const list<value> readList(const list<value>& listSoFar, istream& in) {
+inline const list<value> readList(const list<value>& listSoFar, istream& in) {
     const failable<value> ftoken = readToken(in);
     if (!hasContent(ftoken))
         return reverse(listSoFar);
@@ -142,95 +142,97 @@ const list<value> readList(const list<value>& listSoFar, istream& in) {
     return readList(cons(token, listSoFar), in);
 }
 
-const string listToString(const list<char>& l) {
-    if(isNil(l))
-        return "";
-    const char buf[1] = { car(l) };
-    return string(buf, 1) + listToString(cdr(l));
+inline const string readIdentifierHelper(const char chr, istream& in) {
+    ostringstream buf;
+    buf << chr;
+    while(true) {
+        const char nextChar = peekChar(in);
+        if(!isIdentifierPart(nextChar))
+            return str(buf);
+        buf << readChar(in);
+    }
 }
 
-const list<char> readIdentifierHelper(const list<char>& listSoFar, istream& in) {
-    const char nextChar = peekChar(in);
-    if(isIdentifierPart(nextChar))
-        return readIdentifierHelper(cons(readChar(in), listSoFar), in);
-    return reverse(listSoFar);
-}
-
-const value readIdentifier(const char chr, istream& in) {
-    const value val = c_str(listToString(readIdentifierHelper(mklist(chr), in)));
+inline const value readIdentifier(const char chr, istream& in) {
+    const value val = c_str(readIdentifierHelper(chr, in));
     if (val == "false")
         return value((bool)false);
     if (val == "true")
         return value((bool)true);
     if (val == "nil")
-        return value();
+        return nilValue;
     return val;
 }
 
-const list<char> readStringHelper(const list<char>& listSoFar, istream& in) {
-    const char nextChar = readChar(in);
-    if(nextChar == -1 || nextChar == '"')
-        return reverse(listSoFar);
-    if (nextChar == '\\') {
-        const char escapedChar = readChar(in);
-        if (escapedChar == -1)
-            return reverse(listSoFar);
-        return readStringHelper(cons(escapedChar, listSoFar), in);
+inline const value readString(istream& in) {
+    ostringstream buf;
+    while(true) {
+        const char nextChar = readChar(in);
+        if(nextChar == -1 || nextChar == '"')
+            return (value)str(buf);
+        if (nextChar == '\\') {
+            const char escapedChar = readChar(in);
+            if (escapedChar == -1)
+                return (value)str(buf);
+            buf << escapedChar;
+        }
+        buf << nextChar;
     }
-    return readStringHelper(cons(nextChar, listSoFar), in);
 }
 
-const value readString(istream& in) {
-    return listToString(readStringHelper(list<char>(), in));
+inline const value readNumber(const char chr, istream& in) {
+    ostringstream buf;
+    buf << chr;
+    while(true) {
+        const char nextChar = peekChar(in);
+        if(!isDigit(nextChar))
+            return stringToNumber(str(buf));
+        buf << readChar(in);
+    }
 }
 
-const list<char> readNumberHelper(const list<char>& listSoFar, istream& in) {
-    const char nextChar = peekChar(in);
-    if(isDigit(nextChar))
-        return readNumberHelper(cons(readChar(in), listSoFar), in);
-    return reverse(listSoFar);
-}
-
-const value readNumber(const char chr, istream& in) {
-    return stringToNumber(listToString(readNumberHelper(mklist(chr), in)));
-}
-
-const value readValue(istream& in) {
+inline const failable<value> readValue(istream& in) {
     const failable<value> fnextToken = readToken(in);
     if (!hasContent(fnextToken))
-        return value();
+        return nilValue;
     const value nextToken = content(fnextToken);
     if(isLeftParenthesis(nextToken))
-        return readList(list<value>(), in);
+        return (value)readList(nilListValue, in);
     return nextToken;
 }
 
-const value readValue(const string s) {
+inline const failable<value> readValue(const string& s) {
     istringstream in(s);
     const failable<value> fnextToken = readToken(in);
     if (!hasContent(fnextToken))
-        return value();
+        return nilValue;
     const value nextToken = content(fnextToken);
     if(isLeftParenthesis(nextToken))
-        return readList(list<value>(), in);
+        return (value)readList(nilListValue, in);
     return nextToken;
 }
 
-const bool writeValue(const value& val, ostream& out) {
-    out << val;
-    return true;
+inline const failable<value> readValue(const list<string>& l) {
+    ostringstream os;
+    write(l, os);
+    return readValue(str(os));
 }
 
-const string writeValue(const value& val) {
+inline const failable<ostream&> writeValue(const value& val, ostream& out) {
+    out << val;
+    return out;
+}
+
+inline const failable<list<string> > writeValue(const value& val) {
     ostringstream out;
     out << val;
-    return str(out);
+    return mklist<string>(str(out));
 }
 
-const value readScript(istream& in) {
-    const value val = readValue(in);
+inline const value readScript(istream& in) {
+    const value val = content(readValue(in));
     if (isNil(val))
-        return list<value>();
+        return nilListValue;
     return cons(val, (list<value>)readScript(in));
 }
 

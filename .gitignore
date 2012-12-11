@@ -61,8 +61,8 @@ cache-manifest.cmf
 *-min.html
 *-min.js
 *-min.css
+*.b64
 intro*.png
-intro*.b64
 depcomp
 install-sh
 ltmain.sh
@@ -138,8 +138,8 @@ js-shell
 file-test
 test-start*
 test-stop*
-xml-value
-value-xml
+xml-element
+element-xml
 json-value
 value-json
 element-value

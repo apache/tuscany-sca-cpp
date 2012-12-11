@@ -43,7 +43,7 @@ public:
             maxElements = countElements;
     }
 
-    Element(int i) : i(i) {
+    Element(const int i) : i(i) {
         countElements++;
         if (countElements > maxElements)
             maxElements = countElements;
@@ -66,7 +66,7 @@ public:
 private:
     friend ostream& operator<<(ostream& out, const Element& v);
 
-    int i;
+    const int i;
     char c[20];
 };
 
@@ -75,14 +75,14 @@ ostream& operator<<(ostream& out, const Element& v) {
     return out;
 }
 
-bool poolAlloc(Element** p, const int count) {
+const bool poolAlloc(Element** const p, const int count) {
     if (count == 0)
         return true;
     p[count - 1] = new (gc_new<Element>()) Element();
     return poolAlloc(p, count - 1);
 };
 
-bool poolFree(Element** p, const int count) {
+bool poolFree(Element** const p, const int count) {
     if (count == 0)
         return true;
     // Do nothing to free the element, but cycle through them just
@@ -90,21 +90,14 @@ bool poolFree(Element** p, const int count) {
     return poolFree(p, count - 1);
 };
 
-struct poolAllocPerf {
-    const int n;
-    Element** p;
-    poolAllocPerf(const int n) : n(n), p(new Element*[n]) {
-    }
-    const bool operator()() const {
-        gc_scoped_pool gc;
-        poolAlloc(p, n);
-        return true;
-    }
-};
-
-bool testPoolAllocPerf() {
+const bool testPoolAllocPerf() {
     const int count = 10000;
-    const lambda<bool()> pl = poolAllocPerf(count);
+    Element** const elements = new Element*[count];
+    const blambda pl = [elements, count]() -> const bool {
+        const gc_scoped_pool gc;
+        poolAlloc(elements, count);
+        return true;
+    };
     maxElements = 0;
     cout << "Memory pool alloc test " << (time(pl, 1, 1) / count) << " ms" << endl;
     assert(countElements == 0);
@@ -112,35 +105,28 @@ bool testPoolAllocPerf() {
     return true;
 }
 
-bool stdAlloc(Element** p, const int count) {
+const bool stdAlloc(Element** const p, const int count) {
     if (count == 0)
         return true;
     p[count - 1] = new Element();
     return stdAlloc(p, count - 1);
 };
 
-bool stdFree(Element** p, const int count) {
+const bool stdFree(Element** const p, const int count) {
     if (count == 0)
         return true;
     delete p[count -1];
     return stdFree(p, count - 1);
 };
 
-struct stdAllocPerf {
-    const int n;
-    Element** p;
-    stdAllocPerf(const int n) : n(n), p(new Element*[n]) {
-    }
-    const bool operator()() const {
-        stdAlloc(p, n);
-        stdFree(p, n);
-        return true;
-    }
-};
-
-bool testStdAllocPerf() {
+const bool testStdAllocPerf() {
     const int count = 10000;
-    const lambda<bool()> sl = stdAllocPerf(count);
+    Element** const elements = new Element*[count];
+    const blambda sl = [elements, count]() -> const bool {
+        stdAlloc(elements, count);
+        stdFree(elements, count);
+        return true;
+    };
     maxElements = 0;
     cout << "Memory standard alloc test " << (time(sl, 1, 1) / count) << " ms" << endl;
     assert(countElements == 0);
@@ -151,7 +137,7 @@ bool testStdAllocPerf() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testPoolAllocPerf();

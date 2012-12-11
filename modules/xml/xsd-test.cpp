@@ -30,11 +30,11 @@
 
 namespace tuscany {
 
-bool printNode(xmlTextReaderPtr reader) {
+const bool printNode(xmlTextReaderPtr reader) {
     const xmlChar* name = xmlTextReaderConstName(reader);
     if(name == NULL)
         name = (xmlChar *)"<unknown>";
-    const xmlChar* value = xmlTextReaderConstValue(reader);
+    const xmlChar* const value = xmlTextReaderConstValue(reader);
     cerr << xmlTextReaderDepth(reader) << " " << xmlTextReaderNodeType(reader) << " " << name << " "
             << xmlTextReaderIsEmptyElement(reader) << " " << xmlTextReaderHasValue(reader);
     if(value == NULL)
@@ -53,7 +53,7 @@ int xmlClose(void *context) {
     return 0;
 }
 
-bool readFile(const char*xsdfilename, const char *filename) {
+const bool readFile(const char* const xsdfilename, const char* const filename) {
     cout << "Loading schema " << xsdfilename << endl;
     const xmlDocPtr xsddoc = xmlReadFile(xsdfilename, NULL, XML_PARSE_NONET);
     const xmlSchemaParserCtxtPtr xsdctx = xmlSchemaNewDocParserCtxt(xsddoc);
@@ -61,7 +61,7 @@ bool readFile(const char*xsdfilename, const char *filename) {
     const xmlSchemaValidCtxtPtr validctx = xmlSchemaNewValidCtxt(xsd);
 
     cout << "Reading file " << filename << endl;
-    FILE* file = fopen(filename, "r");
+    FILE* const file = fopen(filename, "r");
     if (file != NULL) {
         const xmlTextReaderPtr reader = xmlReaderForIO(xmlRead, xmlClose, file, filename, NULL, XML_PARSE_NONET);
         xmlTextReaderSetParserProp(reader, XML_PARSER_DEFAULTATTRS, 1);
@@ -93,7 +93,7 @@ bool readFile(const char*xsdfilename, const char *filename) {
 
 }
 
-int main(int argc, char **argv) {
+int main(const int argc, const char** const argv) {
     tuscany::cout << "Testing..." << tuscany::endl;
     if(argc != 3)
         return 1;

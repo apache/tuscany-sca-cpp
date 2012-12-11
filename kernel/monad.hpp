@@ -26,8 +26,11 @@
  * Simple monad implementations.
  */
 
+#ifdef WANT_MAINTAINER_BACKTRACE
 #include <execinfo.h>
 #include <cxxabi.h>
+#endif
+
 #include "function.hpp"
 #include "string.hpp"
 #include "stream.hpp"
@@ -43,21 +46,16 @@ namespace tuscany
  */
 template<typename V> class id {
 public:
-    id(const V& v) : v(v) {
+    inline id(const V& v) : v(v) {
     }
 
-    const id<V>& operator=(const id<V>& m) {
-        if(this == &m)
-            return *this;
-        v = m.v;
-        return *this;
-    }
+    id<V>& operator=(const id<V>& m) = delete;
 
-    const bool operator!=(const id<V>& m) const {
+    inline const bool operator!=(const id<V>& m) const {
         return !this->operator==(m);
     }
 
-    const bool operator==(const id<V>& m) const {
+    inline const bool operator==(const id<V>& m) const {
         if (&m == this)
             return true;
         return v == m.v;
@@ -72,7 +70,7 @@ private:
 /**
  * Write an identity monad to a stream.
  */
-template<typename V> ostream& operator<<(ostream& out, const id<V>& m) {
+template<typename V> inline ostream& operator<<(ostream& out, const id<V>& m) {
     out << content(m);
     return out;
 }
@@ -80,29 +78,29 @@ template<typename V> ostream& operator<<(ostream& out, const id<V>& m) {
 /**
  * Returns the content of an identity monad.
  */
-template<typename V> const V content(const id<V>& m) {
+template<typename V> inline const V content(const id<V>& m) {
     return m.v;
 }
 
 /**
  * Return an identity monad from a value.
  */
-template<typename V> const id<V> mkunit(const V& v) {
+template<typename V> inline const id<V> mkunit(const V& v) {
     return id<V>(v);
 }
 
-template<typename V> const lambda<id<V>(const V)> unit() {
+template<typename V> inline const lambda<const id<V>(const V)> unit() {
     return mkunit<V>;
 }
 
 /**
  * Bind a function to an identity monad. Pass the value in the monad to the function.
  */
-template<typename R, typename V> const id<R> operator>>(const id<V>& m, const lambda<id<R>(const V)>& f) {
+template<typename R, typename V> inline const id<R> operator>>(const id<V>& m, const lambda<const id<R>(const V)>& f) {
     return f(content(m));
 }
 
-template<typename R, typename V> const id<R> operator>>(const id<V>& m, const id<R> (* const f)(const V)) {
+template<typename R, typename V> inline const id<R> operator>>(const id<V>& m, const id<R> (* const f)(const V)) {
     return f(content(m));
 }
 
@@ -112,26 +110,22 @@ template<typename R, typename V> const id<R> operator>>(const id<V>& m, const id
  */
 template<typename V> class maybe {
 public:
-    maybe(const V& v) : hasv(true), v(v) {
+    inline maybe(const V& v) : hasv(true), v(v) {
     }
 
-    maybe() : hasv(false) {
+    inline maybe() : hasv(false), v() {
     }
 
-    const maybe<V>& operator=(const maybe<V>& m) {
-        if(this == &m)
-            return *this;
-        hasv = m.hasv;
-        if (hasv)
-            v = m.v;
-        return *this;
+    inline maybe(const maybe<V>& m) : hasv(m.hasv), v(m.v) {
     }
 
-    const bool operator!=(const maybe<V>& m) const {
+    maybe<V>& operator=(const maybe<V>& m) = delete;
+
+    inline const bool operator!=(const maybe<V>& m) const {
         return !this->operator==(m);
     }
 
-    const bool operator==(const maybe<V>& m) const {
+    inline const bool operator==(const maybe<V>& m) const {
         if (this == &m)
             return true;
         if (!hasv)
@@ -141,7 +135,7 @@ public:
 
 private:
     const bool hasv;
-    V v;
+    const V v;
 
     template<typename X> friend const bool hasContent(const maybe<X>& m);
     template<typename X> friend const X content(const maybe<X>& m);
@@ -150,7 +144,7 @@ private:
 /**
  * Write a maybe monad to a stream.
  */
-template<typename V> ostream& operator<<(ostream& out, const maybe<V>& m) {
+template<typename V> inline ostream& operator<<(ostream& out, const maybe<V>& m) {
     if (!hasContent(m)) {
         out << "nothing";
         return out;
@@ -162,25 +156,25 @@ template<typename V> ostream& operator<<(ostream& out, const maybe<V>& m) {
 /**
  * Return a maybe monad with a value in it.
  */
-template<typename V> const maybe<V> mkjust(const V& v) {
+template<typename V> inline const maybe<V> mkjust(const V& v) {
     return maybe<V>(v);
 }
 
-template<typename V> const lambda<maybe<V>(const V)> just() {
+template<typename V> inline const lambda<const maybe<V>(const V)> just() {
     return mkjust<V>;
 }
 
 /**
  * Returns true if a maybe monad contains a content.
  */
-template<typename V> const bool hasContent(const maybe<V>& m) {
+template<typename V> inline const bool hasContent(const maybe<V>& m) {
     return m.hasv;
 }
 
 /**
  * Returns the content of a maybe monad.
  */
-template<typename V> const V content(const maybe<V>& m) {
+template<typename V> inline const V content(const maybe<V>& m) {
     return m.v;
 }
 
@@ -188,13 +182,13 @@ template<typename V> const V content(const maybe<V>& m) {
  * Bind a function to a maybe monad. Passes the value in the monad to the function
  * if present, or does nothing if there's no value.
  */
-template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, const lambda<maybe<R>(const V)>& f) {
+template<typename R, typename V> inline const maybe<R> operator>>(const maybe<V>& m, const lambda<const maybe<R>(const V)>& f) {
     if (!hasContent(m))
         return m;
     return f(content(m));
 }
 
-template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, const maybe<R> (* const f)(const V)) {
+template<typename R, typename V> inline const maybe<R> operator>>(const maybe<V>& m, const maybe<R> (* const f)(const V)) {
     if (!hasContent(m))
         return m;
     return f(content(m));
@@ -207,30 +201,22 @@ template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, co
  */
 template<typename V, typename F = string, typename C = int> class failable {
 public:
-    failable() : hasv(false), c(-1) {
+    inline failable() : hasv(false), v(), c(-1) {
     }
 
-    failable(const V& v) : hasv(true), v(v), c(-1) {
+    inline failable(const V& v) : hasv(true), v(v), c(-1) {
     }
 
-    failable(const failable<V, F, C>& m) : hasv(m.hasv), v(m.v), f(m.f), c(m.c) {
+    inline failable(const failable<V, F, C>& m) : hasv(m.hasv), v(m.v), f(m.f), c(m.c) {
     }
 
-    const failable<V, F, C>& operator=(const failable<V, F, C>& m) {
-        if (&m == this)
-            return *this;
-        hasv = m.hasv;
-        v = m.v;
-        f = m.f;
-        c = m.c;
-        return *this;
-    }
+    failable<V, F, C>& operator=(const failable<V, F, C>& m) = delete;
 
-    const bool operator!=(const failable<V, F, C>& m) const {
+    inline const bool operator!=(const failable<V, F, C>& m) const {
         return !this->operator==(m);
     }
 
-    const bool operator==(const failable<V, F, C>& m) const {
+    inline const bool operator==(const failable<V, F, C>& m) const {
         if (this == &m)
             return true;
         if (!hasv)
@@ -239,7 +225,7 @@ public:
     }
 
 private:
-    failable(const bool hasv, const F& f, const C& c) : hasv(hasv), f(f), c(c) {
+    inline failable(const bool hasv, const F& f, const C& c) : hasv(hasv), v(), f(f), c(c) {
     }
 
     template<typename A, typename B, typename R> friend const bool hasContent(const failable<A, B, R>& m);
@@ -250,16 +236,16 @@ private:
     template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f, const int c, const bool log);
     template<typename A> friend const failable<A> mkfailure();
 
-    bool hasv;
-    V v;
-    F f;
-    C c;
+    const bool hasv;
+    const V v;
+    const F f;
+    const C c;
 };
 
 /**
  * Write a failable monad to a stream.
  */
-template<typename V, typename F, typename C> ostream& operator<<(ostream& out, const failable<V, F, C>& m) {
+template<typename V, typename F, typename C> inline ostream& operator<<(ostream& out, const failable<V, F, C>& m) {
     if (!hasContent(m)) {
         out << reason(m) << " : " << rcode(m);
         return out;
@@ -271,20 +257,22 @@ template<typename V, typename F, typename C> ostream& operator<<(ostream& out, c
 /**
  * Returns a failable monad with a success value in it.
  */
-template<typename V, typename F, typename C> const failable<V, F, C> mksuccess(const V& v) {
+template<typename V, typename F, typename C> inline const failable<V, F, C> mksuccess(const V& v) {
     return failable<V, F, C>(v);
 }
 
-template<typename V, typename F, typename C> const lambda<failable<V, F, C>(const V)> success() {
+template<typename V, typename F, typename C> inline const lambda<const failable<V, F, C>(const V)> success() {
     return mksuccess<V, F, C>;
 }
+
+#ifdef WANT_MAINTAINER_BACKTRACE
 
 /**
  * Demangle a C++ function name.
  */
-const string demangleFrame(const char* fun) {
+inline const string demangleFrame(const char* fun) {
     int status;
-    char* name = abi::__cxa_demangle(fun, 0, 0, &status);
+    char* const name = abi::__cxa_demangle(fun, 0, 0, &status);
     if (name == NULL)
         return fun;
     const string s = name;
@@ -295,12 +283,12 @@ const string demangleFrame(const char* fun) {
 /**
  * Format a backtrace frame.
  */
-const char* formatFrameFile(const char* file) {
-    const char* s = strrchr(file, '/');
+inline const char* const formatFrameFile(const char* const file) {
+    const char* const s = strrchr(file, '/');
     return s == NULL? file : s + 1;
 }
 
-const string formatFrame(const char* symbol) {
+inline const string formatFrame(const char* const symbol) {
 #ifdef __clang__
     // Mac OS X CLang/LLVM stack frame format
     // 0 kernel-test 0x000000010d440179 _ZN7tuscany9mkfailureINS_5valueENS_6stringEiEEKNS_8failableIT_T0_T1_EERKS5_RKS6_b + 265
@@ -349,7 +337,7 @@ const string formatFrame(const char* symbol) {
 /**
  * Log backtrace frames.
  */
-const bool logFrames(char** symbols, const int frames, const bool log) {
+inline const bool logFrames(char** const symbols, const int frames, const bool log) {
     if (frames == 0)
         return true;
 #ifdef WANT_MAINTAINER_LOG
@@ -364,26 +352,30 @@ const bool logFrames(char** symbols, const int frames, const bool log) {
 /**
  * Log a backtrace.
  */
-const bool logBacktrace(void** callstack, const int frames, const bool log) {
+inline const bool logBacktrace(void** const callstack, const int frames, const bool log) {
     char** symbols = backtrace_symbols(callstack, frames);
     logFrames(symbols, frames, log);
     free(symbols);
     return true;
 }
 
+#endif
+
 /**
  * Returns a failable monad with a failure in it.
  */
-template<typename V, typename F, typename C> const failable<V, F, C> mkfailure(const F& f, const C& c, const bool log = true) {
+template<typename V, typename F, typename C> inline const failable<V, F, C> mkfailure(const F& f, const C& c, const bool log = true) {
 #ifdef WANT_MAINTAINER_LOG
     if (!log) {
         // Log the failure
         debug(f, "failable::mkfailure");
 
+#ifdef WANT_MAINTAINER_BACKTRACE
         // Log the call stack
         void* callstack[16];
         const int frames = backtrace(callstack, 16);
         logBacktrace(callstack, frames, log);
+#endif
     }
 #endif
     if (log) {
@@ -393,63 +385,65 @@ template<typename V, typename F, typename C> const failable<V, F, C> mkfailure(c
             // Log the failure
             cfailure << "failable::mkfailure: " << f << " : " << c << endl;
 
+#ifdef WANT_MAINTAINER_BACKTRACE
             // Print the call stack
             void* callstack[16];
             const int frames = backtrace(callstack, 16);
             logBacktrace(callstack, frames, log);
+#endif
         }
     }
     return failable<V, F, C>(false, f, c);
 }
 
-template<typename V, typename F> const failable<V, F> mkfailure(const F& f, const int c = -1, const bool log = true) {
+template<typename V, typename F> inline const failable<V, F> mkfailure(const F& f, const int c = -1, const bool log = true) {
     return mkfailure<V, F, int>(f, c, log);
 }
 
-template<typename V> const failable<V> mkfailure(const char* f, const int c = -1, const bool log = true) {
+template<typename V> inline const failable<V> mkfailure(const char* f, const int c = -1, const bool log = true) {
     return mkfailure<V, string, int>(string(f), c, log);
 }
 
-template<typename V> const failable<V> mkfailure() {
+template<typename V> inline const failable<V> mkfailure() {
     return failable<V, string>(false, string(), -1);
 }
 
-template<typename V, typename F, typename C> const lambda<failable<V, F, C>(const V)> failure() {
+template<typename V, typename F, typename C> inline const lambda<const failable<V, F, C>(const V)> failure() {
     return mkfailure<V, F, C>;
 }
 
 /**
  * Convert a failable of a given type to a failable of another type.
  */
-template<typename V, typename F, typename C, typename X> const failable<V, F, C> mkfailure(const failable<X, F, C>& f, const bool log = true) {
+template<typename V, typename F, typename C, typename X> inline const failable<V, F, C> mkfailure(const failable<X, F, C>& f, const bool log = false) {
     return mkfailure<V, F, C>(reason(f), rcode(f), log);
 }
 
 /**
  * Returns true if the monad contains a content.
  */
-template<typename V, typename F, typename C> const bool hasContent(const failable<V, F, C>& m) {
+template<typename V, typename F, typename C> inline const bool hasContent(const failable<V, F, C>& m) {
     return m.hasv;
 }
 
 /**
  * Returns the content of a failable monad.
  */
-template<typename V, typename F, typename C> const V content(const failable<V, F, C>& m) {
+template<typename V, typename F, typename C> inline const V content(const failable<V, F, C>& m) {
     return m.v;
 }
 
 /**
  * Returns the reason for failure of a failable monad.
  */
-template<typename V, typename F, typename C> const F reason(const failable<V, F, C>& m) {
+template<typename V, typename F, typename C> inline const F reason(const failable<V, F, C>& m) {
     return m.f;
 }
 
 /**
  * Returns the reason code for failure of a failable monad.
  */
-template<typename V, typename F, typename C> const C rcode(const failable<V, F, C>& m) {
+template<typename V, typename F, typename C> inline const C rcode(const failable<V, F, C>& m) {
     return m.c;
 }
 
@@ -458,14 +452,14 @@ template<typename V, typename F, typename C> const C rcode(const failable<V, F, 
  * if present, or does nothing if there's no value and a failure instead.
  */
 template<typename R, typename FR, typename XR, typename V, typename FV, typename XV>
-const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const lambda<failable<R, FR, XR>(const V)>& f) {
+inline const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const lambda<const failable<R, FR, XR>(const V)>& f) {
     if (!hasContent(m))
         return m;
     return f(content(m));
 }
 
 template<typename R, typename FR, typename XR, typename V, typename FV, typename XV>
-const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const failable<R, FR, XR> (* const f)(const V)) {
+inline const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const failable<R, FR, XR> (* const f)(const V)) {
     if (!hasContent(m))
         return m;
     return f(content(m));
@@ -476,30 +470,27 @@ const failable<R, FR, XR> operator>>(const failable<V, FV, XV>& m, const failabl
  */
 template<typename S, typename V> class scp {
 public:
-    scp(const S& s, const V& v) : s(s), v(v) {
+    inline scp(const S& s, const V& v) : s(s), v(v) {
     }
 
-    operator const S() const {
+    inline operator const S() const {
         return s;
     }
 
-    operator const V() const {
+    inline operator const V() const {
         return v;
     }
 
-    const scp<S, V>& operator=(const scp<S, V>& p) {
-        if(this == &p)
-            return *this;
-        s = p.s;
-        v = p.v;
-        return *this;
+    inline scp(const scp<S, V>& p) : s(p.s), v(p.v) {
     }
 
-    const bool operator!=(const scp<S, V>& p) const {
+    scp<S, V>& operator=(const scp<S, V>& p) = delete;
+
+    inline const bool operator!=(const scp<S, V>& p) const {
         return !this->operator==(p);
     }
 
-    const bool operator==(const scp<S, V>& p) const {
+    inline const bool operator==(const scp<S, V>& p) const {
         if (this == &p)
             return true;
         return s == p.s && v == p.v;
@@ -516,14 +507,14 @@ private:
 /**
  * Returns the state of a state-content pair.
  */
-template<typename S, typename V> const S scpstate(const scp<S, V>& m) {
+template<typename S, typename V> inline const S scpstate(const scp<S, V>& m) {
     return m.s;
 }
 
 /**
  * Returns the content of a state-content pair.
  */
-template<typename S, typename V> const S content(const scp<S, V>& m) {
+template<typename S, typename V> inline const S content(const scp<S, V>& m) {
     return m.v;
 }
 
@@ -532,38 +523,36 @@ template<typename S, typename V> const S content(const scp<S, V>& m) {
  */
 template<typename S, typename V> class state {
 public:
-    state(const lambda<scp<S, V>(const S)>& f) : f(f) {
+    inline state(const lambda<const scp<S, V>(const S)>& f) : f(f) {
     }
 
-    const scp<S, V> operator()(const S& s) const {
+    inline const scp<S, V> operator()(const S& s) const {
         return f(s);
     }
 
-    const state<S, V>& operator=(const state<S, V>& m) {
-        if(this == &m)
-            return *this;
-        f = m.f;
-        return *this;
+    inline state(const state<S, V>& m) : f(m.f) {
     }
 
-    const bool operator!=(const state<S, V>& m) const {
+    state<S, V>& operator=(const state<S, V>& m) = delete;
+
+    inline const bool operator!=(const state<S, V>& m) const {
         return !this->operator==(m);
     }
 
-    const bool operator==(const state<S, V>& m) const {
+    inline const bool operator==(const state<S, V>& m) const {
         if (this == &m)
             return true;
         return f == m.f;
     }
 
 private:
-    const lambda<scp<S, V>(const S)> f;
+    const lambda<const scp<S, V>(const S)> f;
 };
 
 /**
  * Write a state monad to a stream.
  */
-template<typename S, typename V> ostream& operator<<(ostream& out, const state<S, V>& m) {
+template<typename S, typename V> inline ostream& operator<<(ostream& out, const state<S, V>& m) {
     const S s = m;
     const V v = m;
     out << '(' << s << ' ' << v << ')';
@@ -573,17 +562,10 @@ template<typename S, typename V> ostream& operator<<(ostream& out, const state<S
 /**
  * Return a state monad carrying a result content.
  */
-template<typename S, typename V> struct returnState {
-    const V v;
-    returnState(const V& v) : v(v) {
-    }
-    const scp<S, V> operator()(const S& s) const {
+template<typename S, typename V> inline const state<S, V> result(const V& v) {
+    return state<S, V>([v](const S& s) -> const scp<S, V> {
         return scp<S, V>(s, v);
-    }
-};
-
-template<typename S, typename V> const state<S, V> result(const V& v) {
-    return state<S, V>(returnState<S, V>(v));
+    });
 }
 
 /**
@@ -591,7 +573,7 @@ template<typename S, typename V> const state<S, V> result(const V& v) {
  * A transformer function takes a state and returns an scp pair carrying a content and a
  * new (transformed) state.
  */
-template<typename S, typename V> const state<S, V> transformer(const lambda<scp<S, V>(const S)>& f) {
+template<typename S, typename V> inline const state<S, V> transformer(const lambda<const scp<S, V>(const S)>& f) {
     return state<S, V>(f);
 }
 
@@ -599,28 +581,19 @@ template<typename S, typename V> const state<S, V> transformer(const lambda<scp<
  * Bind a function to a state monad. The function takes a content and returns a state
  * monad carrying a return content.
  */
-template<typename S, typename A, typename B> struct stateBind {
-    const state<S, A> st;
-    const lambda<state<S, B>(const A)>f;
-
-    stateBind(const state<S, A>& st, const lambda<state<S, B>(const A)>& f) : st(st), f(f) {
-    }
-
-    const scp<S, B> operator()(const S& is) const {
+template<typename S, typename A, typename B>
+inline const state<S, B> operator>>(const state<S, A>& st, const lambda<const state<S, B>(const A)>& f) {
+    const lambda<const scp<S, B>(const S&)> stateBind = [st, f](const S& is) -> const scp<S, B> {
         const scp<S, A> iscp = st(is);
         const state<S, B> m = f((A)iscp);
         return m((S)iscp);
-    }
-};
-
-template<typename S, typename A, typename B>
-const state<S, B> operator>>(const state<S, A>& st, const lambda<state<S, B>(const A)>& f) {
-    return state<S, B>(stateBind<S, A , B>(st, f));
+    };
+    return state<S, B>(stateBind);
 }
 
 template<typename S, typename A, typename B>
-const state<S, B> operator>>(const state<S, A>& st, const state<S, B> (* const f)(const A)) {
-    return state<S, B>(stateBind<S, A , B>(st, f));
+inline const state<S, B> operator>>(const state<S, A>& st, const state<S, B> (* const f)(const A)) {
+    return st >> lambda<const state<S, B>(const A)>(f);
 }
 
 }

@@ -38,66 +38,67 @@ namespace tuscany {
  */
 class ostream {
 public:
-    virtual ostream& vprintf(const char* fmt, ...) = 0;
+    virtual ostream& vprintf(const char* const fmt, ...) = 0;
     virtual ostream& write(const string& s) = 0;
+    virtual ostream& write(const char c) = 0;
     virtual ostream& flush() = 0;
 };
 
 /**
  * Flush a stream.
  */
-ostream& flush(ostream& os) {
+inline ostream& flush(ostream& os) {
     return os.flush();
 }
 
 /**
  * Write simple values to a stream.
  */
-ostream& operator<<(ostream& os, const char* v) {
+inline ostream& operator<<(ostream& os, const char* const v) {
     return os.vprintf("%s", v);
 }
 
-ostream& operator<<(ostream& os, const unsigned char* v) {
+inline ostream& operator<<(ostream& os, const unsigned char* const v) {
     return os.vprintf("%s", v);
 }
 
-ostream& operator<<(ostream& os, const char v) {
-    return os.vprintf("%c", v);
+inline ostream& operator<<(ostream& os, const char v) {
+    return os.write(v);
 }
 
-ostream& operator<<(ostream& os, const int v) {
+inline ostream& operator<<(ostream& os, const int v) {
     return os.vprintf("%d", v);
 }
 
-ostream& operator<<(ostream& os, const unsigned int v) {
+inline ostream& operator<<(ostream& os, const unsigned int v) {
     return os.vprintf("%u", v);
 }
 
-ostream& operator<<(ostream& os, const long int v) {
+inline ostream& operator<<(ostream& os, const long int v) {
     return os.vprintf("%ld", v);
 }
 
-ostream& operator<<(ostream& os, const long unsigned int v) {
+inline ostream& operator<<(ostream& os, const long unsigned int v) {
     return os.vprintf("%lu", v);
 }
 
-ostream& operator<<(ostream& os, const double v) {
+inline ostream& operator<<(ostream& os, const double v) {
     return os.vprintf("%.10g", v);
 }
 
-ostream& operator<<(ostream& os, const void* v) {
+inline ostream& operator<<(ostream& os, const void* const v) {
     return os.vprintf("%p", v);
 }
 
-ostream& operator<<(ostream& os, const string& v) {
+inline ostream& operator<<(ostream& os, const string& v) {
     return os.write(v);
 }
 
 class stream_endl {
 } endl;
 
-ostream& operator<<(ostream& os, unused const stream_endl e) {
-    os.write("\n");
+inline ostream& operator<<(ostream& os, unused const stream_endl e) {
+    os.write('\n');
     return os.flush();
 }
 
@@ -106,7 +107,7 @@ ostream& operator<<(ostream& os, unused const stream_endl e) {
  */
 class istream {
 public:
-    virtual const size_t read(void* buf, size_t size) = 0;
+    virtual const size_t read(void* const buf, const size_t size) = 0;
     virtual const bool eof() = 0;
     virtual const bool fail() = 0;
     virtual const int get() = 0;
@@ -116,40 +117,61 @@ public:
 /**
  * Read from an input stream.
  */
-const size_t read(istream& is, void * buf, size_t size) {
+inline const size_t read(istream& is, void* const buf, const size_t size) {
     return is.read(buf, size);
 }
 
 /**
  * Return true if the end of an input stream has been reached.
  */
-const bool eof(istream& is) {
+inline const bool eof(istream& is) {
     return is.eof();
 }
 
 /**
  * Return true if an input stream can't be accessed.
  */
-const bool fail(istream& is) {
+inline const bool fail(istream& is) {
     return is.fail();
 }
 
 /**
  * Read a character from a stream.
  */
-const int get(istream& is) {
+inline const int get(istream& is) {
     return is.get();
 }
 
 /**
  * Peek a character from a stream.
  */
-const int peek(istream& is) {
+inline const int peek(istream& is) {
     return is.peek();
 }
 
-template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
-    return out << p.ptr;
+#ifndef WANT_RAW_PTR
+
+/**
+ * Write a pointer.
+ */
+template<typename T> inline ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
+    return out << (T*)p;
+}
+
+/**
+ * Write a mutable pointer.
+ */
+template<typename T> inline ostream& operator<<(ostream& out, const gc_mutable_ptr<T>& p) {
+    return out << (T*)p;
+}
+
+#endif
+
+/**
+ * Write a mutable reference.
+ */
+template<typename T> inline ostream& operator<<(ostream& out, const gc_mutable_ref<T>& r) {
+    return out << (T)r;
 }
 
 #ifdef WANT_MAINTAINER_LOG
@@ -159,35 +181,40 @@ template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
  */
 class odebugstream : public ostream {
 public:
-    odebugstream() {
+    inline odebugstream() : buf() {
     }
 
-    odebugstream& vprintf(const char* fmt, ...) {
+    inline odebugstream& vprintf(const char* const fmt, ...) {
         va_list args;
         string s;
         va_start (args, fmt);
-        s.len = vsnprintf(NULL, 0, fmt, args);
-        s.buf = gc_cnew(s.len + 1);
+        const size_t slen = vsnprintf(NULL, 0, fmt, args);
+        char* const sbuf = gc_cnew(slen + 1);
         va_start (args, fmt);
-        vsnprintf(s.buf, s.len + 1, fmt, args);
-        buf = buf + s;
+        vsnprintf(sbuf, slen + 1, fmt, args);
+        buf = buf + string(sbuf, slen, false);
         va_end (args);
         return *this;
     }
 
-    odebugstream& write(const string& s) {
+    inline odebugstream& write(const string& s) {
         buf = buf + s;
         return *this;
     }
 
-    odebugstream& flush() {
+    inline odebugstream& write(const char c) {
+        buf = buf + c;
+        return *this;
+    }
+
+    inline odebugstream& flush() {
         return *this;
     }
 
 private:
     friend const string str(odebugstream& os);
 
-    string buf;
+    gc_mutable_ref<string> buf;
 };
 
 const string str(odebugstream& os) {

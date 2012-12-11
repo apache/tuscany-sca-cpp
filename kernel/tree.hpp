@@ -38,14 +38,14 @@ namespace tuscany {
 /**
  * Make a tree from a leaf and two branches.
  */
-template<typename T> const list<T> mktree(const T& e, const list<T>& left, const list<T>& right) {
+template<typename T> inline const list<T> mktree(const T& e, const list<T>& left, const list<T>& right) {
     return mklist<T>(e, left, right);
 }
 
 /**
  * Find a leaf with the given key in a tree.
  */
-template<typename T> const list<T> assoctree(const T& k, const list<T>& tree) {
+template<typename T> inline const list<T> assoctree(const T& k, const list<T>& tree) {
     if (isNil(tree))
         return tree;
     if (k == car<T>(car(tree)))
@@ -58,7 +58,7 @@ template<typename T> const list<T> assoctree(const T& k, const list<T>& tree) {
 /**
  * Construct a new tree from a leaf and a tree.
  */
-template<typename T> const list<T> constree(const T& e, const list<T>& tree) {
+template<typename T> inline const list<T> constree(const T& e, const list<T>& tree) {
     if (isNil(tree))
         return mktree(e, list<T>(), list<T>());
     if (e == car(tree))
@@ -71,7 +71,7 @@ template<typename T> const list<T> constree(const T& e, const list<T>& tree) {
 /**
  * Make a tree from an unordered list of leaves.
  */
-template<typename T> const list<T> mktree(const list<T>& l) {
+template<typename T> inline const list<T> mktree(const list<T>& l) {
     if (isNil(l))
         return l;
     return constree(car(l), mktree(cdr(l)));
@@ -80,7 +80,7 @@ template<typename T> const list<T> mktree(const list<T>& l) {
 /**
  * Convert a tree to an ordered list of leaves.
  */
-template<typename T> const list<T> flatten(const list<T>& tree) {
+template<typename T> inline const list<T> flatten(const list<T>& tree) {
     if (isNil(tree))
         return tree;
     return append<T>(flatten<T>(cadr(tree)), cons<T>(car(tree), flatten<T>(caddr(tree))));
@@ -89,14 +89,14 @@ template<typename T> const list<T> flatten(const list<T>& tree) {
 /**
  * Sort a list.
  */
-template<typename T> const list<T> sort(const list<T>& l) {
+template<typename T> inline const list<T> sort(const list<T>& l) {
     return flatten(mktree(l));
 }
 
 /**
  * Make a balanced tree from an ordered list of leaves.
  */
-template<typename T> const list<T> btreeHelper(const list<T>& elements, const size_t n) {
+template<typename T> inline const list<T> btreeHelper(const list<T>& elements, const size_t n) {
     if (n == 0)
         return cons<T>(list<T>(), elements);
     const size_t leftSize = (n - 1) / 2; {
@@ -116,7 +116,7 @@ template<typename T> const list<T> btreeHelper(const list<T>& elements, const si
     }
 }
 
-template<typename T> const list<T> mkbtree(const list<T>& elements) {
+template<typename T> inline const list<T> mkbtree(const list<T>& elements) {
     return car(btreeHelper<T>(elements, length(elements)));
 }
 

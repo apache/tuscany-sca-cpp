@@ -30,89 +30,64 @@
 
 namespace tuscany {
 
-bool testCrc32hash() {
+const bool testCrc32hash() {
     const string key("This is a test key");
-    unsigned int h = crc32hash(c_str(key), length(key));
+    const unsigned int h = crc32hash(c_str(key), length(key));
     assert(h != 0);
     return true;
 }
 
-bool testTimes33hash() {
+const bool testTimes33hash() {
     const string key("This is a test key");
-    unsigned int h = times33hash(c_str(key), length(key));
+    const unsigned int h = times33hash(c_str(key), length(key));
     assert(h != 0);
     return true;
 }
 
-bool testMurmurhash() {
+const bool testMurmurhash() {
     const string key("This is a test key");
-    unsigned int h = murmurhash(c_str(key), length(key));
+    const unsigned int h = murmurhash(c_str(key), length(key));
     assert(h != 0);
     return true;
 }
 
-bool testPortablemurmurhash() {
+const bool testPortablemurmurhash() {
     const string key("This is a test key");
-    unsigned int h = portablemurmurhash(c_str(key), length(key));
+    const unsigned int h = portablemurmurhash(c_str(key), length(key));
     assert(h != 0);
     return true;
 }
 
-struct crc32hashTest {
-    const string key;
-    crc32hashTest(const string& key) : key(key) {
-    }
-    bool operator()() const {
-        unsigned int h = crc32hash(c_str(key), length(key));
-        assert(h != 0);
-        return true;
-    }
-};
-
-struct times33hashTest {
-    const string key;
-    times33hashTest(const string& key) : key(key) {
-    }
-    bool operator()() const {
-        unsigned int h = times33hash(c_str(key), length(key));
-        assert(h != 0);
-        return true;
-    }
-};
-
-struct murmurhashTest {
-    const string key;
-    murmurhashTest(const string& key) : key(key) {
-    }
-    bool operator()() const {
-        unsigned int h = murmurhash(c_str(key), length(key));
-        assert(h != 0);
-        return true;
-    }
-};
-
-struct portablemurmurhashTest {
-    const string key;
-    portablemurmurhashTest(const string& key) : key(key) {
-    }
-    bool operator()() const {
-        unsigned int h = portablemurmurhash(c_str(key), length(key));
-        assert(h != 0);
-        return true;
-    }
-};
-
-bool testHashPerf() {
+const bool testHashPerf() {
     const string key("This is a test key");
     const int count = 100000;
 
-    const lambda<bool()> crc32 = crc32hashTest(key);
+    const blambda crc32 = [key]() -> const bool {
+        const unsigned int h = crc32hash(c_str(key), length(key));
+        assert(h != 0);
+        return true;
+    };
     cout << "crc32hash test " << time(crc32, 5, count) << " ms" << endl;
-    const lambda<bool()> times33 = times33hashTest(key);
+
+    const blambda times33 = [key]() -> const bool {
+        const unsigned int h = times33hash(c_str(key), length(key));
+        assert(h != 0);
+        return true;
+    };
     cout << "times33hash test " << time(times33, 5, count) << " ms" << endl;
-    const lambda<bool()> murmur = murmurhashTest(key);
+
+    const blambda murmur = [key]() -> const bool {
+        const unsigned int h = murmurhash(c_str(key), length(key));
+        assert(h != 0);
+        return true;
+    };
     cout << "murmurhash test " << time(murmur, 5, count) << " ms" << endl;
-    const lambda<bool()> portablemurmur = portablemurmurhashTest(key);
+
+    const blambda portablemurmur = [key]() -> const bool {
+        const unsigned int h = portablemurmurhash(c_str(key), length(key));
+        assert(h != 0);
+        return true;
+    };
     cout << "portable murmurhash test " << time(portablemurmur, 5, count) << " ms" << endl;
 
     return true;
@@ -121,7 +96,7 @@ bool testHashPerf() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testCrc32hash();

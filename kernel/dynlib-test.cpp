@@ -28,7 +28,7 @@
 namespace tuscany {
 namespace test {
 
-    const int cppsquare(int x) {
+    const int cppsquare(const int x) {
         return x * x;
     }
 
@@ -41,8 +41,8 @@ extern "C" {
         return tuscany::test::cppsquare(x);
     }
 
-    const tuscany::lambda<int(const int)> csquarel() {
-        return tuscany::lambda<int(const int)>(tuscany::test::cppsquare);
+    const tuscany::lambda<const int(const int)> csquarel() {
+        return tuscany::lambda<const int(const int)>(tuscany::test::cppsquare);
     }
 
 }

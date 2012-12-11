@@ -30,7 +30,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
-#include "xml.hpp"
+#include "../modules/xml/xml.hpp"
 
 namespace tuscany {
 namespace scdl {
@@ -82,33 +82,26 @@ const list<value> nameToElementAssoc(const list<value>& l) {
 /**
  * Returns the scdl declaration with the given name.
  */
-struct filterName {
-    const value n;
-    filterName(const value& n) : n(n) {
-    }
-    const bool operator()(const value& v) const {
+const value named(const value& n, const value& l) {
+    const vblambda filterName = [n](const value& v) -> const bool {
         return name(v) == n;
-    }
-};
-
-const value named(const value& name, const value& l) {
-    const list<value> c = filter<value>(filterName(name), l);
+    };
+    const list<value> c = filter<value>(filterName, l);
     if (isNil(c))
-        return value();
+        return nilValue;
     return car(c);
 }
 
 /**
  * Returns the implementation of a component.
  */
-const bool filterImplementation(const value& v) {
-    return isElement(v) && contains(string(cadr<value>(v)), "implementation.");
-}
-
 const value implementation(const value& l) {
+    const vblambda filterImplementation = [](const value& v) -> const bool {
+        return isElement(v) && contains(string(cadr<value>(v)), "implementation.");
+    };
     const list<value> n = filter<value>(filterImplementation, l);
     if (isNil(n))
-        return value();
+        return nilValue;
     return car(n);
 }
 
@@ -156,7 +149,7 @@ const list<value> bindings(const value& l) {
  */
 const value bindingsTarget(const list<value>& l) {
     if (isNil(l))
-        return value();
+        return nilValue;
     const value u = uri(car(l));
     if (!isNil(u))
         return u;

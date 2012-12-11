@@ -32,15 +32,15 @@
 
 namespace tuscany {
 
-bool testCopies() {
+const bool testCopies() {
     resetStringCopyCounters();
-    string x("abcd");
+    const string x("abcd");
     assert(checkStringCopyCounters(1));
     resetStringCopyCounters();
-    string y = string("abcd");
+    const string y = string("abcd");
     assert(checkStringCopyCounters(1));
     resetStringCopyCounters();
-    unused string z = y;
+    unused const string z = y;
     assert(checkStringCopyCounters(0));
     resetStringCopyCounters();
     const list<string> pl = list<string>() + "abcd" + "efgh";
@@ -51,7 +51,7 @@ bool testCopies() {
     return true;
 }
 
-bool testString() {
+const bool testString() {
     const string s("abcd");
     assert(length(s) == 4);
     assert(!strcmp(c_str(s), "abcd"));
@@ -89,11 +89,18 @@ bool testString() {
     return true;
 }
 
-bool testStream() {
+const bool testStream() {
     ostringstream os;
     os << "ab" << "cd";
-    cout << str(os) << endl;
     assert(str(os) == "abcd");
+
+    ostringstream bos;
+    bos << "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+    bos << "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    cout << str(bos) << endl;
+    assert(str(bos) == 
+    "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     ostringstream cs;
     cs << "\'";
@@ -113,69 +120,65 @@ bool testStream() {
     return true;
 }
 
-std::string stdAdd(std::string& x, std::string& y) {
+const std::string stdAdd(const std::string& x, const std::string& y) {
     return x + y;
 }
 
-string add(string& x, string& y) {
+const string add(const string& x, const string& y) {
     return x + y;
 }
 
 char charBuffer[16385];
 
-struct addStrings{
-    const size_t size;
-    addStrings(const size_t size) : size(size) {
-    }
-    bool operator()() const {
-        const size_t sz = size / 4;
-        string x(charBuffer, sz);
-        string y(charBuffer, sz);
-        assert(length(add(x, y)) == sz * 2);
-        return true;
-    }
-};
-
-struct addStdStrings{
-    const size_t size;
-    addStdStrings(const size_t size) : size(size) {
-    }
-    bool operator()() const {
-        const size_t sz = size / 4;
-        std::string x(charBuffer, sz);
-        std::string y(charBuffer, sz);
-        assert(stdAdd(x, y).length() == (unsigned int)(sz * 2));
-        return true;
-    }
-};
-
-bool testStringPerf() {
+const bool testStringPerf() {
     memset(charBuffer, 'A', 16384);
     charBuffer[16384] = '\0';
 
     const int count = 10000;
     {
-        const lambda<bool()> a16 = addStrings(16);
+        const lambda<const blambda(const size_t size)> addStrings = [](const size_t size) -> const blambda {
+            const blambda l = [size]() -> const bool {
+                const size_t sz = size / 4;
+                const string x(charBuffer, sz);
+                const string y(charBuffer, sz);
+                assert(length(add(x, y)) == sz * 2);
+                return true;
+            };
+            return l;
+        };
+
+        const blambda a16 = addStrings(16);
         cout << "string test " << time(a16, 5, count) << " ms" << endl;
-        const lambda<bool()> a32 =addStrings(32);
+        const blambda a32 =addStrings(32);
         cout << "string test " << time(a32, 5, count) << " ms" << endl;
-        const lambda<bool()> a256 =addStrings(256);
+        const blambda a256 =addStrings(256);
         cout << "string test " << time(a256, 5, count) << " ms" << endl;
-        const lambda<bool()> a1024 =addStrings(1024);
+        const blambda a1024 =addStrings(1024);
         cout << "string test " << time(a1024, 5, count) << " ms" << endl;
-        const lambda<bool()> a4096 =addStrings(4096);
+        const blambda a4096 =addStrings(4096);
         cout << "string test " << time(a4096, 5, count) << " ms" << endl;
     }
     {
-        const lambda<bool()> a16 =addStdStrings(16);
+        const lambda<const blambda(const size_t size)> addStdStrings = [](const size_t size) -> const blambda {
+            const blambda l = [size]() -> const bool {
+                const size_t sz = size / 4;
+                const std::string x(charBuffer, sz);
+                const std::string y(charBuffer, sz);
+                assert(stdAdd(x, y).length() == (unsigned int)(sz * 2));
+                return true;
+            };
+            return l;
+        };
+
+        const blambda a16 =addStdStrings(16);
         cout << "Std string test " << time(a16, 5, count) << " ms" << endl;
-        const lambda<bool()> a32 =addStdStrings(32);
+        const blambda a32 =addStdStrings(32);
         cout << "Std string test " << time(a32, 5, count) << " ms" << endl;
-        const lambda<bool()> a256 =addStdStrings(256);
+        const blambda a256 =addStdStrings(256);
         cout << "Std string test " << time(a256, 5, count) << " ms" << endl;
-        const lambda<bool()> a1024 =addStdStrings(1024);
+        const blambda a1024 =addStdStrings(1024);
         cout << "Std string test " << time(a1024, 5, count) << " ms" << endl;
-        const lambda<bool()> a4096 =addStdStrings(4096);
+        const blambda a4096 =addStdStrings(4096);
         cout << "Std string test " << time(a4096, 5, count) << " ms" << endl;
     }
 
@@ -185,7 +188,7 @@ bool testStringPerf() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testCopies();

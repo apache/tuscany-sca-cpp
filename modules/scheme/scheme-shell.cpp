@@ -30,7 +30,7 @@
 #include "driver.hpp"
 
 int main() {
-    tuscany::gc_scoped_pool pool;
+    const tuscany::gc_scoped_pool pool;
     tuscany::scheme::evalDriverRun(tuscany::cin, tuscany::cout);
     return 0;
 }

@@ -38,24 +38,20 @@
 #include "monad.hpp"
 
 namespace tuscany {
-
-/**
- * APR-based memory management functions.
- */
-
+namespace xml {
 
 /**
  * Initializes the libxml2 library.
  */
 class XMLParser {
 public:
-    XMLParser() {
+    inline XMLParser() {
         debug("xml::XMLParser");
         xmlMemSetup(gc_pool_free, gc_pool_malloc, gc_pool_realloc, gc_pool_strdup);
         xmlInitParser();
     }
 
-    ~XMLParser() {
+    inline ~XMLParser() {
     }
 } xmlParser;
 
@@ -68,30 +64,19 @@ public:
         None = 0, Element = 1, Attribute = 2, Text = 3, EndElement = 15, Identifier = 100, End = 101
     };
 
-    XMLReader(xmlTextReaderPtr xml) : xml(xml), owner(true), tokenType(None), isEmptyElement(false), hasValue(false), hasAttributes(false) {
+    inline XMLReader(xmlTextReaderPtr xml) : xml(xml), owner(true), tokenType(None), isEmptyElement(false), hasValue(false), hasAttributes(false) {
         debug("xml::XMLReader::xml");
         xmlTextReaderSetParserProp(xml, XML_PARSER_DEFAULTATTRS, 1);
         xmlTextReaderSetParserProp(xml, XML_PARSER_SUBST_ENTITIES, 1);
     }
 
-    XMLReader(const XMLReader& r) : xml(r.xml), owner(false), tokenType(r.tokenType), isEmptyElement(r.isEmptyElement), hasValue(r.hasValue), hasAttributes(r.hasAttributes) {
+    inline XMLReader(const XMLReader& r) : xml(r.xml), owner(false), tokenType(r.tokenType), isEmptyElement(r.isEmptyElement), hasValue(r.hasValue), hasAttributes(r.hasAttributes) {
         debug("xml::XMLReader::copy");
     }
 
-    const XMLReader& operator=(const XMLReader& r) {
-        debug("xml::XMLReader::operator=");
-        if(this == &r)
-            return *this;
-        xml = r.xml;
-        owner = false;
-        tokenType = r.tokenType;
-        isEmptyElement = r.isEmptyElement;
-        hasValue = r.hasValue;
-        hasAttributes = r.hasAttributes;
-        return *this;
-    }
+    XMLReader& operator=(const XMLReader& r) = delete;
 
-    ~XMLReader() {
+    inline ~XMLReader() {
         if (!owner)
             return;
         xmlTextReaderClose(xml);
@@ -101,7 +86,7 @@ public:
     /**
      * Read the next XML token and return its type.
      */
-    int read() {
+    inline const int read() {
         if (tokenType == End)
             return tokenType;
         if (tokenType == Element) {
@@ -120,13 +105,13 @@ public:
         return tokenType = xmlTextReaderNodeType(xml);
     }
 
-    operator xmlTextReaderPtr() const {
+    inline operator xmlTextReaderPtr() const {
         return xml;
     }
 
 private:
-    xmlTextReaderPtr xml;
-    bool owner;
+    const xmlTextReaderPtr xml;
+    const bool owner;
     int tokenType;
     bool isEmptyElement;
     bool hasValue;
@@ -140,37 +125,55 @@ const value endElement("<");
 const value startElement(">");
 
 /**
+ * Read a value from a text string, automatically detects a boolean or number value.
+ */
+const value readTextValue(const char* const val) {
+    if (!strcmp("true", val))
+        return value(true);
+    if (!strcmp("false", val))
+        return value(false);
+
+    char e[2];
+    double d;
+    const int n = sscanf(val, "%lg%1s", &d, e);
+    if (n == 1)
+        return value(d);
+
+    return value(string(val));
+}
+
+/**
  * Read an XML identifier.
  */
-const value readIdentifier(XMLReader& reader) {
-    const char* name = (const char*)xmlTextReaderConstName(reader);
+inline const value readIdentifier(XMLReader& reader) {
+    const char* const name = (const char*)xmlTextReaderConstName(reader);
     return name;
 }
 
 /**
  * Read XML text.
  */
-const value readText(XMLReader& reader) {
-    const char *val = (const char*)xmlTextReaderConstValue(reader);
-    return string(val);
+inline const value readText(XMLReader& reader) {
+    const char* const val = (const char*)xmlTextReaderConstValue(reader);
+    return readTextValue(val);
 }
 
 /**
  * Read an XML attribute.
  */
-const value readAttribute(XMLReader& reader) {
-    const char *name = (const char*)xmlTextReaderConstName(reader);
-    const char *val = (const char*)xmlTextReaderConstValue(reader);
-    return mklist<value>(attribute, name, string(val));
+inline const value readAttribute(XMLReader& reader) {
+    const char* const name = (const char*)xmlTextReaderConstName(reader);
+    const char* const val = (const char*)xmlTextReaderConstValue(reader);
+    return mklist<value>(attribute, name, readTextValue(val));
 }
 
 /**
  * Read an XML token.
  */
-const value readToken(XMLReader& reader) {
+inline const value readToken(XMLReader& reader) {
     const int tokenType = reader.read();
     if (tokenType == XMLReader::None || tokenType == XMLReader::End)
-        return value();
+        return nilValue;
     if (tokenType == XMLReader::Element)
         return startElement;
     if (tokenType == XMLReader::Identifier)
@@ -187,7 +190,7 @@ const value readToken(XMLReader& reader) {
 /**
  * Read a list of values from XML tokens.
  */
-const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
+inline const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
     const value token = readToken(reader);
     if(isNil(token) || endElement == token)
         return reverse(listSoFar);
@@ -199,11 +202,11 @@ const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
 /**
  * Read a list of values from a libxml2 XML reader.
  */
-const list<value> read(XMLReader& reader) {
-    value nextToken = readToken(reader);
+inline const list<value> read(XMLReader& reader) {
+    const value nextToken = readToken(reader);
     if (startElement == nextToken)
         return mklist<value>(readList(mklist(element), reader));
-    return list<value>();
+    return nilListValue;
 }
 
 /**
@@ -211,17 +214,18 @@ const list<value> read(XMLReader& reader) {
  */
 class XMLReadContext {
 public:
-    XMLReadContext(const list<string>& ilist) : ilist(ilist) {
+    inline XMLReadContext(const list<string>& ilist) : ilist(ilist) {
     }
-    list<string> ilist;
+
+    gc_mutable_ref<list<string> > ilist;
 };
 
 /**
  * Callback function called by libxml2 to read XML.
  */
-int readCallback(void *context, char* buffer, int len) {
-    XMLReadContext& rc = *static_cast<XMLReadContext*>(context);
-    if (isNil(rc.ilist))
+inline int readCallback(void *context, char* buffer, int len) {
+    XMLReadContext& rc = *(XMLReadContext*)context;
+    if (isNil((const list<string>)rc.ilist))
         return 0;
     const list<string> f(fragment(rc.ilist, len));
     const string s(car(f));
@@ -233,7 +237,7 @@ int readCallback(void *context, char* buffer, int len) {
 /**
  * Return true if a list of strings contains an XML document.
  */
-const bool isXML(const list<string>& ls) {
+inline const bool isXML(const list<string>& ls) {
     if (isNil(ls))
         return false;
     return substr(car(ls), 0, 5) == "<?xml";
@@ -242,12 +246,12 @@ const bool isXML(const list<string>& ls) {
 /**
  * Read a list of values from a list of strings representing an XML document.
  */
-const list<value> readXML(const list<string>& ilist) {
-    debug(ilist, "xml::readXML");
+inline const failable<list<value> > readElements(const list<string>& ilist) {
+    debug(ilist, "xml::readElements");
     XMLReadContext cx(ilist);
-    xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &cx, NULL, NULL, XML_PARSE_NONET | XML_PARSE_NODICT);
+    const xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &cx, NULL, NULL, XML_PARSE_NONET | XML_PARSE_NODICT);
     if (xml == NULL)
-        return list<value>();
+        return nilListValue;
     XMLReader reader(xml);
     return read(reader);
 }
@@ -255,19 +259,19 @@ const list<value> readXML(const list<string>& ilist) {
 /**
  * Default encoding used to write XML documents.
  */
-const char* encoding = "UTF-8";
+const char* const encoding = "UTF-8";
 
 
 /**
  * Write a list of XML element or attribute tokens.
  */
-const list<value> expandElementValues(const value& n, const list<value>& l) {
+inline const list<value> expandElementValues(const value& n, const list<value>& l) {
     if (isNil(l))
         return l;
     return cons<value>(value(cons<value>(element, cons<value>(n, isList(car(l))? (list<value>)car(l) : mklist(car(l))))), expandElementValues(n, cdr(l)));
 }
 
-const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml) {
+inline const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml) {
     if (isNil(l))
         return true;
 
@@ -331,7 +335,7 @@ const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml)
 /**
  * Write a list of values to a libxml2 XML writer.
  */
-const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml, bool xmlTag) {
+inline const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml, bool xmlTag) {
     if (xmlTag) {
         if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
             return mkfailure<bool>("xmlTextWriterStartDocument failed");
@@ -353,17 +357,18 @@ const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml, boo
  */
 template<typename R> class XMLWriteContext {
 public:
-    XMLWriteContext(const lambda<R(const string&, const R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
+    inline XMLWriteContext(const lambda<const R(const string&, const R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
     }
-    const lambda<R(const string&, const R)> reduce;
-    R accum;
+
+    const lambda<const R(const string&, const R)> reduce;
+    gc_mutable_ref<R> accum;
 };
 
 /**
  * Callback function called by libxml2 to write XML out.
  */
-template<typename R> int writeCallback(void *context, const char* buffer, int len) {
-    XMLWriteContext<R>& cx = *static_cast<XMLWriteContext<R>*>(context);
+template<typename R> inline int writeCallback(void *context, const char* buffer, int len) {
+    XMLWriteContext<R>& cx = *(XMLWriteContext<R>*)context;
     cx.accum = cx.reduce(string(buffer, len), cx.accum);
     return len;
 }
@@ -371,7 +376,7 @@ template<typename R> int writeCallback(void *context, const char* buffer, int le
 /**
  * Convert a list of values to an XML document.
  */
-template<typename R> const failable<R> writeXML(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l, const bool xmlTag) {
+template<typename R> inline const failable<R> writeElements(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& l, const bool xmlTag) {
     XMLWriteContext<R> cx(reduce, initial);
     xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
     if (out == NULL)
@@ -379,34 +384,35 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
     xmlTextWriterPtr xml = xmlNewTextWriter(out);
     if (xml == NULL)
         return mkfailure<R>("xmlNewTextWriter failed");
-    xmlTextWriterSetIndent(xml, 1);
+    xmlTextWriterSetIndent(xml, 0);
 
     const failable<bool> w = write(l, xml, xmlTag);
     xmlFreeTextWriter(xml);
     if (!hasContent(w)) {
         return mkfailure<R>(w);
     }
-    return cx.accum;
+    return (R)cx.accum;
 }
 
-template<typename R> const failable<R> writeXML(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
-    return writeXML(reduce, initial, l, true);
+template<typename R> inline const failable<R> writeElements(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+    return writeElements(reduce, initial, l, true);
 }
 
 /**
  * Convert a list of values to a list of strings representing an XML document.
  */
-const failable<list<string> > writeXML(const list<value>& l, const bool xmlTag) {
-    debug(l, "xml::writeXML");
-    const failable<list<string> > ls = writeXML<list<string> >(rcons<string>, list<string>(), l, xmlTag);
+inline const failable<list<string> > writeElements(const list<value>& l, const bool xmlTag) {
+    debug(l, "xml::writeElements");
+    const failable<list<string> > ls = writeElements<list<string> >(rcons<string>, list<string>(), l, xmlTag);
     if (!hasContent(ls))
         return ls;
     return reverse(list<string>(content(ls)));
 }
 
-const failable<list<string> > writeXML(const list<value>& l) {
-    return writeXML(l, true);
+inline const failable<list<string> > writeElements(const list<value>& l) {
+    return writeElements(l, true);
 }
 
+}
 }
 #endif /* tuscany_xml_hpp */

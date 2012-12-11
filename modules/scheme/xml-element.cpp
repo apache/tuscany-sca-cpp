@@ -25,16 +25,16 @@
 
 #include "fstream.hpp"
 #include "string.hpp"
-#include "xml.hpp"
 #include "element.hpp"
+#include "../xml/xml.hpp"
 #include "eval.hpp"
 
 namespace tuscany {
 namespace scheme {
 
-int xmlValue() {
-    const value v = readXML(streamList(cin));
-    cout << writeValue(v);
+const int xmlValue() {
+    const value v = content(xml::readElements(streamList(cin)));
+    write(content(writeValue(v)), cout);
     return 0;
 }
 

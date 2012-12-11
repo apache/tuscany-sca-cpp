@@ -38,14 +38,14 @@ namespace tuscany {
 /**
  * Instrumentable memcpy.
  */
-void* stream_memcpy(void* t, const void* s, const size_t n) {
+inline void* stream_memcpy(void* t, const void* s, const size_t n) {
     return memcpy(t, s, n);
 }
 
 /**
  * Write a list of strings into a buffer.
  */
-const bool writeList(const list<string>& l, char* buf) {
+const bool writeList(const list<string>& l, char* const buf) {
     if (isNil(l))
         return true;
     const string c = car(l);
@@ -59,63 +59,108 @@ const bool writeList(const list<string>& l, char* buf) {
  */
 class ostringstream : public ostream {
 public:
-    ostringstream() : len(0) {
+    inline ostringstream() : len(0), accumbuf(NULL), accumlen(0), buf() {
     }
 
-    ~ostringstream() {
+    inline ~ostringstream() {
     }
 
-    ostringstream(const ostringstream& os) {
-        len = os.len;
-        buf = os.buf;
+    inline ostringstream(const ostringstream& os) : len(os.len), accumbuf(os.accumbuf), accumlen(os.accumlen), buf(os.buf) {
     }
 
-    ostringstream& vprintf(const char* fmt, ...) {
+    inline ostringstream& vprintf(const char* const fmt, ...) {
         va_list args;
-        string s;
         va_start (args, fmt);
-        s.len = vsnprintf(NULL, 0, fmt, args);
-        s.buf = gc_cnew(s.len + 1);
+        const size_t l = vsnprintf(NULL, 0, fmt, args);
+        if (l <= 256) {
+            char c[256];
+            va_start (args, fmt);
+            vsnprintf(c, l + 1, fmt, args);
+            va_end (args);
+            accumulate(c, l);
+            return *this;
+        }
+        spill();
+        char* const sbuf = gc_cnew(l + 1);
         va_start (args, fmt);
-        vsnprintf(s.buf, s.len + 1, fmt, args);
-        buf = cons(s, buf);
-        len += s.len;
+        vsnprintf(sbuf, l + 1, fmt, args);
         va_end (args);
+        buf = cons(string(sbuf, l, false), (const list<string>)buf);
+        len += l;
         return *this;
     }
 
-    ostringstream& write(const string& s) {
-        buf = cons(s, buf);
+    inline ostringstream& write(const string& s) {
+        if (s.len <= 256) {
+            accumulate(s.buf, s.len);
+            return *this;
+        }
+        spill();
+        buf = cons(s, (const list<string>)buf);
         len += s.len;
         return *this;
     }
 
-    ostringstream& flush() {
+    inline ostringstream& write(const char c) {
+        accumulate(&c, 1);
+        return *this;
+    }
+
+    inline ostringstream& flush() {
+        spill();
         return *this;
     }
 
 private:
-    const string str() {
-        if (isNil(buf))
-            return string();
-        string s;
-        s.len = len;
-        s.buf = gc_cnew(s.len + 1);
-        writeList(buf, s.buf + len);
-        s.buf[s.len] = '\0';
-        return s;
+    inline const string str() {
+        spill();
+        if (isNil((const list<string>)buf))
+            return emptyString;
+        char* const sbuf = gc_cnew(len + 1);
+        writeList(buf, sbuf + len);
+        sbuf[len] = '\0';
+        return string(sbuf, len, false);
+    }
+
+    inline const bool accumulate(const char* const c, const size_t l) {
+        if (accumbuf == NULL)
+            accumbuf = gc_cnew(65);
+        for(size_t i = 0; i < l; i++) {
+            accumbuf[accumlen] = c[i];
+            accumlen++;
+            if (accumlen == 64) {
+                accumbuf[accumlen] = '\0';
+                buf = cons(string(accumbuf, accumlen, false), (const list<string>)buf);
+                accumbuf = i < l? gc_cnew(65) : NULL;
+                accumlen = 0;
+            }
+        }
+        accumbuf[accumlen] = '\0';
+        len += l;
+        return true;
+    }
+
+    inline const bool spill() {
+        if (accumbuf == NULL)
+            return true;
+        buf = cons(string(accumbuf, accumlen), (const list<string>)buf);
+        accumbuf = NULL;
+        accumlen = 0;
+        return true;
     }
 
     friend const string str(ostringstream& os);
 
     size_t len;
-    list<string> buf;
+    char* accumbuf;
+    size_t accumlen;
+    gc_mutable_ref<list<string> > buf;
 };
 
 /**
  * Return a string representation of a stream.
  */
-const string str(ostringstream& os) {
+inline const string str(ostringstream& os) {
     return os.str();
 }
 
@@ -124,23 +169,16 @@ const string str(ostringstream& os) {
  */
 class istringstream : public istream {
 public:
-    istringstream(const string& s) {
-        cur = 0;
-        const size_t slen = length(s);
-        len = slen;
-        buf = c_str(s);
-      }
-
-    ~istringstream() {
+    inline istringstream(const string& s) : len(length(s)), cur(0), buf(c_str(s)) {
     }
 
-    istringstream(const istringstream& is) {
-        len = is.len;
-        cur = is.cur;
-        buf = is.buf;
+    inline ~istringstream() {
     }
 
-    const size_t read(void* b, size_t size) {
+    inline istringstream(const istringstream& is) : len(is.len), cur(is.cur), buf(is.buf) {
+    }
+
+    inline const size_t read(void* const b, const size_t size) {
         const size_t n = len - cur;
         if (n == 0)
             return 0;
@@ -154,30 +192,28 @@ public:
         return n;
     }
 
-    const bool eof() {
+    inline const bool eof() {
         return cur == len;
     }
 
-    const bool fail() {
+    inline const bool fail() {
         return false;
     }
 
-    const int get() {
-        if (eof())
+    inline const int get() {
+        if (cur == len)
             return -1;
-        const int c = buf[cur];
-        cur += 1;
-        return c;
+        return buf[cur++];
     }
 
-    const int peek() {
-        if (eof())
+    inline const int peek() {
+        if (cur == len)
             return -1;
         return buf[cur];
     }
 
 private:
-    size_t len;
+    const size_t len;
     size_t cur;
     const char* buf;
 };
@@ -185,62 +221,52 @@ private:
 /**
  * Tokenize a string into a list of strings.
  */
-const list<string> tokenize(const char* sep, const string& str) {
-    struct nested {
-        static const list<string> tokenize(const char* sep, const size_t slen, const string& str, const size_t start) {
-            if (start >= length(str))
-                return list<string>();
-            const size_t i = find(str, sep, start);
-            if (i == length(str))
-                return mklist(string(substr(str, start)));
-            return cons(string(substr(str, start, i - start)), tokenize(sep, slen, str, i + slen));
-        }
+inline const list<string> tokenize(const char* const sep, const string& str) {
+    const lambda<const list<string>(const char* const, const size_t, const string&, const size_t)> tokenize = [&tokenize](const char* const sep, const size_t slen, const string& str, const size_t start) -> const list<string> {
+        if (start >= length(str))
+            return list<string>();
+        const size_t i = find(str, sep, start);
+        if (i == length(str))
+            return mklist(string(substr(str, start)));
+        return cons(string(substr(str, start, i - start)), tokenize(sep, slen, str, i + slen));
     };
-    return nested::tokenize(sep, strlen(sep), str, 0);
+    return tokenize(sep, strlen(sep), str, 0);
 }
 
 /**
  * Join a list of strings into a single string.
  */
-const string join(const char* sep, const list<string>& l) {
-    struct nested {
-        static ostringstream& join(const char* sep, const list<string>& l, ostringstream& os) {
-            if (isNil(l))
-                return os;
-            os << car(l);
-            if (!isNil(cdr(l)))
-                os << sep;
-            return join(sep, cdr(l), os);
-        }
-    };
+inline const string join(const char* const sep, const list<string>& l) {
     ostringstream os;
-    return str(nested::join(sep, l, os));
+    const lambda<ostringstream&(const char* const, const list<string>&, ostringstream&)> join = [&join](const char* const sep, const list<string>& l, ostringstream& os) -> ostringstream& {
+        if (isNil(l))
+            return os;
+        os << car(l);
+        if (!isNil(cdr(l)))
+            os << sep;
+        return join(sep, cdr(l), os);
+    };
+    return str(join(sep, l, os));
 }
 
 /**
  * Returns a lazy list view of an input stream.
  */
-struct ilistRead{
-    istream &is;
-    ilistRead(istream& is) : is(is) {
-    }
-    const list<string> operator()() {
+inline const list<string> streamList(istream& is) {
+    const lambda<const list<string>()> ilistRead = [&is, &ilistRead]() -> const list<string> {
         char buffer[1024];
         const size_t n = read(is, buffer, sizeof(buffer));
         if (n ==0)
             return list<string>();
-        return cons(string(buffer, n), (*this)());
-    }
-};
-
-const list<string> streamList(istream& is) {
-    return ilistRead(is)();
+        return cons(string(buffer, n), ilistRead());
+    };
+    return ilistRead();
 }
 
 /**
  * Fragment the first element of a list of strings to fit the given max length.
  */
-const list<string> fragment(list<string> l, size_t max) {
+inline const list<string> fragment(const list<string>& l, const size_t max) {
     const string s = car(l);
     if (length(s) <= max)
         return l;
@@ -250,11 +276,24 @@ const list<string> fragment(list<string> l, size_t max) {
 /**
  * Write a list of strings to an output stream.
  */
-ostream& write(const list<string>& l, ostream& os) {
+inline ostream& write(const list<string>& l, ostream& os) {
     if(isNil(l))
         return os;
     os << car(l);
     return write(cdr(l), os);
+}
+
+/**
+ * Convert a list of strings to a string.
+ */
+inline const string write(const list<string>& l) {
+    if (isNil(l))
+        return emptyString;
+    if (isNil(cdr(l)))
+        return car(l);
+    ostringstream os;
+    write(l, os);
+    return str(os);
 }
 
 }

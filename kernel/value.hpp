@@ -50,16 +50,16 @@ long int countEValues = 0;
 long int countCValues = 0;
 long int countVValues = 0;
 
-bool resetValueCounters() {
+inline const bool resetValueCounters() {
     countValues = countEValues = countCValues = countVValues = 0;
     return true;
 }
 
-bool checkValueCounters() {
+inline const bool checkValueCounters() {
     return countValues == 0;
 }
 
-bool printValueCounters() {
+inline const bool printValueCounters() {
     cout << "countValues " << countValues << endl;
     cout << "countEValues " << countEValues << endl;
     cout << "countCValues " << countCValues << endl;
@@ -92,7 +92,28 @@ bool printValueCounters() {
 
 #endif
 
+/**
+ * Common value constants.
+ */
 class value;
+extern const value nilValue;
+extern const list<value> nilListValue;
+extern const list<value> nilPairValue;
+extern const value emptyStringValue;
+extern const value trueValue;
+extern const value falseValue;
+
+/**
+ * Common value-based lambda types.
+ */
+typedef lambda<const value(const list<value>&)> lvvlambda;
+typedef lambda<const value(const value&)> vvlambda;
+typedef lambda<const bool(const value&)> vblambda;
+typedef lambda<const value()> vlambda;
+
+/**
+ * Generic value type class.
+ */
 
 class value {
 public:
@@ -101,338 +122,301 @@ public:
         Nil, Symbol, String, List, Number, Bool, Lambda, Ptr
     };
 
-    value() : type(value::Nil) {
+    typedef union {
+        const void* mix;
+        const gc_ptr<list<value> > lst;
+        const string str;
+        const lvvlambda func;
+        const gc_ptr<value> ptr;
+        const double num;
+        const bool boo;
+    } ValueMix;
+
+    inline value() noexcept : type(value::Nil) {
         debug_inc(countValues);
         debug_inc(countEValues);
         debug_watchValue();
     }
 
-    value(const value& v) {
+    inline value(const value& v) noexcept : type(v.type) {
         debug_inc(countValues);
         debug_inc(countCValues);
-        type = v.type;
-        switch(type) {
-        case value::List:
-            lst() = v.lst();
-        case value::Lambda:
-            func() = v.func();
-        case value::Symbol:
-            str() = v.str();
-        case value::String:
-            str() = v.str();
-        case value::Number:
-            num() = v.num();
-        case value::Bool:
-            boo() = v.boo();
-        case value::Ptr:
-            ptr() = v.ptr();
-        default:
-            break;
-        }
+        memcpy((void*)&mix, (void*)&v.mix, sizeof(ValueMix));
 #ifdef WANT_MAINTAINER_WATCH
         watch = v.watch;
 #endif
     }
 
-    virtual ~value() {
+    inline value(const gc_mutable_ref<value>& r) noexcept : type(((value*)r)->type) {
+        debug_inc(countValues);
+        debug_inc(countCValues);
+        memcpy((void*)&mix, (void*)&(((value*)r)->mix), sizeof(ValueMix));
+#ifdef WANT_MAINTAINER_WATCH
+        watch = v.watch;
+#endif
+    }
+
+    inline virtual ~value() noexcept {
         debug_dec(countValues);
     }
 
-    value(const lambda<value(const list<value>&)>& func) : type(value::Lambda), data(vdata(func)) {
+    inline value(const lvvlambda& f) noexcept : type(value::Lambda), func(f) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const string& str) : type(value::String), data(vdata(result(str))) {
+    inline value(const string& s) noexcept : type(value::String), str(s) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const char* str) : type(value::Symbol), data(vdata(result(string(str)))) {
+    inline value(const char* s) noexcept : type(value::Symbol), str(s) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const list<value>& lst) : type(value::List), data(vdata(result(lst))) {
+    inline value(const list<value>& l) noexcept : type(value::List), lst(new (gc_new<list<value> >()) list<value>(l)) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const list<list<value> >& l) : type(value::List), data(vdata(result(listOfValues(l)))) {
+    inline value(const list<list<value> >& l) noexcept : type(value::List), lst(new (gc_new<list<value> >()) list<value>(listOfValues(l))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const double num) : type(value::Number), data(vdata(result(num))) {
+    inline value(const double d) noexcept : type(value::Number), num(d) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const int num) : type(value::Number), data(vdata(result((double)num))) {
+    inline value(const int i) noexcept : type(value::Number), num((double)i) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const bool boo) : type(value::Bool), data(vdata(result(boo))) {
+    inline value(const bool b) noexcept : type(value::Bool), boo(b) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const gc_ptr<value> ptr) : type(value::Ptr), data(vdata(result(ptr))) {
+    inline value(const gc_ptr<value> p) noexcept : type(value::Ptr), ptr(p) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const failable<value>& m) : type(value::List),
-        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : rcode(m) == 1? mklist<value>(value(), reason(m)) : mklist<value>(value(), reason(m), rcode(m))))) {
+    inline value(const failable<value>& m) noexcept : type(value::List),
+        lst(new (gc_new<list<value> >()) list<value>(hasContent(m)? mklist<value>(content(m)) :
+            rcode(m) == 1? mklist<value>(nilValue, reason(m)) : mklist<value>(nilValue, reason(m), rcode(m)))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const maybe<value>& m) : type(value::List),
-        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : list<value>()))) {
+    inline value(const maybe<value>& m) noexcept : type(value::List),
+        lst(new (gc_new<list<value> >()) list<value>(hasContent(m)? mklist<value>(content(m)) : nilListValue)) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    const value& operator=(const value& v) {
-        if(this == &v)
-            return *this;
-        type = v.type;
-        switch(type) {
-        case value::List:
-            lst() = v.lst();
-        case value::Lambda:
-            func() = v.func();
-        case value::Symbol:
-            str() = v.str();
-        case value::String:
-            str() = v.str();
-        case value::Number:
-            num() = v.num();
-        case value::Bool:
-            boo() = v.boo();
-        case value::Ptr:
-            ptr() = v.ptr();
-        default:
-            break;
-        }
-#ifdef WANT_MAINTAINER_WATCH
-        watch = v.watch;
-#endif
-        return *this;
-    }
+    value& operator=(const value& v) = delete;
 
-    const bool operator!=(const value& v) const {
+    inline const bool operator!=(const value& v) const noexcept {
         return !this->operator==(v);
     }
 
-    const bool operator==(const value& v) const {
+    inline const bool operator==(const value& v) const noexcept {
         if(this == &v)
             return true;
         switch(type) {
         case value::Nil:
             return v.type == value::Nil;
         case value::List:
-            return v.type == value::List && lst()() == v.lst()();
+            return v.type == value::List && *lst == *v.lst;
         case value::Lambda:
-            return v.type == value::Lambda && func() == v.func();
+            return v.type == value::Lambda && func == v.func;
         case value::Symbol:
         case value::String:
-            return str()() == (string)v;
+            return (v.type == value::Symbol || v.type == value::String) && str == v.str;
         case value::Number:
-            return num()() == (double)v;
+            return v.type == value::Number && num == v.num;
         case value::Bool:
-            return boo()() == (bool)v;
+            return v.type == value::Bool && boo == v.boo;
         case value::Ptr:
-            return v.type == value::Ptr && ptr()() == v.ptr()();
+            return v.type == value::Ptr && ptr == v.ptr;
         default:
             return false;
         }
     }
 
-    const bool operator<(const value& v) const {
+    inline const bool operator<(const value& v) const noexcept {
         if(this == &v)
             return false;
         switch(type) {
         case value::List:
-            return v.type == value::List && lst()() < v.lst()();
+            return v.type == value::List && *lst < *v.lst;
         case value::Symbol:
         case value::String:
-            return str()() < (string)v;
+            return (v.type == value::Symbol || v.type == value::String) && str < v.str;
         case value::Bool:
-            return boo()() < (bool)v;
+            return v.type == value::Bool && boo < v.boo;
         case value::Number:
-            return num()() < (double)v;
+            return v.type == value::Number && num < v.num;
         default:
             return false;
         }
     }
 
-    const bool operator>(const value& v) const {
+    inline const bool operator>(const value& v) const noexcept {
         if(this == &v)
             return false;
         switch(type) {
         case value::List:
-            return v.type == value::List && lst()() > v.lst()();
+            return v.type == value::List && *lst > *v.lst;
         case value::Symbol:
         case value::String:
-            return str()() > (string)v;
+            return (v.type == value::Symbol || v.type == value::String) && str > v.str;
         case value::Bool:
-            return boo()() > (bool)v;
+            return v.type == value::Bool && boo > v.boo;
         case value::Number:
-            return num()() > (double)v;
+            return v.type == value::Number && num > v.num;
         default:
             return false;
         }
     }
 
-    const value operator()(const list<value>& args) const {
-        return func()(args);
+    inline const value operator()(const list<value>& args) const noexcept {
+        return func(args);
     }
 
-    operator const string() const {
+    inline operator const string() const noexcept {
         switch(type) {
         case value::Symbol:
         case value::String:
-            return str()();
+            return str;
         case value::Number: {
             ostringstream os;
-            os << num()();
+            os << num;
             return tuscany::str(os);
         }
         case value::Bool:
-            return boo()()? trueString : falseString;
+            return boo? trueString : falseString;
         default:
             return emptyString;
         }
     }
 
-    operator const double() const {
+    inline operator const double() const noexcept {
         switch(type) {
         case value::Symbol:
         case value::String:
-            return atof(c_str(str()()));
+            return atof(c_str(str));
         case value::Number:
-            return (double)num()();
+            return (double)num;
         case value::Bool:
-            return boo()()? 1.0 : 0.0;
+            return boo? 1.0 : 0.0;
         default:
             return 0.0;
         }
     }
 
-    operator const int() const {
+    inline operator const int() const noexcept {
         switch(type) {
         case value::Symbol:
         case value::String:
-            return atoi(c_str(str()()));
+            return atoi(c_str(str));
         case value::Number:
-            return (int)num()();
+            return (int)num;
         case value::Bool:
-            return boo()()? 1 : 0;
+            return boo? 1 : 0;
         default:
             return 0;
         }
     }
 
-    operator const bool() const {
+    inline operator const bool() const noexcept {
         switch(type) {
         case value::Symbol:
         case value::String:
-            return str()() == string("true");
+            return str == trueString;
         case value::Number:
-            return (int)num()() != 0;
+            return num != 0.0;
         case value::Bool:
-            return boo()();
+            return boo;
         default:
-            return 0;
+            return false;
         }
     }
 
-    operator const gc_ptr<value>() const {
-        return ptr()();
+    inline operator const gc_ptr<value>() const noexcept {
+        return ptr;
     }
 
-    operator const list<value>() const {
-        return lst()();
+    inline operator const list<value>() const noexcept {
+        return *lst;
     }
 
-    operator const list<list<value> >() const {
-        return listOfListOfValues(lst()());
+    inline operator const list<list<value> >() const noexcept {
+        return listOfListOfValues(*lst);
     }
 
-    operator const lambda<value(const list<value>&)>() const {
-        return func();
+    inline operator const lvvlambda() const noexcept {
+        return func;
     }
 
 private:
-     template<typename T> lambda<T>& vdata() const {
-        return *reinterpret_cast<lambda<T> *> (const_cast<lambda<char()> *> (&data));
-    }
-
-    template<typename T> const lambda<char()>& vdata(const T& v) const {
-        return *reinterpret_cast<const lambda<char()> *> (&v);
-    }
-
-    lambda<double()>& num() const {
-        return vdata<double()> ();
-    }
-
-    lambda<bool()>& boo() const {
-        return vdata<bool()> ();
-    }
-
-    lambda<gc_ptr<value>()>& ptr() const {
-        return vdata<gc_ptr<value>()> ();
-    }
-
-    lambda<string()>& str() const {
-        return vdata<string()> ();
-    }
-
-    lambda<list<value>()>& lst() const {
-        return vdata<list<value>()> ();
-    }
-
-    lambda<value(const list<value>&)>& func() const {
-        return vdata<value(const list<value>&)> ();
-    }
-
-    const list<value> listOfValues(const list<list<value> >& l) const {
+    inline const list<value> listOfValues(const list<list<value> >& l) const noexcept {
         if (isNil(l))
-            return list<value>();
+            return nilListValue;
         return cons<value>(car(l), listOfValues(cdr(l)));
     }
 
-    const list<list<value> > listOfListOfValues(const list<value>& l) const {
+    inline const list<list<value> > listOfListOfValues(const list<value>& l) const noexcept {
         if (isNil(l))
             return list<list<value> >();
-        return cons<list<value> >(list<value>(car(l)), listOfListOfValues(cdr(l)));
+        return cons<list<value> >(car(l).type == value::List? list<value>(car(l)) : nilPairValue, listOfListOfValues(cdr(l)));
     }
 
-    friend ostream& operator<<(ostream&, const value&);
-    friend const value::ValueType type(const value& v);
+    friend ostream& operator<<(ostream&, const value&) noexcept;
+    friend const value::ValueType type(const value& v) noexcept;
+    friend const bool setvalue(value& target, const value& v);
 
 #ifdef WANT_MAINTAINER_WATCH
     friend const string watchValue(const value& v);
     string watch;
 #endif
 
-    ValueType type;
-     lambda<char()> data;
+    const ValueType type;
+    union {
+        void* mix;
+        const gc_ptr<list<value> > lst;
+        const string str;
+        const lvvlambda func;
+        const gc_ptr<value> ptr;
+        const double num;
+        const bool boo;
+    };
 };
+
+/**
+ * Common value constants.
+ */
+const value nilValue;
+const list<value> nilListValue = list<value>();
+const list<value> nilPairValue = mklist<value>(nilValue, nilValue);
+const value emptyStringValue(emptyString);
+const value trueValue(true);
+const value falseValue(false);
 
 #ifdef WANT_MAINTAINER_WATCH
 
@@ -440,7 +424,7 @@ private:
  * Debug utility used to write the contents of a value to a string, easier
  * to watch than the value itself in a debugger.
  */
-const string watchValue(const value& v) {
+inline const string watchValue(const value& v) {
     if (v.type == value::List)
         return watchList<value>(v);
     odebugstream os;
@@ -453,7 +437,7 @@ const string watchValue(const value& v) {
 /**
  * Write an escape string to a buffer.
  */
-const char* escapestr(const char* s, char* buf) {
+inline const char* escapestr(const char* const s, char* const buf) noexcept {
     if (*s == '\0') {
         *buf = '\0';
         return buf;
@@ -470,7 +454,7 @@ const char* escapestr(const char* s, char* buf) {
 /**
  * Write an escaped string value to a stream.
  */
-ostream& escvwrite(const string& str, ostream& out) {
+inline ostream& escvwrite(const string& str, ostream& out) noexcept {
     char* buf = gc_cnew(length(str) * 2 + 1);
     escapestr(c_str(str), buf);
     out << buf;
@@ -480,30 +464,29 @@ ostream& escvwrite(const string& str, ostream& out) {
 /**
  * Write a value to a stream.
  */
-ostream& operator<<(ostream& out, const value& v) {
+inline ostream& operator<<(ostream& out, const value& v) noexcept {
     switch(v.type) {
     case value::List:
-        return out << v.lst()();
+        return out << *v.lst;
     case value::Lambda:
-        return out << "lambda::" << v.func();
+        return out << "lambda::" << v.func;
     case value::Symbol:
-        return out << v.str()();
+        return out << v.str;
     case value::String:
         out << '\"';
-        escvwrite(v.str()(), out);
+        escvwrite(v.str, out);
         return out << '\"';
     case value::Number:
-        return out << v.num()();
+        return out << v.num;
     case value::Bool:
-        if(v.boo()())
-            return out << "true";
+        if(v.boo)
+            return out << trueString;
         else
-            return out << "false";
+            return out << falseString;
     case value::Ptr: {
-        const gc_ptr<value> p =  v.ptr()();
-        if (p == gc_ptr<value>(NULL))
+        if (v.ptr == gc_ptr<value>(NULL))
             return out << "gc_ptr::null";
-        return out << "gc_ptr::" << p;
+        return out << "gc_ptr::" << v.ptr;
     }
     default:
         return out << "nil";
@@ -513,70 +496,70 @@ ostream& operator<<(ostream& out, const value& v) {
 /**
  * Returns the type of a value.
  */
-const value::ValueType type(const value& v) {
+inline const value::ValueType type(const value& v) noexcept {
     return v.type;
 }
 
 /**
  * Returns true if a value is nil.
  */
-const bool isNil(const value& v) {
+inline const bool isNil(const value& v) noexcept {
     return type(v) == value::Nil;
 }
 
 /**
  * Returns true if a value is a lambda.
  */
-const bool isLambda(const value& v) {
+inline const bool isLambda(const value& v) noexcept {
     return type(v) == value::Lambda;
 }
 
 /**
  * Returns true if a value is a string.
  */
-const bool isString(const value& v) {
+inline const bool isString(const value& v) noexcept {
     return type(v) == value::String;
 }
 
 /**
  * Returns true if a value is a symbol.
  */
-const bool isSymbol(const value& v) {
+inline const bool isSymbol(const value& v) noexcept {
     return type(v) == value::Symbol;
 }
 
 /**
  * Returns true if a value is a list.
  */
-const bool isList(const value& v) {
+inline const bool isList(const value& v) noexcept {
     return type(v) == value::List;
 }
 
 /**
  * Returns true if a value is a number.
  */
-const bool isNumber(const value& v) {
+inline const bool isNumber(const value& v) noexcept {
     return type(v) == value::Number;
 }
 
 /**
  * Returns true if a value is a boolean.
  */
-const bool isBool(const value& v) {
+inline const bool isBool(const value& v) noexcept {
     return type(v) == value::Bool;
 }
 
 /**
  * Returns true if a value is a pointer.
  */
-const bool isPtr(const value& v) {
+inline const bool isPtr(const value& v) noexcept {
     return type(v) == value::Ptr;
 }
 
 /**
  * Returns true if a value is a tagged list.
  */
-const bool isTaggedList(const value& exp, value tag) {
+inline const bool isTaggedList(const value& exp, const value& tag) noexcept {
     if(isList(exp) && !isNil((list<value>)exp))
         return car((list<value>)exp) == tag;
     return false;
@@ -585,16 +568,16 @@ const bool isTaggedList(const value& exp, value tag) {
 /**
  * Make a list of values from a list of other things.
  */
-template<typename T> const list<value> mkvalues(const list<T>& l) {
+template<typename T> inline const list<value> mkvalues(const list<T>& l) noexcept {
     if (isNil(l))
-        return list<value>();
+        return nilListValue;
     return cons<value>(car(l), mkvalues(cdr(l)));
 }
 
 /**
  * Convert a list of values to a list of other things.
  */
-template<typename T> const list<T> convertValues(const list<value>& l) {
+template<typename T> inline const list<T> convertValues(const list<value>& l) noexcept {
     if (isNil(l))
         return list<T>();
     return cons<T>(car(l), convertValues<T>(cdr(l)));
@@ -603,7 +586,7 @@ template<typename T> const list<T> convertValues(const list<value>& l) {
 /**
  * Convert a path string value to a list of values.
  */
-const list<string> pathTokens(const char* p) {
+inline const list<string> pathTokens(const char* const p) noexcept {
     if (p == NULL || p[0] == '\0')
         return list<string>();
     if (p[0] == '/')
@@ -611,23 +594,23 @@ const list<string> pathTokens(const char* p) {
     return tokenize("/", p);
 }
 
-const list<value> pathValues(const value& p) {
+inline const list<value> pathValues(const value& p) noexcept {
     return mkvalues(pathTokens(c_str(p)));
 }
 
 /**
  * Convert a path represented as a list of values to a string value.
  */
-const value path(const list<value>& p) {
+inline const value path(const list<value>& p) noexcept {
     if (isNil(p))
-        return "";
-    return string("/") + car(p) + path(cdr(p));
+        return emptyString;
+    return string("/") + (string)car(p) + (string)path(cdr(p));
 }
 
 /**
  * Make a uuid value.
  */
-const value mkuuid() {
+inline const value mkuuid() noexcept {
     apr_uuid_t id;
     apr_uuid_get(&id);
     char buf[APR_UUID_FORMATTED_LENGTH];
@@ -638,18 +621,32 @@ const value mkuuid() {
 /**
  * Make a random alphanumeric value.
  */
-const int intrand() {
+inline const int intrand() noexcept {
     const apr_uint64_t now = apr_time_now();
     srand((unsigned int)(((now >> 32) ^ now) & 0xffffffff));
     return rand() & 0x0FFFF;
 }       
 
-const value mkrand() {
+inline const value mkrand() noexcept {
     char buf[32];
-    const char* an = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const char* const an = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     for (int i =0; i < 32; i++)
         buf[i] = an[intrand() % 62];
     return value(string(buf, 32));
+}
+
+/**
+ * Set a value. Use with moderation.
+ */
+inline const bool setvalue(value& target, const value& v) {
+    if (&target == &v)
+        return true;
+#ifdef WANT_MAINTAINER_WATCH
+    memcpy(&target.watch, &v.watch, sizeof(string));
+#endif
+    memcpy((void*)&target.type, (void*)&v.type, sizeof(value::ValueType));
+    memcpy((void*)&target.mix, (void*)&v.mix, sizeof(value::ValueMix));
+    return true;
 }
 
 }

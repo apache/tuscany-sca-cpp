@@ -37,78 +37,78 @@ ostream* writer(const string& s, ostream* os) {
 }
 
 const string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<item>\n"
-        " <title>fruit</title>\n"
-        " <link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>\n"
-        " <description>\n"
-        "  <item>\n"
-        "   <name>Apple</name>\n"
-        "   <price>$2.99</price>\n"
-        "  </item>\n"
-        " </description>\n"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
+        "<description>"
+        "<item>"
+        "<name>Apple</name>"
+        "<price>$2.99</price>"
+        "</item>"
+        "</description>"
         "</item>\n");
 
 const string itemTextEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<item>\n"
-        " <title>fruit</title>\n"
-        " <link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>\n"
-        " <description>Apple</description>\n"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
+        "<description>Apple</description>"
         "</item>\n");
 
 const string itemNoDescriptionEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<item>\n"
-        " <title>fruit</title>\n"
-        " <link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>\n"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
         "</item>\n");
 
 const string incompleteEntry("<item>\n"
-        " <title>fruit</title>\n"
-        " <description>\n"
-        "  <Item xmlns=\"http://services/\">\n"
-        "   <name xmlns=\"\">Orange</name>\n"
-        "   <price xmlns=\"\">3.55</price>\n"
-        "  </Item>\n"
-        " </description>\n"
+        "<title>fruit</title>"
+        "<description>"
+        "<Item xmlns=\"http://services/\">"
+        "<name xmlns=\"\">Orange</name>"
+        "<price xmlns=\"\">3.55</price>"
+        "</Item>"
+        "</description>"
         "</item>");
 
 const string completedEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<item>\n"
-        " <title>fruit</title>\n"
-        " <link></link>\n"
-        " <description>\n"
-        "  <Item xmlns=\"http://services/\">\n"
-        "   <name xmlns=\"\">Orange</name>\n"
-        "   <price xmlns=\"\">3.55</price>\n"
-        "  </Item>\n"
-        " </description>\n"
+        "<item>"
+        "<title>fruit</title>"
+        "<link></link>"
+        "<description>"
+        "<Item xmlns=\"http://services/\">"
+        "<name xmlns=\"\">Orange</name>"
+        "<price xmlns=\"\">3.55</price>"
+        "</Item>"
+        "</description>"
         "</item>\n");
 
-bool testEntry() {
+const bool testEntry() {
     {
-        const list<value> i = list<value>() + element + value("item")
-                + value(list<value>() + element + value("name") + value(string("Apple")))
-                + value(list<value>() + element + value("price") + value(string("$2.99")));
-        const list<value> a = list<value>() + (list<value>() + element + value("entry")
-                + value(list<value>() + element + value("title") + value(string("fruit")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
-                + value(list<value>() + element + value("content") + value(i)));
+        const list<value> i = nilListValue + element + value("item")
+                + value(nilListValue + element + value("name") + value(string("Apple")))
+                + value(nilListValue + element + value("price") + value(string("$2.99")));
+        const list<value> a = nilListValue + (nilListValue + element + value("entry")
+                + value(nilListValue + element + value("title") + value(string("fruit")))
+                + value(nilListValue + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(nilListValue + element + value("content") + value(i)));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemEntry);
     }
     {
-        const list<value> a = list<value>() + (list<value>() + element + value("entry")
-                + value(list<value>() + element + value("title") + value(string("fruit")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
-                + value(list<value>() + element + value("content") + value(string("Apple"))));
+        const list<value> a = nilListValue + (nilListValue + element + value("entry")
+                + value(nilListValue + element + value("title") + value(string("fruit")))
+                + value(nilListValue + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(nilListValue + element + value("content") + value(string("Apple"))));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemTextEntry);
     }
     {
-        const list<value> a = list<value>() + (list<value>() + element + value("entry")
-                + value(list<value>() + element + value("title") + value(string("fruit")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))));
+        const list<value> a = nilListValue + (nilListValue + element + value("entry")
+                + value(nilListValue + element + value("title") + value(string("fruit")))
+                + value(nilListValue + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemNoDescriptionEntry);
@@ -141,48 +141,48 @@ bool testEntry() {
 }
 
 const string emptyFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<rss version=\"2.0\">\n"
-        " <channel>\n"
-        "  <title>Feed</title>\n"
-        "  <link>1234</link>\n"
-        "  <description>Feed</description>\n"
-        " </channel>\n"
+        "<rss version=\"2.0\">"
+        "<channel>"
+        "<title>Feed</title>"
+        "<link>1234</link>"
+        "<description>Feed</description>"
+        "</channel>"
         "</rss>\n");
 
 const string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<rss version=\"2.0\">\n"
-        " <channel>\n"
-        "  <title>Feed</title>\n"
-        "  <link>1234</link>\n"
-        "  <description>Feed</description>\n"
-        "  <item>\n"
-        "   <title>fruit</title>\n"
-        "   <link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>\n"
-        "   <description>\n"
-        "    <item>\n"
-        "     <name>Apple</name>\n"
-        "     <price>$2.99</price>\n"
-        "    </item>\n"
-        "   </description>\n"
-        "  </item>\n"
-        "  <item>\n"
-        "   <title>fruit</title>\n"
-        "   <link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c</link>\n"
-        "   <description>\n"
-        "    <item>\n"
-        "     <name>Orange</name>\n"
-        "     <price>$3.55</price>\n"
-        "    </item>\n"
-        "   </description>\n"
-        "  </item>\n"
-        " </channel>\n"
+        "<rss version=\"2.0\">"
+        "<channel>"
+        "<title>Feed</title>"
+        "<link>1234</link>"
+        "<description>Feed</description>"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
+        "<description>"
+        "<item>"
+        "<name>Apple</name>"
+        "<price>$2.99</price>"
+        "</item>"
+        "</description>"
+        "</item>"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c</link>"
+        "<description>"
+        "<item>"
+        "<name>Orange</name>"
+        "<price>$3.55</price>"
+        "</item>"
+        "</description>"
+        "</item>"
+        "</channel>"
         "</rss>\n");
 
-bool testFeed() {
+const bool testFeed() {
     {
-        const list<value> a = list<value>() + (list<value>() + element + value("feed")
-                + value(list<value>() + element + value("title") + value(string("Feed")))
-                + value(list<value>() + element + value("id") + value(string("1234"))));
+        const list<value> a = nilListValue + (nilListValue + element + value("feed")
+                + value(nilListValue + element + value("title") + value(string("Feed")))
+                + value(nilListValue + element + value("id") + value(string("1234"))));
         ostringstream os;
         writeRSSFeed<ostream*>(writer, &os, a);
         assert(str(os) == emptyFeed);
@@ -194,27 +194,27 @@ bool testFeed() {
         assert(str(os) == emptyFeed);
     }
     {
-        const list<value> i1 = list<value>() + element + "item"
-                        + (list<value>() + element + "name" + "Apple")
-                        + (list<value>() + element + "price" + "$2.99");
+        const list<value> i1 = nilListValue + element + "item"
+                        + (nilListValue + element + "name" + "Apple")
+                        + (nilListValue + element + "price" + "$2.99");
 
-        const list<value> i2 = list<value>() + element + "item"
-                        + (list<value>() + element + "name" + "Orange")
-                        + (list<value>() + element + "price" + "$3.55");
+        const list<value> i2 = nilListValue + element + "item"
+                        + (nilListValue + element + "name" + "Orange")
+                        + (nilListValue + element + "price" + "$3.55");
 
-        const list<value> i = list<value>()
-            + value(list<value>() + element + value("entry")
-                + value(list<value>() + element + value("title") + value(string("fruit")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
-                + value(list<value>() + element + value("content") + value(i1)))
-            + value(list<value>() + element + value("entry")
-                + value(list<value>() + element + value("title") + value(string("fruit")))
-                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c")))
-                + value(list<value>() + element + value("content") + value(i2)));
+        const list<value> i = nilListValue
+            + value(nilListValue + element + value("entry")
+                + value(nilListValue + element + value("title") + value(string("fruit")))
+                + value(nilListValue + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(nilListValue + element + value("content") + value(i1)))
+            + value(nilListValue + element + value("entry")
+                + value(nilListValue + element + value("title") + value(string("fruit")))
+                + value(nilListValue + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c")))
+                + value(nilListValue + element + value("content") + value(i2)));
         
-        const list<value> a = list<value>() + (append<value>(list<value>() + element + value("feed")
-                + value(list<value>() + element + value("title") + value(string("Feed")))
-                + value(list<value>() + element + value("id") + value("1234")),
+        const list<value> a = nilListValue + (append<value>(nilListValue + element + value("feed")
+                + value(nilListValue + element + value("title") + value(string("Feed")))
+                + value(nilListValue + element + value("id") + value("1234")),
                 i));
 
         ostringstream os;
@@ -240,7 +240,7 @@ bool testFeed() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::rss::testEntry();

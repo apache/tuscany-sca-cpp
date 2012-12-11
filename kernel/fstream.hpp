@@ -69,24 +69,18 @@ namespace tuscany {
  */
 class ofstream : public ostream {
 public:
-    ofstream(const string& path) : file(fopen(c_str(path), "wb")), owner(true) {
+    inline ofstream(const string& path) : file(fopen(c_str(path), "wb")), owner(true) {
     }
 
-    ofstream(FILE* file) : file(file), owner(false) {
+    inline ofstream(FILE* const file) : file(file), owner(false) {
     }
 
-    ofstream(const ofstream& os) : file(os.file), owner(false) {
+    inline ofstream(const ofstream& os) : file(os.file), owner(false) {
     }
 
-    const ofstream& operator=(const ofstream& os) {
-        if(this == &os)
-            return *this;
-        file = os.file;
-        owner = false;
-        return *this;
-    }
+    ofstream& operator=(const ofstream& os) = delete;
 
-    ~ofstream() {
+    inline ~ofstream() {
         if (!owner)
             return;
         if (file == NULL)
@@ -94,11 +88,11 @@ public:
         fclose(file);
     }
 
-    const bool fail() {
+    inline const bool fail() {
         return file == NULL;
     }
 
-    ofstream& vprintf(const char* fmt, ...) {
+    inline ofstream& vprintf(const char* const fmt, ...) {
         va_list args;
         va_start (args, fmt);
         vfprintf (file, fmt, args);
@@ -106,19 +100,24 @@ public:
         return *this;
     }
 
-    ofstream& write(const string& s) {
+    inline ofstream& write(const string& s) {
         fwrite(c_str(s), 1, length(s), file);
         return *this;
     }
 
-    ofstream& flush() {
+    inline ofstream& write(const char c) {
+        fwrite(&c, 1, 1, file);
+        return *this;
+    }
+
+    inline ofstream& flush() {
         fflush(file);
         return *this;
     }
 
 private:
-    FILE* file;
-    bool owner;
+    FILE* const file;
+    const bool owner;
 };
 
 /*
@@ -126,24 +125,18 @@ private:
  */
 class ifstream : public istream {
 public:
-    ifstream(const string& path) : file(fopen(c_str(path), "rb")), owner(true) {
+    inline ifstream(const string& path) : file(fopen(c_str(path), "rb")), owner(true) {
     }
 
-    ifstream(FILE* file) : file(file), owner(false) {
+    inline ifstream(FILE* const file) : file(file), owner(false) {
     }
 
-    ifstream(const ifstream& is) : file(is.file), owner(false) {
+    inline ifstream(const ifstream& is) : file(is.file), owner(false) {
     }
 
-    const ifstream& operator=(const ifstream& is) {
-        if(this == &is)
-            return *this;
-        file = is.file;
-        owner = false;
-        return *this;
-    }
+    ifstream& operator=(const ifstream& is) = delete;
 
-    ~ifstream() {
+    inline ~ifstream() {
         if (!owner)
             return;
         if (file == NULL)
@@ -151,23 +144,23 @@ public:
         fclose(file);
     }
 
-    const size_t read(void* buf, size_t size) {
+    inline const size_t read(void* const buf, const size_t size) {
         return fread(buf, 1, size, file);
     }
 
-    const bool eof() {
+    inline const bool eof() {
         return feof(file);
     }
 
-    const bool fail() {
+    inline const bool fail() {
         return file == NULL;
     }
 
-    const int get() {
+    inline const int get() {
         return fgetc(file);
     }
 
-    const int peek() {
+    inline const int peek() {
         int c = fgetc(file);
         if (c == -1)
             return c;
@@ -176,8 +169,8 @@ public:
     }
 
 private:
-    FILE* file;
-    bool owner;
+    FILE* const file;
+    const bool owner;
 };
 
 /**
@@ -198,24 +191,24 @@ ifstream cin(stdin);
  */
 class loghstream : public ostream {
 public:
-    loghstream(const int level) : level(level), len(0) {
+    inline loghstream(const int level) : level(level), len(0) {
     }
 
-    ~loghstream() {
+    inline ~loghstream() {
     }
 
-    ostream& vprintf(const char* fmt, ...) {
+    inline ostream& vprintf(const char* const fmt, ...) {
         va_list args;
-        va_start (args, fmt);
+        va_start(args, fmt);
         const int l = vsnprintf(buf + len, (sizeof(buf) - 1) - len, fmt, args);
-        va_end (args);
+        va_end(args);
         len += l;
         if (len > (int)(sizeof(buf) - 1))
             len = sizeof(buf) - 1;
         return *this;
     }
 
-    ostream& write(const string& s) {
+    inline ostream& write(const string& s) {
         if (s != "\n")
             return this->vprintf("%s", c_str(s));
         buf[len] = '\0';
@@ -224,14 +217,23 @@ public:
         return *this;
     }
 
-    ostream& flush() {
+    inline ostream& write(const char c) {
+        if (c != '\n')
+            return this->vprintf("%c", c);
+        buf[len] = '\0';
+        ap_log_error(NULL, 0, -1, level, 0, ap_server_conf, "%s", buf);
+        len = 0;
+        return *this;
+    }
+
+    inline ostream& flush() {
         return *this;
     }
 
 private:
     const int level;
     int len;
-    char buf[2049];
+    char buf[513];
 };
 
 /**
@@ -259,11 +261,11 @@ loghstream cdebug(APLOG_DEBUG);
 /**
  * Format the current time.
  */
-const string logTime() {
+inline const string logTime() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     const time_t t = tv.tv_sec;
-    const tm* lt = localtime(&t);
+    const tm* const lt = localtime(&t);
     char ft[32];
     strftime(ft, 20, "%a %b %d %H:%M:%S", lt);
     sprintf(ft + 19, ".%06lu ", (unsigned long)tv.tv_usec);
@@ -276,16 +278,16 @@ const string logTime() {
  */
 class logfstream : public ostream {
 public:
-    logfstream(FILE* file, const string& type) : file(file), type(type), head(false) {
+    inline logfstream(FILE* const file, const string& type) : file(file), type(type), head(false) {
     }
 
-    logfstream(const logfstream& os) : file(os.file), type(os.type), head(os.head) {
+    inline logfstream(const logfstream& os) : file(os.file), type(os.type), head(os.head) {
     }
 
-    ~logfstream() {
+    inline ~logfstream() {
     }
 
-    ostream& vprintf(const char* fmt, ...) {
+    inline ostream& vprintf(const char* const fmt, ...) {
         whead();
         va_list args;
         va_start (args, fmt);
@@ -294,7 +296,7 @@ public:
         return *this;
     }
 
-    ostream& write(const string& s) {
+    inline ostream& write(const string& s) {
         whead();
         fwrite(c_str(s), 1, length(s), file);
         if (s == "\n")
@@ -302,17 +304,25 @@ public:
         return *this;
     }
 
-    ostream& flush() {
+    inline ostream& write(const char c) {
+        whead();
+        fwrite(&c, 1, 1, file);
+        if (c == '\n')
+            head = false;
+        return *this;
+    }
+
+    inline ostream& flush() {
         fflush(file);
         return *this;
     }
 
 private:
-    FILE* file;
+    FILE* const file;
     const string type;
     bool head;
 
-    const unsigned long tid() const {
+    inline const unsigned long tid() const {
 #ifdef WANT_THREADS
         return (unsigned long)pthread_self();
 #else
@@ -320,7 +330,7 @@ private:
 #endif
     }
 
-    ostream& whead() {
+    inline ostream& whead() {
         if (head)
             return *this;
         head = true;
@@ -348,7 +358,7 @@ logfstream cdebug(stderr, "debug");
 bool debug_isLoggingSet = false;
 bool debug_isLoggingEnv = false;
 
-const bool debug_isLogging() {
+inline const bool debug_isLogging() {
     if (debug_isLoggingSet)
         return debug_isLoggingEnv;
     debug_isLoggingEnv = getenv("TUSCANY_DEBUG_LOG") != NULL;
@@ -366,8 +376,8 @@ const bool debug_isLogging() {
 /**
  * Log a debug message.
  */
-const bool debugLog(const string& msg) {
-    gc_scoped_pool p;
+inline const bool debugLog(const string& msg) {
+    const gc_scoped_pool p;
     cdebug << msg << endl;
     return true;
 }
@@ -375,8 +385,8 @@ const bool debugLog(const string& msg) {
 /**
  * Log a debug message and a value.
  */
-template<typename V> const bool debugLog(const V& v, const string& msg) {
-    gc_scoped_pool p;
+template<typename V> inline const bool debugLog(const V& v, const string& msg) {
+    const gc_scoped_pool p;
     cdebug << msg << ": " << v << endl;
     return true;
 }
@@ -384,8 +394,8 @@ template<typename V> const bool debugLog(const V& v, const string& msg) {
 /**
  * Log a debug message and two values.
  */
-template<typename V, typename W> const bool debugLog(const V& v, const W& w, const string& msg) {
-    gc_scoped_pool p;
+template<typename V, typename W> inline const bool debugLog(const V& v, const W& w, const string& msg) {
+    const gc_scoped_pool p;
     cdebug << msg << ": " << v << " : " << w << endl;
     return true;
 }

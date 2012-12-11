@@ -31,9 +31,9 @@
 namespace tuscany {
 namespace scheme {
 
-int elementValue() {
-    const value v = elementsToValues(readValue(cin));
-    cout << writeValue(v);
+const int elementValue() {
+    const value v = elementsToValues(content(readValue(cin)));
+    write(content(writeValue(v)), cout);
     return 0;
 }
 

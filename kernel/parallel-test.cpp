@@ -35,84 +35,58 @@ namespace tuscany {
 
 int inci = 0;
 
-struct incPerf {
-    incPerf() {
-    }
-    const bool operator()() const {
-        inci = inci + 1;
-        return true;
-    }
-};
-
 const gc_ptr<int> tlsic() {
-    gc_ptr<int> i = new (gc_new<int>()) int();
+    const gc_ptr<int> i = new (gc_new<int>()) int();
     *i = 0;
     return i;
 }
 const perthread_ptr<int> tlsi(tlsic);
 
-struct tlsPerf {
-    tlsPerf() {
-    }
-    const bool operator()() const {
-        *tlsi = *tlsi + 1;
-        return true;
-    }
-};
-
 #ifdef WANT_THREADS
 
 int addi = 0;
-
-struct addAndFetchPerf {
-    addAndFetchPerf() {
-    }
-    const bool operator()() const {
-        __sync_add_and_fetch(&addi, 1);
-        return true;
-    }
-};
-
 int muxi = 0;
-
-struct mutexPerf {
-    pthread_mutex_t* mutex;
-    mutexPerf(pthread_mutex_t* mutex) : mutex(mutex) {
-    }
-    const bool operator()() const {
-        pthread_mutex_lock(mutex);
-        muxi = muxi + 1;
-        pthread_mutex_unlock(mutex);
-        return true;
-    }
-};
 
 #endif
 
-bool testAtomicPerf() {
+const bool testAtomicPerf() {
     const int count = 100000;
     {
-        const lambda<bool()> l = incPerf();
+        const blambda l = []() -> const bool {
+            inci = inci + 1;
+            return true;
+        };
         cout << "Non-atomic inc test " << time(l, 1000, count) << " ms" << endl;
         assert(inci == count + 1000);
     }
 #ifdef WANT_THREADS
     {
-        const lambda<bool()> l = addAndFetchPerf();
+        const blambda l = []() -> const bool {
+            __sync_add_and_fetch(&addi, 1);
+            return true;
+        };
         cout << "Atomic inc test " << time(l, 1000, count) << " ms" << endl;
         assert(addi == count + 1000);
     }
     {
         pthread_mutex_t mutex;
         pthread_mutex_init(&mutex, NULL);
-        const lambda<bool()> l = mutexPerf(&mutex);
+        const blambda l = [&mutex]() -> const bool {
+            pthread_mutex_lock(&mutex);
+            muxi = muxi + 1;
+            pthread_mutex_unlock(&mutex);
+            return true;
+        };
         cout << "Locked inc test " << time(l, 1000, count) << " ms" << endl;
         assert(muxi == count + 1000);
         pthread_mutex_destroy(&mutex);
     }
 #endif
     {
-        const lambda<bool()> l = tlsPerf();
+        const blambda l = []() -> const bool {
+            *tlsi = *tlsi + 1;
+            return true;
+        };
         cout << "Thread local inc test " << time(l, 1000, count) << " ms" << endl;
         assert(*tlsi == count + 1000);
     }
@@ -130,7 +104,7 @@ const int mtsquare(const int x) {
 const list<future<int> > submitSquares(worker& w, const int max, const int i) {
     if (i == max)
         return list<future<int> >();
-    const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), i);
+    const lambda<const int()> func = curry(lambda<const int(const int)> (mtsquare), i);
     return cons(submit(w, func), submitSquares(w, max, i + 1));
 }
 
@@ -143,7 +117,7 @@ bool checkSquareResults(const list<future<int> > r, int i) {
 }
 
 const gc_ptr<unsigned long> tlsvc() {
-    gc_ptr<unsigned long> i = new (gc_new<unsigned long>()) unsigned long();
+    const gc_ptr<unsigned long> i = new (gc_new<unsigned long>()) unsigned long();
     *i = 0l;
     return i;
 }
@@ -181,11 +155,11 @@ const bool unblockWorkers(wqueue<bool>& wq, const int n) {
 const list<future<long int> > submitTLSSets(worker& w, wqueue<bool>& wq, wqueue<bool>& xq, const int max, const int i) {
     if (i == max)
         return list<future<long int> >();
-    const lambda<long int()> func = curry(lambda<long int(gc_ptr<wqueue<bool>>, gc_ptr<wqueue<bool>>)>(tlsset), (gc_ptr<wqueue<bool>>)&wq, (gc_ptr<wqueue<bool>>)&xq);
+    const lambda<const long int()> func = curry(lambda<const long int(gc_ptr<wqueue<bool>>, gc_ptr<wqueue<bool>>)>(tlsset), (gc_ptr<wqueue<bool>>)&wq, (gc_ptr<wqueue<bool>>)&xq);
     return cons(submit(w, func), submitTLSSets(w, wq, xq, max, i + 1));
 }
 
-bool checkTLSSets(const list<future<long int> > s) {
+const bool checkTLSSets(const list<future<long int> > s) {
     if (isNil(s))
         return true;
     assert(car(s) == 0);
@@ -195,22 +169,22 @@ bool checkTLSSets(const list<future<long int> > s) {
 const list<future<bool> > submitTLSChecks(worker& w, wqueue<bool>& wq, wqueue<bool>& xq, const int max, const int i) {
     if (i == max)
         return list<future<bool> >();
-    const lambda<bool()> func = curry(lambda<bool(gc_ptr<wqueue<bool>>, gc_ptr<wqueue<bool>>)>(tlscheck), (gc_ptr<wqueue<bool>>)&wq, (gc_ptr<wqueue<bool>>)&xq);
+    const blambda func = curry(lambda<const bool(gc_ptr<wqueue<bool>>, gc_ptr<wqueue<bool>>)>(tlscheck), (gc_ptr<wqueue<bool>>)&wq, (gc_ptr<wqueue<bool>>)&xq);
     return cons(submit(w, func), submitTLSChecks(w, wq, xq, max, i + 1));
 }
 
-bool checkTLSResults(const list<future<bool> > r) {
+const bool checkTLSResults(const list<future<bool> > r) {
     if (isNil(r))
         return true;
     assert(car(r) == true);
     return checkTLSResults(cdr(r));
 }
 
-bool testWorker() {
+const bool testWorker() {
     const int max = 100;
     worker w(max);
     {
-        const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), 2);
+        const lambda<const int()> func = curry(lambda<const int(const int)> (mtsquare), 2);
         assert(submit(w, func) == 4);
     }
     {
@@ -245,7 +219,7 @@ bool testWorker() {
 }
 
 int main() {
-    tuscany::gc_scoped_pool p;
+    const tuscany::gc_scoped_pool p;
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testAtomicPerf();

@@ -42,7 +42,7 @@ const string atsign("@");
 /**
  * Returns true if a value is an element.
  */
-bool isElement(const value& v) {
+inline const bool isElement(const value& v) {
     if (!isList(v) || isNil(v) || element != car<value>(v))
         return false;
     return true;
@@ -51,7 +51,7 @@ bool isElement(const value& v) {
 /**
  * Returns true if a value is an attribute.
  */
-bool isAttribute(const value& v) {
+inline const bool isAttribute(const value& v) {
     if (!isList(v) || isNil(v) || attribute != car<value>(v))
         return false;
     return true;
@@ -60,42 +60,42 @@ bool isAttribute(const value& v) {
 /**
  * Returns the name of an attribute.
  */
-const value attributeName(const list<value>& l) {
+inline const value attributeName(const list<value>& l) {
     return cadr(l);
 }
 
 /**
  * Returns the value of an attribute.
  */
-const value attributeValue(const list<value>& l) {
+inline const value attributeValue(const list<value>& l) {
     return caddr(l);
 }
 
 /**
  * Returns the name of an element.
  */
-const value elementName(const list<value>& l) {
+inline const value elementName(const list<value>& l) {
     return cadr(l);
 }
 
 /**
  * Returns true if an element has children.
  */
-const bool elementHasChildren(const list<value>& l) {
+inline const bool elementHasChildren(const list<value>& l) {
     return !isNil(cddr(l));
 }
 
 /**
  * Returns the children of an element.
  */
-const list<value> elementChildren(const list<value>& l) {
+inline const list<value> elementChildren(const list<value>& l) {
     return cddr(l);
 }
 
 /**
  * Returns true if an element has a value.
  */
-const bool elementHasValue(const list<value>& l) {
+inline const bool elementHasValue(const list<value>& l) {
     const list<value> r = reverse(l);
     if (isSymbol(car(r)))
         return false;
@@ -107,26 +107,26 @@ const bool elementHasValue(const list<value>& l) {
 /**
  * Returns the value of an element.
  */
-const value elementValue(const list<value>& l) {
+inline const value elementValue(const list<value>& l) {
     return car(reverse(l));
 }
 
 /**
  * Convert an element to a value.
  */
-const bool elementToValueIsList(const value& v) {
+inline const bool elementToValueIsList(const value& v) {
     if (!isList(v))
         return false;
     const list<value> l = v;
     return (isNil(l) || !isSymbol(car(l)));
 }
 
-const value elementToValue(const value& t) {
+inline const value elementToValue(const value& t) {
     const list<value> elementsToValues(const list<value>& e);
 
     // Convert an attribute
     if (isTaggedList(t, attribute))
-        return mklist<value>(c_str(atsign + attributeName(t)), attributeValue(t));
+        return mklist<value>(c_str(atsign + (string)attributeName(t)), attributeValue(t));
 
     // Convert an element
     if (isTaggedList(t, element)) {
@@ -155,7 +155,7 @@ const value elementToValue(const value& t) {
 /**
  * Convert a list of elements to a list of values.
  */
-const bool elementToValueIsSymbol(const value& v) {
+inline const bool elementToValueIsSymbol(const value& v) {
     if (!isList(v))
         return false;
     const list<value> l = v;
@@ -166,7 +166,7 @@ const bool elementToValueIsSymbol(const value& v) {
     return true;
 }
 
-const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
+inline const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
     if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
         return cons(v, l);
     if (car<value>(car(l)) != car<value>(v))
@@ -180,7 +180,7 @@ const list<value> elementToValueGroupValues(const value& v, const list<value>& l
 
 }
 
-const list<value> elementsToValues(const list<value>& e) {
+inline const list<value> elementsToValues(const list<value>& e) {
     if (isNil(e))
         return e;
     return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)));
@@ -189,13 +189,13 @@ const list<value> elementsToValues(const list<value>& e) {
 /**
  * Convert a value to an element.
  */
-const value valueToElement(const value& t) {
+inline const value valueToElement(const value& t) {
     const list<value> valuesToElements(const list<value>& l);
 
     // Convert a name value pair
     if (isList(t) && !isNil((list<value>)t) && isSymbol(car<value>(t))) {
         const value n = car<value>(t);
-        const value v = isNil(cdr<value>(t))? value() : cadr<value>(t);
+        const value v = isNil(cdr<value>(t))? nilValue : cadr<value>(t);
 
         // Convert a single value to an attribute or an element
         if (!isList(v)) {
@@ -221,7 +221,7 @@ const value valueToElement(const value& t) {
 /**
  * Convert a list of values to a list of elements.
  */
-const list<value> valuesToElements(const list<value>& l) {
+inline const list<value> valuesToElements(const list<value>& l) {
     if (isNil(l))
         return l;
     return cons<value>(valueToElement(car(l)), valuesToElements(cdr(l)));
@@ -231,72 +231,51 @@ const list<value> valuesToElements(const list<value>& l) {
  * Returns a selector lambda function which can be used to filter
  * elements against the given element pattern.
  */
-struct selectorLambda {
-    const list<value> select;
-    selectorLambda(const list<value>& s) : select(s) {
-    }
-    const bool evalSelect(const list<value>& s, const list<value> v) const {
-        if (isNil(s))
-            return true;
-        if (isNil(v))
-            return false;
-        if (car(s) != car(v))
-            return false;
-        return evalSelect(cdr(s), cdr(v));
-    }
-    const bool operator()(const value& v) const {
+inline const lambda<const bool(const value&)> selector(const list<value>& select) {
+    return [select](const value& v) -> const bool {
+        const lambda<const bool(const list<value>&, const list<value>&)> evalSelect = [&evalSelect](const list<value>& s, const list<value>& v) -> const bool {
+            if (isNil(s))
+                return true;
+            if (isNil(v))
+                return false;
+            if (car(s) != car(v))
+                return false;
+            return evalSelect(cdr(s), cdr(v));
+        };
         if (!isList(v))
             return false;
         return evalSelect(select, v);
-    }
-};
-
-const lambda<bool(const value&)> selector(const list<value> s) {
-    return selectorLambda(s);
+    };
 }
 
 /**
  * Returns the value of the attribute with the given name.
  */
-struct filterAttribute {
-    const value name;
-    filterAttribute(const value& n) : name(n) {
-    }
-    const bool operator()(const value& v) const {
-        return isAttribute(v) && attributeName((list<value>)v) == name;
-    }
-};
-
-const value attributeValue(const value& name, const value& l) {
-    const list<value> f = filter<value>(filterAttribute(name), list<value>(l));
+inline const value attributeValue(const value& name, const value& l) {
+    const list<value> f = filter<value>([name](const value& v) {
+                return isAttribute(v) && attributeName((list<value>)v) == name;
+           }, list<value>(l));
     if (isNil(f))
-        return value();
+        return nilValue;
     return caddr<value>(car(f));
 }
 
 /**
  * Returns child elements with the given name.
  */
-struct filterElement {
-    const value name;
-    filterElement(const value& n) : name(n) {
-    }
-    const bool operator()(const value& v) const {
-        return isElement(v) && elementName((list<value>)v) == name;
-    }
-};
-
-const value elementChildren(const value& name, const value& l) {
-    return filter<value>(filterElement(name), list<value>(l));
+inline const value elementChildren(const value& name, const value& l) {
+    return filter<value>([name](const value& v) {
+                return isElement(v) && elementName((list<value>)v) == name;
+            }, list<value>(l));
 }
 
 /**
  * Return the child element with the given name.
  */
-const value elementChild(const value& name, const value& l) {
+inline const value elementChild(const value& name, const value& l) {
     const list<value> f = elementChildren(name, l);
     if (isNil(f))
-        return value();
+        return nilValue;
     return car(f);
 }
 

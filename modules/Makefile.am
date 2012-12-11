@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss js json scdl http server python opencl java openid oauth wsgi
+SUBDIRS = xml json scheme atom rss js scdl http server python opencl java openid oauth wsgi
 

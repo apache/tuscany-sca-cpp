@@ -23,7 +23,9 @@
 #define tuscany_function_hpp
 
 /**
- * Lambda function type.
+ * Lambda function type that enforces pass by ref and constant parameters,
+ * allocates memory only as needed and using an APR memory pool, is about
+ * 2 times faster than std::function and between 1/4 and 1/6 of its size.
  */
 
 #include <utility>
@@ -46,16 +48,16 @@ long int countELambdas = 0;
 long int countCLambdas = 0;
 long int countFLambdas = 0;
 
-bool resetLambdaCounters() {
+inline const bool resetLambdaCounters() {
     countLambdas = countELambdas = countCLambdas = countFLambdas = countProxies = countFProxies = countCProxies = 0;
     return true;
 }
 
-bool checkLambdaCounters() {
+inline const bool checkLambdaCounters() {
     return countLambdas == 0;
 }
 
-bool printLambdaCounters() {
+inline const bool printLambdaCounters() {
     cout << "countLambdas " << countLambdas << endl;
     cout << "countELambdas " << countELambdas << endl;
     cout << "countFLambdas " << countFLambdas << endl;
@@ -80,38 +82,32 @@ bool printLambdaCounters() {
 
 template<typename R, typename... P> class Callable {
 public:
-    Callable() {
+    inline Callable() noexcept {
     }
 
-    virtual const size_t size() const = 0;
+    virtual const R operator()(const P&&... p) const noexcept = 0;
 
-    virtual const R operator()(P... p) const = 0;
-
-    virtual ~Callable() {
+    inline virtual ~Callable() noexcept {
     }
 
-    template<typename F> class Proxy: public Callable {
+    template<typename F> class Proxy: public Callable<R, P...> {
     public:
-        Proxy(const F& f) : function(f) {
+        inline Proxy(const F& f) noexcept : function(f) {
             debug_inc(countProxies);
             debug_inc(countFProxies);
         }
 
-        Proxy(const Proxy& p) : function(p.function) {
+        inline Proxy(const Proxy& p) noexcept : function(p.function) {
             debug_inc(countProxies);
             debug_inc(countCProxies);
         }
 
-        ~Proxy() {
+        inline ~Proxy() noexcept {
             debug_dec(countProxies);
         }
 
-        virtual const R operator() (P... p) const {
-            return function(std::forward<P>(p)...);
-        }
-
-        virtual const size_t size() const {
-            return sizeof(function);
+        virtual const R operator() (const P&&... p) const noexcept {
+            return function(std::forward<const P&&>(p)...);
         }
 
     private:
@@ -123,67 +119,68 @@ template<typename S> class lambda;
 
 template<typename R, typename... P> class lambda<R(P...)> {
 public:
-    lambda() : callable(0) {
+    inline lambda() noexcept : callable(NULL) {
         debug_inc(countLambdas);
         debug_inc(countELambdas);
     }
 
-    template<typename F> lambda(const F f) {
+    template<typename F> inline lambda(const F f) noexcept : callable(mkproxy<F>(f)) {
         debug_inc(countLambdas);
         debug_inc(countFLambdas);
-
-        typedef typename CallableType::template Proxy<F> ProxyType;
-        callable = gc_ptr<CallableType>(new (gc_new<ProxyType>()) ProxyType(f));
     }
 
-    lambda(const lambda& l) {
+    template<typename F> inline lambda(const gc_mutable_ref<F>& r) noexcept : callable(mkproxy<F>(*(F*)r)) {
+        debug_inc(countLambdas);
+        debug_inc(countFLambdas);
+    }
+
+    inline lambda(const lambda& l) noexcept : callable(l.callable) {
         debug_inc(countLambdas);
         debug_inc(countCLambdas);
-        callable = l.callable;
     }
 
-    const lambda& operator=(const lambda& l) {
-        if (this == &l)
-            return *this;
-        callable = l.callable;
-        return *this;
-    }
+    lambda& operator=(const lambda& l) = delete;
 
-    ~lambda() {
+    inline ~lambda() noexcept {
         debug_dec(countLambdas);
     }
 
-    const bool operator==(const lambda& l) const {
+    inline const bool operator==(const lambda& l) const noexcept {
         if (this == &l)
             return true;
-        return callable == l.callable;
+        return false;
     }
 
-    const bool operator!=(const lambda& l) const {
+    inline const bool operator!=(const lambda& l) const noexcept {
         return !this->operator==(l);
     }
 
-    const R operator()(P... p) const {
-        return (*callable)(std::forward<P>(p)...);
+    inline const R operator()(const P&... p) const noexcept {
+        return (*callable)(std::forward<const P&&>(p)...);
     }
 
     template<typename S> friend ostream& operator<<(ostream&, const lambda<S>&);
-    template<typename S> friend const bool isNil(const lambda<S>& l);
+    template<typename S> friend const bool isNil(const lambda<S>& l) noexcept;
 
 private:
     typedef Callable<R,P...> CallableType;
-    gc_ptr<CallableType> callable;
+    const gc_ptr<CallableType> callable;
+
+    template<typename F> inline gc_ptr<CallableType> mkproxy(const F& f) noexcept {
+        typedef typename CallableType::template Proxy<F> ProxyType;
+        return gc_ptr<CallableType>(new (gc_new<ProxyType>()) ProxyType(f));
+    }
 };
 
-template<typename S> ostream& operator<<(ostream& out, const lambda<S>& l) {
+template<typename S> inline ostream& operator<<(ostream& out, const lambda<S>& l) {
     return out << "lambda::" << l.callable;
 }
 
 /**
  * Return true if a lambda is nil.
  */
-template<typename S> const bool isNil(const lambda<S>& l) {
-    return ((void*)l.callable) == 0;
+template<typename S> inline const bool isNil(const lambda<S>& l) noexcept {
+    return (const void*)l.callable == NULL;
 }
 
 /**
@@ -191,11 +188,11 @@ template<typename S> const bool isNil(const lambda<S>& l) {
  */
 template<typename R, typename T, typename... P> class curried {
 public:
-    curried(const lambda<R(T, P...)>& f, const T& v): v(v), f(f) {
+    inline curried(const lambda<R(T, P...)>& f, const T& v) noexcept: v(v), f(f) {
     }
 
-    const R operator()(P... p) const {
-        return f(v, std::forward<P>(p)...);
+    inline const R operator()(const P&... p) const noexcept {
+        return f(v, std::forward<const P&>(p)...);
     }
 
 private:
@@ -203,36 +200,29 @@ private:
     const lambda<R(T, P...)>f;
 };
 
-template<typename R, typename T, typename... P> const lambda<R(P...)> curry(const lambda<R(T, P...)>& f, const T& t) {
+template<typename R, typename T, typename... P> inline const lambda<const R(P...)> curry(const lambda<R(T, P...)>& f, const T& t) noexcept {
     return curried<R, T, P...>(f, t);
 }
 
-template<typename R, typename T, typename U, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, P...)>& f, const T& t, const U& u) {
+template<typename R, typename T, typename U, typename... P> inline const lambda<R(P...)> curry(const lambda<R(T, U, P...)>& f, const T& t, const U& u) noexcept {
     return curry(curry(f, t), u);
 }
 
-template<typename R, typename T, typename U, typename V, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, V, P...)>& f, const T& t, const U& u, const V& v) {
+template<typename R, typename T, typename U, typename V, typename... P> inline const lambda<R(P...)> curry(const lambda<R(T, U, V, P...)>& f, const T& t, const U& u, const V& v) noexcept {
     return curry(curry(curry(f, t), u), v);
 }
 
 /**
  * A lambda function that returns the given value.
  */
-template<typename T> class returnResult {
-public:
-    returnResult(const T& v) :
-        v(v) {
-    }
-    const T operator()() const {
-        return v;
-    }
-private:
-    const T v;
-};
-
-template<typename T> const lambda<T()> result(const T& v) {
-    return returnResult<T> (v);
+template<typename T> inline const lambda<const T()> result(const T& v) {
+    return [v]()->T { return v; };
 }
+
+/**
+ * Commonly used lambda types.
+ */
+typedef lambda<const bool()> blambda;
 
 }
 #endif /* tuscany_function_hpp */

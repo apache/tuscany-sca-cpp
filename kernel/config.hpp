@@ -93,12 +93,12 @@ namespace tuscany
 
 #ifdef WANT_MAINTAINER_COUNTERS
 
-bool debug_inc(long int& c) {
+const bool debug_inc(long int& c) {
     c++;
     return true;
 }
 
-bool debug_dec(long int& c) {
+const bool debug_dec(long int& c) {
     c--;
     return true;
 }

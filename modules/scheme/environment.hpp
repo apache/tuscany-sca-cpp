@@ -45,7 +45,7 @@ const value setSymbol("set!");
 const value dotSymbol(".");
 
 const Env theEmptyEnvironment() {
-    return list<value>();
+    return nilListValue;
 }
 
 const bool isDefinition(const value& exp) {
@@ -68,11 +68,11 @@ const gc_ptr<Frame> firstFrame(const Env& env) {
     return car(env);
 }
 
-list<value> frameVariables(const Frame& frame) {
+const list<value> frameVariables(const Frame& frame) {
     return car((list<value> )frame);
 }
 
-list<value> frameValues(const Frame& frame) {
+const list<value> frameValues(const Frame& frame) {
     return cdr((list<value> )frame);
 }
 
@@ -103,8 +103,7 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
 }
 
 const gc_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values) {
-    gc_ptr<Frame> frame = new (gc_new<Frame>()) Frame();
-    *frame = value(makeBinding(cons(value(list<value>()), list<value>()), variables, values));
+    const gc_ptr<Frame> frame = new (gc_new<Frame>()) Frame(makeBinding(cons(value(nilListValue), nilListValue), variables, values));
     return frame;
 }
 
@@ -120,7 +119,7 @@ const value definitionValue(const value& exp) {
     const list<value> exps(exp);
     if(isSymbol(car(cdr(exps)))) {
         if (isNil(cdr(cdr(exps))))
-            return value();
+            return nilValue;
         return car(cdr(cdr(exps)));
     }
     const list<value> lexps(car(cdr(exps)));
@@ -140,7 +139,8 @@ const Frame addBindingToFrame(const value& var, const value& val, const Frame& f
 }
 
 const bool defineVariable(const value& var, const value& val, Env& env) {
-    *firstFrame(env) = addBindingToFrame(var, val, *firstFrame(env));
+    const Frame newFrame = addBindingToFrame(var, val, *firstFrame(env));
+    setvalue(*firstFrame(env), addBindingToFrame(var, val, *firstFrame(env)));
     return true;
 }
 
@@ -168,7 +168,7 @@ const value lookupEnvScan(const value& var, const list<value>& vars, const list<
 const value lookupEnvLoop(const value& var, const Env& env) {
     if(env == theEmptyEnvironment()) {
         logStream() << "Unbound variable " << var << endl;
-        return value();
+        return nilValue;
     }
     return lookupEnvScan(var, frameVariables(*firstFrame(env)), frameValues(*firstFrame(env)), env);
 }

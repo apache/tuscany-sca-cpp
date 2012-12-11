@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,33 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-incl_HEADERS = *.hpp
-incldir = $(prefix)/include/modules/scheme
+# Run valgrind to record call history, generate a call graph and help analyze
+# cache and branch prediction
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 
-moddir = $(prefix)/modules/scheme
+valgrind --tool=callgrind $* 2>&1 | tee callgrind.log
 
-scheme_test_SOURCES = scheme-test.cpp
-
-scheme_shell_SOURCES = scheme-shell.cpp
-
-value_element_SOURCES = value-element.cpp
-value_element_LDFLAGS = 
-
-element_value_SOURCES = element-value.cpp
-element_value_LDFLAGS = 
-
-xml_element_SOURCES = xml-element.cpp
-xml_element_LDFLAGS = -lxml2
-
-element_xml_SOURCES = element-xml.cpp
-element_xml_LDFLAGS = -lxml2
-
-json_value_SOURCES = json-value.cpp
-json_value_LDFLAGS = -ljansson 
-
-value_json_SOURCES = value-json.cpp
-value_json_LDFLAGS = -ljansson 
-
-noinst_PROGRAMS = scheme-test
-mod_PROGRAMS = scheme-shell element-value value-element xml-element element-xml json-value value-json
-TESTS = scheme-test

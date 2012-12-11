@@ -43,7 +43,7 @@ namespace tuscany
  * tree at contrib/ltree/crc32.[ch] and from FreeBSD at
  * src/usr.bin/cksum/crc32.c.
  */
-const unsigned int crc32hash(const char* data, const size_t len) {
+inline const unsigned int crc32hash(const char* const data, const size_t len) {
     return (unsigned int)apr_memcache_hash_default(NULL, data, len);
 }
 
@@ -89,7 +89,7 @@ const unsigned int crc32hash(const char* data, const size_t len) {
  *
  *                  -- Ralf S. Engelschall <rse@engelschall.com>
  */
-const unsigned int times33hash(const char* data, const size_t len) {
+inline const unsigned int times33hash(const char* const data, const size_t len) {
     apr_ssize_t l = len;
     return apr_hashfunc_default(data, &l);
 }
@@ -107,7 +107,7 @@ const unsigned int times33hash(const char* data, const size_t len) {
  * Passes Bob Jenkin's frog.c torture-test. No collisions possible for 4 byte
  * keys, no small 1 to 7 bit differentials.
  */
-const unsigned int murmurhash(const char* key, const size_t klen) {
+inline const unsigned int murmurhash(const char* const key, const size_t klen) {
     unsigned int len = (unsigned int)klen;
     const unsigned int seed = 0;
 
@@ -153,7 +153,7 @@ const unsigned int murmurhash(const char* key, const size_t klen) {
  * An endian and alignment neutral, but half the speed, version of
  * the murmur hash.
  */
-const unsigned int portablemurmurhash(const char* key, const size_t klen) {
+inline const unsigned int portablemurmurhash(const char* const key, const size_t klen) {
     unsigned int len = (unsigned int)klen;
     const unsigned int seed = 0;
 
@@ -199,7 +199,7 @@ const unsigned int portablemurmurhash(const char* key, const size_t klen) {
     return h;
 } 
 
-const unsigned int hashselect(const unsigned int hash, const unsigned int max) {
+inline const unsigned int hashselect(const unsigned int hash, const unsigned int max) {
     return hash % max;
 }
 

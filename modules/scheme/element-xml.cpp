@@ -25,15 +25,15 @@
 
 #include "fstream.hpp"
 #include "string.hpp"
-#include "xml.hpp"
 #include "element.hpp"
+#include "../xml/xml.hpp"
 #include "eval.hpp"
 
 namespace tuscany {
 namespace scheme {
 
-int valueXML() {
-    failable<list<string> > s = writeXML(readValue(cin));
+const int valueXML() {
+    const failable<list<string> > s = xml::writeElements(content(readValue(cin)));
     if (!hasContent(s)) {
         cerr << reason(s) << " : " << rcode(s);
         return 1;

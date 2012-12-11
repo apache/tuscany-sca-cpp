@@ -30,7 +30,7 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
-#include "xml.hpp"
+#include "../xml/xml.hpp"
 
 namespace tuscany {
 namespace rss {
@@ -50,10 +50,10 @@ const list<value> entryElementValues(const list<value>& e) {
     const list<value> li = filter<value>(selector(mklist<value>(element, "link")), e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> ld = filter<value>(selector(mklist<value>(element, "description")), e);
-    return append<value>(list<value>() + element + entry 
-                + value(list<value>() + element + value("title") + t)
-                + value(list<value>() + element + value("id") + i),
-                isNil(ld)? list<value>() : mklist<value>(value(list<value>() + element + value("content") + elementValue(car(ld)))));
+    return append<value>(nilListValue + element + entry 
+                + value(nilListValue + element + value("title") + t)
+                + value(nilListValue + element + value("id") + i),
+                isNil(ld)? nilListValue : mklist<value>(value(nilListValue + element + value("content") + elementValue(car(ld)))));
 }
 
 /**
@@ -69,7 +69,7 @@ const list<value> entriesElementValues(const list<value>& e) {
  * Return true if a list of strings contains an RSS feed.
  */
 const bool isRSSFeed(const list<string>& ls) {
-    if (!isXML(ls))
+    if (!xml::isXML(ls))
         return false;
     return contains(car(ls), "<rss");
 }
@@ -78,7 +78,7 @@ const bool isRSSFeed(const list<string>& ls) {
  * Convert a list of strings to a list of values representing an RSS entry.
  */
 const failable<list<value> > readRSSEntry(const list<string>& ilist) {
-    const list<value> e = readXML(ilist);
+    const list<value> e = content(xml::readElements(ilist));
     if (isNil(e))
         return mkfailure<list<value> >("Empty entry");
     return mklist<value>(entryElementValues(car(e)));
@@ -88,16 +88,16 @@ const failable<list<value> > readRSSEntry(const list<string>& ilist) {
  * Convert a list of strings to a list of values representing an RSS feed.
  */
 const failable<list<value> > readRSSFeed(const list<string>& ilist) {
-    const list<value> f = readXML(ilist);
+    const list<value> f = content(xml::readElements(ilist));
     if (isNil(f))
         return mkfailure<list<value> >("Empty feed");
     const list<value> c = filter<value>(selector(mklist<value>(element, "channel")), car(f));
     const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(c));
     const list<value> i = filter<value>(selector(mklist<value>(element, "link")), car(c));
     const list<value> e = filter<value>(selector(mklist<value>(element, "item")), car(c));
-    return mklist<value>(append<value>(list<value>() + element + feed 
-                + value(list<value>() + element + value("title") + elementValue(car(t)))
-                + value(list<value>() + element + value("id") + elementValue(car(i))),
+    return mklist<value>(append<value>(nilListValue + element + feed 
+                + value(nilListValue + element + value("title") + elementValue(car(t)))
+                + value(nilListValue + element + value("id") + elementValue(car(i))),
                 entriesElementValues(e)));
 }
 
@@ -109,13 +109,13 @@ const list<value> entryElement(const list<value>& l) {
     const value id = elementValue(elementChild("id", l));
     const value content = elementChild("content", l);
     const bool text = isNil(content)? false : elementHasValue(content);
-    return append<value>(list<value>()
+    return append<value>(nilListValue
         + element + "item"
-        + (list<value>() + element + "title" + title)
-        + (list<value>() + element + "link" + id),
+        + (nilListValue + element + "title" + title)
+        + (nilListValue + element + "link" + id),
         isNil(content)?
-            list<value>() :
-            mklist<value>(append<value>(list<value>() + element + "description",
+            nilListValue :
+            mklist<value>(append<value>(nilListValue + element + "description",
                 text? mklist<value>(elementValue(content)) : elementChildren(content))));
 }
 
@@ -132,9 +132,9 @@ const list<value> entriesElements(const list<value>& l) {
  * Convert a list of values representing an RSS entry to an RSS entry.
  * The first two values in the list are the entry id and title.
  */
-template<typename R> const failable<R> writeRSSEntry(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+template<typename R> const failable<R> writeRSSEntry(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
     const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
-    return writeXML<R>(reduce, initial, mklist<value>(entryElement(l)));
+    return xml::writeElements<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
 const failable<list<string> > writeRSSEntry(const list<value>& l) {
@@ -148,41 +148,41 @@ const failable<list<string> > writeRSSEntry(const list<value>& l) {
  * Convert a list of values representing an RSS feed to an RSS feed.
  * The first two values in the list are the feed id and title.
  */
-template<typename R> const failable<R> writeRSSFeed(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
     const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), l);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), l);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
-    const list<value> c = list<value>()
-        + (list<value>() + element + "title" + t)
-        + (list<value>() + element + "link" + i)
-        + (list<value>() + element + "description" + t);
+    const list<value> c = nilListValue
+        + (nilListValue + element + "title" + t)
+        + (nilListValue + element + "link" + i)
+        + (nilListValue + element + "description" + t);
 
     // Write RSS entries
     const list<value> le = filter<value>(selector(mklist<value>(element, entry)), l);
     if (isNil(le)) {
-        const list<value> fe = list<value>()
-            + element + "rss" + (list<value>() + attribute + "version" + "2.0")
-            + append(list<value>() + element + "channel", c);
-        return writeXML<R>(reduce, initial, mklist<value>(fe));
+        const list<value> fe = nilListValue
+            + element + "rss" + (nilListValue + attribute + "version" + "2.0")
+            + append(nilListValue + element + "channel", c);
+        return xml::writeElements<R>(reduce, initial, mklist<value>(fe));
     }
 
     // Write a single RSS entry element with a list of values
     if (!isNil(le) && !isNil(car(le)) && isList(car<value>(caddr<value>(car(le))))) {
         const list<value> ce = append(c, entriesElements(caddr<value>(car(le))));
-        const list<value> fe = list<value>()
-            + element + "rss" + (list<value>() + attribute + "version" + "2.0")
-            + append(list<value>() + element + "channel", ce);
-        return writeXML<R>(reduce, initial, mklist<value>(fe));
+        const list<value> fe = nilListValue
+            + element + "rss" + (nilListValue + attribute + "version" + "2.0")
+            + append(nilListValue + element + "channel", ce);
+        return xml::writeElements<R>(reduce, initial, mklist<value>(fe));
     }
 
     // Write separate RSS entry elements
     const list<value> ce = append(c, entriesElements(le));
-    const list<value> fe = list<value>()
-        + element + "rss" + (list<value>() + attribute + "version" + "2.0")
-        + append(list<value>() + element + "channel", ce);
-    return writeXML<R>(reduce, initial, mklist<value>(fe));
+    const list<value> fe = nilListValue
+        + element + "rss" + (nilListValue + attribute + "version" + "2.0")
+        + append(nilListValue + element + "channel", ce);
+    return xml::writeElements<R>(reduce, initial, mklist<value>(fe));
 }
 
 /**
