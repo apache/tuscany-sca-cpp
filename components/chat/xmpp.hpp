@@ -51,7 +51,6 @@ public:
     }
 
     ~XMPPRuntime() {
-        debug("chat::~xmppruntime");
         xmpp_shutdown();
     }
 
@@ -79,7 +78,6 @@ public:
     XMPPClient& operator=(const XMPPClient& xc) = delete;
 
     ~XMPPClient() {
-        debug("chat::~xmppclient");
         extern const failable<bool> disconnect(XMPPClient& xc);
         if (!owner)
             return;

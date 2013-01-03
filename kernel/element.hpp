@@ -228,33 +228,12 @@ inline const list<value> valuesToElements(const list<value>& l) {
 }
 
 /**
- * Returns a selector lambda function which can be used to filter
- * elements against the given element pattern.
- */
-inline const lambda<const bool(const value&)> selector(const list<value>& select) {
-    return [select](const value& v) -> const bool {
-        const lambda<const bool(const list<value>&, const list<value>&)> evalSelect = [&evalSelect](const list<value>& s, const list<value>& v) -> const bool {
-            if (isNil(s))
-                return true;
-            if (isNil(v))
-                return false;
-            if (car(s) != car(v))
-                return false;
-            return evalSelect(cdr(s), cdr(v));
-        };
-        if (!isList(v))
-            return false;
-        return evalSelect(select, v);
-    };
-}
-
-/**
  * Returns the value of the attribute with the given name.
  */
-inline const value attributeValue(const value& name, const value& l) {
+inline const value attributeValue(const value& name, const list<value>& l) {
     const list<value> f = filter<value>([name](const value& v) {
                 return isAttribute(v) && attributeName((list<value>)v) == name;
-           }, list<value>(l));
+           }, l);
     if (isNil(f))
         return nilValue;
     return caddr<value>(car(f));
@@ -263,16 +242,16 @@ inline const value attributeValue(const value& name, const value& l) {
 /**
  * Returns child elements with the given name.
  */
-inline const value elementChildren(const value& name, const value& l) {
+inline const list<value> elementChildren(const value& name, const list<value>& l) {
     return filter<value>([name](const value& v) {
                 return isElement(v) && elementName((list<value>)v) == name;
-            }, list<value>(l));
+            }, l);
 }
 
 /**
  * Return the child element with the given name.
  */
-inline const value elementChild(const value& name, const value& l) {
+inline const value elementChild(const value& name, const list<value>& l) {
     const list<value> f = elementChildren(name, l);
     if (isNil(f))
         return nilValue;

@@ -214,7 +214,7 @@ public:
     gc_pool& operator=(const gc_pool& pool) = delete;
 
 private:
-    friend apr_pool_t* pool(const gc_pool& pool) noexcept;
+    friend apr_pool_t* const pool(const gc_pool& pool) noexcept;
     friend class gc_global_pool_t;
     friend class gc_child_pool;
     friend class gc_local_pool;
@@ -226,7 +226,7 @@ private:
 /**
  * Return the APR pool used by a gc_pool.
  */
-inline apr_pool_t* pool(const gc_pool& pool) noexcept {
+inline apr_pool_t* const pool(const gc_pool& pool) noexcept {
     return pool.apr_pool;
 }
 
@@ -242,21 +242,22 @@ public:
     inline gc_pool_stack_t() noexcept : key(mkkey()) {
     }
 
-    inline operator apr_pool_t*() const noexcept {
-        return (apr_pool_t*)pthread_getspecific(key);
+    inline operator apr_pool_t* const () const noexcept {
+        return (apr_pool_t* const )pthread_getspecific(key);
     }
 
-    inline const gc_pool_stack_t& operator=(apr_pool_t* p) noexcept {
-        pthread_setspecific(key, p);
+    const gc_pool_stack_t& operator=(apr_pool_t* const p) noexcept {
+        const int rc = pthread_setspecific(key, p);
+        assertOrFail(rc == 0);
         return *this;
     }
 
 private:
-    pthread_key_t key;
+    const pthread_key_t key;
 
-    pthread_key_t mkkey() {
+    inline const pthread_key_t mkkey() noexcept {
         pthread_key_t k;
-        int rc = pthread_key_create(&k, NULL);
+        const int rc = pthread_key_create(&k, NULL);
         assertOrFail(rc == 0);
         return k;
     }
@@ -278,7 +279,7 @@ apr_pool_t* gc_pool_stack = NULL;
 /**
  * Push a pool onto the stack.
  */
-inline apr_pool_t* const gc_push_pool(apr_pool_t* pool) noexcept {
+inline apr_pool_t* const gc_push_pool(apr_pool_t* const pool) noexcept {
     apr_pool_t* const p = gc_pool_stack;
     gc_pool_stack = pool;
     return p;
@@ -287,7 +288,7 @@ inline apr_pool_t* const gc_push_pool(apr_pool_t* pool) noexcept {
 /**
  * Pop a pool from the stack.
  */
-inline apr_pool_t* const gc_pop_pool(apr_pool_t* pool) noexcept {
+inline apr_pool_t* const gc_pop_pool(apr_pool_t* const pool) noexcept {
     apr_pool_t* const p = gc_pool_stack;
     gc_pool_stack = pool;
     return p;
@@ -326,7 +327,7 @@ public:
 private:
     const bool owner;
 
-    apr_pool_t* const mkpool() {
+    inline apr_pool_t* const mkpool() noexcept {
         apr_pool_t* p;
         apr_pool_create(&p, gc_current_pool());
         assertOrFail(p != NULL);
@@ -356,7 +357,7 @@ public:
 private:
     const bool owner;
 
-    apr_pool_t* const mkpool() {
+    inline apr_pool_t* const mkpool() noexcept {
         apr_pool_t* p;
         apr_pool_create(&p, gc_current_pool());
         assertOrFail(p != NULL);
@@ -375,7 +376,7 @@ public:
         gc_push_pool(apr_pool);
     }
 
-    inline gc_scoped_pool(apr_pool_t* p) noexcept : gc_pool(p), prev(gc_current_pool()), owner(false) {
+    inline gc_scoped_pool(apr_pool_t* const p) noexcept : gc_pool(p), prev(gc_current_pool()), owner(false) {
         gc_push_pool(apr_pool);
     }
 
@@ -394,7 +395,7 @@ private:
     apr_pool_t* const prev;
     const bool owner;
 
-    apr_pool_t* const mkpool() {
+    inline apr_pool_t* const mkpool() noexcept {
         apr_pool_t* p;
         apr_pool_create(&p, gc_current_pool());
         assertOrFail(p != NULL);

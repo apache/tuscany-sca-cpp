@@ -389,13 +389,13 @@ inline const string funcName(const string& f) {
  * Returns a list of param values other than the id and method args from a list
  * of key value pairs.
  */
-inline const list<value> queryParams(const list<list<value> >& a) {
+inline const list<value> queryParams(const list<value>& a) {
     if (isNil(a))
         return nilListValue;
     const list<value> p = car(a);
     if (car(p) == value("id") || car(p) == value("method"))
         return queryParams(cdr(a));
-    return cons(cadr(p), queryParams(cdr(a)));
+    return cons<value>(cadr(p), queryParams(cdr(a)));
 }
 
 }

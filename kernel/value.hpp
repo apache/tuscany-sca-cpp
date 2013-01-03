@@ -27,6 +27,7 @@
  */
 
 #include <stdlib.h>
+#include <math.h>
 #include <apr_uuid.h>
 #include <apr_time.h>
 
@@ -184,12 +185,6 @@ public:
         debug_watchValue();
     }
 
-    inline value(const list<list<value> >& l) noexcept : type(value::List), lst(new (gc_new<list<value> >()) list<value>(listOfValues(l))) {
-        debug_inc(countValues);
-        debug_inc(countVValues);
-        debug_watchValue();
-    }
-
     inline value(const double d) noexcept : type(value::Number), num(d) {
         debug_inc(countValues);
         debug_inc(countVValues);
@@ -249,7 +244,8 @@ public:
         case value::String:
             return (v.type == value::Symbol || v.type == value::String) && str == v.str;
         case value::Number:
-            return v.type == value::Number && num == v.num;
+            // Handle double floating point rounding
+            return v.type == value::Number && fabs(num - v.num) < 5e-16;
         case value::Bool:
             return v.type == value::Bool && boo == v.boo;
         case value::Ptr:
@@ -363,11 +359,13 @@ public:
     }
 
     inline operator const list<value>() const noexcept {
+        switch(type) {
+        case value::List:
+            return *lst;
+        default:
+            return nilListValue;
+        }
         return *lst;
-    }
-
-    inline operator const list<list<value> >() const noexcept {
-        return listOfListOfValues(*lst);
     }
 
     inline operator const lvvlambda() const noexcept {
@@ -375,21 +373,9 @@ public:
     }
 
 private:
-    inline const list<value> listOfValues(const list<list<value> >& l) const noexcept {
-        if (isNil(l))
-            return nilListValue;
-        return cons<value>(car(l), listOfValues(cdr(l)));
-    }
-
-    inline const list<list<value> > listOfListOfValues(const list<value>& l) const noexcept {
-        if (isNil(l))
-            return list<list<value> >();
-        return cons<list<value> >(car(l).type == value::List? list<value>(car(l)) : nilPairValue, listOfListOfValues(cdr(l)));
-    }
-
     friend ostream& operator<<(ostream&, const value&) noexcept;
     friend const value::ValueType type(const value& v) noexcept;
-    friend const bool setvalue(value& target, const value& v);
+    friend const bool setvalue(value& target, const value& v) noexcept;
 
 #ifdef WANT_MAINTAINER_WATCH
     friend const string watchValue(const value& v);
@@ -566,6 +552,13 @@ inline const bool isTaggedList(const value& exp, const value& tag) noexcept {
 }
 
 /**
+ * Returns true if a value is an assoc.
+ */
+inline const bool isAssoc(const value& exp) noexcept {
+    return isList(exp) && !isNil((list<value>)exp) && isSymbol(car<value>(exp));
+}
+
+/**
  * Make a list of values from a list of other things.
  */
 template<typename T> inline const list<value> mkvalues(const list<T>& l) noexcept {
@@ -581,6 +574,24 @@ template<typename T> inline const list<T> convertValues(const list<value>& l) no
     if (isNil(l))
         return list<T>();
     return cons<T>(car(l), convertValues<T>(cdr(l)));
+}
+
+/**
+ * Convert a list of lists of values to a list of values.
+ */
+inline const list<value> listOfValues(const list<list<value> >& l) noexcept {
+    if (isNil(l))
+        return nilListValue;
+    return cons<value>(car(l), listOfValues(cdr(l)));
+}
+
+/**
+ * Convert a list of values to a list of lists of values.
+ */
+inline const list<list<value> > listOfListOfValues(const list<value>& l) noexcept {
+    if (isNil(l))
+        return list<list<value> >();
+    return cons<list<value> >(type(car(l)) == value::List? list<value>(car(l)) : nilPairValue, listOfListOfValues(cdr(l)));
 }
 
 /**
@@ -638,7 +649,7 @@ inline const value mkrand() noexcept {
 /**
  * Set a value. Use with moderation.
  */
-inline const bool setvalue(value& target, const value& v) {
+inline const bool setvalue(value& target, const value& v) noexcept {
     if (&target == &v)
         return true;
 #ifdef WANT_MAINTAINER_WATCH

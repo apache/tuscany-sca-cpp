@@ -87,7 +87,6 @@ public:
             return;
         if (h.h == NULL)
             return;
-        debug(h.h, "http::~CURLSession::cleanup::h");
         curl_easy_cleanup(h.h);
     }
 
@@ -943,7 +942,7 @@ const failable<size_t> recv(char* const c, const size_t l, const CURLSession& cs
 /**
  * Converts a list of key value pairs to a query string.
  */
-ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
+ostringstream& queryString(const list<value>& args, ostringstream& os) {
     if (isNil(args))
         return os;
     const list<value> arg = car(args);
@@ -956,7 +955,7 @@ ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
     return queryString(cdr(args), os);
 }
 
-const string queryString(const list<list<value> > args) {
+const string queryString(const list<value>& args) {
     ostringstream os;
     return str(queryString(args, os));
 }

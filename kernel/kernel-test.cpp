@@ -557,11 +557,37 @@ const bool testListRef() {
     return true;
 }
 
+const bool testSubst() {
+    assert(subst(1, 9, mklist(1, 2, 1, 3, 1)) == mklist(9, 2, 9, 3, 9));
+    assert(subst<value>(1, 9, mklist<value>(1, 2, 1, 3, 1)) == mklist<value>(9, 2, 9, 3, 9));
+    return true;
+}
+
 const bool testAssoc() {
     const list<list<string> > l = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"));
     assert(assoc<string>("a", l) == mklist<string>("a", "A"));
     assert(isNil(assoc<string>("z", l)));
 
+    const list<list<string> > l3 = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("a", "AA"));
+    assert(delAssoc<string>("y", l) == l3);
+
+    const list<list<string> > l4 = mklist(mklist<string>("x", "X"), mklist<string>("y", "Y"));
+    assert(delAssoc<string>("a", l) == l4);
+
+    const list<list<string> > l5 = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "YY"), mklist<string>("a", "AA"));
+    assert(substAssoc<string>("y", mklist<string>("y", "YY"), l) == l5);
+
+    const list<list<string> > l6 = mklist(mklist<string>("x", "X"), mklist<string>("a", "AAA"), mklist<string>("y", "Y"), mklist<string>("a", "AAA"));
+    assert(substAssoc<string>("a", mklist<string>("a", "AAA"), l) == l6);
+
+    const list<list<string> > l7 = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"), mklist<string>("z", "ZZ"));
+    assert(substAssoc<string>("z", mklist<string>("z", "ZZ"), l) == l);
+    assert(substAssoc<string>("z", mklist<string>("z", "ZZ"), l, true) == l7);
+
+    return true;
+}
+
+const bool testValueAssoc() {
     const list<list<value> > u = mklist(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
     assert(assoc<value>("a", u) == mklist<value>("a", "A"));
 
@@ -570,6 +596,50 @@ const bool testAssoc() {
 
     const list<value> v2 = mklist<value>(mklist<value>("x", "X"), "a", mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
     assert(assoc<value>("a", v2) == mklist<value>("a", "A"));
+
+    const list<value> v3 = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("a", "AA"));
+    assert(delAssoc<value>("y", v) == v3);
+
+    const list<value> v4 = mklist<value>(mklist<value>("x", "X"), mklist<value>("y", "Y"));
+    assert(delAssoc<value>("a", v) == v4);
+
+    const list<value> v5 = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "YY"), mklist<value>("a", "AA"));
+    assert(substAssoc<value>("y", mklist<value>("y", "YY"), v) == v5);
+
+    const list<value> v6 = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "AAA"), mklist<value>("y", "Y"), mklist<value>("a", "AAA"));
+    assert(substAssoc<value>("a", mklist<value>("a", "AAA"), v) == v6);
+
+    const list<value> v7 = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"), mklist<value>("z", "ZZ"));
+    assert(substAssoc<value>("z", mklist<value>("z", "ZZ"), v) == v);
+    assert(substAssoc<value>("z", mklist<value>("z", "ZZ"), v, true) == v7);
+    return true;
+}
+
+const bool testTreeAssoc() {
+    const list<value> tv = mklist<value>(mklist<value>("a", "A"), mklist<value>("b", mklist<value>("ba", "BA"), mklist<value>("bc", "BC"), mklist<value>("bd", mklist<value>("z", "ZZ"), mklist<value>("bda", "BDA"))), mklist<value>("z", "Z"));
+    assert(treeSelectAssoc<value>(mklist<value>("a"), tv) == mklist<value>(mklist<value>("a", "A")));
+    assert(treeSelectAssoc<value>(mklist<value>("b", "bc"), tv) == mklist<value>(mklist<value>("bc", "BC")));
+    assert(treeSelectAssoc<value>(mklist<value>("b", "bx"), tv) == list<value>());
+    assert(treeSelectAssoc<value>(mklist<value>("b", "bd", "bda"), tv) == mklist<value>(mklist<value>("bda", "BDA")));
+    assert(treeSelectAssoc<value>(mklist<value>("bc"), tv) == mklist<value>(mklist<value>("bc", "BC")));
+    assert(treeSelectAssoc<value>(mklist<value>("bda"), tv) == mklist<value>(mklist<value>("bda", "BDA")));
+    assert(treeSelectAssoc<value>(mklist<value>("bd", "bda"), tv) == mklist<value>(mklist<value>("bda", "BDA")));
+    assert(treeSelectAssoc<value>(mklist<value>("bd", "bda", "bdax"), tv) == list<value>());
+    assert(treeSelectAssoc<value>(mklist<value>("z"), tv) == mklist<value>(mklist<value>("z", "ZZ"), mklist<value>("z", "Z")));
+
+    const list<value> tv2 = mklist<value>(mklist<value>("a", "A"), mklist<value>("b", mklist<value>("ba", "BA"), mklist<value>("bc", "BC"), mklist<value>("bd", mklist<value>("bda", "BDA"))));
+    const list<value> tv3 = mklist<value>(mklist<value>("a", "A"), mklist<value>("b", mklist<value>("ba", "BA"), mklist<value>("bc", "BC"), mklist<value>("bd", mklist<value>("z", "ZZ"))), mklist<value>("z", "Z"));
+    assert(treeDelAssoc<value>(mklist<value>("z"), tv) == tv2);
+    assert(treeDelAssoc<value>(mklist<value>("bda"), tv) == tv3);
+    assert(treeDelAssoc<value>(mklist<value>("bd", "bda"), tv) == tv3);
+    assert(treeDelAssoc<value>(mklist<value>("bd", "bda", "bdax"), tv) == tv);
+
+    const list<value> tv4 = mklist<value>(mklist<value>("a", "A"), mklist<value>("b", mklist<value>("ba", "BA"), mklist<value>("bc", "BC"), mklist<value>("bd", mklist<value>("z", "ZZZ"), mklist<value>("bda", "BDA"))), mklist<value>("z", "ZZZ"));
+    const list<value> tv5 = mklist<value>(mklist<value>("a", "A"), mklist<value>("b", mklist<value>("ba", "BA"), mklist<value>("bc", "BC"), mklist<value>("bd", mklist<value>("z", "ZZ"), mklist<value>("bda", "BDAX"))), mklist<value>("z", "Z"));
+    assert(treeSubstAssoc<value>(mklist<value>("z"), mklist<value>("z", "ZZZ"), tv) == tv4);
+    assert(treeSubstAssoc<value>(mklist<value>("bda"), mklist<value>("bda", "BDAX"), tv) == tv5);
+    assert(treeSubstAssoc<value>(mklist<value>("bd", "bda"), mklist<value>("bda", "BDAX"), tv) == tv5);
+    assert(treeSubstAssoc<value>(mklist<value>("bd", "bda", "bdax"), mklist<value>("bda", "BDAX"), tv) == tv);
     return true;
 }
 
@@ -638,7 +708,7 @@ const bool testValue() {
     assert(value(mklist<value>(1, 2)) == value(mklist<value>(1, 2)));
 
     const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"));
-    assert(cadr((list<list<value> >)value(v)) == mklist<value>("a", "A"));
+    assert(cadr<value>(value(v)) == mklist<value>("a", "A"));
 
     const value pv(gc_ptr<value>(new (gc_new<value>()) value(1)));
     assert(*(gc_ptr<value>)pv == value(1));
@@ -662,16 +732,16 @@ const bool testValueGC() {
     return true;
 }
 
-const bool testTree() {
-    const list<value> t = mktree<value>("a", nilListValue, nilListValue);
-    const list<value> ct = constree<value>("d", constree<value>("f", constree<value>("c", constree<value>("e", constree<value>("b", t)))));
-    const list<value> mt = mktree(mklist<value>("d", "f", "c", "e", "b", "a"));
+const bool testBinaryTree() {
+    const list<value> t = mkrbtree<value>("a", nilListValue, nilListValue);
+    const list<value> ct = rbtreeCons<value>("d", rbtreeCons<value>("f", rbtreeCons<value>("c", rbtreeCons<value>("e", rbtreeCons<value>("b", t)))));
+    const list<value> mt = mkrbtree(mklist<value>("d", "f", "c", "e", "b", "a"));
     assert(mt == ct);
     const list<value> l = flatten<value>(mt);
     assert(length(l) == 6);
     assert(car(l) == "a");
     assert(car(reverse(l)) == "f");
-    const list<value> bt = mkbtree<value>(l);
+    const list<value> bt = mkbrbtree<value>(l);
     assert(car(bt) == "c");
     return true;
 }
@@ -680,19 +750,19 @@ const list<value> lta(const string& x) {
     return mklist<value>(c_str(x), c_str(x + x));
 }
 
-const bool testTreeAssoc() {
-    const list<value> t = mktree<value>(lta("a"), nilListValue, nilListValue);
-    const list<value> at = constree<value>(lta("d"), constree<value>(lta("f"), constree<value>(lta("c"), constree<value>(lta("e"), constree<value>(lta("b"), t)))));
+const bool testBinaryTreeAssoc() {
+    const list<value> t = mkrbtree<value>(lta("a"), nilListValue, nilListValue);
+    const list<value> at = rbtreeCons<value>(lta("d"), rbtreeCons<value>(lta("f"), rbtreeCons<value>(lta("c"), rbtreeCons<value>(lta("e"), rbtreeCons<value>(lta("b"), t)))));
     const list<value> l = flatten<value>(at);
     assert(length(l) == 6);
     assert(car(l) == mklist<value>("a", "aa"));
     assert(car(reverse(l)) == mklist<value>("f", "ff"));
-    const list<value> bt = mkbtree<value>(l);
+    const list<value> bt = mkbrbtree<value>(l);
     assert(car(bt) == mklist<value>("c", "cc"));
-    assert(assoctree<value>("a", bt) == mklist<value>("a", "aa"));
-    assert(assoctree<value>("b", bt) == mklist<value>("b", "bb"));
-    assert(assoctree<value>("f", bt) == mklist<value>("f", "ff"));
-    assert(isNil(assoctree<value>("x", bt)));
+    assert(rbtreeAssoc<value>("a", bt) == mklist<value>("a", "aa"));
+    assert(rbtreeAssoc<value>("b", bt) == mklist<value>("b", "bb"));
+    assert(rbtreeAssoc<value>("f", bt) == mklist<value>("f", "ff"));
+    assert(isNil(rbtreeAssoc<value>("x", bt)));
     return true;
 }
 
@@ -893,14 +963,17 @@ int main() {
     tuscany::testMember();
     tuscany::testReverse();
     tuscany::testListRef();
+    tuscany::testSubst();
     tuscany::testAssoc();
+    tuscany::testValueAssoc();
+    tuscany::testTreeAssoc();
     tuscany::testZip();
     tuscany::testTokenize();
     tuscany::testSeq();
     tuscany::testValue();
     tuscany::testValueGC();
-    tuscany::testTree();
-    tuscany::testTreeAssoc();
+    tuscany::testBinaryTree();
+    tuscany::testBinaryTreeAssoc();
     tuscany::testCppPerf();
     tuscany::testIdMonad();
     tuscany::testMaybeMonad();

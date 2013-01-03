@@ -45,15 +45,16 @@ const value entry("entry");
  * Convert a list of elements to a list of element values representing an RSS entry.
  */
 const list<value> entryElementValues(const list<value>& e) {
-    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
+    const list<value> lt = elementChildren("title", e);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
-    const list<value> li = filter<value>(selector(mklist<value>(element, "link")), e);
+    const list<value> li = elementChildren("link", e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
-    const list<value> ld = filter<value>(selector(mklist<value>(element, "description")), e);
+    const list<value> ld = elementChildren("description", e);
     return append<value>(nilListValue + element + entry 
                 + value(nilListValue + element + value("title") + t)
                 + value(nilListValue + element + value("id") + i),
-                isNil(ld)? nilListValue : mklist<value>(value(nilListValue + element + value("content") + elementValue(car(ld)))));
+                isNil(ld)? nilListValue : isAttribute(elementValue(car(ld)))? nilListValue :
+                    mklist<value>(value(nilListValue + element + value("content") + elementValue(car(ld)))));
 }
 
 /**
@@ -91,10 +92,10 @@ const failable<list<value> > readRSSFeed(const list<string>& ilist) {
     const list<value> f = content(xml::readElements(ilist));
     if (isNil(f))
         return mkfailure<list<value> >("Empty feed");
-    const list<value> c = filter<value>(selector(mklist<value>(element, "channel")), car(f));
-    const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(c));
-    const list<value> i = filter<value>(selector(mklist<value>(element, "link")), car(c));
-    const list<value> e = filter<value>(selector(mklist<value>(element, "item")), car(c));
+    const list<value> c = elementChildren("channel", car(f));
+    const list<value> t = elementChildren("title", car(c));
+    const list<value> i = elementChildren("link", car(c));
+    const list<value> e = elementChildren("item", car(c));
     return mklist<value>(append<value>(nilListValue + element + feed 
                 + value(nilListValue + element + value("title") + elementValue(car(t)))
                 + value(nilListValue + element + value("id") + elementValue(car(i))),
@@ -150,9 +151,9 @@ const failable<list<string> > writeRSSEntry(const list<value>& l) {
  */
 template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
     const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
-    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), l);
+    const list<value> lt = elementChildren("title", l);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
-    const list<value> li = filter<value>(selector(mklist<value>(element, "id")), l);
+    const list<value> li = elementChildren("id", l);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> c = nilListValue
         + (nilListValue + element + "title" + t)
@@ -160,7 +161,7 @@ template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const s
         + (nilListValue + element + "description" + t);
 
     // Write RSS entries
-    const list<value> le = filter<value>(selector(mklist<value>(element, entry)), l);
+    const list<value> le = elementChildren(entry, l);
     if (isNil(le)) {
         const list<value> fe = nilListValue
             + element + "rss" + (nilListValue + attribute + "version" + "2.0")

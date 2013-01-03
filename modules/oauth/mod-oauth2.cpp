@@ -58,7 +58,7 @@ public:
     gc_mutable_ref<string> ca;
     gc_mutable_ref<string> cert;
     gc_mutable_ref<string> key;
-    gc_mutable_ref<list<list<value> > > appkeys;
+    gc_mutable_ref<list<value> > appkeys;
     gc_mutable_ref<list<string> > mcaddrs;
     gc_mutable_ref<memcache::MemCached> mc;
     gc_mutable_ref<perthread_ptr<http::CURLSession> > cs;
@@ -90,7 +90,7 @@ public:
     const char* const dir;
     bool enabled;
     gc_mutable_ref<string> login;
-    gc_mutable_ref<list<list<value> > > scopeattrs;
+    gc_mutable_ref<list<value> > scopeattrs;
     gc_mutable_ref<list<AuthnProviderConf> > apcs;
 };
 
@@ -133,7 +133,7 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& userinfo, const bool check, request_rec* const r, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs) {
+const failable<int> authenticated(const list<value>& userinfo, const bool check, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
     if (isNil(scopeattrs)) {
@@ -172,7 +172,7 @@ const failable<int> authenticated(const list<list<value> >& userinfo, const bool
 /**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* const r, const list<list<value> >& appkeys) {
+const failable<int> authorize(const list<value>& args, request_rec* const r, const list<value>& appkeys) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> ref = assoc<value>("openauth_referrer", args);
     if (isNil(ref) || isNil(cdr(ref)))
@@ -199,7 +199,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
     debug(redir, "modoauth2::authorize::redir");
 
     // Build the state URI
-    const list<list<value> > stargs = mklist<list<value> >(tok, cid, info, ref);
+    const list<value> stargs = mklist<value>(tok, cid, info, ref);
     const string state = http::queryString(stargs);
     debug(state, "modoauth2::authorize::state");
 
@@ -211,7 +211,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
 
     // Redirect to the authorize URI
     const list<value> adisplay = (isNil(display) || isNil(cdr(display)))? nilListValue : mklist<value>("display", cadr(display));
-    const list<list<value> > aargs = mklist<list<value> >(mklist<value>("response_type", "code"), mklist<value>("client_id", car(appkey)), mklist<value>("scope", cadr(scope)), adisplay, mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("state", httpd::escape(state)));
+    const list<value> aargs = mklist<value>(mklist<value>("response_type", "code"), mklist<value>("client_id", car(appkey)), mklist<value>("scope", cadr(scope)), adisplay, mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("state", httpd::escape(state)));
     const string uri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(aargs);
     debug(uri, "modoauth2::authorize::uri");
     return httpd::externalRedirect(uri, r);
@@ -229,13 +229,13 @@ const failable<list<value> > profileUserInfo(const value& cid, const list<value>
 /**
  * Handle an access_token request.
  */
-const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const http::CURLSession& cs, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
+const failable<int> accessToken(const list<value>& args, request_rec* r, const list<value>& appkeys, const http::CURLSession& cs, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
 
     // Extract access_token URI, client ID and authorization code parameters
     const list<value> state = assoc<value>("state", args);
     if (isNil(state) || isNil(cdr(state)))
         return mkfailure<int>("Missing state parameter");
-    const list<list<value> >& stargs = httpd::queryArgs(httpd::unescape(cadr(state)));
+    const list<value>& stargs = httpd::queryArgs(httpd::unescape(cadr(state)));
     const list<value> ref = assoc<value>("openauth_referrer", stargs);
     if (isNil(ref) || isNil(cdr(ref)))
         return mkfailure<int>("Missing openauth_referrer parameter");
@@ -263,7 +263,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     debug(redir, "modoauth2::access_token::redir");
 
     // Request access token
-    const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code, mklist<value>("grant_type", "authorization_code"));
+    const list<value> targs = mklist<value>(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code, mklist<value>("grant_type", "authorization_code"));
     const string tqs = http::queryString(targs);
     debug(tqs, "modoauth2::access_token::tokenqs");
     const string turi = httpd::unescape(cadr(tok));
@@ -285,7 +285,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
 
     // Request user info
     // TODO Make this step configurable
-    const list<list<value> > iargs = mklist<list<value> >(tv);
+    const list<value> iargs = mklist<value>(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + http::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
     const failable<value> profres = http::get(iuri, cs);
@@ -350,7 +350,7 @@ static int checkAuthn(request_rec *r) {
     }
 
     // Get the request args
-    const list<list<value> > args = httpd::queryArgs(r);
+    const list<value> args = httpd::queryArgs(r);
 
     // Handle OAuth authorize request step
     if (string(r->uri) == "/oauth2/authorize/") {
@@ -390,7 +390,7 @@ int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
     debug(httpd::serverName(s), "modoauth2::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil((list<list<value> >)sc.appkeys))
+    if (isNil((list<value>)sc.appkeys))
         sc.appkeys = mainsc.appkeys;
     if (isNil((list<string>)sc.mcaddrs))
         sc.mcaddrs = mainsc.mcaddrs;
@@ -450,7 +450,7 @@ void childInit(apr_pool_t* const p, server_rec* const s) {
 char* confAppKey(cmd_parms *cmd, unused void *c, char *arg1, char* arg2, char* arg3) {
     const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
-    sc.appkeys = cons<list<value> >(mklist<value>(arg1, mklist<value>(arg2, arg3)), (list<list<value> >)sc.appkeys);
+    sc.appkeys = cons<value>(mklist<value>(arg1, mklist<value>(arg2, arg3)), (list<value>)sc.appkeys);
     return NULL;
 }
 char* confMemcached(cmd_parms *cmd, unused void *c, char *arg) {
@@ -492,7 +492,7 @@ char* confCertKeyFile(cmd_parms *cmd, unused void *c, char *arg) {
 char* confScopeAttr(cmd_parms *cmd, void* c, char* arg1, char* arg2) {
     const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
-    dc.scopeattrs = cons<list<value> >(mklist<value>(arg1, arg2), (list<list<value> >)dc.scopeattrs);
+    dc.scopeattrs = cons<value>(mklist<value>(arg1, arg2), (list<value>)dc.scopeattrs);
     return NULL;
 }
 char* confAuthnProvider(cmd_parms *cmd, void *c, char* arg) {

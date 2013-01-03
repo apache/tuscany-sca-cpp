@@ -5,7 +5,7 @@
      size_t length;
  
 -    ret = snprintf(buffer, size, "%.17g", value);
-+    ret = snprintf(buffer, size, "%g", value);
++    ret = snprintf(buffer, size, "%.16g", value);
      if(ret < 0)
          return -1;
  

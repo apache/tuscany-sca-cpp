@@ -68,7 +68,6 @@ public:
     QpidConnection& operator=(const QpidConnection& qc) = delete;
 
     ~QpidConnection() {
-        debug("queue::~qpidonnection");
         if (!owner)
             return;
         c.close();
@@ -109,7 +108,6 @@ public:
     }
 
     ~QpidSession() {
-        debug("queue::~qpidsession");
         if (!owner)
             return;
         s.close();

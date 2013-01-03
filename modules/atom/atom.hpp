@@ -45,23 +45,24 @@ const value entry("entry");
  * Convert a list of elements to a list of element values representing an ATOM entry.
  */
 const list<value> entryElementValues(const list<value>& e) {
-    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
+    const list<value> lt = elementChildren("title", e);
     const list<value> t = nilListValue + element + value("title") + (isNil(lt)? value(emptyString) : elementValue(car(lt)));
 
-    const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
+    const list<value> li = elementChildren("id", e);
     const list<value> i = nilListValue + element + value("id") + (isNil(li)? value(emptyString) : elementValue(car(li)));
 
-    const list<value> la = filter<value>(selector(mklist<value>(element, "author")), e);
-    const list<value> lan = isNil(la)? nilListValue : filter<value>(selector(mklist<value>(element, "name")), car(la));
-    const list<value> lae = isNil(la)? nilListValue : filter<value>(selector(mklist<value>(element, "email")), car(la));
+    const list<value> la = elementChildren("author", e);
+    const list<value> lan = isNil(la)? nilListValue : elementChildren("name", car(la));
+    const list<value> lae = isNil(la)? nilListValue : elementChildren("email", car(la));
     const list<value> laa = isNil(lan)? lae : lan;
     const list<value> a = isNil(laa)? nilListValue : mklist<value>(nilListValue + element + value("author") + elementValue(car(laa)));
 
-    const list<value> lu = filter<value>(selector(mklist<value>(element, "updated")), e);
+    const list<value> lu = elementChildren("updated", e);
     const list<value> u = isNil(lu)? nilListValue : mklist<value>(nilListValue + element + value("updated") + elementValue(car(lu)));
 
-    const list<value> lc = filter<value>(selector(mklist<value>(element, "content")), e);
-    const list<value> c = isNil(lc)? nilListValue : mklist<value>(nilListValue + element + value("content") + elementValue(car(lc)));
+    const list<value> lc = elementChildren("content", e);
+    const list<value> c = isNil(lc)? nilListValue : isAttribute(elementValue(car(lc)))? nilListValue :
+        mklist<value>(nilListValue + element + value("content") + elementValue(car(lc)));
 
     return append<value>(append<value>(append<value>(nilListValue + element + entry + value(t) + value(i), a), u), c);
 }
@@ -110,9 +111,9 @@ const failable<list<value> > readATOMFeed(const list<string>& ilist) {
     const list<value> f = content(xml::readElements(ilist));
     if (isNil(f))
         return mkfailure<list<value> >("Empty feed");
-    const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(f));
-    const list<value> i = filter<value>(selector(mklist<value>(element, "id")), car(f));
-    const list<value> e = filter<value>(selector(mklist<value>(element, entry)), car(f));
+    const list<value> t = elementChildren("title", car(f));
+    const list<value> i = elementChildren("id", car(f));
+    const list<value> e = elementChildren(entry, car(f));
     return mklist<value>(append<value>(nilListValue + element + feed 
                 + value(nilListValue + element + value("title") + elementValue(car(t)))
                 + value(nilListValue + element + value("id") + elementValue(car(i))),
@@ -182,9 +183,9 @@ const failable<list<string> > writeATOMEntry(const list<value>& l) {
  */
 template<typename R> const failable<R> writeATOMFeed(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
     const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
-    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), l);
+    const list<value> lt = elementChildren("title", l);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
-    const list<value> li = filter<value>(selector(mklist<value>(element, "id")), l);
+    const list<value> li = elementChildren("id", l);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> f = nilListValue
         + element + feed + (nilListValue + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
@@ -192,7 +193,7 @@ template<typename R> const failable<R> writeATOMFeed(const lambda<const R(const 
         + (nilListValue + element + "id" + i);
 
     // Write ATOM entries
-    const list<value> le = filter<value>(selector(mklist<value>(element, entry)), l);
+    const list<value> le = elementChildren(entry, l);
     if (isNil(le))
         return xml::writeElements<R>(reduce, initial, mklist<value>(f));
 

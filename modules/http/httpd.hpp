@@ -330,13 +330,13 @@ const string unescape(const string& uri) {
 /**
  * Unescape a list of key of value pairs representing query args.
  */
-const list<value> unescapeArg(const list<value> a) {
-    return mklist<value>(car(a), unescape(cadr(a)));
+const value unescapeArg(const value& a) {
+    return mklist<value>(car<value>(a), unescape(cadr<value>(a)));
 }
 
-const list<list<value> > unescapeArgs(const list<list<value> > args) {
+const list<value> unescapeArgs(const list<value>& args) {
     debug(args, "httpd::unescape::args");
-    const list<list<value> > uargs = map<list<value>, list<value>>(unescapeArg, args);
+    const list<value> uargs = map<value, value>(unescapeArg, args);
     debug(uargs, "httpd::unescape::result");
     return uargs;
 }
@@ -344,7 +344,7 @@ const list<list<value> > unescapeArgs(const list<list<value> > args) {
 /**
  * Returns a list of key value pairs from the args in a query string.
  */
-const list<value> queryArg(const string& s) {
+const value queryArg(const string& s) {
     debug(s, "httpd::queryArg::string");
     const list<string> t = tokenize("=", s);
     if (isNil(cdr(t)))
@@ -359,27 +359,27 @@ const string fixupQueryArgs(const string& a) {
     return join("&", t);
 }
 
-const list<list<value> > queryArgs(const string& a) {
-    return map<string, list<value>>(queryArg, tokenize("&", fixupQueryArgs(a)));
+const list<value> queryArgs(const string& a) {
+    return map<string, value>(queryArg, tokenize("&", fixupQueryArgs(a)));
 }
 
 /**
  * Returns a list of key value pairs from the args in an HTTP request.
  */
-const list<list<value> > queryArgs(const request_rec* const r) {
+const list<value> queryArgs(const request_rec* const r) {
     if (r->args == NULL)
-        return list<list<value> >();
+        return nilListValue;
     return queryArgs(r->args);
 }
 
 /**
  * Converts the args received in a POST to a list of key value pairs.
  */
-const list<list<value> > postArgs(const list<value>& a) {
+const list<value> postArgs(const list<value>& a) {
     if (isNil(a))
-        return list<list<value> >();
+        return nilListValue;
     const list<value> l = car(a);
-    return cons(l, postArgs(cdr(a)));
+    return cons<value>(l, postArgs(cdr(a)));
 }
 
 /**
@@ -397,7 +397,7 @@ const int setupReadPolicy(request_rec* const r) {
 }
 
 /**
- * Read the content of a POST or PUT.
+ * Read the content of an HTTP request.
  */
 const list<string> read(request_rec* const r) {
     char b[1024];

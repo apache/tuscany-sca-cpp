@@ -23,7 +23,7 @@
 ; Return an empty cart if not found
 (define (getcart id cache)
   (define cart (cache "get" (list id)))
-  (if (nul cart)
+  (if (null? cart)
     (list)
     cart)
 )
@@ -39,7 +39,7 @@
 
 ; Find an item in the cart
 (define (find id cart)
-  (if (nul cart)
+  (if (null? cart)
     (list (list 'entry (list 'title "Item") (list 'id "0")))
     (if (= id (cadr (caddr (car cart))))
       (list (car cart))
@@ -48,7 +48,7 @@
 
 ; Get items from the cart
 (define (get id cache)
-  (if (nul id)
+  (if (null? id)
     (list (append (list 'feed (list 'title "Your Cart") (list 'id cartId)) (getcart cartId cache)))
     (find (car id) (getcart cartId cache))
   )
@@ -56,7 +56,7 @@
 
 ; Delete items from the  cart
 (define (delete id cache)
-  (if (nul id)
+  (if (null? id)
     (cache "delete" (list cartId))
     true
   )
@@ -69,7 +69,7 @@
 
 ; Sum the prices of a list of items
 (define (sum items)
-  (if (nul items)
+  (if (null? items)
     0
     (+ (price (car items)) (sum (cdr items))))
 )

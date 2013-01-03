@@ -178,7 +178,7 @@ const failable<value> userInfoFromSession(const string& realm, request_rec* cons
  * Return the user info from a form auth session cookie.
  */
 const failable<value> userInfoFromCookie(const value& sid, const string& realm, request_rec* const r) {
-    const list<list<value>> info = httpd::queryArgs(sid);
+    const list<value> info = httpd::queryArgs(sid);
     debug(info, "modopenauth::userInfoFromCookie::info");
     const list<value> user = assoc<value>(realm + "-user", info);
     if(isNil(user))
@@ -212,7 +212,7 @@ const failable<value> userInfoFromHeader(const char* header, const string& realm
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& info, request_rec* const r) {
+const failable<int> authenticated(const list<value>& info, request_rec* const r) {
     debug(info, "modopenauth::authenticated::info");
 
     // Store user info in the request
@@ -248,7 +248,7 @@ static int checkAuthn(request_rec* const r) {
     debug(atype, "modopenauth::checkAuthn::auth_type");
 
     // Get the request args
-    const list<list<value> > args = httpd::queryArgs(r);
+    const list<value> args = httpd::queryArgs(r);
 
     // Get session id from the request
     const maybe<string> sid = sessionID(r, "TuscanyOpenAuth");

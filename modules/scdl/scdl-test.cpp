@@ -53,8 +53,8 @@ const bool testComponents() {
     const value catalog = named(string("Catalog"), c);
     assert(name(catalog) == string("Catalog"));
 
-    const list<value> t = mkbtree(sort(nameToElementAssoc(c)));
-    assert(assoctree<value>("Catalog", t) == mklist<value>("Catalog" , cadr(c)));
+    const list<value> t = mkrbtree(sort(nameToElementAssoc(c)));
+    assert(rbtreeAssoc<value>("Catalog", t) == mklist<value>("Catalog" , cadr(c)));
     return true;
 }
 
@@ -89,8 +89,8 @@ const bool testReferences() {
     assert(uri(binding) == nilValue);
     assert(bindingType(binding) == "binding.jsonrpc");
 
-    const list<value> t = mkbtree(sort(referenceToTargetAssoc(references(store))));
-    assert(assoctree<value>("shoppingCart", t) == mklist<value>(string("shoppingCart"), string("ShoppingCart/Cart")));
+    const list<value> t = mkrbtree(sort(referenceToTargetAssoc(references(store))));
+    assert(rbtreeAssoc<value>("shoppingCart", t) == mklist<value>(string("shoppingCart"), string("ShoppingCart/Cart")));
     return true;
 }
 

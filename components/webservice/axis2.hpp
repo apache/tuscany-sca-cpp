@@ -72,7 +72,6 @@ public:
     }
 
     ~Axis2Context() {
-        debug("webservice::~axis2context");
         if (!owner || env == NULL)
             return;
         axutil_env_free(env);

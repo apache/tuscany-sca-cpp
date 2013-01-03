@@ -43,16 +43,16 @@ long countILists = 0;
 long countCLists = 0;
 long countELists = 0;
 
-inline const bool resetListCounters() {
+inline const bool resetListCounters() noexcept {
     countLists = countILists = countCLists = countELists = 0;
     return true;
 }
 
-inline const bool checkListCounters() {
+inline const bool checkListCounters() noexcept {
     return countLists == 0;
 }
 
-inline const bool printListCounters() {
+inline const bool printListCounters() noexcept {
     cout << "countLists " << countLists << endl;
     cout << "countELists " << countELists << endl;
     cout << "countILists " << countILists << endl;
@@ -91,19 +91,19 @@ inline const bool printListCounters() {
 template<typename T> class list {
 public:
 
-    inline list() : car() {
+    inline list() noexcept : car() {
         debug_inc(countLists);
         debug_inc(countELists);
         debug_watchList();
     }
 
-    inline list(const T& car, const lambda<list<T>()>& cdr) : car(car), cdr(cdr) {
+    inline list(const T& car, const lambda<list<T>()>& cdr) noexcept : car(car), cdr(cdr) {
         debug_inc(countLists);
         debug_inc(countILists);
         debug_watchList();
     }
 
-    inline list(const list& p) : car(p.car), cdr(p.cdr) {
+    inline list(const list& p) noexcept : car(p.car), cdr(p.cdr) {
         debug_inc(countLists);
         debug_inc(countCLists);
 #ifdef WANT_MAINTAINER_WATCH
@@ -113,11 +113,11 @@ public:
 
     list<T>& operator=(const list<T>& p) = delete;
 
-    inline ~list() {
+    inline ~list() noexcept {
         debug_dec(countLists);
     }
 
-    inline const bool operator==(const list<T>& p) const {
+    inline const bool operator==(const list<T>& p) const noexcept {
         if(this == &p)
             return true;
         if(isNil(cdr))
@@ -131,7 +131,7 @@ public:
         return cdr() == p.cdr();
     }
 
-    inline const bool operator<(const list<T>& p) const {
+    inline const bool operator<(const list<T>& p) const noexcept {
         if(this == &p)
             return false;
         if (isNil(cdr))
@@ -145,7 +145,7 @@ public:
         return cdr() < p.cdr();
     }
 
-    inline const bool operator>(const list<T>& p) const {
+    inline const bool operator>(const list<T>& p) const noexcept {
         if(this == &p)
             return false;
         if (isNil(cdr))
@@ -159,24 +159,23 @@ public:
         return cdr() > p.cdr();
     }
 
-    inline const bool operator!=(const list<T>& p) const {
+    inline const bool operator!=(const list<T>& p) const noexcept {
         return !this->operator==(p);
     }
 
-    inline operator const list<list<T> >() const {
+    inline operator const list<list<T> >() const noexcept {
         return (list<list<T> >)T(*this);
     }
 
 private:
 #ifdef WANT_MAINTAINER_WATCH
-    template<typename X> friend const string watchList(const list<X>& p);
+    template<typename X> friend const string watchList(const list<X>& p) noexcept;
     string watch;
 #endif
 
-    template<typename X> friend const bool isNil(const list<X>& p);
-    template<typename X> friend const X car(const list<X>& p);
-    template<typename X> friend const list<X> cdr(const list<X>& p);
-    template<typename X> friend const bool setlist(list<X>& target, const list<X>& l);
+    template<typename X> friend const bool isNil(const list<X>& p) noexcept;
+    template<typename X> friend const X car(const list<X>& p) noexcept;
+    template<typename X> friend const list<X> cdr(const list<X>& p) noexcept;
 
     const T car;
     const lambda<list<T>()> cdr;
@@ -188,7 +187,7 @@ private:
  * Debug utility used to write the contents of a list to a string, easier
  * to watch than the list itself in a debugger.
  */
-template<typename T> inline const string watchList(const list<T>& p) {
+template<typename T> inline const string watchList(const list<T>& p) noexcept {
     if(isNil(p))
         return "()";
     odebugstream os;
@@ -201,21 +200,21 @@ template<typename T> inline const string watchList(const list<T>& p) {
 /**
  * Returns true if the given list is nil.
  */
-template<typename T> inline const bool isNil(const list<T>& p) {
+template<typename T> inline const bool isNil(const list<T>& p) noexcept {
     return isNil(p.cdr);
 }
 
 /**
  * Write a list to an output stream.
  */
-template<typename T> inline ostream& writeHelper(ostream& out, const list<T>& l) {
+template<typename T> inline ostream& writeHelper(ostream& out, const list<T>& l) noexcept {
     if (isNil(l))
         return out;
     out << " " << car(l);
     return writeHelper(out, cdr(l));
 }
 
-template<typename T> inline ostream& operator<<(ostream& out, const list<T>& l) {
+template<typename T> inline ostream& operator<<(ostream& out, const list<T>& l) noexcept {
     if(isNil(l))
         return out << "()";
     out << "(" << car(l);
@@ -226,74 +225,74 @@ template<typename T> inline ostream& operator<<(ostream& out, const list<T>& l) 
 /**
  * Construct a (lazy) list from a value and a lambda function that returns the cdr.
  */
-template<typename T> inline const list<T> cons(const T& car, const lambda<const list<T>()>& cdr) {
+template<typename T> inline const list<T> cons(const T& car, const lambda<const list<T>()>& cdr) noexcept {
     return list<T> (car, cdr);
 }
 
 /**
  * Construct a list from a value and a cdr list.
  */
-template<typename T> inline const list<T> cons(const T& car, const list<T>& cdr) {
+template<typename T> inline const list<T> cons(const T& car, const list<T>& cdr) noexcept {
     return list<T> (car, result(cdr));
 }
 
 /**
  * Cons variations for use with the reduce and reduceRight functions.
  */
-template<typename T> inline const list<T> lcons(const list<T>& cdr, const T& car) {
+template<typename T> inline const list<T> lcons(const list<T>& cdr, const T& car) noexcept {
     return cons<T>(car, cdr);
 }
 
-template<typename T> inline const list<T> rcons(const T& car, const list<T>& cdr) {
+template<typename T> inline const list<T> rcons(const T& car, const list<T>& cdr) noexcept {
     return cons<T>(car, cdr);
 }
 
 /**
  * Construct a list of one value.
  */
-template<typename T> inline const list<T> mklist(const T& car) {
+template<typename T> inline const list<T> mklist(const T& car) noexcept {
     return list<T> (car, result(list<T> ()));
 }
 
 /**
  * Construct a list of two values.
  */
-template<typename T> inline const list<T> mklist(const T& a, const T& b) {
+template<typename T> inline const list<T> mklist(const T& a, const T& b) noexcept {
     return cons(a, mklist(b));
 }
 
 /**
  * Construct a list of three values.
  */
-template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c) {
+template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c) noexcept {
     return cons(a, cons(b, mklist(c)));
 }
 
 /**
  * Construct a list of four values.
  */
-template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d) {
+template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d) noexcept {
     return cons(a, cons(b, cons(c, mklist(d))));
 }
 
 /**
  * Construct a list of five values.
  */
-template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e) {
+template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e) noexcept {
     return cons(a, cons(b, cons(c, cons(d, mklist(e)))));
 }
 
 /**
  * Construct a list of six values.
  */
-template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e, const T& f) {
+template<typename T> inline const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e, const T& f) noexcept {
     return cons(a, cons(b, cons(c, cons(d, cons(e, mklist(f))))));
 }
 
 /**
  * Returns the car of a list.
  */
-template<typename T> inline const T car(const list<T>& p) {
+template<typename T> inline const T car(const list<T>& p) noexcept {
     // Abort if trying to access the car of a nil list
     assertOrFail(!isNil(p.cdr));
     return p.car;
@@ -302,105 +301,105 @@ template<typename T> inline const T car(const list<T>& p) {
 /**
  * Returns the cdr of a list.
  */
-template<typename T> inline const list<T> cdr(const list<T>& p) {
+template<typename T> inline const list<T> cdr(const list<T>& p) noexcept {
     return p.cdr();
 }
 
 /**
  * Returns the car of the cdr (the 2nd element) of a list.
  */
-template<typename T> inline const T cadr(const list<T>& p) {
+template<typename T> inline const T cadr(const list<T>& p) noexcept {
     return car(cdr(p));
 }
 
 /**
  * Returns the 3rd element of a list.
  */
-template<typename T> inline const T caddr(const list<T>& p) {
+template<typename T> inline const T caddr(const list<T>& p) noexcept {
     return car(cdr(cdr(p)));
 }
 
 /**
  * Returns the 4th element of a list.
  */
-template<typename T> inline const T cadddr(const list<T>& p) {
+template<typename T> inline const T cadddr(const list<T>& p) noexcept {
     return car(cdr(cdr(cdr(p))));
 }
 
 /**
  * Returns the 5th element of a list.
  */
-template<typename T> inline const T caddddr(const list<T>& p) {
+template<typename T> inline const T caddddr(const list<T>& p) noexcept {
     return car(cdr(cdr(cdr(cdr(p)))));
 }
 
 /**
  * Returns the 6th element of a list.
  */
-template<typename T> inline const T cadddddr(const list<T>& p) {
+template<typename T> inline const T cadddddr(const list<T>& p) noexcept {
     return car(cdr(cdr(cdr(cdr(cdr(p))))));
 }
 
 /**
  * Returns the 7th element of a list.
  */
-template<typename T> inline const T caddddddr(const list<T>& p) {
+template<typename T> inline const T caddddddr(const list<T>& p) noexcept {
     return car(cdr(cdr(cdr(cdr(cdr(cdr(p)))))));
 }
 
 /**
  * Returns the 8th element of a list.
  */
-template<typename T> inline const T cadddddddr(const list<T>& p) {
+template<typename T> inline const T cadddddddr(const list<T>& p) noexcept {
     return car(cdr(cdr(cdr(cdr(cdr(cdr(cdr(p))))))));
 }
 
 /**
  * Returns a list of elements from the 3rd to the end of a list.
  */
-template<typename T> inline const list<T> cddr(const list<T>& p) {
+template<typename T> inline const list<T> cddr(const list<T>& p) noexcept {
     return cdr(cdr(p));
 }
 
 /**
  * Returns a list of elements from the 4th to the end of a list.
  */
-template<typename T> inline const list<T> cdddr(const list<T>& p) {
+template<typename T> inline const list<T> cdddr(const list<T>& p) noexcept {
     return cdr(cdr(cdr(p)));
 }
 
 /**
  * Returns a list of elements from the 5th to the end of a list.
  */
-template<typename T> inline const list<T> cddddr(const list<T>& p) {
+template<typename T> inline const list<T> cddddr(const list<T>& p) noexcept {
     return cdr(cdr(cdr(cdr(p))));
 }
 
 /**
  * Returns a list of elements from the 6th to the end of a list.
  */
-template<typename T> inline const list<T> cdddddr(const list<T>& p) {
+template<typename T> inline const list<T> cdddddr(const list<T>& p) noexcept {
     return cdr(cdr(cdr(cdr(cdr(p)))));
 }
 
 /**
  * Returns a list of elements from the 7th to the end of a list.
  */
-template<typename T> inline const list<T> cddddddr(const list<T>& p) {
+template<typename T> inline const list<T> cddddddr(const list<T>& p) noexcept {
     return cdr(cdr(cdr(cdr(cdr(cdr(p))))));
 }
 
 /**
  * Returns a list of elements from the 8th to the end of a list.
  */
-template<typename T> inline const list<T> cdddddddr(const list<T>& p) {
+template<typename T> inline const list<T> cdddddddr(const list<T>& p) noexcept {
     return cdr(cdr(cdr(cdr(cdr(cdr(cdr(p)))))));
 }
 
 /**
  * Returns the length of a list.
  */
-template<typename T> inline const size_t length(const list<T>& p) {
+template<typename T> inline const size_t length(const list<T>& p) noexcept {
     const lambda<size_t(const size_t, const list<T>&)> lengthRef = [&lengthRef](const size_t c, const list<T>& p) -> const size_t {
         if(isNil(p))
             return c;
@@ -412,7 +411,7 @@ template<typename T> inline const size_t length(const list<T>& p) {
 /**
  * Appends a list and a lambda function returning a list.
  */
-template<typename T> inline const list<T> append(const list<T>&a, const lambda<const list<T>()>& fb) {
+template<typename T> inline const list<T> append(const list<T>&a, const lambda<const list<T>()>& fb) noexcept {
     if(isNil(a))
         return fb();
     return cons<T>(car(a), [a, fb]() { return append(cdr(a), fb); });
@@ -421,25 +420,25 @@ template<typename T> inline const list<T> append(const list<T>&a, const lambda<c
 /**
  * Appends two lists.
  */
-template<typename T> inline const list<T> append(const list<T>&a, const list<T>& b) {
+template<typename T> inline const list<T> append(const list<T>&a, const list<T>& b) noexcept {
     return append(a, result(b));
 }
 
 /**
  * Append a value to a list.
  */
-template<typename T> inline const list<T> operator+(const list<T>& l, const T& v) {
+template<typename T> inline const list<T> operator+(const list<T>& l, const T& v) noexcept {
     return append(l, mklist(v));
 }
 
-template<typename T, typename V> const list<T> inline operator+(const list<T>& l, const V& v) {
+template<typename T, typename V> const list<T> inline operator+(const list<T>& l, const V& v) noexcept {
     return append(l, mklist<T>(v));
 }
 
 /**
- * Map a lambda function on a list.
+ * Run a map lambda function on a list.
  */
-template<typename T, typename R> inline const list<R> map(const lambda<const R(const T)>& f, const list<T>& p) {
+template<typename T, typename R> inline const list<R> map(const lambda<const R(const T)>& f, const list<T>& p) noexcept {
     if(isNil(p))
         return list<R> ();
     return cons(f(car(p)), map(f, cdr(p)));
@@ -448,7 +447,7 @@ template<typename T, typename R> inline const list<R> map(const lambda<const R(c
 /**
  * Run a reduce lambda function on a list.
  */
-template<typename T, typename R> inline const R reduce(const lambda<const R(const R, const T)>& f, const R& initial, const list<T>& p) {
+template<typename T, typename R> inline const R reduce(const lambda<const R(const R, const T)>& f, const R& initial, const list<T>& p) noexcept {
     const lambda<const R(const R&, const list<T>&p)> reduceAccumulate = [f, &reduceAccumulate](const R& acc, const list<T>& p) -> R {
         if(isNil(p))
             return acc;
@@ -457,7 +456,7 @@ template<typename T, typename R> inline const R reduce(const lambda<const R(cons
     return reduceAccumulate(initial, p);
 }
 
-template<typename T, typename R> inline const R reduceRight(const lambda<const R(const T, const R)>& f, const R& initial, const list<T>& p) {
+template<typename T, typename R> inline const R reduceRight(const lambda<const R(const T, const R)>& f, const R& initial, const list<T>& p) noexcept {
     const lambda<const R(const list<T>&p, const R&)> reduceRightAccumulate = [f, &reduceRightAccumulate](const list<T>& p, const R& acc) -> R {
         if(isNil(p))
             return acc;
@@ -469,7 +468,7 @@ template<typename T, typename R> inline const R reduceRight(const lambda<const R
 /**
  * Run a filter lambda function on a list.
  */
-template<typename T> inline const list<T> filter(const lambda<const bool(const T)>& f, const list<T>& p) {
+template<typename T> inline const list<T> filter(const lambda<const bool(const T)>& f, const list<T>& p) noexcept {
     if(isNil(p))
         return list<T> ();
     if(f(car(p))) {
@@ -482,7 +481,7 @@ template<typename T> inline const list<T> filter(const lambda<const bool(const T
 /**
  * Returns a list pointing to a member of a list.
  */
-template<typename T> inline const list<T> member(const T& t, const list<T>& p) {
+template<typename T> inline const list<T> member(const T& t, const list<T>& p) noexcept {
     if(isNil(p))
         return list<T> ();
     if(t == car(p))
@@ -493,20 +492,20 @@ template<typename T> inline const list<T> member(const T& t, const list<T>& p) {
 /**
  * Reverse a list.
  */
-template<typename T> inline const list<T> reverseIter(const list<T>& acc, const list<T>& p) {
+template<typename T> inline const list<T> reverseIter(const list<T>& acc, const list<T>& p) noexcept {
     if(isNil(p))
         return acc;
     return reverseIter(cons(car(p), acc), cdr(p));
 }
 
-template<typename T> inline const list<T> reverse(const list<T>& p) {
+template<typename T> inline const list<T> reverse(const list<T>& p) noexcept {
     return reverseIter(list<T> (), p);
 }
 
 /**
  * Returns a sequence of values between the given bounds.
  */
-template<typename T> inline const list<T> seq(const T& start, const T& end) {
+template<typename T> inline const list<T> seq(const T& start, const T& end) noexcept {
     if(start == end)
         return mklist(start);
     if(start < end)
@@ -517,27 +516,62 @@ template<typename T> inline const list<T> seq(const T& start, const T& end) {
 /**
  * Returns the i-th element of a list.
  */
-template<typename T> inline const T listRef(const list<T>& l, const size_t i) {
-    if (i == 0)
+template<typename T> inline const T listRef(const list<T>& l, const size_t i) noexcept {
+    if(i == 0)
         return car(l);
     return listRef(cdr(l), i - 1);
 }
 
 /**
+ * Returns the tail of a list, ommiting the first k elements.
+ */
+template<typename T> inline const list<T> listTail(const list<T>& l, const size_t k) noexcept {
+    if(k == 0)
+        return l;
+    if(isNil(l))
+        return l;
+    return listTail(cdr(l), k - 1);
+}
+
+/**
+ * Substitute elements in a list.
+ */
+template<typename T> inline const list<T> subst(const T& o, const T& n, const list<T>& p) noexcept {
+    if(isNil(p))
+        return p;
+    if(o == car(p))
+        return cons<T>(n, subst(o, n, cdr(p)));
+    return cons<T>(car(p), subst(o, n, cdr(p)));
+}
+
+/**
  * Returns the first pair matching a key from a list of key value pairs.
  */
-template<typename T> inline const list<T> assoc(const T& k, const list<list<T> >& p) {
+template<typename T> inline const list<T> assoc(const T& k, const list<list<T> >& p) noexcept {
     if(isNil(p))
-        return list<T> ();
+        return list<T>();
     if(k == car(car(p)))
         return car(p);
     return assoc(k, cdr(p));
 }
 
 /**
+ * Returns the first pair matching a key from a list of key value pairs.
+ * Requires T to support isList and cast to list<T>.
+ */
+template<typename T> inline const list<T> assoc(const T& k, const list<T>& p) noexcept {
+    if(isNil(p))
+        return list<T>();
+    const T c = car(p);
+    if(isList(c) && k == car<T>(c))
+        return c;
+    return assoc(k, cdr(p));
+}
+
+/**
  * Returns a list of lists containing elements from two input lists.
  */
-template<typename T> inline const list<list<T> > zip(const list<T>& a, const list<T>& b) {
+template<typename T> inline const list<list<T> > zip(const list<T>& a, const list<T>& b) noexcept {
     if (isNil(a) || isNil(b))
         return list<list<T> >();
     return cons<list<T> >(mklist<T>(car(a), car(b)), zip(cdr(a), cdr(b)));
@@ -546,20 +580,68 @@ template<typename T> inline const list<list<T> > zip(const list<T>& a, const lis
 /**
  * Converts a list of key value pairs to a list containing the list of keys and the list of values.
  */
-template<typename T> inline const list<T> unzipKeys(const list<list<T> >& l) {
+template<typename T> inline const list<T> unzipKeys(const list<list<T> >& l) noexcept {
     if (isNil(l))
         return list<T>();
     return cons(car(car(l)), unzipKeys(cdr(l)));
 }
 
-template<typename T> inline const list<T> unzipValues(const list<list<T> >& l) {
+template<typename T> inline const list<T> unzipValues(const list<list<T> >& l) noexcept {
     if (isNil(l))
         return list<T>();
     return cons(cadr(car(l)), unzipValues(cdr(l)));
 }
 
-template<typename T> inline const list<list<T> > unzip(const list<list<T> >& l) {
+template<typename T> inline const list<list<T> > unzip(const list<list<T> >& l) noexcept {
     return mklist<list<T> >(unzipKeys(l), unzipValues(l));
+}
+
+/**
+ * Delete assocs matching a key from a list of assocs.
+ */
+template<typename T> inline const list<list<T> > delAssoc(const T& k, const list<list<T> >& p) noexcept {
+    if(isNil(p))
+        return p;
+    if(k == car(car(p)))
+        return delAssoc(k, cdr(p));
+    return cons<list<T> >(car(p), delAssoc(k, cdr(p)));
+}
+
+/**
+ * Delete assocs matching a key from a list of assocs.
+ * Requires T to support isList, isAssoc, and cast to list<T>.
+ */
+template<typename T> inline const list<T> delAssoc(const T& k, const list<T>& p) noexcept {
+    if(isNil(p))
+        return p;
+    const T c = car(p);
+    if(isList(c) && k == car<T>(c))
+        return delAssoc(k, cdr(p));
+    return cons<T>(c, delAssoc(k, cdr(p)));
+}
+
+/**
+ * Substitute assocs with matching keys in a list of assocs.
+ */
+template<typename T> inline const list<list<T> > substAssoc(const T& k, const list<T>& n, const list<list<T> >& p, const bool add = false) noexcept {
+    if(isNil(p))
+        return add? mklist<list<T> >(n) : p;
+    if(k == car(car(p)))
+        return cons<list<T> >(n, substAssoc(k, n, cdr(p), false));
+    return cons<list<T> >(car(p), substAssoc(k, n, cdr(p), add));
+}
+
+/**
+ * Substitute assocs with matching keys in a list of assocs.
+ * Requires T to support isList, isAssoc, and cast to list<T>.
+ */
+template<typename T> inline const list<T> substAssoc(const T& k, const list<T>& n, const list<T>& p, const bool add = false) noexcept {
+    if(isNil(p))
+        return add? mklist<T>(n) : p;
+    const T c = car(p);
+    if(isList(c) && k == car<T>(c))
+        return cons<T>(n, substAssoc(k, n, cdr(p), false));
+    return cons<T>(c, substAssoc(k, n, cdr(p), add));
 }
 
 }

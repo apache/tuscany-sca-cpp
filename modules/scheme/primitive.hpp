@@ -26,9 +26,12 @@
  * Script evaluator primitive functions.
  */
 
+#include <math.h>
+
 #include "stream.hpp"
 #include "function.hpp"
 #include "list.hpp"
+#include "tree.hpp"
 #include "value.hpp"
 #include "parallel.hpp"
 
@@ -90,10 +93,30 @@ inline const value listProc(const list<value>& args) {
 }
 
 inline const value assocProc(const list<value>& args) {
-    return assoc(car(args), (list<list<value> >)cadr(args));
+    return assoc(car(args), (list<value>)cadr(args));
 }
 
-inline const value nulProc(const list<value>& args) {
+inline const value delAssocProc(const list<value>& args) {
+    return delAssoc(car(args), (list<value>)cadr(args));
+}
+
+inline const value substAssocProc(const list<value>& args) {
+    return substAssoc(car(args), (list<value>)cadr(args), (list<value>)caddr(args));
+}
+
+inline const value treeDelAssocProc(const list<value>& args) {
+    return treeDelAssoc((list<value>)car(args), (list<value>)cadr(args));
+}
+
+inline const value treeSubstAssocProc(const list<value>& args) {
+    return treeSubstAssoc((list<value>)car(args), (list<value>)cadr(args), (list<value>)caddr(args));
+}
+
+inline const value treeSelectAssocProc(const list<value>& args) {
+    return treeSelectAssoc((list<value>)car(args), (list<value>)cadr(args));
+}
+
+inline const value nullProc(const list<value>& args) {
     const value v(car(args));
     if (isNil(v))
         return true;
@@ -104,6 +127,14 @@ inline const value nulProc(const list<value>& args) {
 
 inline const value equalProc(const list<value>& args) {
     return (bool)(car(args) == cadr(args));
+}
+
+inline const value greaterProc(const list<value>& args) {
+    return (bool)(car(args) > cadr(args));
+}
+
+inline const value lesserProc(const list<value>& args) {
+    return (bool)(car(args) < cadr(args));
 }
 
 inline const value addProc(const list<value>& args) {
@@ -124,6 +155,10 @@ inline const value mulProc(const list<value>& args) {
 
 inline const value divProc(const list<value>& args) {
     return (double)car(args) / (double)cadr(args);
+}
+
+inline const value sqrtProc(const list<value>& args) {
+    return (double)sqrt((double)car(args));
 }
 
 inline const value displayProc(const list<value>& args) {
@@ -216,14 +251,22 @@ inline const list<value> primitiveProcedureNames() {
     + "cdr"
     + "cons"
     + "list"
-    + "nul"
+    + "null?"
     + "="
     + "equal?"
+    + "<"
+    + ">"
     + "+"
     + "-"
     + "*"
     + "/"
+    + "sqrt"
     + "assoc"
+    + "del-assoc"
+    + "subst-assoc"
+    + "tree-select-assoc"
+    + "tree-del-assoc"
+    + "tree-subst-assoc"
     + "cadr"
     + "caddr"
     + "cadddr"
@@ -242,14 +285,22 @@ inline const list<value> primitiveProcedureObjects() {
     + primitiveProcedure(cdrProc)
     + primitiveProcedure(consProc)
     + primitiveProcedure(listProc)
-    + primitiveProcedure(nulProc)
+    + primitiveProcedure(nullProc)
     + primitiveProcedure(equalProc)
     + primitiveProcedure(equalProc)
+    + primitiveProcedure(lesserProc)
+    + primitiveProcedure(greaterProc)
     + primitiveProcedure(addProc)
     + primitiveProcedure(subProc)
     + primitiveProcedure(mulProc)
     + primitiveProcedure(divProc)
+    + primitiveProcedure(sqrtProc)
     + primitiveProcedure(assocProc)
+    + primitiveProcedure(delAssocProc)
+    + primitiveProcedure(substAssocProc)
+    + primitiveProcedure(treeSelectAssocProc)
+    + primitiveProcedure(treeDelAssocProc)
+    + primitiveProcedure(treeSubstAssocProc)
     + primitiveProcedure(cadrProc)
     + primitiveProcedure(caddrProc)
     + primitiveProcedure(cadddrProc)

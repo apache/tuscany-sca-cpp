@@ -119,7 +119,7 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
 if test "${want_maintainer_mode}" = "true"; then
   cxxflags="${cxxflags} -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Wno-strict-aliasing -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Waddress -Wredundant-decls -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -O2 -stdlib=libc++ -Qunused-arguments -Wno-return-type-c-linkage"
+    cxxflags="${cxxflags} -O1 -stdlib=libc++ -Qunused-arguments -Wno-return-type-c-linkage"
   else
     cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion"
   fi
@@ -128,7 +128,7 @@ if test "${want_maintainer_mode}" = "true"; then
 else
   cxxflags="${cxxflags} -g -std=c++0x -fmessage-length=0"
   if test "${cxxtype}" = "clang"; then
-    cxxflags="${cxxflags} -O2 -stdlib=libc++ -Qunused-arguments"
+    cxxflags="${cxxflags} -O1 -stdlib=libc++ -Qunused-arguments"
   else
     cxxflags="${cxxflags} -O2"
   fi

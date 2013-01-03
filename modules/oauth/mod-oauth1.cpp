@@ -64,7 +64,7 @@ public:
     gc_mutable_ref<string> ca;
     gc_mutable_ref<string> cert;
     gc_mutable_ref<string> key;
-    gc_mutable_ref<list<list<value> > > appkeys;
+    gc_mutable_ref<list<value> > appkeys;
     gc_mutable_ref<list<string> > mcaddrs;
     gc_mutable_ref<memcache::MemCached> mc;
     gc_mutable_ref<perthread_ptr<http::CURLSession> > cs;
@@ -96,7 +96,7 @@ public:
     const char* const dir;
     bool enabled;
     gc_mutable_ref<string> login;
-    gc_mutable_ref<list<list<value> > > scopeattrs;
+    gc_mutable_ref<list<value> > scopeattrs;
     gc_mutable_ref<list<AuthnProviderConf> > apcs;
 };
 
@@ -139,7 +139,7 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<list<value> >& userinfo, const bool check, request_rec* const r, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs) {
+const failable<int> authenticated(const list<value>& userinfo, const bool check, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
     if (isNil(scopeattrs)) {
@@ -179,7 +179,7 @@ const failable<int> authenticated(const list<list<value> >& userinfo, const bool
  * Convert a query string containing oauth args to an authorization header.
  */
 const string header(const string& qs, const string& redir, const string& verif) {
-    const list<list<value> > args = httpd::queryArgs(qs);
+    const list<value> args = httpd::queryArgs(qs);
     ostringstream hdr;
     hdr << "Authorization: OAuth "
         << "oauth_nonce=\"" << string(cadr(assoc<value>("oauth_nonce", args))) << "\", ";
@@ -220,7 +220,7 @@ const list<string> sign(const string& verb, const string& uri, const list<value>
 /**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* const r, const list<list<value> >& appkeys, const memcache::MemCached& mc) {
+const failable<int> authorize(const list<value>& args, request_rec* const r, const list<value>& appkeys, const memcache::MemCached& mc) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> ref = assoc<value>("openauth_referrer", args);
     if (isNil(ref) || isNil(cdr(ref)))
@@ -242,7 +242,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
         return mkfailure<int>("Missing oauth1_info parameter");
 
     // Build the redirect URI
-    const list<list<value> > redirargs = mklist<list<value> >(tok, cid, info, ref);
+    const list<value> redirargs = mklist<value>(tok, cid, info, ref);
     const string redir = httpd::url("/oauth1/access_token/", r) + string("?") + http::queryString(redirargs);
     debug(redir, "modoauth1::authorize::redir");
 
@@ -253,7 +253,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
     list<value> appkey = cadr(app);
 
     // Build and sign the request token URI
-    const string requri = httpd::unescape(cadr(req)) + string("&") + http::queryString(mklist<list<value> >(mklist<value>("oauth_callback", httpd::escape(redir))));
+    const string requri = httpd::unescape(cadr(req)) + string("&") + http::queryString(mklist<value>(mklist<value>("oauth_callback", httpd::escape(redir))));
     const list<string> srequri = sign("POST", requri, appkey, emptyString, emptyString);
     debug(srequri, "modoauth1::authorize::srequri");
 
@@ -267,7 +267,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
     const string res(pres);
     free(pres);
     debug(res, "modoauth1::authorize::res");
-    const list<list<value> > resargs = httpd::queryArgs(res);
+    const list<value> resargs = httpd::queryArgs(res);
 
     // Retrieve the request token
     const list<value> conf = assoc<value>("oauth_callback_confirmed", resargs);
@@ -286,7 +286,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* const
         return mkfailure<int>(prc);
 
     // Redirect to the authorize URI
-    const string authuri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(mklist<list<value> >(tv));
+    const string authuri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(mklist<value>(tv));
     debug(authuri, "modoauth1::authorize::authuri");
     return httpd::externalRedirect(authuri, r);
 }
@@ -343,7 +343,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
 /**
  * Handle an access_token request.
  */
-const failable<int> accessToken(const list<list<value> >& args, request_rec* r, const list<list<value> >& appkeys, const list<list<value> >& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
+const failable<int> accessToken(const list<value>& args, request_rec* r, const list<value>& appkeys, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs, const memcache::MemCached& mc) {
 
     // Extract access_token URI, client ID and verification code
     const list<value> ref = assoc<value>("openauth_referrer", args);
@@ -377,7 +377,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
         return mkfailure<int>(sv);
 
     // Build and sign access token request URI
-    const string tokuri = httpd::unescape(cadr(tok)) + string("?") + http::queryString(mklist<list<value> >(vv));
+    const string tokuri = httpd::unescape(cadr(tok)) + string("?") + http::queryString(mklist<value>(vv));
     const list<string> stokuri = sign("POST", tokuri, appkey, cadr(tv), content(sv));
     debug(stokuri, "modoauth1::access_token::stokuri");
 
@@ -391,7 +391,7 @@ const failable<int> accessToken(const list<list<value> >& args, request_rec* r, 
     const string tokres(ptokres);
     free(ptokres);
     debug(tokres, "modoauth1::access_token::res");
-    const list<list<value> > tokresargs = httpd::queryArgs(tokres);
+    const list<value> tokresargs = httpd::queryArgs(tokres);
 
     // Retrieve the access token
     const list<value> atv = assoc<value>("oauth_token", tokresargs);
@@ -475,7 +475,7 @@ static int checkAuthn(request_rec *r) {
     }
 
     // Get the request args
-    const list<list<value> > args = httpd::queryArgs(r);
+    const list<value> args = httpd::queryArgs(r);
 
     // Handle OAuth authorize request step
     if (string(r->uri) == "/oauth1/authorize/") {
@@ -515,7 +515,7 @@ int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
     debug(httpd::serverName(s), "modoauth1::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil((list<list<value> >)sc.appkeys))
+    if (isNil((list<value>)sc.appkeys))
         sc.appkeys = mainsc.appkeys;
     if (isNil((list<string>)sc.mcaddrs))
         sc.mcaddrs = mainsc.mcaddrs;
@@ -575,7 +575,7 @@ void childInit(apr_pool_t* const p, server_rec* const s) {
 char* const confAppKey(cmd_parms* cmd, unused void *c, char *arg1, char* arg2, char* arg3) {
     const gc_scoped_pool sp(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth1);
-    sc.appkeys = cons<list<value> >(mklist<value>(arg1, mklist<value>(arg2, arg3)), (list<list<value> >)sc.appkeys);
+    sc.appkeys = cons<value>(mklist<value>(arg1, mklist<value>(arg2, arg3)), (list<value>)sc.appkeys);
     return NULL;
 }
 char* confMemcached(cmd_parms *cmd, unused void *c, char *arg) {
@@ -617,7 +617,7 @@ char* confCertKeyFile(cmd_parms *cmd, unused void *c, char *arg) {
 char* confScopeAttr(cmd_parms *cmd, void* c, char* arg1, char* arg2) {
     const gc_scoped_pool sp(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
-    dc.scopeattrs = cons<list<value> >(mklist<value>(arg1, arg2), (list<list<value> >)dc.scopeattrs);
+    dc.scopeattrs = cons<value>(mklist<value>(arg1, arg2), (list<value>)dc.scopeattrs);
     return NULL;
 }
 char* confAuthnProvider(cmd_parms *cmd, void *c, char* arg) {
