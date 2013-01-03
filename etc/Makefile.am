@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-EXTRA_DIST = svn-config svn-ignore
+EXTRA_DIST = svn-config svn-ignore valgrind-apr.supp
 
-dist_noinst_SCRIPTS = httpd-ipcrm memgrind
+dist_noinst_SCRIPTS = httpd-ipcrm callgrind memgrind ios-inspector
 
