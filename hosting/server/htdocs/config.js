@@ -32,7 +32,7 @@ config.pagetitle = function() {
 };
 
 config.hometitle = function() {
-    return '<br/><span style="font-weight: bold;">Create SCA Composite Apps</span><br/><br/>';
+    return '<br/><span style="font-weight: bold;">Create SCA Apps</span><br/><br/>';
 };
 
 config.clone = function() {

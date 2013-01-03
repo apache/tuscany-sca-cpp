@@ -296,9 +296,19 @@ function memo(obj, key, f) {
 /**
  * Un-memoize stored results.
  */
-function unmemo(obj) {
-    obj.memo = {};
-    return true;
+function unmemo(obj, prefix) {
+    if (!prefix) {
+        obj.memo = {};
+        return true;
+    }
+    if (!('memo' in obj)) {
+        obj.memo = {};
+        return true;
+    }
+    for (key in obj.memo) {
+        if (key.substring(0, prefix.length) == prefix)
+            delete obj.memo[key];
+    }
 }
 
 /**
@@ -306,6 +316,32 @@ function unmemo(obj) {
  */
 var lstorage = {};
 lstorage.enabled = true;
+
+/**
+ * Get a key.
+ */
+lstorage.key = function(i) {
+    if (!lstorage.enabled)
+        return null;
+    try {
+        return localStorage.key(i);
+    } catch(e) {
+        return null;
+    }
+};
+
+/**
+ * Return the number of keys.
+ */
+lstorage.length = function() {
+    if (!lstorage.enabled)
+        return 0;
+    try {
+        return localStorage.length;
+    } catch(e) {
+        return 0;
+    }
+};
 
 /**
  * Get an item.
@@ -318,7 +354,7 @@ lstorage.getItem = function(k) {
     } catch(e) {
         return null;
     }
-}
+};
 
 /**
  * Set an item.
@@ -331,7 +367,7 @@ lstorage.setItem = function(k, v) {
     } catch(e) {
         return null;
     }
-}
+};
 
 /**
  * Remove an item.
@@ -344,7 +380,7 @@ lstorage.removeItem = function(k) {
     } catch(e) {
         return null;
     }
-}
+};
 
 /**
  * Returns a list of the properties of an object.
@@ -372,6 +408,14 @@ function domainname(host) {
 }
 
 /**
+ * Convert a host name to a top domain name.
+ */
+function topdomainname(host) {
+    var d = reverse(domainname(host).split('.'));
+    return reverse(mklist(car(d), cadr(d))).join('.');
+}
+
+/**
  * Return true if a host name is a subdomain.
  */
 function issubdomain(host) {
@@ -379,24 +423,13 @@ function issubdomain(host) {
 }
 
 /**
- * Return true if the document cookie contains auth information.
- */
-function hasauthcookie() {
-    return !isNil(document.cookie) &&
-        (document.cookie.indexOf('TuscanyOpenAuth=') != -1 ||
-         document.cookie.indexOf('TuscanyOAuth1=') != -1 ||
-         document.cookie.indexOf('TuscanyOAuth2=') != -1 ||
-         document.cookie.indexOf('TuscanyOpenIDAuth=') != -1);
-}
-
-/**
  * Clear auth information from the document cookie.
  */
 function clearauthcookie() {
-    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/; secure; httponly';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/; secure; httponly';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/; secure; httponly';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/; secure; httponly';
     return true;
 }
 
@@ -411,6 +444,64 @@ function format() {
         i++;
     }
     return s;
+}
+
+/**
+ * Parse an XML dateTime.
+ */
+function xmldatetime(xml) {
+    var re = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]+)?(Z|([+-])([0-9]{2}):([0-9]{2}))?$/;
+    var match = xml.match(re);
+    if (!match)
+        return new Date();
+    return new Date(Date.UTC(match[1], parseInt(match[2]) - 1, match[3],
+                match[9]? parseInt(match[4]) + parseInt(match[10]) * (match[9] == '+'? 1 : -1) : match[4],
+                match[9]? parseInt(match[5]) + parseInt(match[11]) * (match[9] == '+'? 1 : -1) : match[5],
+                match[6], 0));
+}
+
+/**
+ * Encode a string to a url-safe base64 format.
+ */
+function safeb64encode(s) {
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}
+
+/**
+ * Decode a url-safe base64 encoded string.
+ */
+function safeb64decode(s) {
+    return atob((s.replace(/\-/g, '+').replace(/\_/g, '/') + '===').substring(0, s.length + (s.length % 4)));
+}
+
+/**
+ * Return a uuid4.
+ */
+function uuid4() {
+    if (window.crypto && window.crypto.getRandomValues) {
+        var b = new Uint16Array(8);
+        window.crypto.getRandomValues(b);
+        function s4(n) {
+            var s = '000' + n.toString(16);
+            return s.substr(s.length - 4);
+        }
+        return s4(b[0]) + s4(b[1]) + '-' + s4(b[2]) + '-' + s4(b[3]) + '-' + s4(b[4]) + '-' + s4(b[5]) + s4(b[6]) + s4(b[7]);
+    } else {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0
+            return (c == 'x'? r : (r & 0x3 | 0x8)).toString(16);
+        });
+    }
+}
+
+/**
+ * Convert an hexadecimal string to ascii.
+ */
+function hex2ascii(x) {
+    var a = '';
+    for (var i = 0; i < x.length; i += 2)
+        a += String.fromCharCode(parseInt(x.substr(i, 2), 16));
+    return a;
 }
 
 /**

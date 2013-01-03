@@ -35,6 +35,10 @@ config.loginprompt = function() {
     return '<span>Sign in with your userid and password</span>';
 };
 
+config.signuptitle = function() {
+    return 'Sign up for an account';
+};
+
 config.viewfoot = function() {
     return ui.menubar(mklist(ui.menu('menuabout', 'About', '/', '_view', 'note')), mklist());
 };

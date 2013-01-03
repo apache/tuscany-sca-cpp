@@ -17,6 +17,7 @@
 
 # Dashboards collection implementation
 from util import *
+from atomutil import *
 from sys import debug
 
 # Convert a particular user id to a dashboard id
@@ -27,7 +28,7 @@ def dashboardid(user):
 def getdashboard(id, cache):
     debug('dashboards.py::getdashboard::id', id)
     val = cache.get(id)
-    if isNil(val) or val is None:
+    if isNil(val):
         return ()
     dashboard = cdddr(car(val))
     if not isNil(dashboard) and isList(car(cadr(car(dashboard)))):
@@ -47,36 +48,57 @@ def putdashboard(id, dashboard, cache):
     return cache.put(id, val)
 
 # Put an app into the user's dashboard
-def put(id, app, user, cache, apps):
+def put(id, app, user, cache, apps, ratings):
     debug('dashboards.py::put::id', id)
     debug('dashboards.py::put::app', app)
 
     def putapp(id, app, dashboard):
         if isNil(dashboard):
             return app
-        if car(id) == cadr(assoc("'id", car(dashboard))):
+        if car(id) == entryid(dashboard):
             return cons(car(app), cdr(dashboard))
         return cons(car(dashboard), putapp(id, app, cdr(dashboard)))
 
-    appentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), ("'author", user.get(())), assoc("'updated", car(app)), assoc("'content", car(app))),)
+    appentry = mkentry(title(app), car(id), user.get(()), now(), content(app))
     debug('dashboards.py::put::appentry', appentry)
 
     dashboard = putapp(id, appentry, getdashboard(dashboardid(user), cache))
     return putdashboard(dashboardid(user), dashboard, cache)
 
+# Merge app info and ratings into a list of apps
+def mergeapps(entries, apps, ratings):
+    debug('store.py::mergeapps::entries', entries)
+
+    def mergeapp(entry):
+        debug('store.py::mergeapp::entry', entry)
+        id = (entryid(entry),)
+        app = apps.get(id)
+        if isNil(app):
+            return ((),)
+        info = content(app)
+        rating = ratings.get(id)
+        rates = content(rating)
+        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNil(info) else cdr(info)) + (() if isNil(rates) else cdr(rates)))
+        return mergedentry
+
+    mergedentries = tuple(filter(lambda e: not isNil(e), map(lambda e: car(mergeapp((e,))), entries)))
+    debug('store.py::mergeapps::mergedentries', mergedentries)
+    return mergedentries
+
 # Get apps from the user's dashboard
-def get(id, user, cache, apps):
+def get(id, user, cache, apps, ratings):
     debug('dashboards.py::get::id', id)
 
     def findapp(id, dashboard):
         if isNil(dashboard):
             return None
-        if car(id) == cadr(assoc("'id", car(dashboard))):
+        if car(id) == entryid(dashboard):
             return (car(dashboard),)
         return findapp(id, cdr(dashboard))
 
     if isNil(id):
-        dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + getdashboard(dashboardid(user), cache)),)
+        dashboardapps = mergeapps(getdashboard(dashboardid(user), cache), apps, ratings)
+        dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + dashboardapps),)
         debug('dashboards.py::get::dashboard', dashboard)
         return dashboard
 
@@ -85,7 +107,7 @@ def get(id, user, cache, apps):
     return app
 
 # Delete apps from the user's dashboard
-def delete(id, user, cache, apps):
+def delete(id, user, cache, apps, ratings):
     debug('dashboards.py::delete::id', id)
     if isNil(id):
         return cache.delete(dashboardid(user))
@@ -93,7 +115,7 @@ def delete(id, user, cache, apps):
     def deleteapp(id, dashboard):
         if isNil(dashboard):
             return ()
-        if car(id) == cadr(assoc("'id", car(dashboard))):
+        if car(id) == entryid(dashboard):
             return cdr(dashboard)
         return cons(car(dashboard), deleteapp(id, cdr(dashboard)))
 

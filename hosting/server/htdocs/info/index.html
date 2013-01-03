@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<div id="bodydiv" class="body">
+
+<div id="viewform" class="viewform">
+
+<form id="appForm">
+<table style="width: 100%;">
+<tr><td class="label">URL:</td></tr>
+<tr><td><input type="text" id="appURL" class="readentry" size="30" readonly="readonly" placeholder="App URL" style="width: 300px;"/></td></tr>
+<tr><td class="label">Icon:</td></tr>
+<tr><td><img id="appIcon" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadIcon" type="button" class="lightbutton" value="Upload" style="display:none;"/><input id="uploadFile" type="file" accept="image/*" style="display: none;"/><span id="refreshingIcon" class="refreshing" style="display:none;"/></td></tr>
+<tr><td class="label">Author:</td></tr>
+<tr><td><img id="authorPicture" style="width: 50px; height: 50px; vertical-align: middle;"/><input type="text" id="appAuthor" class="readentry" size="30" readonly="readonly" placeholder="Author of the app" style="width: 248px;"/></td></tr>
+<tr><td class="label">Rating:</td></tr>
+<tr><td><span id="appRating" class="ratings">&nbsp;</span><input id="rateApp" type="button" class="lightbutton" value="Rate this app"/></td></tr>
+<tr><td><input type="text" id="appRatings" class="readentry" size="20" readonly="readonly" placeholder="Number of ratings" style="font-size: 12px;"/></td></tr>
+<tr><td class="label">Updated:</td></tr>
+<tr><td><input type="text" id="appUpdated" class="readentry" size="30" readonly="readonly" placeholder="App update date" style="width: 300px;"/></td></tr>
+<tr><td class="label">Description:</td></tr>
+<tr><td><textarea id="appDescription" class="readentry" cols="40" rows="3" readonly="readonly" placeholder="Short description of the app" style="width: 300px;"></textarea></td></tr>
+</table>
+</form>
+<br/>
+
+</div>
+
+<script type="text/javascript">
+(function infobody() {
+
+/**
+ * Get the app name.
+ */
+var appname = ui.fragmentParams(location)['app'];
+
+/**
+ * Setup page layout.
+ */
+(function layout() {
+    document.title = config.windowtitle() + ' - Info - ' + appname;
+    $('viewhead').innerHTML = '<span id="appname" class="cmenu">' + appname + '</span>' +
+        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteApp" value="-" title="Delete this app" disabled="true"/>' +
+        '<span style="position: absolute; top: 0px; right: 5px;">' +
+        '<input type="button" class="greenbutton" id="runApp" value="Run" title="Run this app"/>' +
+        '<input type="button" class="bluebutton" id="cloneApp" value="'+ config.clone() +'" title="' + config.clone() + ' this app"/>' +
+        '</span>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+    $('appURL').value = window.location.hostname + '/' + appname + '/';
+
+    $('viewform').appendChild(ui.declareCSS(
+        '.ratings { ' +
+        'background: url(\'' + ui.b64png(appcache.get('/public/ratings.b64')) + '\'); ' +
+        'vertical-align: middle; width: 50px; height: 14px; display: inline-block; ' +
+        ' }'));
+})();
+
+/**
+ * Set images.
+ */
+(function drawImages() {
+    $('appIcon').src = ui.b64png(appcache.get('/public/app.b64'));
+    $('authorPicture').src = ui.b64png(appcache.get('/public/user.b64'));
+})();
+
+/**
+ * Initialize service references.
+ */
+var editorComp = sca.component("Editor");
+var apps = sca.reference(editorComp, "apps");
+var icons = sca.reference(editorComp, "icons");
+var pictures = sca.reference(editorComp, "pictures");
+var ratings = sca.reference(editorComp, "ratings");
+
+/**
+ * The current app entry, author and saved XML content.
+ */
+var savedappxml = '';
+var author;
+var savediconxml;
+
+/**
+ * Get and display the requested app.
+ */
+(function getapp() {
+    if (isNil(appname))
+        return false;
+    workingstatus(true);
+    showstatus('Loading');
+
+    return apps.get(appname, function(doc) {
+
+        // Stop now if we didn't get the app
+        if (doc == null) {
+            errorstatus('Couldn\'t get the app info');
+            workingstatus(false);
+            return false;
+        }
+
+        var appentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        author = cadr(assoc("'author", appentry));
+        $('appAuthor').value = author.split('@')[0];
+        var updated = assoc("'updated", appentry);
+        $('appUpdated').value = isNil(updated)? '' : xmldatetime(cadr(updated)).toLocaleDateString();
+        var content = cadr(assoc("'content", appentry));
+        var description = assoc("'description", content);
+        $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
+        //var ratingy = -20 * (4 - Math.floor(Math.random() * 4));
+        //$('appRating').style.backgroundPosition = '0px ' + ratingy + 'px';
+        //$('appRatings').value = '';
+        savedappxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+
+        // Enable author to edit and delete the app
+        if (username == author) {
+            $('appDescription').readOnly = false;
+            $('appDescription').className = 'flatentry';
+            $('uploadIcon').style.display = 'inline';
+            $('deleteApp').disabled = false;
+            $('deleteApp').onclick = function() {
+                return ui.navigate('/#view=delete&app=' + appname, '_view');
+            }
+            onlinestatus();
+        } else {
+            showstatus('Read only');
+        }
+        workingstatus(false);
+        return true;
+    });
+})();
+
+/**
+ * Get and display the author's picture.
+ */
+(function getpic(author) {
+    workingstatus(true);
+    showstatus('Loading');
+
+    return pictures.get(author, function(doc) {
+
+        // Stop now if we didn't get a picture
+        if (doc == null) {
+            errorstatus('Author picture not available');
+            workingstatus(false);
+            return false;
+        }
+
+        var picentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var content = assoc("'content", picentry);
+        var picture = assoc("'picture", content);
+        var img = assoc("'image", picture);
+        if (!isNil(img))
+            $('authorPicture').src = cadr(img);
+
+        onlinestatus();
+        workingstatus(false);
+        return true;
+    });
+    return true;
+})();
+
+/**
+ * Get and display the app icon.
+ */
+(function geticon() {
+    if (isNil(appname))
+        return false;
+    workingstatus(true);
+    showstatus('Loading');
+
+    return icons.get(appname, function(doc) {
+        // Stop now if we didn't get an icon
+        if (doc == null) {
+            errorstatus('Icon not available');
+            workingstatus(false);
+            return false;
+        }
+
+        var iconentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        savediconxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
+        var content = assoc("'content", iconentry);
+        var icon = assoc("'icon", content);
+        var img = assoc("'image", icon);
+        if (!isNil(img))
+            $('appIcon').src = cadr(img);
+
+        onlinestatus();
+        workingstatus(false);
+        return true;
+    });
+    return true;
+})();
+
+/**
+ * Refresh icon.
+ */
+var refreshingicon = false;
+function refreshicon() {
+    if (isNil(appname))
+        return false;
+    if (!refreshingicon)
+        return false;
+    $('refreshingIcon').style.display = 'inline-block';
+    return icons.get(appname, function(doc) {
+        if (doc == null) {
+            errorstatus('Icon not available');
+            $('refreshingIcon').style.display = 'none';
+            refreshingicon = false;
+            return false;
+        }
+
+        var iconentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var content = assoc("'content", iconentry);
+        var icon = assoc("'icon", content);
+        var token = assoc("'token", icon);
+
+        // Update icon
+        if (isNil(token)) {
+            var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
+            savediconxml = entryxml;
+            var img = assoc("'image", icon);
+            if (!isNil(img))
+                $('appIcon').src = cadr(img);
+            $('refreshingIcon').style.display = 'none';
+            refreshingicon = false;
+            return true;
+        }
+
+        // Refresh in 2 secs
+        return ui.delay(refreshicon, 2000);
+    }, 'remote');
+    return true;
+}
+
+/**
+ * Get and display the app ratings.
+ */
+(function getratings() {
+    if (isNil(appname))
+        return false;
+    workingstatus(true);
+    showstatus('Loading');
+
+    return ratings.get(appname, function(doc) {
+        // Stop now if we didn't get an icon
+        if (doc == null) {
+            errorstatus('Ratings not available');
+            workingstatus(false);
+            return false;
+        }
+
+        var ratingsentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var aratings = assoc("'ratings", assoc("'content", ratingsentry));
+        var ar = assoc("'rating", aratings);
+        var ar1 = assoc("'rating1", aratings);
+        var ar2 = assoc("'rating2", aratings);
+        var ar3 = assoc("'rating3", aratings);
+        var ar4 = assoc("'rating4", aratings);
+        var rating = isNil(ar)? 0 : Number(cadr(ar));
+        var reviews = (isNil(ar1)? 0 : Number(cadr(ar1))) + (isNil(ar2)? 0 : Number(cadr(ar2))) + (isNil(ar3)? 0 : Number(cadr(ar3))) + (isNil(ar4)? 0 : Number(cadr(ar4)));
+
+        var ratingy = -20 * (4 - Math.floor(rating));
+        $('appRating').style.backgroundPosition = '0px ' + ratingy + 'px';
+        $('appRatings').value = reviews + (reviews > 1? ' ratings' : ' rating');
+
+        onlinestatus();
+        workingstatus(false);
+        return true;
+    });
+    return true;
+})();
+
+/**
+ * Save the current app.
+ */
+function saveapp(entryxml) {
+    workingstatus(true);
+    showstatus('Saving');
+    savedappxml = entryxml;
+    apps.put(appname, savedappxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+
+        showstatus('Saved');
+        workingstatus(false);
+        return false;
+    });
+    return true;
+}
+
+/**
+ * Save the app icon.
+ */
+function saveicon(entryxml) {
+    workingstatus(true);
+    showstatus('Uploading');
+    savedappxml = entryxml;
+    icons.put(appname, savedappxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+
+        showstatus('Uploaded');
+        workingstatus(false);
+        return true;
+    });
+    return true;
+}
+
+/**
+ * Handle a change event
+ */
+function onappchange() {
+    if (username != author)
+        return false;
+
+    // Validate user input
+    var description = $('appDescription').value;
+    if (description.length > 120) {
+        errorstatus('Description cannot be longer than 120 characters');
+        return false;
+    }
+
+    // Save the changes
+    var appentry = mklist("'entry", mklist("'title", appname), mklist("'id", appname), mklist("'content", mklist("'info", mklist("'description", description))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+    if (savedappxml == entryxml)
+        return false;
+    showstatus('Modified');
+    return saveapp(entryxml);
+}
+
+$('appDescription').onchange = onappchange;
+
+/**
+ * Handle a key event.
+ */
+var lastkeyup = null;
+$('appDescription').onkeyup = function() {
+    var t = new Date().getTime();
+    lastkeyup = t;
+    ui.delay(function() {
+            return t == lastkeyup? onappchange() : true;
+        }, 2000);
+};
+
+/**
+ * Handle a form submit event.
+ */
+$('appForm').onsubmit = function() {
+    onappchange();
+    return false;
+};
+
+/**
+ * Handle Clone button event.
+ */
+$('cloneApp').onclick = function() {
+    return ui.navigate('/#view=clone&app=' + appname, '_view');
+};
+
+/**
+ * Handle Run button event.
+ */
+$('runApp').onclick = function() {
+    return ui.navigate('/' + appname + '/', '_blank');
+};
+
+/**
+ * Read and upload icon file.
+ */
+function uploadicon(files) {
+    if (username != author)
+        return false;
+    if (!files || files.length == 0)
+        return false;
+    if (!files[0].type.match('image.*')) {
+        errorstatus('Please select an image');
+        return false;
+    }
+    workingstatus(true);
+    showstatus('Loading');
+
+    // Read the selected file into a 50x50 image
+    return ui.readimage(files[0],
+        function(e) {
+            errorstatus('Couldn\'t read the file');
+            workingstatus(false);
+        },
+        function(p) {
+            showstatus('Loading ' + p + '%');
+        },
+        function(url) {
+            // Update the app icon
+            $('appIcon').src = url;
+            showstatus('Loaded');
+
+            // Now upload it
+            ui.delay(function() {
+                var iconentry = mklist("'entry", mklist("'title", appname), mklist("'id", appname), mklist("'author", username), mklist("'content", mklist("'icon", mklist("'image", url))));
+                var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
+                if (savediconxml == entryxml) {
+                    onlinestatus();
+                    workingstatus(false);
+                    return false;
+                }
+                return saveicon(entryxml);
+            });
+        }, 50, 50);
+}
+
+/**
+ * Upload an icon in an email.
+ */
+function emailicon() {
+
+    // Generate and put an icon email upload token
+    workingstatus(true);
+    showstatus('Uploading');
+    var token = uuid4();
+    var iconentry = mklist("'entry", mklist("'title", appname), mklist("'id", appname), mklist("'author", username), mklist("'content", mklist("'icon", mklist("'token", token))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
+    icons.put(appname, entryxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+        workingstatus(false);
+
+        // Open the email app
+        var mailto = safeb64encode('i/' + appname + '/' + token);
+        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Email to upload&body=Paste icon here', '_self');
+
+        // Refresh app icon
+        refreshingicon = true;
+        return ui.delay(refreshicon, 500);
+    }, 'remote');
+}
+
+/**
+ * Handle icon upload events.
+ */
+$('uploadIcon').onclick = function() {
+    if (ui.isMobile())
+        return emailicon();
+    return $('uploadFile').click();
+};
+$('uploadFile').onchange = function(e) {
+    return uploadicon(e.target.files);
+};
+$('appIcon').ondrag = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+};
+$('appIcon').ondrop = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    return uploadicon(e.dataTransfer.files);
+};
+
+/**
+ * Handle rate button event.
+ */
+$('rateApp').onclick = function() {
+    return ui.navigate('/#view=rate&app=' + appname, '_view');
+};
+
+})();
+</script>
+
+</div>

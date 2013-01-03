@@ -32,5 +32,5 @@ def put(id, palette, cache):
 def get(id, cache):
     if isNil(id):
         return (("'feed", ("'title", "Palettes"), ("'id", "palettes")),)
-    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(cache.get(paletteid(id))))),)
+    return mkentry(car(id), car(id), None, now(), car(cache.get(paletteid(id))))
 

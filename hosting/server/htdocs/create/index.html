@@ -19,43 +19,38 @@
 -->
 <div id="bodydiv" class="body">
 
-<div class="viewform">
+<div id="viewform" class="viewform">
 
 <form id="createAppForm">
 <table style="width: 100%;">
-<tr><td><b>App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" class="flatentry" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
-<tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" class="flatentry" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
-<tr><td>
-<input id="createAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Create" title="Create the app"/>
+<tr><td class="label">URL:</td></tr>
+<tr><td><span id="hostname" class="readentry"></span><input type="text" id="appName" class="flatentry" size="18" autocapitalize="off" placeholder="New app name"/></td></tr>
+<tr><td style="padding-top: 20px;">
+<input id="createAppOKButton" type="submit" class="bluebutton" style="font-weight: bold;" value="Create" title="Create the app"/>
 <input id="createAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
+<br/>
 
 </div>
 
 <script type="text/javascript">
-(function() {
+(function createbody() {
 
 /**
- * Set page titles.
+ * Setup page layout.
  */
-document.title = config.windowtitle() + ' - Create App';
-$('viewhead').innerHTML = '<span class="smenu">Create an App</span>';
+(function layout() {
+    document.title = config.windowtitle() + ' - New App';
+    $('viewhead').innerHTML = '<span class="smenu">New App</span>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+    $('hostname').innerHTML = window.location.hostname + '/';
+})();
 
 /**
- * Set images.
- */
-$('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
-
-/**
- * Init service references.
+ * Initialize service references.
  */
 var editorComp = sca.component("Editor");
 var apps = sca.reference(editorComp, "apps");
@@ -64,23 +59,32 @@ var apps = sca.reference(editorComp, "apps");
  * The current app entry and corresponding saved XML content.
  */
 var appentry;
-var savedappentryxml = '';
+var savedappxml = '';
 
 /**
  * Save an app.
  */
-function save(name, entryxml) {
-    showStatus('Saving');
-    savedappentryxml = entryxml;
-    apps.put(name, savedappentryxml, function(e) {
+function saveapp(name, entryxml) {
+    workingstatus(true);
+    showstatus('Saving');
+
+    savedappxml = entryxml;
+    apps.put(name, savedappxml, function(e) {
         if (e) {
-            showStatus('Local copy');
+            if (e.code && e.code == 404) {
+                errorstatus('App name is taken, please pick another name');
+                workingstatus(false);
+                return false;
+            }
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
-        showStatus('Saved');
+        showstatus('Saved');
+        workingstatus(false);
 
-        // Open it in the page editor
-        ui.navigate('/#view=page&app=' + name, '_view');
+        // Open the app in the page editor
+        ui.navigate('/#view=info&app=' + name, '_view');
         return false;
     });
     return false;
@@ -90,19 +94,36 @@ function save(name, entryxml) {
  * Create an app.
  */
 $('createAppForm').onsubmit = function() {
+
+    // Validate app name
     var name = $('appName').value;
-    if (name == '') {
-        showError('Missing app name');
+    if (name.length < 3 || name.length > 10) {
+        errorstatus('App name must be between 3 and 10 characters');
         return false;
     }
-    showStatus('Modified');
+    name = name.toLowerCase();
+    var anum = name.split('').reduce(function(p, c, i, a) { return p && ((c >= 'a' && c <= 'z') || (c >= '0' && c<= '9')); }, true);
+    if (!anum) {
+        errorstatus('App name can only use numbers and letters');
+        return false;
+    }
+    if (name.charAt(0) < 'a' || name.charAt(0) > 'z') {
+        errorstatus('App name must start with a letter');
+        return false;
+    }
+
+    // Check reserved app names
+    var reserved = mklist('account', 'app', 'cache', 'clone', 'create', 'delete', 'graph', 'home', 'login', 'new', 'page', 'proxy', 'public', 'private', 'info', 'store');
+    if (!isNil(assoc(name, map(function(r) { return mklist(r, r); }, reserved)))) {
+        errorstatus('App name is taken, please pick another name');
+        return false;
+    }
 
     // Clone the 'new' app template
-    var title = $('appTitle').value;
-    var description = $('appDescription').value;
-    appentry = mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", 'new'), mklist("'content", mklist("'stats", mklist("'description", description))));
+    showstatus('Modified');
+    appentry = mklist("'entry", mklist("'title", name), mklist("'id", 'new'), mklist("'author", username));
     var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
-    return save(name, entryxml);
+    return saveapp(name, entryxml);
 };
 
 /**
@@ -115,7 +136,7 @@ $('createAppCancelButton').onclick = function() {
 /**
  * Show the status.
  */
-showOnlineStatus();
+onlinestatus();
 
 })();
 </script>

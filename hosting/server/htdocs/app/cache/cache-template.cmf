@@ -1,0 +1,17 @@
+CACHE MANIFEST
+
+# Version SHA1
+
+# App resources
+/favicon.ico
+/login/
+/public/img.png
+/public/notauth/
+/public/notfound/
+/public/notyet/
+/public/oops/
+/public/touchicon.png
+
+NETWORK:
+*
+

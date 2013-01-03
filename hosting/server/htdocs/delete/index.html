@@ -19,31 +19,32 @@
 -->
 <div id="bodydiv" class="body">
 
-<div class="viewform">
+<div id="viewform" class="viewform">
 
 <form id="deleteAppForm">
 <table style="width: 100%;">
-<tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
-<tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" class="flatentry" size="30" readonly="readonly" style="width: 300px;"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Author:</b></td></tr>
-<tr><td><span id="appAuthor"></span></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Updated:</b></td></tr>
-<tr><td><span id="appUpdated"></span></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" readonly="readonly" style="width: 300px;"></textarea></td></tr>
+<tr><tr><td class="label">URL:</td></tr>
+<tr><td><input type="text" id="appURL" class="readentry" size="30" readonly="readonly" placeholder="App URL" style="width: 300px;"/></td></tr>
+<tr><tr><td class="label">Icon:</td></tr>
+<tr><td><img id="appIcon" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><tr><td class="label">Author:</td></tr>
+<tr><td><img id="authorPhoto" style="width: 50px; height: 50px; vertical-align: middle;"><input type="text" id="appAuthor" class="readentry" size="30" readonly="readonly" placeholder="Author of the app" style="width: 248px;"/></td></tr>
+<tr><tr><td class="label">Updated:</td></tr>
+<tr><td><input type="text" id="appUpdated" class="readentry" size="30" readonly="readonly" placeholder="App update date" style="width: 300px;"/></td></tr>
+<tr><tr><td class="label">Description:</td></tr>
+<tr><td><textarea id="appDescription" class="readentry" cols="40" rows="3" readonly="readonly" placeholder="No description for this app" style="width: 300px;"></textarea></td></tr>
 <tr><td>
-<input id="deleteAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Delete" title="Delete the app"/>
+<input id="deleteAppOKButton" type="submit" class="bluebutton" style="font-weight: bold;" value="Delete" title="Delete the app"/>
 <input id="deleteAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
+<br/>
 
 </div>
 
 <script type="text/javascript">
-(function() {
+(function deletebody() {
 
 /**
  * Get the app name.
@@ -51,18 +52,24 @@
 var appname = ui.fragmentParams(location)['app'];
 
 /**
- * Set page titles.
+ * Setup page layout.
  */
-document.title = config.windowtitle() + ' - ' + 'Delete' + ' - ' + appname;
-$('viewhead').innerHTML = '<span class="smenu">Delete ' + appname + '</span>';
+(function layout() {
+    document.title = config.windowtitle() + ' - ' + 'Delete' + ' - ' + appname;
+    $('viewhead').innerHTML = '<span class="smenu">Delete ' + appname + '</span>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+    $('appURL').value = window.location.hostname + '/' + appname + '/';
+})();
 
 /**
  * Set images.
  */
-$('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
+$('appIcon').src = ui.b64png(appcache.get('/public/app.b64'));
+$('authorPhoto').src = ui.b64png(appcache.get('/public/user.b64'));
 
 /**
- * Init service references.
+ * Initialize service references.
  */
 var editorComp = sca.component("Editor");
 var apps = sca.reference(editorComp, "apps");
@@ -73,49 +80,56 @@ var apps = sca.reference(editorComp, "apps");
 var appentry;
 
 /**
- * Get and display an app.
+ * Get and display the requested app.
  */
-function getapp(name) {
-    if (isNil(name))
+(function getapp() {
+    if (isNil(appname))
         return false;
-    showStatus('Loading');
+    workingstatus(true);
+    showstatus('Loading');
 
-    return apps.get(name, function(doc) {
+    return apps.get(appname, function(doc) {
 
         // Stop now if we didn't get the app
         if (doc == null) {
-            showError('App not available');
+            errorstatus('Couldn\'t get the app info');
+            workingstatus(false);
             return false;
         }
-        showOnlineStatus();
 
-        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
-        $('appTitle').value = cadr(assoc("'title", cdr(appentry)));
-        $('appAuthor').innerHTML = cadr(assoc("'author", cdr(appentry)));
-        $('appUpdated').innerHTML = cadr(assoc("'updated", cdr(appentry)));
-        var content = cadr(assoc("'content", cdr(appentry)));
+        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", appname));
+        var author = cadr(assoc("'author", appentry));
+        $('appAuthor').value = author.split('@')[0];
+        $('appUpdated').value = xmldatetime(cadr(assoc("'updated", appentry))).toLocaleDateString();
+        var content = cadr(assoc("'content", appentry));
         var description = assoc("'description", content);
         $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
+
+        onlinestatus();
+        workingstatus(false);
         return true;
     });
-}
+})();
 
 /**
- * Delete an app.
+ * Delete the app.
  */
 $('deleteAppForm').onsubmit = function() {
-    showStatus('Deleting');
+    workingstatus(true);
+    showstatus('Deleting');
 
     // Delete the app
     apps.del(appname, function(e) {
         if (e) {
-            showStatus('Local copy');
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
-        showOnlineStatus();
+        onlinestatus();
+        workingstatus(false);
 
         // Return to the app store
-        ui.navigate('/#view=store', '_view');
+        ui.navigate('/#view=store&category=myapps&idx=5', '_view');
         return false;
     });
     return false;
@@ -127,11 +141,6 @@ $('deleteAppForm').onsubmit = function() {
 $('deleteAppCancelButton').onclick = function() {
     history.back();
 };
-
-/**
- * Get the current app.
- */
-getapp(appname);
 
 })();
 </script>

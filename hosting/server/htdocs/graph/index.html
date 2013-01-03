@@ -19,13 +19,13 @@
 -->
 <div id="bodydiv" class="body">
 
-<div id="contentdiv" class="viewcontent" style="width: 2500px;">
-<div id="graphdiv" class="graphdiv" style="top: 0px; left: -2500px; width: 5000px; height: 5000px;"></div>
-<div id="playdiv" style="position: absolute; top: 0x; left: 0px; width: 2500px; height: 5000px; visibility: hidden"></div>
+<div id="viewcontent" class="viewcontent" style="width: 100%;">
+<div id="graphdiv" class="graphcontent" style="top: 0px; left: -2500px; width: 5000px; height: 5000px;"></div>
+<div id="playdiv" style="position: absolute; top: 0x; left: 0px; width: 2500px; height: 5000px; display: none"></div>
 </div>
 
 <script type="text/javascript">
-(function() {
+(function graphbody() {
 
 /**
  * Get the current app name.
@@ -49,11 +49,14 @@ document.title = config.windowtitle() + ' - ' + config.logic() + ' - ' + appname
  * Set header div.
  */
 $('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
-'<input type="button" id="deleteCompButton" title="Delete a component" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
-'<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="compValue" type="text" value="" class="flatentry" title="Component value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; visibility: hidden;" readonly="readonly"/></span>' +
+'<input type="button" id="deleteCompButton" title="Delete a component" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
+'<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="compValue" type="text" value="" class="flatentry" title="Component value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; display: none;" readonly="readonly"/></span>' +
 '<input type="button" id="playCompButton" title="View component value" class="graybutton plusminus" style="position: absolute; top: 4px; right: 75px;" disabled="true" value="&gt;"/>' +
-'<input type="button" id="copyCompButton" title="Copy a component" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 40px;" disabled="true" value="C"/>' +
-'<input type="button" id="addCompButton" title="Add a component" class="graybutton bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
+'<input type="button" id="copyCompButton" title="Copy a component" class="bluebutton" style="position: absolute; top: 4px; right: 40px;" disabled="true" value="C"/>' +
+'<input type="button" id="addCompButton" title="Add a component" class="bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
+
+if (!ui.isMobile())
+    $('viewcontent').className = 'viewcontent flatscrollbars';
 
 /**
  * Track the current app composite, author, and saved XML content.
@@ -159,8 +162,8 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
     graph.dragged = false;
     graph.selected = null;
     cvalue.readOnly = true;
-    cvalue.style.visibility = 'hidden';
-    atitle.style.visibility = 'visible';
+    cvalue.style.display = 'none';
+    atitle.style.display = 'block';
     ccopy.disabled = true;
     cdelete.disabled = true;
     cadd.disabled = !editable;
@@ -180,6 +183,54 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
             return n;
         return draggable(n.parentNode);
     }
+
+    /**
+     * Render component move animation.
+     */
+    function onmoveanimation() {
+        //debug('onmoveanimation');
+
+        // Stop animation if we're not dragging an element anymore
+        if (graph.dragging == null)
+            return true;
+
+        // Request the next animation frame
+        ui.animation(onmoveanimation);
+
+        // Nothing to do if the selected component has not moved
+        if (graph.moveX == graph.dragX && graph.moveY == graph.dragY)
+            return true;
+
+        // Remember that the selected component has been dragged
+        graph.dragged = true;
+
+        // Cut wire to the dragged component
+        if (graph.dragging.parentNode != graphdiv) {
+            var compos = scdl.composite(graphdiv.compos);
+            setElement(compos, graph.sortcompos(graph.cutwire(graph.dragging, compos, graphdiv)));
+
+            // Bring component to the top
+            graph.bringtotop(graph.dragging, graphdiv);
+        }
+
+        // Calculate new position of the dragged component
+        var gpos = graph.relpos(graph.dragging);
+        var newX = gpos.x + (graph.moveX - graph.dragX);
+        var newY = gpos.y + (graph.moveY - graph.dragY);
+        if (newX >= graph.palcx)
+            graph.dragX = graph.moveX
+        else
+            newX = graph.palcx;
+        if (newY >= 0)
+            graph.dragY = graph.moveY;
+        else
+            newY = 0;
+
+        // Move it
+        graph.move(graph.dragging, graph.mkpath().pos(newX, newY));
+
+        return false;
+    };
 
     /**
      * Handle a mouse down or touch start event.
@@ -208,6 +259,9 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
         // Remember current drag position
         graph.dragX = pos.screenX;
         graph.dragY = pos.screenY;
+
+        // Start move animation
+        ui.animation(onmoveanimation);
 
         e.preventDefault();
         return true;
@@ -393,69 +447,28 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
     /**
      * Handle a mouse or touch move event.
      */
-    function onmousemove(e) {
-        if (graph.dragging == null)
-            return true;
-
-        // Ignore duplicate  mouse move events
-        if (graph.moveX == graph.dragX && graph.moveY == graph.dragY)
-            return true;
-
-        // Remember that the component was dragged
-        graph.dragged = true;
-
-        // Cut wire to component
-        if (graph.dragging.parentNode != graphdiv) {
-            var compos = scdl.composite(graphdiv.compos);
-            setElement(compos, graph.sortcompos(graph.cutwire(graph.dragging, compos, graphdiv)));
-
-            // Bring component to the top
-            graph.bringtotop(graph.dragging, graphdiv);
-        }
-
-        // Calculate new position of dragged element
-        var gpos = graph.relpos(graph.dragging);
-        var newX = gpos.x + (graph.moveX - graph.dragX);
-        var newY = gpos.y + (graph.moveY - graph.dragY);
-        if (newX >= graph.palcx)
-            graph.dragX = graph.moveX
-        else
-            newX = graph.palcx;
-        if (newY >= 0)
-            graph.dragY = graph.moveY;
-        else
-            newY = 0;
-
-        // Move the dragged element
-        graph.move(graph.dragging, graph.mkpath().pos(newX, newY));
-
-        return false;
-    };
-
     if (!ui.isMobile()) {
         window.onmousemove = function(e) {
             //debug('onmousemove');
 
-            // Remember mouse position
+            // Record mouse position
             graph.moveX = e.screenX;
             graph.moveY = e.screenY;
-
-            return onmousemove(e);
+            if (graph.dragging == null)
+                return true;
+            return false;
         }
     } else {
         graphdiv.ontouchmove = function(e) {
             //debug('ontouchmove');
             
-            // Remember touch position
+            // Record touch position
             var pos = e.touches[0];
-            if (graph.moveX == pos.screenX && graph.moveY == pos.screenY)
-                return true;
             graph.moveX = pos.screenX;
             graph.moveY = pos.screenY;
-            if (graph.moveX == graph.dragX && graph.moveY == graph.dragY)
+            if (graph.dragging == null)
                 return true;
-
-            return onmousemove(e);
+            return false;
         }
     }
 
@@ -465,7 +478,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
     function onvaluechange() {
         if (graph.selected == null)
             return false;
-        if (graphdiv.parentNode.style.visibility == 'hidden')
+        if (graphdiv.parentNode.style.display == 'none')
             return false;
 
         // Change component name and refactor references to it
@@ -496,8 +509,8 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
             graph.setproperty(graph.selected.comp, cvalue.value);
             var hasprop = graph.hasproperty(graph.selected.comp);
             cvalue.readOnly = (hasprop? false : true) || !editable;
-            cvalue.style.visibility = hasprop? 'visible' : 'hidden';
-            atitle.style.visibility = hasprop? 'hidden' : 'visible';
+            cvalue.style.display = hasprop? 'block' : 'none';
+            atitle.style.display = hasprop? 'none' : 'block';
             cvalue.value = graph.property(graph.selected.comp);
 
             // Refresh the composite
@@ -597,10 +610,11 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
         return false;
     };
 
-    // Create a hidden SVG element to help compute the width
-    // of component and reference titles
+    // Create a hidden element to help compute the width of
+    // component and reference titles
     graph.offtitles = document.createElement('span');
     graph.offtitles.style.visibility = 'hidden';
+    graph.offtitles.style.display = 'block';
     graph.offtitles.position = 'absolute';
     graph.offtitles.top = -500;
     graph.offtitles.width = 500;
@@ -792,8 +806,8 @@ graph.compselect = function(g, s, atitle, cvalue, ccopy, cdelete) {
     if (isNil(g) || !s) {
         cvalue.value = '';
         cvalue.readOnly = true;
-        cvalue.style.visibility = 'hidden';
-        atitle.style.visibility = 'visible';
+        cvalue.style.display = 'none';
+        atitle.style.display = 'block';
         ccopy.disabled = true;
         cdelete.disabled = true;
         if (isNil(g))
@@ -806,8 +820,8 @@ graph.compselect = function(g, s, atitle, cvalue, ccopy, cdelete) {
 
     cvalue.value = graph.hasproperty(g.comp)? graph.property(g.comp) : g.id;
     cvalue.readOnly = false || !editable;
-    cvalue.style.visibility = 'visible';
-    atitle.style.visibility = 'hidden';
+    cvalue.style.display = 'block';
+    atitle.style.display = 'none';
     ccopy.disabled = false || !editable;
     cdelete.disabled = false || !editable;
 
@@ -1817,13 +1831,15 @@ var bpalette = null;
 function getapp(name, g) {
     if (isNil(name))
         return false;
-    showStatus('Loading');
+    workingstatus(true);
+    showstatus('Loading');
 
     return composites.get(name, function(doc) {
 
         // Stop now if we didn't get a composite
         if (doc == null) {
-            showError('App not available');
+            errorstatus('Couldn\'t get the app info');
+            workingstatus(false);
             return false;
         }
 
@@ -1849,7 +1865,12 @@ function getapp(name, g) {
         author = elementValue(namedElementChild("'author", composentry));
         editable = author == username;
         cadd.disabled = !editable;
-        showStatus(editable? onlineStatus() : 'Read only');
+        if (editable)
+            onlinestatus();
+        else
+            showstatus('Read only');
+        
+        workingstatus(false);
         return true;
     });
 }
@@ -1912,17 +1933,21 @@ function installpalette(name, pos, g, bg, palette, gpalettes) {
  * Save the current composite.
  */
 function save(savexml) {
-    showStatus('Saving');
+    workingstatus(true);
+    showstatus('Saving');
+
     savedcomposxml = savexml;
     var entry = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<entry xmlns="http://www.w3.org/2005/Atom">' +
         '<title type="text">' + appname + '</title><id>' + appname + '</id><author><email>' + author + '</email></author>' +
         '<content type="application/xml">' + savedcomposxml + '</content></entry>';
     composites.put(appname, entry, function(e) {
         if (e) {
-            showStatus('Local copy');
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
-        showStatus('Saved');
+        showstatus('Saved');
+        workingstatus(false);
         return false;
     });
     return true;
@@ -1938,17 +1963,17 @@ function oncomposchange(prop) {
     var newxml = car(writeXML(composite, false));
     if (savedcomposxml == newxml)
         return false;
-    showStatus('Modified');
+    showstatus('Modified');
 
     // Save property changes right away
     if (prop)
         return save(newxml);
 
     // Autosave other changes after 1 second
-    showStatus('Modified');
-    setTimeout(function() {
+    showstatus('Modified');
+    ui.delay(function autosave() {
         if (savedcomposxml == newxml) {
-            showStatus('Saved');
+            showstatus('Saved');
             return false;
         }
         return save(newxml);
@@ -1997,7 +2022,7 @@ function showdata(gcomp) {
     cplay.value = '<';
     gvisible = false;
     pdiv.innerHTML = '';
-    pdiv.style.visibility = 'visible';
+    pdiv.style.display = 'block';
 
     // Get the component result data
     var comp = sca.component(gcomp.id, appname);
@@ -2030,9 +2055,9 @@ function showdata(gcomp) {
         return displaydata(t, '100%');
     });
 
-    setTimeout(function() {
-        graphdiv.style.visibility = 'hidden'
-    }, 0);
+    ui.async(function hidegraphdiv() {
+        graphdiv.style.display = 'none'
+    });
     return true;
 }
 
@@ -2043,13 +2068,13 @@ function showgraph(gcomp) {
     if (gvisible)
         return true;
     cplay.value = '>';
-    graphdiv.style.visibility = 'visible'
+    graphdiv.style.display = 'block'
     gvisible = true;
     graph.compselect(gcomp, true, atitle, cvalue, ccopy, cdelete);
-    setTimeout(function() {
-        pdiv.style.visibility = 'hidden';
+    ui.async(function hideplaydiv() {
+        pdiv.style.display = 'none';
         pdiv.innerHTML = '';
-    }, 0);
+    });
     return true;
 }
 

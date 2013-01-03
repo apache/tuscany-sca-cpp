@@ -16,8 +16,8 @@
 #  under the License.
 
 # App composites collection implementation
-from time import strftime
 from util import *
+from atomutil import *
 from sys import debug
 
 # Convert an id to a composite id
@@ -30,19 +30,18 @@ def put(id, comp, user, cache, apps):
     debug('composites.py::put::comp', comp)
 
     # Get the requested app
-    app = apps.get(id);
-    if isNil(app) or app is None:
+    app = apps.get(id)
+    if isNil(app):
         debug('composites.py::put', 'app not found', id)
         return False
 
     # Check app author
-    author = cadr(assoc("'author", car(app)))
-    if author != user.get(()):
-        debug('composites.py::put', 'different author', author)
+    if author(app) != user.get(()):
+        debug('composites.py::put', 'different author', author(app))
         return False
 
     # Update the composite in the composite db
-    compentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y')), assoc("'content", car(comp))),)
+    compentry = mkentry(title(app), car(id), user.get(()), now(), content(comp))
     debug('composites.py::put::compentry', compentry)
     return cache.put(compid(id), compentry)
 
@@ -54,25 +53,22 @@ def get(id, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app) or app is None:
+    if isNil(app):
         debug('composites.py::get', 'app not found', id)
 
         # Return a default new composite
-        return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
+        return mkentry(car(id), car(id), user.get(()), now(), ())
 
     # Get the requested composite
-    comp = cache.get(compid(id));
-    if isNil(comp) or comp is None:
+    comp = cache.get(compid(id))
+    if isNil(comp):
         debug('composites.py::get', 'composite not found', id)
 
         # Return a default new composite
-        return (("'entry", ("'title", car(id)), ("'id", car(id)), assoc("'author", car(app)), assoc("'updated", car(app))),)
+        return mkentry(title(app), car(id), author(app), now(), ())
 
     # Return the composite
-    def updated(u):
-        return assoc("'updated", car(app)) if isNil(u) or u is None else u
-
-    compentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), assoc("'author", car(app)), updated(assoc("'updated", car(comp))), assoc("'content", car(comp))),)
+    compentry = mkentry(title(app), car(id), author(app), updated(comp), content(comp))
     debug('composites.py::get::compentry', compentry)
     return compentry
 
@@ -81,15 +77,14 @@ def delete(id, user, cache, apps):
     debug('composites.py::delete::id', id)
 
     # Get the requested app
-    app = apps.get(id);
-    if isNil(app) or app is None:
+    app = apps.get(id)
+    if isNil(app):
         debug('composites.py::delete', 'app not found', id)
         return False
 
     # Check app author
-    author = cadr(assoc("'author", car(app)))
-    if author != user.get(()):
-        debug('composites.py::delete', 'different author', author)
+    if author(app) != user.get(()):
+        debug('composites.py::delete', 'different author', author(app))
         return False
 
     # Delete the composite

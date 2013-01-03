@@ -17,50 +17,69 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
+<html>
 <head>
+<!-- Firebug inspector -->
+<!--
+<script type="text/javascript" src="https://getfirebug.com/releases/lite/1.3/firebug-lite.js"></script>
+-->
+<!-- Weinre inspector -->
+<!--
+<script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
+-->
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
+<!--
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+-->
+<link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/"/>
 <script type="text/javascript">
-(function() {
+try {
+
+(function roothead() {
 
 window.appcache = {};
 
 /**
  * Get and cache a resource.
  */
-appcache.get = function(uri) {
+appcache.get = function(uri, mode) {
     var h = uri.indexOf('#');
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
     var ls = window.lstorage || localStorage;
-    var item = null;
-    try { item = ls.getItem(u); } catch(e) {}
-    if (item != null && item != '')
-        return item;
+    if (mode != 'remote') {
+        var item = null;
+        try { item = ls.getItem('ui.r.' + u); } catch(e) {}
+        if (item != null && item != '')
+            return item;
+        if (mode == 'local')
+            return null;
+    }
 
     // Get resource from network
     //if (window.debug) debug('appcache.get', u);
     var http = new XMLHttpRequest();
-    http.open("GET", u, false);
+    http.open("GET", mode == 'remote'? (u + '?t=' + new Date().getTime() + '&r=' + Math.random()) : u, false);
     http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
-        if (http.getResponseHeader("X-Login") != null) {
+        var xl = http.getResponseHeader("X-Login");
+        if (xl != null && xl != '') {
             if (window.debug) debug('http error', u, 'X-Login');
             // Redirect to login page if not signed in
             document.location = '/login/';
             return null;
-        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+        }
+        var ct = http.getResponseHeader("Content-Type");
+        if (http.responseText == '' || ct == null || ct == '') {
             if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
-        try { ls.setItem(u, http.responseText); } catch(e) {}
+        try { ls.setItem('ui.r.' + u, http.responseText); } catch(e) {}
         return http.responseText;
     }
     if (window.debug) debug('http error', u, http.status, http.statusText);
@@ -83,82 +102,68 @@ appcache.remove = function(uri) {
 /**
  * Load Javascript and CSS.
  */
-(function() {
+(function rootboot() {
 
-var bootjs = document.createElement('script');
-bootjs.type = 'text/javascript';
-bootjs.text = appcache.get('/all-min.js');
-document.head.appendChild(bootjs);
-document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+window.eval.call(window, 'try {\n' + appcache.get('/all-min.js') + '\n' + appcache.get('/config-min.js') + '\n} catch(e) { console.log(e.stack); throw e; }\n');
+ui.includeCSS(appcache.get('/ui-min.css'));
 
 // Disable cache for testing
 //lstorage.enabled = false;
 
 })();
 
-/**
- * Redirect to login page if not signed in.
- */
-(function() {
-
-if (document.location.protocol == 'https:' && !hasauthcookie())
-    document.location = '/login/';
-
-})();
+} catch(e) {
+    if (window.debug) debug(e.stack);
+    throw e;
+}
 </script>
 </head>
 <body class="delayed">
-<div id="mainbodydiv" class="mainbody">
 
-<div id="headdiv" class="hsection">
-<script type="text/javascript">
-(function() {
-
-$('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
-
-})();
-</script>
+<div id="menucontainer" class="tbarmenu">
+<div id="menu"></div>
 </div>
 
-<div id="menubackground" class="tbarbackground fixed"></div>
-<div id="menu" class="tbarmenu fixed"></div>
+<div id="viewheadcontainer" class="viewhead">
+<div id="viewhead"></div>
+</div>
 
-<div id="viewheadbackground" class="viewheadbackground fixed"></div>
-<div id="viewhead" class="viewhead fixed"></div>
+<div id="working" class="working" style="display: none;"></div>
 
 <div id="viewcontainer"></div>
 
-<div id="viewfootbackground" class="viewfootbackground fixed"></div>
-<div id="viewfoot" class="viewfoot fixed"></div>
-<div id="status" class="status fixed" style="visibility: hidden;"></div>
+<div id="viewfootcontainer" class="viewfoot">
+<div id="viewfoot"></div>
+<div id="status"></div>
+</div>
+
+<div id="installer" class="installer"></div>
 
 <script type="text/javascript">
-(function() {
+try {
+
+(function rootbody() {
 
 /**
- * Init service references.
+ * Setup page layout.
+ */
+(function layout() {
+
+    document.title = config.windowtitle();
+    $('viewcontainer').className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+
+})();
+
+/**
+ * Initialize service references.
  */
 var editorComp = sca.component("Editor");
-var user= sca.defun(sca.reference(editorComp, "user"));
+var user = sca.defun(sca.reference(editorComp, "user"));
 var accounts = sca.reference(editorComp, "accounts");
 
 /**
- * Set page title.
- */
-document.title = config.windowtitle();
-
-/**
- * Init div variables.
- */
-var bdiv = $('mainbodydiv');
-var mdiv = $('menu'); 
-var hdiv = $('viewhead'); 
-var vcontainer = $('viewcontainer');
-vcontainer.className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
-var fdiv = $('viewfoot'); 
-
-/**
- * The current user name and account entry.
+ * The current user name.
  */
 window.username = 'anonymous';
 
@@ -169,134 +174,95 @@ var storecat = 'top';
 var storeidx = 0;
 
 /**
- * Pre-fetch app resources.
+ * Populate cache with app resources.
  */
 var appresources = [
     ['/all-min.js'],
     ['/ui-min.css'],
     ['/account/', 9],
-    ['/clone/', 3],
-    ['/create/', 2],
-    ['/delete/', 3],
+    ['/clone/', 4],
+    ['/create/', 3],
+    ['/delete/', 4],
     ['/graph/', 5],
     ['/config-min.js'],
     ['/home/', 0],
-    ['/home/home.b64'],
     ['/page/', 4],
     ['/public/app.b64'],
     ['/public/config-min.js'],
-    ['/public/grid72.b64'],
-    ['/public/iframe-min.html'],
     ['/public/img.b64'],
+    ['/public/rate.b64'],
+    ['/public/ratings.b64'],
     ['/public/user.b64'],
-    ['/stats/', 2],
+    ['/rate/', 4],
+    ['/search/', 2],
+    ['/info/', 3],
     ['/store/', 1]
 ];
 
 /**
- * Show a status message.
+ * Init status message area.
  */
-window.showStatus = function(s, c) {
-    //debug('status', s);
-    var sdiv = $('status');
-    if (isNil(sdiv))
-        return s;
-    sdiv.innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
-    sdiv.className = 'status fixed';
-    sdiv.style.visibility = 'visible';
+(function initstatus() {
+    if (isNil($('status')))
+        return;
+    $('status').style.display = 'none';
     
     function divtransitionend(e) {
-        e.target.style.visibility = 'hidden';
-        e.target.className = 'status fixed';
+        e.target.style.display = 'none';
+        e.target.className = ui.isMobile()? 'status3dm' : 'status3d';
+        e.target.error = false;
     }
-    if (!sdiv.addedTransitionEnd) {
-        sdiv.addEventListener('webkitTransitionEnd', divtransitionend, false);
-        sdiv.addEventListener('transitionend', divtransitionend, false);
-        sdiv.addedTransitionEnd = true;
-    }
-    sdiv.className = 'statusout3 fixed';
+    $('status').addEventListener('webkitTransitionEnd', divtransitionend, false);
+    $('status').addEventListener('transitionend', divtransitionend, false);
+})();
+
+/**
+ * Show a status message.
+ */
+window.showstatus = function(s, c) {
+    //debug('show status', s);
+    if (isNil($('status')) || $('status').error)
+        return s;
+    $('status').innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+    $('status').style.display = 'block';
+    $('status').error = c == 'errorstatus';
+    if ($('status').delay)
+        ui.cancelDelay($('status').delay);
+    $('status').delay = ui.delay(function hidestatus() {
+        $('status').className = ui.isMobile()? 'statusout3dm' : 'statusout3d';
+        $('status').error = false;
+    }, 3000);
     return s;
-}
+};
 
 /**
  * Show an error message.
  */
-window.showError = function(s) {
+window.errorstatus = function(s) {
     //debug('error', s);
-    return showStatus(s, 'errorstatus');
-}
+    return showstatus(s, 'errorstatus');
+};
+
+/**
+ * Show working status.
+ */
+window.workingstatus = function(w, c) {
+    //debug('show working', w);
+    if (isNil($('working')))
+        return w;
+    if (!ui.isMobile())
+        $('working').style.top = ui.pixpos(Math.round(window.clientHeight / 2));
+    $('working').style.display = w? 'block' : 'none';
+    return w;
+};
 
 /**
  * Show the online/offline status.
  */
-window.showOnlineStatus = function() {
-    return navigator.onLine? showStatus('Online') : showError('Offline');
-}
-
-/**
- * Handle application cache events.
- */
-applicationCache.addEventListener('checking', function(e) {
-    //debug('appcache checking', e);
-    showStatus('Checking');
-}, false);
-applicationCache.addEventListener('error', function(e) {
-    //debug('appcache error', e);
-    showOnlineStatus();
-}, false);
-applicationCache.addEventListener('noupdate', function(e) {
-    //debug('appcache noupdate', e);
-    showOnlineStatus();
-}, false);
-applicationCache.addEventListener('downloading', function(e) {
-    //debug('appcache downloading', e);
-    showStatus('Updating');
-}, false);
-applicationCache.addEventListener('progress', function(e) {
-    //debug('appcache progress', e);
-    showStatus('Updating');
-}, false);
-applicationCache.addEventListener('updateready', function(e) {
-    //debug('appcache updateready', e);
-    try {
-        applicationCache.swapCache();
-    } catch(e) {}
-    showOnlineStatus();
-    //debug('appcache swapped', e);
-
-    // Update offline resources in local storage and reload the page
-    map(function(res) {
-        showStatus('Updating');
-        appcache.remove(res[0]);
-        appcache.get(res[0]);
-    }, append(appresources, config.appresources()));
-    window.location.reload();
-}, false);
-applicationCache.addEventListener('cached', function(e) {
-    //debug('appcache cached', e);
-    showOnlineStatus();
-
-    // Install offline resources in local storage
-    map(function(res) {
-        showStatus('Installing');
-        appcache.remove(res[0]);
-        appcache.get(res[0]);
-    }, append(appresources, config.appresources()));
-}, false);
-
-/**
- * Handle network offline/online events.
- */
-window.addEventListener('offline', function(e) {
-    //debug('going offline');
-    showStatus('Offline');
-}, false);
-window.addEventListener('online', function(e) {
-    //debug('going online');
-    showStatus('Online');
-}, false);
-
-//debug(navigator.onLine? 'online' : 'offline');
+window.onlinestatus = function() {
+    return navigator.onLine? (ui.isMobile()? showstatus('Online') : showstatus('Online')) : errorstatus('Offline');
+};
 
 /**
  * Handle view transitions.
@@ -351,32 +317,36 @@ function mkviewdiv(cname) {
  * Return the last visited location.
  */
 function lastvisited() {
-    if (username != lstorage.getItem('ui.lastvisit.user'))
+    if (username != lstorage.getItem('ui.v.user'))
         return null;
-    return lstorage.getItem('ui.lastvisit.url');
+    return lstorage.getItem('ui.v.url');
 }
 
 /**
  * Build and show the menu bar.
  */
-function showmenu(mdiv, view, appname) {
-    mdiv.innerHTML = ui.menubar(
+function showmenu(view, appname) {
+     $('menu').innerHTML = ui.menubar(
         append(mklist(ui.menu('menuhome', 'Home', '/', '_view', view == 'home'),
-                    ui.menu('menustore', 'Store', '/#view=store&category=' + storecat + '&idx=' + storeidx, '_view', view === 'store')),
+                    ui.menu('menustore', 'Store', '/#view=store&category=' + storecat + '&idx=' + storeidx, '_view', view == 'store'),
+                    ui.menu('menusearch', 'Search', '/#view=search', '_view', view == 'search')),
                 (isNil(appname) || appname == 'undefined')?
                     mklist() :
                     mklist(
-                        ui.menu('menustats', 'Stats', '/#view=stats&app=' + appname, '_view', view == 'stats'),
-                        ui.menu('menupage', 'Page', '/#view=page&app=' + appname, '_view', view == 'page'),
+                        ui.menu('menuinfo', 'Info', '/#view=info&app=' + appname, '_view', view == 'info'),
+                        ui.menu('menupage', 'Edit', '/#view=page&app=' + appname, '_view', view == 'page')
+                        /* TODO disabled for now
+                        ,
                         ui.menu('menulogic', config.logic(), '/#view=graph&app=' + appname, '_view', view == 'graph'),
-                        ui.menu('menurun', '<span class="greentext" style="font-weight: bold">Run!</span>', '/' + appname + '/', '_blank', false))),
+                        ui.menu('menurun', '<span class="greentext" style="font-weight: bold">Run!</span>', '/' + appname + '/', '_blank', false)
+                        */
+                        )),
         (isNil(appname) || appname == 'undefined')? mklist(
-            hasauthcookie()? ui.menufunc('menusignout', 'Sign out', 'return logout();', false) : ui.menu('menusignin', 'Sign in', '/login/', '_self', false),
+            ui.menufunc('menusignout', 'Sign out', 'return logout();', false),
             ui.menu('menuaccount', 'Account', '/#view=account', '_view', view == 'account')) :
             mklist());
 
-    if (fdiv.innerHTML == '') 
-        fdiv.innerHTML = config.viewfoot();
+    $('viewfoot').innerHTML = config.viewfoot();
 }
 
 /**
@@ -390,7 +360,7 @@ function getaccount() {
         return false;
 
     var accountentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
-    username = cadr(assoc("'id", cdr(accountentry)));
+    username = cadr(assoc("'id", accountentry));
     return true;
 }
 
@@ -401,8 +371,8 @@ function showview(url) {
     //debug('showview', url);
 
     // Save last visited location
-    lstorage.setItem('ui.lastvisit.user', username);
-    lstorage.setItem('ui.lastvisit.url', url);
+    lstorage.setItem('ui.v.user', username);
+    lstorage.setItem('ui.v.url', url);
 
     // Determine the view to show
     var params = ui.fragmentParams(url);
@@ -426,10 +396,11 @@ function showview(url) {
 
     // Show the menu bar
     var appname = params['app'];
-    showmenu(mdiv, view, appname);
+    showmenu(view, appname);
 
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
+    // Make sure that the document is visible
+    if (document.body.style.display != 'block')
+        document.body.style.display = 'block';
 
     // Start to unload the front view and create a new view
     if (ui.isMobile()) {
@@ -444,21 +415,17 @@ function showview(url) {
         var vdiv = mkviewdiv(vtransition + 'viewloading3dm');
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
-        vcontainer.appendChild(vdiv);
+        $('viewcontainer').appendChild(vdiv);
         map(ui.evalScript, ui.innerScripts(vdiv));
 
-        // Make sure the top document is visible
-        if (document.body.style.visibility != 'visible')
-            document.body.style.visibility = 'visible';
-
-        setTimeout(function() {
+        ui.async(function mtransitionview() {
             // Transition the old view out
             if (!isNil(ovdiv))
                 ovdiv.className = vtransition + 'viewunloaded3dm';
 
             // Transition the new view in
             vdiv.className = 'viewloaded3dm';
-        }, 100);
+        });
 
     } else {
         // Prepare current view for transition out
@@ -470,21 +437,17 @@ function showview(url) {
         var vdiv = mkviewdiv('viewloading3d');
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
-        vcontainer.appendChild(vdiv);
+        $('viewcontainer').appendChild(vdiv);
         map(ui.evalScript, ui.innerScripts(vdiv));
 
-        // Make sure the top document is visible
-        if (document.body.style.visibility != 'visible')
-            document.body.style.visibility = 'visible';
-
-        setTimeout(function() {
+        ui.async(function transitionview() {
             // Transition the new view in
             vdiv.className = 'viewloaded3d';
 
             // Transition the old view out
             if (!isNil(ovdiv))
                 ovdiv.parentNode.removeChild(ovdiv);
-        }, 100);
+        });
     }
 
     // Track the current visible view
@@ -501,12 +464,14 @@ function updatelocation(url) {
 
     // Add url to the history if necessary
     if (url != ui.pathandparams(location)) {
-        history.pushState(null, null, url);
-        //debug('pushstate', history.length);
+        if (history.pushState) {
+            history.pushState(null, null, url);
+            //debug('pushstate', history.length);
+        }
 
         // Update the location hash if necessary
         var f = ui.fragment(url);
-        if (f != '' && f != location.hash) {
+        if (f != location.hash) {
             location.hash = f;
             //debug('hash', f);
         }
@@ -519,6 +484,10 @@ function updatelocation(url) {
  */
 window.onnavigate = function(url) {
     //debug('onnavigate', url);
+
+    // Cleanup installer
+    if ($('installer').innerHTML != '')
+        $('installer').innerHTML = '';
 
     // Update the browser window location
     updatelocation(url);
@@ -541,12 +510,11 @@ window.onloginredirect = function(e) {
  */
 window.logout = function() {
     // Clear session cookie and user-specific local storage entries
-    clearauthcookie();
     lstorage.removeItem('/r/Editor/accounts');
     lstorage.removeItem('/r/Editor/dashboards');
-    document.location = '/login/';
+    document.location = '/logout/dologout/';
     return false;
-}
+};
 
 /**
  * Handle history.
@@ -555,10 +523,13 @@ window.addEventListener('popstate', function(e) {
     //debug('onpopstate', history.length);
     var furl = ui.fragment(location);
     var url = location.pathname + (furl == ''? '' : '#' + furl);
-
-    // Show the current view
     if (url == viewurl)
         return true;
+
+    // Cleanup element lookups memoized in current document
+    ui.unmemo$();
+
+    // Show the current view
     return showview(url);
 
 }, false);
@@ -567,10 +538,13 @@ window.addEventListener('hashchange', function(e) {
     //debug('onhashchange');
     var furl = ui.fragment(location);
     var url = location.pathname + (furl == ''? '' : '#' + furl);
-
-    // Show the current view
     if (url == viewurl)
         return true;
+
+    // Cleanup element lookups memoized in current document
+    ui.unmemo$();
+
+    // Show the current view
     return showview(url);
 
 }, false);
@@ -580,18 +554,128 @@ window.addEventListener('hashchange', function(e) {
  */
 document.body.onorientationchange = function(e) {
     //debug('onorientationchange');
-    ui.onorientationchange(e);
-
-    // Resize menu and view header
-    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    return true;
+    return ui.onorientationchange(e);
 };
+
+/**
+ * Install the application cache.
+ */
+(function installappcache() {
+    if (ui.isMobile()) {
+        // On mobile devices, trigger usage of an application cache manifest
+        window.onappcachechecking = function(e) {
+            //debug('appcache checking', e);
+            workingstatus(true);
+            showstatus('Checking');
+        };
+        window.onappcacheerror = function(e) {
+            //debug('appcache error', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachenoupdate = function(e) {
+            //debug('appcache noupdate', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachedownloading = function(e) {
+            //debug('appcache downloading', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheprogress = function(e) {
+            //debug('appcache progress', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheupdateready = function(e) {
+            //debug('appcache updateready', e);
+            try {
+                applicationCache.swapCache();
+            } catch(e) {}
+            onlinestatus();
+            workingstatus(false);
+            //debug('appcache swapped', e);
+
+            // Update offline resources in local storage and reload the page
+            map(function(res) {
+                showstatus('Updating');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+            window.location.reload();
+        };
+        window.onappcachecached = function(e) {
+            //debug('appcache cached', e);
+            onlinestatus();
+            workingstatus(false);
+
+            // Install offline resources in local storage
+            map(function(res) {
+                showstatus('Installing');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+        };
+
+        window.onloadappcache = function() {
+            //debug('appcache iframe loaded');
+        };
+
+        ui.delay(function() {
+            $('installer').innerHTML = '<iframe src="/cache/" class="installer"></iframe>';
+        });
+
+    } else {
+        // On non-mobile devices, check for cache-manifest changes ourselves.
+        workingstatus(true);
+        showstatus('Checking');
+        var lcmf = appcache.get('/cache/cache-manifest.cmf', 'local');
+        var rcmf = appcache.get('/cache/cache-manifest.cmf', 'remote');
+        if (lcmf == rcmf) {
+            onlinestatus();
+            workingstatus(false);
+            return true;
+        }
+
+        //debug('cache-manifest changed, reloading');
+        ui.delay(function() {
+            workingstatus(true);
+            showstatus('Updating');
+            ui.delay(function() {
+                workingstatus(true);
+                showstatus('Updating');
+                map(function(res) {
+                    appcache.remove(res[0]);
+                    appcache.get(res[0], 'remote');
+                }, append(appresources, config.appresources()));
+                if (!isNil(lcmf)) {
+                    //debug('reloading');
+                    window.location.reload();
+                }
+                onlinestatus();
+                workingstatus(false);
+            });
+        });
+    }
+})();
+
+/**
+ * Handle network offline/online events.
+ */
+window.addEventListener('offline', function(e) {
+    //debug('going offline');
+    showstatus('Offline');
+}, false);
+window.addEventListener('online', function(e) {
+    //debug('going online');
+    showstatus('Online');
+}, false);
 
 /**
  * Initialize the document.
  */
-function onload() {
+window.onload = function() {
     //debug('onload', history.length);
     ui.onload();
 
@@ -625,16 +709,15 @@ function onload() {
     if (url == viewurl)
         return true;
     return showview(url);
-}
-
-onload();
+};
 
 })();
+
+} catch(e) {
+    debug(e.stack);
+    throw e;
+}
 </script>
 
-<div id="footdiv" class="fsection">
-</div>
-
-</div>
 </body>
 </html>

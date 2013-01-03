@@ -23,6 +23,8 @@
 ../../components/cache/memcached-stop tmp 11211
 ../../components/cache/memcached-stop tmp 11212
 
+../../components/sqldb/pgsql-stop tmp
+
 if [ -x ../../components/log/scribe-cat ]; then
     ../../components/log/scribed-client-stop tmp
     ../../components/log/scribed-central-stop tmp

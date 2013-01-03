@@ -18,5 +18,5 @@
 #  under the License.
 
 cd ../../
-tar czf ../config-backup.tar.gz hosting/server/*start hosting/server/*stop hosting/server/htdocs/*.js hosting/server/htdocs/public/*.js hosting/server/htdocs/home/*.b64 hosting/server/htdocs/home/*.png
+tar czf ../config-backup.tar.gz hosting/server/*start hosting/server/*stop hosting/server/htdocs/*.js hosting/server/htdocs/public/*.js
 

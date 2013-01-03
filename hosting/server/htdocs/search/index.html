@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<div id="bodydiv" class="body">
+
+<div id="viewcontent" class="viewcontent">
+
+<div id="apps"></div>
+<br/>
+
+</div>
+
+<script type="text/javascript">
+(function searchbody() {
+
+/**
+ * Setup page layout.
+ */
+(function layout() {
+    document.title = config.windowtitle() + ' - Apps';
+    if (!ui.isMobile())
+        $('viewcontent').className = 'viewcontent flatscrollbars';
+
+    $('viewhead').innerHTML = '<form id="searchForm">' +
+    '<span style="position: absolute; top: 0px; left: 5px; right: 70px; padding: 0px; background: transparent;"><input type="text" id="searchQuery" value="" class="flatentry" title="Search" autocapitalize="off" placeholder="Search for apps" style="position: absolute; left: 0px; top: 4px; width: 100%;"></span>' +
+    '<input type="submit" id="searchButton" title="Search" class="bluebutton search" style="position: absolute; top: 4px; right: 5px; width: 60px; background-position: center center; background-repeat: no-repeat; background-image: url(\'' + ui.b64png(appcache.get('/public/search.b64')) + '\');" value=" "/>' +
+    '</form>';
+
+    $('viewcontent').appendChild(ui.declareCSS(
+        '.ratings { ' +
+        'background: url(\'' + ui.b64png(appcache.get('/public/ratings.b64')) + '\'); ' +
+        'margin-top: 6px; width: 50px; height: 14px; display: inline-block; ' +
+        ' }'));
+})();
+
+/**
+ * Initialize service references.
+ */
+var editorComp = sca.component("Editor");
+var search = sca.reference(editorComp, "search");
+var icons = sca.reference(editorComp, "icons");
+
+/**
+ * Edit an app.
+ */
+function editapp(appname) {
+    return ui.navigate('/#view=page&app=' + appname, '_view');
+}
+
+/**
+ * View an app.
+ */
+function viewapp(appname) {
+    return ui.navigate('/#view=info&app=' + appname, '_view');
+}
+
+/**
+ * Get and display an app icon.
+ */
+function geticon(appname) {
+    if (isNil(appname))
+        return false;
+
+    return icons.get(appname, function(doc) {
+        // Stop now if we didn't get an icon
+        if (doc == null)
+            return false;
+
+        var iconentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var content = assoc("'content", iconentry);
+        var icon = assoc("'icon", content);
+        var img = assoc("'image", icon);
+        if (!isNil(img)) {
+            var appimg = $('search_app_img_' + appname);
+            if (!isNil(appimg))
+                appimg.src = cadr(img);
+        }
+        return true;
+    });
+    return true;
+}
+
+/**
+ * Get and display list of apps.
+ */
+function getapps(query) {
+    workingstatus(true);
+    showstatus('Searching');
+
+    function display(doc) {
+
+        // Stop now if we didn't get the apps
+        if (doc == null) {
+            errorstatus('Not available');
+            workingstatus(false);
+            return false;
+        }
+
+        var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
+        var aentries = assoc("'entry", feed);
+        var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
+
+        var defappimg = ui.b64png(appcache.get('/public/app.b64'));
+
+        var apps = '<div>';
+        var icons = mklist();
+
+        (function displayentries(entries) {
+            if (isNil(entries))
+                return apps;
+            var entry = car(entries);
+            var title = cadr(assoc("'title", entry))
+            var name = cadr(assoc("'id", entry));
+            var author = cadr(assoc("'author", entry));
+            var updated = xmldatetime(cadr(assoc("'updated", entry))).toLocaleDateString();
+
+            var aratings = assoc("'info", assoc("'content", entry));
+            var ar = assoc("'rating", aratings);
+            var ar1 = assoc("'rating1", aratings);
+            var ar2 = assoc("'rating2", aratings);
+            var ar3 = assoc("'rating3", aratings);
+            var ar4 = assoc("'rating4", aratings);
+            var rating = isNil(ar)? 0 : Number(cadr(ar));
+            var reviews = (isNil(ar1)? 0 : Number(cadr(ar1))) + (isNil(ar2)? 0 : Number(cadr(ar2))) + (isNil(ar3)? 0 : Number(cadr(ar3))) + (isNil(ar4)? 0 : Number(cadr(ar4)));
+
+            apps += '<div class="box">'
+            apps += '<div class="appicon">'
+            apps += ui.href('appicon_' + name, '/#view=info&app=' + name, '_view', '<img id="search_app_img_' + name + '" src="' + defappimg + '" width="50" height="50"></img>');
+            //apps += '<br/><input type="button" class="lightbutton" value="Run" onclick="ui.navigate(\'/' + name + '/\', \'_blank\');"/>';
+            apps += '</div>'
+            apps += '<div class="appdetails">';
+            apps += '<span class="apptitle">' + ui.href('search_app_title_' + name, '/#view=info&app=' + name, '_view', name) + '</span>';
+            apps += '<br/><span>' + 'by&nbsp;' + author.split('@')[0] + '</span>';
+            var ratingy = -20 * (4 - Math.floor(rating));
+            apps += '<br/><span class="ratings" style="background-position: 0px ' + ratingy + 'px;">&nbsp;</span>';
+            apps += '<br/><span style="font-size: 10px;">' + reviews + (reviews > 1? ' ratings' : ' rating') + '</span>';
+            /*apps += '<br/><span>' + updated + '</span>';*/
+            apps += '</div>';
+            apps += '</div>';
+
+            icons = cons(name, icons);
+
+            return displayentries(cdr(entries));
+        })(entries);
+
+        apps += '</div>';
+        $('apps').innerHTML = apps;
+
+        ui.unmemo$('search_app_');
+
+        (function displayicons(icons) {
+            if (isNil(icons))
+                return true;
+            geticon(car(icons));
+            return displayicons(cdr(icons));
+        })(reverse(icons));
+
+        onlinestatus();
+        workingstatus(false);
+    }
+
+    return search.get('?q=' + query, display);
+}
+
+/**
+ * Handle search form submit.
+ */
+$('searchForm').onsubmit = function() {
+    if ($('searchQuery').value.trim() == '')
+        return false;
+    if (ui.isMobile())
+        $('searchQuery').blur();
+    getapps($('searchQuery').value.trim());
+    return false;
+};
+
+})();
+</script>
+
+</div>

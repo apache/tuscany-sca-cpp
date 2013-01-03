@@ -17,6 +17,7 @@
 
 # Stores collection implementation
 from util import *
+from atomutil import *
 from sys import debug
 
 # Convert a particular store tag to a store id
@@ -26,8 +27,10 @@ def storeid(tag):
 # Get a store from the cache
 def getstore(id, cache):
     debug('store.py::getstore::id', id)
+
+    # Lookup the requested store
     val = cache.get(id)
-    if isNil(val) or val is None:
+    if isNil(val):
         return ()
     store = cdddr(car(val))
     if not isNil(store) and isList(car(cadr(car(store)))):
@@ -47,7 +50,7 @@ def putstore(id, store, cache):
     return cache.put(id, val)
 
 # Put an app into a store
-def put(id, app, user, cache, apps):
+def put(id, app, user, cache, apps, ratings):
     debug('store.py::put::id', id)
     debug('store.py::put::app', app)
     tag = car(id)
@@ -56,31 +59,61 @@ def put(id, app, user, cache, apps):
     def putapp(appid, app, store):
         if isNil(store):
             return app
-        if car(appid) == cadr(assoc("'id", car(store))):
+        if car(appid) == entryid(store):
             return cons(car(app), cdr(store))
         return cons(car(store), putapp(appid, app, cdr(store)))
 
-    appentry = (("'entry", assoc("'title", car(app)), ("'id", car(appid)), ("'author", user.get(())), assoc("'updated", car(app)), assoc("'content", car(app))),)
+    appentry = mkentry(title(app), car(appid), author(app), updated(app), content(app))
     debug('store.py::put::appentry', appentry)
 
     store = putapp(appid, appentry, getstore(storeid(tag), cache))
     return putstore(storeid(tag), store, cache)
 
+# Merge app info and ratings into a list of apps
+def mergeapps(entries, apps, ratings):
+    debug('store.py::mergeapps::entries', entries)
+
+    def mergeapp(entry):
+        debug('store.py::mergeapp::entry', entry)
+        id = (entryid(entry),)
+        app = apps.get(id)
+        if isNil(app):
+            return ((),)
+        info = content(app)
+        rating = ratings.get(id)
+        rates = content(rating)
+        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNil(info) else cdr(info)) + (() if isNil(rates) else cdr(rates)))
+        return mergedentry
+
+    mergedentries = tuple(filter(lambda e: not isNil(e), map(lambda e: car(mergeapp((e,))), entries)))
+    debug('store.py::mergeapps::mergedentries', mergedentries)
+    return mergedentries
+
 # Get apps from a store
-def get(id, user, cache, apps):
+def get(id, user, cache, apps, ratings):
     debug('store.py::get::id', id)
     tag = car(id)
-    appid = cdr(id)
 
+    # Collect the top rated apps
+    if tag == 'top':
+        topratings = ratings.get(()) 
+        topapps = mergeapps(cdddr(car(topratings)), apps, ratings)
+        topstore = ((("'feed", ("'title", 'App Store'), ("'id", tag)) + topapps),)
+        debug('store.py::get::store', topstore)
+        return topstore
+
+    # Collect the featured apps
+    appid = cdr(id)
     def findapp(appid, store):
         if isNil(store):
             return None
-        if car(appid) == cadr(assoc("'id", car(store))):
+        if car(appid) == entryid(store):
             return (car(store),)
         return findapp(appid, cdr(store))
 
     if isNil(appid):
-        store = ((("'feed", ("'title", "App Store"), ("'id", tag)) + getstore(storeid(tag), cache)),)
+        storeapps = mergeapps(getstore(storeid(tag), cache), apps, ratings)
+        store = ((("'feed", ("'title", "App Store"), ("'id", tag)) + storeapps),)
         debug('store.py::get::store', store)
         return store
 
@@ -89,7 +122,7 @@ def get(id, user, cache, apps):
     return app
 
 # Delete apps from a store
-def delete(id, user, cache, apps):
+def delete(id, user, cache, apps, ratings):
     debug('store.py::delete::id', id)
     tag = car(id)
     appid = cdr(id)
@@ -100,7 +133,7 @@ def delete(id, user, cache, apps):
     def deleteapp(appid, store):
         if isNil(store):
             return ()
-        if car(appid) == cadr(assoc("'id", car(store))):
+        if car(appid) == entryid(store):
             return cdr(store)
         return cons(car(store), deleteapp(appid, cdr(store)))
 

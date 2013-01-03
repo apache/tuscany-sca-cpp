@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<div id="bodydiv" class="body">
+
+<div id="viewform" class="viewform">
+
+<form id="rateAppForm">
+<table style="width: 100%;">
+<tr><td class="label">Rating:</td></tr>
+<tr><td class="lightlabel" id="taptorate"></td></tr>
+<tr><td class="label">
+<span style="display: inline-block; width: 2px;"></span>
+<span id="rateApp1" class="graystar">&nbsp;</span><span style="display: inline-block; width: 20px;"></span>
+<span id="rateApp2" class="graystar">&nbsp;</span><span style="display: inline-block; width: 20px;"></span>
+<span id="rateApp3" class="graystar">&nbsp;</span><span style="display: inline-block; width: 20px;"></span>
+<span id="rateApp4" class="graystar">&nbsp;</span>
+</td></tr>
+<tr><td class="lightlabel" id="ratedescription">&nbsp;</span></td></tr>
+<tr><td style="padding-top: 20px;">
+<input id="rateAppDoneButton" type="button" class="graybutton" value="Done"/>
+</td></tr>
+</table>
+</form>
+<br/>
+
+</div>
+
+<script type="text/javascript">
+(function ratebody() {
+
+/**
+ * Get the app name.
+ */
+var appname = ui.fragmentParams(location)['app'];
+
+/**
+ * Setup page layout.
+ */
+(function layout() {
+    document.title = config.windowtitle() + ' - ' + 'Rate' + ' - ' + appname;
+    $('viewhead').innerHTML = '<span class="smenu">' + 'Rate' + ' ' + appname + '</span>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+
+    $('viewform').appendChild(ui.declareCSS(
+        '.redstar { ' +
+        'background: url(\'' + ui.b64png(appcache.get('/public/rate.b64')) + '\'); background-repeat: no-repeat; ' +
+        'vertical-align: middle; width: 40px; height: 40px; display: inline-block; background-position: 0px 1px;' +
+        ' } ' +
+        '.graystar { ' +
+        'background: url(\'' + ui.b64png(appcache.get('/public/rate.b64')) + '\'); background-repeat: no-repeat; ' +
+        'vertical-align: middle; width: 40px; height: 40px; display: inline-block; background-position: -50px 1px;' +
+        ' }'));
+
+    $('taptorate').innerHTML = ui.isMobile()? 'Tap a star to select a rating' : ' Click a star to select a rating';
+})();
+
+/**
+ * Initialize service references.
+ */
+var editorComp = sca.component("Editor");
+var reviews = sca.reference(editorComp, "reviews");
+
+/**
+ * Initialize the rate buttons.
+ */
+var rateAppButtons = [
+    [$('rateApp1'), 1, function() { return onclickrating(1); }, 'Don\'t like it'],
+    [$('rateApp2'), 2, function() { return onclickrating(2); }, 'It\'s ok'],
+    [$('rateApp3'), 3, function() { return onclickrating(3); }, 'It\'s good'],
+    [$('rateApp4'), 4, function() { return onclickrating(4); }, 'It\'s great']
+];
+(function initRateAppButtons() {
+    map(function(b) {
+        b[0].onclick = b[2];
+    }, rateAppButtons);
+})();
+
+/**
+ * Select a rating.
+ */
+var selectedrating = 0;
+function selectrating(r) {
+    selectedrating = r;
+    map(function(b) {
+        b[0].className = b[1] <= r? 'redstar' : 'graystar';
+    }, rateAppButtons);
+    $('ratedescription').innerHTML = rateAppButtons[r - 1][3];
+    return true;
+}
+
+/**
+ * The current app entry and corresponding saved XML content.
+ */
+var appentry;
+var savedxml = '';
+
+/**
+ * Get and display the requested app rating.
+ */
+(function getrating() {
+    if (isNil(appname))
+        return false;
+    workingstatus(true);
+    showstatus('Loading');
+
+    return reviews.get(appname, function(doc) {
+
+        // Stop now if we didn't get the rating
+        if (doc == null) {
+            onlinestatus();
+            workingstatus(false);
+            return false;
+        }
+
+        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", appname));
+        savedxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+        var content = cadr(assoc("'content", appentry));
+        if (!isNil(content))
+            selectrating(parseInt(cadr(content)));
+
+        onlinestatus();
+        workingstatus(false);
+        return true;
+    });
+})();
+
+/**
+ * Save an app rating.
+ */
+function save(name, entryxml) {
+    workingstatus(true);
+    showstatus('Saving');
+
+    savedxml = entryxml;
+    reviews.put(name, savedxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+        showstatus('Saved');
+        workingstatus(false);
+        return false;
+    });
+    return false;
+}
+
+/**
+ * Handle rating click event.
+ */
+function onclickrating(r) {
+    // Select the rating
+    selectrating(r);
+
+    // Save
+    showstatus('Saving');
+    appentry = mklist("'entry", mklist("'title", appname), mklist("'id", appname), mklist("'content", mklist("'rating", selectedrating.toString())));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+    return save(appname, entryxml);
+}
+
+/**
+ * Navigate back.
+ */
+$('rateAppDoneButton').onclick = function() {
+    history.back();
+};
+
+})();
+</script>
+
+</div>

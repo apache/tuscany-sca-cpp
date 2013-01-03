@@ -17,37 +17,51 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="cache-manifest.cmf">
+<html manifest="cache/cache-manifest.cmf">
 <head>
+<!-- Firebug inspector -->
+<!--
+<script type="text/javascript" src="https://getfirebug.com/releases/lite/1.3/firebug-lite.js"></script>
+-->
+<!-- Weinre inspector -->
+<!--
+<script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
+-->
 <title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
+<!--
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+-->
+<link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/"/>
 <script type="text/javascript">
-(function() {
+try {
+
+(function apphead() {
 
 window.appcache = {};
 
 /**
  * Get and cache a resource.
  */
-appcache.get = function(uri) {
+appcache.get = function(uri, mode) {
     var h = uri.indexOf('#');
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
     var ls = window.lstorage || localStorage;
     var item = null;
-    try { item = ls.getItem(u); } catch(e) {}
+    try { item = ls.getItem('ui.r.' + u); } catch(e) {}
     if (item != null && item != '')
         return item;
 
     // Get resource from network
     var http = new XMLHttpRequest();
-    http.open("GET", u, false);
+    http.open("GET", mode == 'remote'? (u + '?t=' + new Date().getTime() + '&r=' + Math.random()) : u, false);
     http.setRequestHeader("Accept", "*/*");
+    if (mode == 'remote')
+        http.setRequestHeader("If-Modified-Since", "Thu, 1 Jan 1970 00:00:00 GMT");
     http.send(null);
     if (http.status == 200) {
         if (http.getResponseHeader("X-Login") != null) {
@@ -59,7 +73,7 @@ appcache.get = function(uri) {
             if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
-        try { ls.setItem(u, http.responseText); } catch(e) {}
+        try { ls.setItem('ui.r.' + u, http.responseText); } catch(e) {}
         return http.responseText;
     }
     if (window.debug) debug('http error', u, http.status, http.statusText);
@@ -74,46 +88,32 @@ appcache.get = function(uri) {
 /**
  * Load Javascript and CSS.
  */
-(function() {
+(function appboot() {
 
 var bootjs = document.createElement('script');
 bootjs.type = 'text/javascript';
-bootjs.text = appcache.get('/all-min.js');
-document.head.appendChild(bootjs);
-document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+bootjs.text = 'try {\n' + appcache.get('/all-min.js') + '\n' + appcache.get('/config-min.js') + '\n} catch(e) { console.log(e.stack); throw e; }\n';
+var head = document.getElementsByTagName('head')[0];
+head.appendChild(bootjs);
+head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 
 })();
 
-/**
- * Redirect to login page if not signed in.
- */
-(function() {
-
-if (document.location.protocol == 'https:' && !hasauthcookie())
-    document.location = '/login/';
-
-})();
-
+} catch(e) {
+    if (window.debug) debug(e.stack);
+    throw e;
+}
 </script>
 </head>
 <body class="delayed">
-<div id="mainbodydiv" class="mainbodydiv">
-
-<div id="headdiv" class="hsection">
-<script type="text/javascript">
-(function() {
-
-$('headdiv').appendChild(ui.declareScript(appcache.get('/config-min.js')));
-
-})();
-</script>
-</div>
 
 <div id="content">
 </div>
 
 <script type="text/javascript">
-(function() {
+try {
+
+(function appbody() {
 
 /**
  * Get the app name
@@ -186,7 +186,7 @@ applicationCache.addEventListener('updateready', function(e) {
 applicationCache.addEventListener('cached', function(e) {
     //debug('appcache cached', e);
     map(function(res) {
-        appcache.get(res[0]);
+        appcache.get(res[0], 'remote');
     }, appresources);
 }, false);
 
@@ -316,7 +316,8 @@ function setwidgetvalue(e, dv) {
                         var nesheet = document.createElement('style');
                         nesheet.id = 'style_' + e.id;
                         nesheet.type = 'text/css';
-                        document.head.appendChild(nesheet);
+                        var head = document.getElementsByTagName('head')[0];
+                        head.appendChild(nesheet);
                         nesheet.innerHTML = s;
                     } else {
                         esheet.innerHTML = s;
@@ -331,9 +332,9 @@ function setwidgetvalue(e, dv) {
                 // Restart current animation if necessary
                 if (!isNil(aname) && ce.style.webkitAnimationName == aname) {
                     ce.style.webkitAnimationName = '';
-                    setTimeout(function() {
+                    ui.async(function restartanimation() {
                         ce.style.webkitAnimationName = aname;
-                    }, 0);
+                    });
                 }
                 return a;
             }
@@ -930,10 +931,7 @@ function setupLocationHandler() {
  */
 document.body.onorientationchange = function(e) {
     //debug('onorientationchange');
-
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
-
+    ui.onorientationchange(e);
     return true;
 };
 
@@ -980,14 +978,9 @@ function getappcomposite(appname) {
 /**
  * Initialize the document.
  */
-function onload() {
+window.onload = function() {
     //debug('onload');
-
-    // Scroll to the top and hide the address bar
-    window.scrollTo(0, 0);
-
-    // Show the page
-    document.body.style.visibility = 'visible';
+    ui.onload();
 
     // Initialize the app composite
     getappcomposite(appname);
@@ -996,17 +989,16 @@ function onload() {
     getapppage(appname);
 
     return true;
-}
-
-onload();
+};
 
 })();
+
+} catch(e) {
+    debug(e.stack);
+    throw e;
+}
 </script>
 
-<div id="footdiv" class="fsection">
-</div>
-
-</div>
 </body>
 </html>
 

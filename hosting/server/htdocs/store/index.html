@@ -19,24 +19,39 @@
 -->
 <div id="bodydiv" class="body">
 
-<div id="apps" class="viewcontent"></div>
+<div id="viewcontent" class="viewcontent">
+
+<div id="apps"></div>
+<br/>
+
+</div>
 
 <script type="text/javascript">
-(function() {
+(function storebody() {
 
 /**
- * Set page titles.
+ * Setup page layout.
  */
-document.title = config.windowtitle() + ' - Store';
+(function layout() {
+    document.title = config.windowtitle() + ' - Apps';
+    if (!ui.isMobile())
+        $('viewcontent').className = 'viewcontent flatscrollbars';
+
+    $('viewcontent').appendChild(ui.declareCSS(
+        '.ratings { ' +
+        'background: url(\'' + ui.b64png(appcache.get('/public/ratings.b64')) + '\'); ' +
+        'margin-top: 6px; width: 50px; height: 14px; display: inline-block; ' +
+        ' }'));
+})();
 
 /**
  * The store categories
  */
 var categories = [
-    //['Featured', 'featured', 1],
+    ['Featured', 'featured', 1],
     ['Top', 'top', 2],
-    ['New', 'new', 3],
-    ['Search', 'all', 4],
+    //['New', 'new', 3],
+    //['Search', 'all', 4],
     ['My Apps', 'myapps', 5]
 ];
 
@@ -45,22 +60,22 @@ var categories = [
  */
 function findcategory(name) {
     if (isNil(name))
-        return findcategory('top');
+        return findcategory('featured');
     var f = filter(function(c) { return cadr(c) == name }, categories);
     if (isNil(f))
-        return findcategory('top');
+        return findcategory('featured');
     return car(f);
 }
 
 /**
- * Get the current store category.
+ * Get the requested store category.
  */
 var catname = cadr(findcategory(ui.fragmentParams(location)['category']));
 
 /**
  * Build the store menu bar
  */
-function catmenu() {
+$('viewhead').innerHTML = (function catmenu() {
     function catmenuitem(name, cat, idx) {
         var c = cat == catname? 'smenu' : 'amenu';
         return '<span>' + ui.href('storecat_' + cat, '/#view=store&category=' + cat + '&idx=' + idx, '_view', '<span class="' + c + '">' + name + '</span>') + '</span>';
@@ -68,34 +83,31 @@ function catmenu() {
 
     var m = '';
     map(function(c) { m += catmenuitem(car(c), cadr(c), caddr(c)); }, categories);
-    m += '<span class="rmenu"><input type="button" class="graybutton bluebutton" id="createApp" title="Create a new app" Value="Create"/></span>';
+    m += '<span class="rmenu"><input type="button" class="bluebutton" id="createApp" title="Create a new app" Value="Create"/></span>';
     return m;
-}
+})();
+
 
 /**
- * Build the store menu bar.
- */
-$('viewhead').innerHTML = catmenu();
-
-/**
- * Init service references.
+ * Initialize service references.
  */
 var editorComp = sca.component("Editor");
 var store = sca.reference(editorComp, "store");
 var dashboards = sca.reference(editorComp, "dashboards");
+var icons = sca.reference(editorComp, "icons");
 
 /**
  * Edit an app.
  */
-function editApp(appname) {
+function editapp(appname) {
     return ui.navigate('/#view=page&app=' + appname, '_view');
 }
 
 /**
  * View an app.
  */
-function viewApp(appname) {
-    return ui.navigate('/#view=stats&app=' + appname, '_view');
+function viewapp(appname) {
+    return ui.navigate('/#view=info&app=' + appname, '_view');
 }
 
 /**
@@ -103,66 +115,118 @@ function viewApp(appname) {
  */
 $('createApp').onclick = function() {
     return ui.navigate('/#view=create', '_view');
+};
+
+/**
+ * Get and display an app icon.
+ */
+function geticon(appname) {
+    if (isNil(appname))
+        return false;
+
+    return icons.get(appname, function(doc) {
+        // Stop now if we didn't get an icon
+        if (doc == null)
+            return false;
+
+        var iconentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var content = assoc("'content", iconentry);
+        var icon = assoc("'icon", content);
+        var img = assoc("'image", icon);
+        if (!isNil(img)) {
+            var appimg = $('store_app_img_' + appname);
+            if (!isNil(appimg))
+                appimg.src = cadr(img);
+        }
+        return true;
+    });
+    return true;
 }
 
 /**
  * Get and display list of apps.
  */
-function getapps(catname) {
-    //debug('catname', catname);
-    showStatus('Loading');
+(function getapps() {
+    workingstatus(true);
+    showstatus('Loading');
 
     function display(doc) {
 
         // Stop now if we didn't get the apps
         if (doc == null) {
-            showError('App not available');
+            errorstatus('Couldn\'t get the list of apps');
+            workingstatus(false);
             return false;
         }
-        showOnlineStatus();
 
-        var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
-        var aentries = assoc("'entry", cdr(feed));
+        var aentries = assoc("'entry", feed);
         var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
 
-        var appimg = ui.b64img(appcache.get('/public/app.b64'));
+        var defappimg = ui.b64png(appcache.get('/public/app.b64'));
 
-        function displayentries(entries) {
+        var apps = '<div>';
+        var icons = mklist();
+
+        (function displayentries(entries) {
             if (isNil(entries))
                 return apps;
             var entry = car(entries);
             var title = cadr(assoc("'title", entry))
             var name = cadr(assoc("'id", entry));
             var author = cadr(assoc("'author", entry));
-            var updated = cadr(assoc("'updated", entry));
+            var updated = xmldatetime(cadr(assoc("'updated", entry))).toLocaleDateString();
+
+            var aratings = assoc("'info", assoc("'content", entry));
+            var ar = assoc("'rating", aratings);
+            var ar1 = assoc("'rating1", aratings);
+            var ar2 = assoc("'rating2", aratings);
+            var ar3 = assoc("'rating3", aratings);
+            var ar4 = assoc("'rating4", aratings);
+            var rating = isNil(ar)? 0 : Number(cadr(ar));
+            var reviews = (isNil(ar1)? 0 : Number(cadr(ar1))) + (isNil(ar2)? 0 : Number(cadr(ar2))) + (isNil(ar3)? 0 : Number(cadr(ar3))) + (isNil(ar4)? 0 : Number(cadr(ar4)));
 
             apps += '<div class="box">'
-            apps += '<span class="appicon">' + ui.href('appicon_' + name, '/#view=stats&app=' + name, '_view', '<img src="' + appimg + '" width="50" height="50"></img>') + '</span>';
-            apps += '<span>'
-            apps += '<span class="apptitle">' + ui.href('apptitle_' + name, '/#view=stats&app=' + name, '_view', name) + '</span>';
+            apps += '<div class="appicon">'
+            apps += ui.href('appicon_' + name, '/#view=info&app=' + name, '_view', '<img id="store_app_img_' + name + '" src="' + defappimg + '" width="50" height="50"></img>');
+            //apps += '<br/><input type="button" class="lightbutton" value="Run" onclick="ui.navigate(\'/' + name + '/\', \'_blank\');"/>';
+            apps += '</div>'
+            apps += '<div class="appdetails">';
+            apps += '<span class="apptitle">' + ui.href('store_app_title_' + name, '/#view=info&app=' + name, '_view', name) + '</span>';
             if (catname != 'myapps')
                 apps += '<br/><span>' + 'by&nbsp;' + author.split('@')[0] + '</span>';
-            apps += '</span>';
+            var ratingy = -20 * (4 - Math.floor(rating));
+            apps += '<br/><span class="ratings" style="background-position: 0px ' + ratingy + 'px;">&nbsp;</span>';
+            apps += '<br/><span style="font-size: 10px;">' + reviews + (reviews > 1? ' ratings' : ' rating') + '</span>';
+            /*apps += '<br/><span>' + updated + '</span>';*/
             apps += '</div>';
-            return displayentries(cdr(entries));
-        }
+            apps += '</div>';
 
-        displayentries(entries);
+            icons = cons(name, icons);
+
+            return displayentries(cdr(entries));
+        })(entries);
 
         apps += '</div>';
         $('apps').innerHTML = apps;
+
+        ui.unmemo$('store_app_');
+
+        (function displayicons(icons) {
+            if (isNil(icons))
+                return true;
+            geticon(car(icons));
+            return displayicons(cdr(icons));
+        })(reverse(icons));
+
+        onlinestatus();
+        workingstatus(false);
     }
 
     if (catname == 'myapps')
         return dashboards.get('', display);
     return store.get(catname, display);
-}
-
-/**
- * Get and display the list of apps.
- */
-getapps(catname);
+})();
 
 })();
 </script>

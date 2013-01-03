@@ -16,8 +16,9 @@
 #  under the License.
 
 # Accounts collection implementation
-from time import strftime
 from util import *
+from atomutil import *
+from sys import debug
 
 # Convert a particular user id to an account id
 def accountid(user):
@@ -25,12 +26,17 @@ def accountid(user):
 
 # Get the current user's account
 def get(id, user, cache):
+    debug('accounts.py::get::id', id)
     account = cache.get(accountid(user))
-    if isNil(account) or account is None:
-        return (("'entry", ("'title", user.get(())), ("'id", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
+    if isNil(account):
+        return mkentry(user.get(()), user.get(()), user.get(()), now(), ())
     return account
 
 # Update the user's account
 def put(id, account, user, cache):
-    return cache.put(accountid(user), account)
+    debug('accounts.py::put::id', id)
+    debug('accounts.py::put::account', account)
+
+    accountentry = mkentry(title(account), user.get(()), user.get(()), now(), content(account))
+    return cache.put(accountid(user), accountentry)
 

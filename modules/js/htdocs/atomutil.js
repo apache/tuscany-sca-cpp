@@ -42,7 +42,7 @@ atom.entryElementValues = function(e) {
     var u = isNil(lu)? mklist() : mklist(mklist(element, "'updated", elementValue(car(lu))));
 
     var lc = filter(selector(mklist(element, "'content")), e);
-    var c = isNil(lc)? mklist() : mklist(mklist(element, "'content", elementValue(car(lc))));
+    var c = isNil(lc)? mklist() : isAttribute(elementValue(car(lc)))? mklist() : mklist(mklist(element, "'content", elementValue(car(lc))));
 
     return append(append(append(mklist(element, "'entry", t, i), a), u), c);
 };
@@ -127,9 +127,9 @@ atom.entryElement = function(l) {
     return append(append(append(append(
             mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
                 mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
-                isNil(author)? mklist() : mklist(element, "'author",
-                    (email? mklist(element, "'email", elementValue(author)) : mklist(element, "'name", elementValue(author))))),
-                isNil(updated)? mklist() : mklist(element, "'updated", elementValue(updated))),
+                isNil(author)? mklist() : mklist(mklist(element, "'author",
+                    (email? mklist(element, "'email", elementValue(author)) : mklist(element, "'name", elementValue(author)))))),
+                isNil(updated)? mklist() : mklist(mklist(element, "'updated", elementValue(updated)))),
                 isNil(content)? mklist() :
                     mklist(append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")),
                         text? mklist(elementValue(content)) : elementChildren(content)))),

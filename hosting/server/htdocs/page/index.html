@@ -19,59 +19,69 @@
 -->
 <div id="bodydiv" class="body">
 
-<div id="contentdiv" class="viewcontent" style="width: 2500px;">
-<div id="pagediv" class="pagediv" style="top: 0px; left: -2500px; width: 5000px; height: 5000px;">
+<div id="viewcontent" class="viewcontent">
+<div id="pagecontainer">
+<div id="pagediv" class="pagediv">
+</div>
 
 <!--
-<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
-<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 480px; height: 300px;"></div>
-<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 768px; height: 911px;"></div>
-<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 1024px; height: 655px;"></div>
+<div class="guide" style="position: absolute; left: 0px; top: 0px; width: 320px; height: 460px;"></div>
+<div class="guide" style="position: absolute; left: 0px; top: 0px; width: 480px; height: 300px;"></div>
+<div class="guide" style="position: absolute; left: 0px; top: 0px; width: 768px; height: 911px;"></div>
+<div class="guide" style="position: absolute; left: 0px; top: 0px; width: 1024px; height: 655px;"></div>
 -->
 
-<span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header Level 1</h1></span>
-<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 30px;"><h2>Header Level 2</h2></span>
-<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 60px; width: 220px;"><span class="Section">Section</span></span>
-<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 90px;"><span>Some text</span></span>
-<span class="link" id="palette:link" style="position: absolute; left: 80px; top: 90px;"><a href="/"><span>Link</span></a></span>
-<span class="button" id="palette:graybutton" style="position: absolute; left: 0px; top: 120px;"><input type="button" value="Button" class="graybutton"/></span>
-<span class="button" id="palette:bluebutton" style="position: absolute; left: 80px; top: 120px;"><input type="button" value="Button" class="graybutton bluebutton"/></span>
-<span class="button" id="palette:redbutton" style="position: absolute; left: 160px; top: 120px;"><input type="button" value="Button" class="graybutton redbutton"/></span>
-<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 160px;"><input type="text" value="Entry Field" class="flatentry" size="20" autocapitalize="off"/></span>
-<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 190px;"><input type="password" value="Password" class="flatentry" size="20"/></span>
-<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 220px;"><input type="checkbox" value="Checkbox" class="flatcheckbox"/><span>Checkbox</span></span>
+</div>
+
+<div id="playdiv" class="playdiv" style="display: none;"></div>
+
+</div>
+
+<div id="palettecontainer">
+<div id="paletteview" style="display: none;">
+
+<div id="palettecontent" class="palettecontent">
+<table class="palettetable">
+<tr><td class="palettetd"><span class="hd1" id="palette:h1"><span>Header 1</span></span></td></tr>
+<tr><td class="palettetd"><span class="hd2" id="palette:h2"><span>Header 2</span></span></td></tr>
+<tr><td class="palettetd"><span class="section" id="palette:section"><span>Section</span></span></td></tr>
+<tr><td class="palettetd"><span class="text" id="palette:text"><span>Some text</span></span></td></tr>
+<tr><td class="palettetd"><span class="link" id="palette:link"><a href="/"><span>Link</span></a></span></td></tr>
+<tr><td class="palettetd"><span class="button" id="palette:graybutton"><input type="button" value="Button" class="graybutton"/></span></td></tr>
+<tr><td class="palettetd"><span class="button" id="palette:redbutton"><input type="button" value="Button" class="redbutton"/></span></td></tr>
+<tr><td class="palettetd"><span class="button" id="palette:greenbutton"><input type="button" value="Button" class="greenbutton"/></span></td></tr>
+<tr><td class="palettetd"><span class="button" id="palette:bluebutton"><input type="button" value="Button" class="bluebutton"/></span></td></tr>
+<tr><td class="palettetd"><span class="entry" id="palette:entry"><input type="text" value="Entry Field" class="flatentry" size="10" autocapitalize="off" readonly="true" style="cursor: default;"/></span></td></tr>
+<tr><td class="palettetd"><span class="password" id="palette:password"><input type="password" value="Password" class="flatentry" size="10" readonly="true" style="cursor: default;"/></span></td></tr>
+<tr><td class="palettetd"><span class="checkbox" id="palette:checkbox"><input type="checkbox" value="Checkbox" class="flatcheckbox"/><span>Checkbox</span></span></td></tr>
 <!--
-<span class="select" id="palette:select" style="position: absolute; left: 80px; top: 220px;"><select><option value="select">Selection</option></select></span>
+<tr><td class="palettetd"><span class="select" id="palette:select"><select disabled="true"><option value="select">Selection</option></select></span></td></tr>
 -->
-<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 250px; width: 220px;">
-<table class="datatable" style="width: 220px;">
-<tr><td class="datatd">List</td></tr>
-<tr><td class="datatd">List</td></tr>
-<tr><td class="datatd">List</td></tr>
+<tr><td class="palettetd"><span class="list" id="palette:list">
+<table class="datatable">
+<tr><td class="datatd"><span>List</span></td></tr>
+<tr><td class="datatd"><span>List</span></td></tr>
+<tr><td class="datatd"><span>List</span></td></tr>
 </table>
-</span>
-<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 320px; width: 220px;">
-<table class="datatable" style="width: 220px;">
-<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
-<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
-<tr><td class="datatdl">Table</td><td class="datatdr">Table</td></tr>
+</span></td></tr>
+<tr><td class="palettetd"><span class="table" id="palette:table">
+<table class="datatable">
+<tr><td class="datatdl"><span>Table</span></td><td class="datatdr"><span>Table</span></td></tr>
+<tr><td class="datatdl"><span>Table</span></td><td class="datatdr"><span>Table</span></td></tr>
+<tr><td class="datatdl"><span>Table</span></td><td class="datatdr"><span>Table</span></td></tr>
 </table>
-</span>
-<!--
-<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 380px; width: 200px;"><a href="/public/iframe-min.html"><span class="fakeframe"><span>Frame ...</span></span></a></span>
--->
-<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 410px;"><img id="imgimg"/></span>
-</div>
-
-<div id="playdiv" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 2500px; height: 5000px;">
+</span></td></tr>
+<tr><td class="palettetd"><span class="img" id="palette:img"><img id="imgimg"/></span></td></tr>
+</table>
 </div>
 
 </div>
+</div>
 
-<div id="buffer" style="visibility: hidden; width: 0px; height: 0px"></div>
+<div id="xhtmlbuffer" style="display: none;"></div>
 
 <script type="text/javascript">
-(function() {
+(function pagebody() {
 
 /**
  * Get the current app name.
@@ -79,402 +89,247 @@
 var appname = ui.fragmentParams(location)['app'];
 
 /**
- * Return the link to an app.
+ * Setup page layout.
  */
-function applink(appname) {
-    var protocol = location.protocol;
-    var host = location.hostname;
-    var port = ':' + location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + host + port + '/' + appname + '/';
-    return link;
-}
+(function layout() {
+    document.title = config.windowtitle() + ' - Page - ' + appname;
 
-/**
- * Set page titles.
- */
-document.title = config.windowtitle() + ' - Page - ' + appname;
+    $('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
+    '<input type="button" id="deleteWidgetButton" title="Delete a Widget" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
+    '<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; display: none;" readonly="readonly"/></span>' +
+    '<input type="button" id="playPageButton" title="View page" class="greenbutton plusminus" style="position: absolute; top: 4px; right: 75px;" value="&gt;"/>' +
+    '<input type="button" id="copyWidgetButton" title="Copy a Widget" class="bluebutton" style="position: absolute; top: 4px; right: 40px; font-size: 16px;" disabled="true" value="C"/>' +
+    '<input type="button" id="addWidgetButton" title="Add a Widget" class="bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
 
-/**
- * Set header div.
- */
-$('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
-'<input type="button" id="deleteWidgetButton" title="Delete a Widget" class="graybutton redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
-'<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; visibility: hidden;" readonly="readonly"/></span>' +
-'<input type="button" id="playPageButton" title="View page" class="graybutton plusminus" style="position: absolute; top: 4px; right: 75px;" value="&gt;"/>' +
-'<input type="button" id="copyWidgetButton" title="Copy a Widget" class="graybutton bluebutton" style="position: absolute; top: 4px; right: 40px; font-size: 16px;" disabled="true" value="C"/>' +
-'<input type="button" id="addWidgetButton" title="Add a Widget" class="graybutton bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
+    if (ui.isMobile()) {
+        $('palettecontainer').className = 'palettecontainer3dm';
+        $('paletteview').className = 'paletteloaded3dm';
+    } else {
+        $('viewcontent').className = 'viewcontent flatscrollbars';
+        $('palettecontainer').className = 'palettecontainer3d';
+        $('paletteview').className = 'paletteloaded3d';
+        $('palettecontent').className = 'palettecontent flatscrollbars';
+    }
+
+    $('imgimg').src = ui.b64png(appcache.get('/public/img.b64'));
+})();
 
 /**
  * Track the current page, author, and saved XHTML content.
  */
 var author = '';
 var editable = false;
-var savedpagexhtml = '';
+var savedxhtml = '';
 
 /**
- * Page editor area, widget value field, add, delete and play page buttons.
- */
-var cdiv = $('contentdiv');
-var pagediv = $('pagediv');
-var evisible = true;
-var pdiv = $('playdiv');
-var wadd = $('addWidgetButton');
-var wdelete = $('deleteWidgetButton');
-var wcopy = $('copyWidgetButton');
-var wvalue = $('widgetValue');
-var atitle = $('appTitle');
-var pplay = $('playPageButton');
-
-/**
- * Set images.
- */
-$('imgimg').src = ui.b64img(appcache.get('/public/img.b64'));
-
-/**
- * Init component references.
+ * Initialize component references.
  */
 var editorComp = sca.component('Editor');
 var pages = sca.reference(editorComp, 'pages');
 
 /**
- * Page editing functions.
+ * Return the transform property of a widget.
  */
-var page = {};
+var msiefixupbounds = ui.isMSIE();
+function widgettransform(e) {
+    if (!isNil(e.xtranslate))
+        return [e.xtranslate, e.ytranslate];
+    var t = e.style.getPropertyValue('-webkit-transform') || e.style.getPropertyValue('-moz-transform') ||
+            e.style.getPropertyValue('-ms-transform') || e.style.getPropertyValue('-o-transform') ||
+            e.style.getPropertyValue('transform');
+    if (t) {
+        var xy = t.split('(')[1].split(')')[0].split(',');
+        return [ui.numpos(xy[0]), ui.numpos(xy[1])];
+    }
+    if (e.id.substring(0, 8) == 'palette:') {
+        // On Internet Explorer get the view bounding rect as the palette
+        // doesn't return a correct bounding rect
+        var pbr = msiefixupbounds? $('viewcontent').getBoundingClientRect() : $('palettecontent').getBoundingClientRect();
+        var br = e.getBoundingClientRect();
+        return [br.left - pbr.left, br.top - pbr.top];
+    }
+    return [0, 0];
+}
 
 /**
- * Default positions and sizes.
+ * Return the x position of a widget.
  */
-page.palcx = 2500;
+function widgetxpos(e) {
+    var t = widgettransform(e)[0];
+    return ui.numpos(e.style.left) + (isNil(t)? 0 : t);
+}
 
 /**
- * Init a page editor.
+ * Return the y position of a widget.
  */
-page.mkedit = function(pagediv, atitle, wvalue, wadd, wcopy, wdelete, onchange, onselect) {
+function widgetypos(e) {
+    var t = widgettransform(e)[1];
+    return ui.numpos(e.style.top) + (isNil(t)? 0 : t);
+}
 
-    // Track element dragging and selection
-    page.dragging = null;
-    page.selected = null;
-    wvalue.readOnly = true;
-    wvalue.style.visibility = 'hidden';
-    atitle.style.visibility = 'visible';
-    page.mousemoved = false;
-    wcopy.disabled = true;
-    wdelete.disabled = true;
-    wadd.disabled = !editable;
+/**
+ * Return the class of a widget.
+ */
+function widgetclass(e) {
+    return e.className.split(' ')[0];
+}
 
-    // Trigger widget select and page change events
-    page.onpagechange = onchange;
-    page.onselectwidget = onselect;
+/**
+ * Initialize a widget.
+ */
+function fixupwidget(e) {
+
+    // Add draggable class
+    var wc = e.className;
+    e.className = ui.isMobile()? (wc + ' draggable3dm') : (wc + ' draggable3d');
+
+    // Convert widget position to a CSS transform
+    var x = ui.numpos(e.style.left);
+    var y = ui.numpos(e.style.top);
+    var t = 'translate(' + x + 'px,' + y + 'px)';
+    e.style.setProperty('-webkit-transform', t, null);
+    e.style.setProperty('-moz-transform', t, null);
+    e.style.setProperty('-o-transform', t, null);
+    e.style.setProperty('-ms-transform', t, null);
+    e.style.setProperty('transform', t, null);
+    e.xtranslate = x;
+    e.ytranslate = y;
+    e.style.left = ui.pixpos(0);
+    e.style.top = ui.pixpos(0);
+
+    if (wc == 'entry' || wc == 'password') {
+        var i = car(childElements(e));
+        i.readOnly = true;
+        i.style.cursor = 'default';
+        return e;
+    }
+    if (wc == 'link') {
+        var l = car(childElements(e));
+        l.onclick = function(e) { return false; };
+        return e;
+    }
+    return e;
+}
+
+/**
+ * Cleanup a widget before saving it.
+ */
+function cleanupwidget(e) {
+    //debug('cleanupwidget', e);
+
+    // Adjust widget class
+    var wc = widgetclass(e);
+    e.className = wc;
+
+    // Convert CSS transform to an absolute position
+    e.style.left = ui.pixpos(widgetxpos(e));
+    e.style.top = ui.pixpos(widgetypos(e));
+    e.style.removeProperty('-webkit-transform');
+    e.style.removeProperty('-moz-transform');
+    e.style.removeProperty('-o-transform');
+    e.style.removeProperty('-ms-transform');
+    e.style.removeProperty('transform');
+    e.xtranslate = null;
+    e.ytranslate = null;
+
+    // Clear outline
+    e.style.removeProperty('outline');
+
+    if (wc == 'entry' || wc == 'password') {
+        var i = car(childElements(e));
+        i.readOnly = false;
+        i.style.cursor = null;
+        return e;
+    }
+    if (wc == 'link') {
+        var l = car(childElements(e));
+        l.onclick = null;
+        return e;
+    }
+    return e;
+}
+
+/**
+ * Clone a widget.
+ */
+function clonewidget(e) {
 
     /**
-     * Handle a mouse down event.
+     * Clone an element's HTML.
      */
-    function onmousedown(e) {
-        // On mouse controlled devices, run component selection logic right away
-        var selected = page.selected;
-        if (typeof e.touches == 'undefined') {
-            //debug('onmousedown-click');
-            onclick(e);
-        }
+    function mkclone(e) {
+        var ne = document.createElement('span');
 
-        // Find a draggable element
-        var dragging = page.draggable(e.target, pagediv);
-        if (dragging == null || dragging != page.selected)
-            return true;
-        page.dragging = dragging;
+        // Skip the palette: prefix
+        ne.id = 'page:' + e.id.substr(8);
 
-        // Remember mouse position
-        var pos = typeof e.touches != "undefined"? e.touches[0] : e;
-        page.mousemoved = false;
-        page.dragX = pos.screenX;
-        page.dragY = pos.screenY;
-        page.moveX = pos.screenX;
-        page.moveY = pos.screenY;
+        // Copy the class and HTML content
+        ne.className = widgetclass(e);
+        ne.innerHTML = e.innerHTML;
 
-        // Prevent default behavior on first click on a widget
-        if (e.preventDefault)
-            e.preventDefault();
-        else
-            e.returnValue = false;
+        // Fixup the widget
+        fixupwidget(ne);
 
+        return ne;
+    }
+
+    /**
+     * Clone an element's position.
+     */
+    function posclone(ne, e) {
+        ne.style.position = 'absolute';
+        movewidget(ne, widgetxpos(e), widgetypos(e));
+        return ne;
+    }
+
+    return posclone(mkclone(e), e);
+}
+
+/**
+ * Select a widget.
+ */
+function selectwidget(n, s) {
+    //debug('selectwidget', n, s);
+    if (isNil(n) || !s) {
+        // Clear the widget value field
+        $('widgetValue').value = '';
+        $('widgetValue').readOnly = true;
+        $('widgetValue').style.display = 'none';
+
+        // Show the app title
+        $('appTitle').style.display = 'block';
+
+        // Update the copy and delete buttons
+        $('copyWidgetButton').disabled = true;
+        $('deleteWidgetButton').disabled = true;
+
+        // Clear the widget outline
+        if (!isNil(n))
+            n.style.removeProperty('outline');
         return true;
     }
 
-    if (!ui.isMobile()) {
-        pagediv.onmousedown = function(e) {
-            //debug('onmousedown');
-            return onmousedown(e);
-        };
-    } else {
-        pagediv.ontouchstart = function(e) {
-            //debug('ontouchstart');
-            return onmousedown(e);
-        };
-    }
+    // Outline the widget
+    n.style.outline = '2px solid #598edd';
 
-    /**
-     * Handle a mouse up event.
-     */
-    function onmouseup(e) {
-        if (page.dragging == null)
-            return true;
+    // Update the widget value field
+    $('widgetValue').value = widgettext(n);
+    $('widgetValue').readOnly = false || !editable;
+    $('widgetValue').style.display = 'block';
 
-        // Snap to grid
-        var newX = page.gridsnap(ui.numpos(page.dragging.style.left));
-        var newY = page.gridsnap(ui.numpos(page.dragging.style.top));
-        page.dragging.style.left = ui.pixpos(newX);
-        page.dragging.style.top = ui.pixpos(newY);
+    // Hide the app title
+    $('appTitle').style.display = 'none';
 
-        // Fixup widget style
-        page.initwidget(page.dragging);
-
-        // Forget dragged element
-        page.dragging = null;
-
-        // Trigger page change event
-        page.onpagechange(false);
-
-        // Simulate onclick event
-        onclick(e);
-
-        return true;
-    }
-
-    if (!ui.isMobile()) {
-        pagediv.onmouseup = function(e) {
-            //debug('onmouseup');
-            return onmouseup(e);
-        };
-    } else {
-        pagediv.ontouchend = function(e) {
-            //debug('ontouchend');
-            return onmouseup(e);
-        }
-    }
-
-    /**
-     * Handle a mouse move event.
-     */
-    function onmousemove(e) {
-
-        // Track mouse moves
-        page.mousemoved = true;
-
-        if (page.dragging == null)
-            return true;
-
-        // Ignore duplicate mouse move events
-        if (page.moveX == page.dragX && page.moveY == page.dragY)
-            return true;
-
-        // Compute position of dragged element
-        var curX = ui.numpos(page.dragging.style.left);
-        var curY = ui.numpos(page.dragging.style.top);
-        var newX = curX + (page.moveX - page.dragX);
-        var newY = curY + (page.moveY - page.dragY);
-        if (newX >= page.palcx)
-            page.dragX = page.moveX;
-        else
-            newX = page.palcx;
-        if (newY >= 0)
-            page.dragY = page.moveY;
-        else
-            newY = 0;
-
-        // Move the dragged element
-        page.dragging.style.left = ui.pixpos(newX);
-        page.dragging.style.top = ui.pixpos(newY);
-        page.constrainwidget(page.dragging);
-
-        return true;
-    }
-
-    if (!ui.isMobile()) {
-        window.onmousemove = function(e) {
-
-            // Remember mouse position
-            page.moveX = e.screenX;
-            page.moveY = e.screenY;
-
-            return onmousemove(e);
-        };
-    } else {
-        pagediv.ontouchmove = function(e) {
-
-            // Remember touch position
-            var pos = e.touches[0];
-            if (page.moveX == pos.screenX && page.moveY == pos.screenY)
-                return true;
-            page.moveX = pos.screenX;
-            page.moveY = pos.screenY;
-            if (page.moveX == page.dragX && page.moveY == page.dragY)
-                return true;
-
-            onmousemove(e);
-        };
-    }
-
-    /**
-     * Handle a mouse click event.
-     */
-    function onclick(e) {
-
-        // Find selected element
-        var selected = page.draggable(e.target, pagediv);
-        if (selected == null) {
-            if (page.selected != null) {
-
-                // Reset current selection
-                page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
-                page.selected = null;
-
-                // Trigger widget select event
-                page.onselectwidget(null);
-            }
-
-            // Dismiss the palette
-            if (ui.numpos(pagediv.style.left) != (page.palcx * -1))
-                pagediv.style.left = ui.pixpos(page.palcx * -1);
-
-            return true;
-        }
-
-        // Deselect the previously selected element
-        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
-
-        // Clone element dragged from palette
-        if (selected.id.substring(0, 8) == 'palette:') {
-            page.selected = page.clone(selected);
-
-            // Move into the editing area and hide the palette
-            page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + page.palcx);
-            page.initwidget(page.selected);
-            pagediv.style.left = ui.pixpos(page.palcx * -1);
-            page.constrainwidget(page.selected);
-        
-            // Bring it to the top
-            page.bringtotop(page.selected);
-
-            // Trigger page change event
-            page.onpagechange(true);
-
-            // Select the element
-            page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
-
-            // Trigger widget select event
-            page.onselectwidget(page.selected);
-
-            return true;
-
-        }
-
-        // Bring selected element to the top
-        page.selected = selected;
-        page.bringtotop(page.selected);
-
-        // Select the element
-        page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
-
-        // Trigger widget select event
-        page.onselectwidget(page.selected);
-
-        return true;
-    }
-
-    if (!ui.isMobile()) {
-        pagediv.onclick = function(e) {
-            //debug('onclick');
-            return onclick(e);
-        };
-    } else {
-        pagediv.onclick = function(e) {
-            //debug('onclick');
-            return onclick(e);
-        };
-    }
-
-    /**
-     * Handle field on change events.
-     */
-    wvalue.onchange = wvalue.onblur = function() {
-        if (page.selected == null)
-            return false;
-        page.settext(page.selected, wvalue.value);
-
-        // Trigger page change event
-        page.onpagechange(true);
-        return false;
-    };
-
-    // Handle add widget event.
-    wadd.onclick = function() {
-
-        // Show the palette
-        pagediv.style.left = ui.pixpos(0);
-        return false;
-    };
-
-    // Handle delete event.
-    wdelete.onclick = function() {
-        if (page.selected == null)
-            return false;
-
-        // Reset current selection
-        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
-
-        // Remove selected widget
-        page.selected.parentNode.removeChild(page.selected);
-        page.selected = null;
-
-        // Trigger widget select event
-        page.onselectwidget(null);
-
-        // Trigger page change event
-        page.onpagechange(true);
-        return false;
-    };
-
-    // Handle copy event.
-    wcopy.onclick = function() {
-        if (page.selected == null)
-            return false;
-        if (page.selected.id.substring(0, 8) == 'palette:')
-            return false;
-
-        // Reset current selection
-        page.selectwidget(page.selected, false, atitle, wvalue, wcopy, wdelete);
-
-        // Clone selected widget
-        page.selected = page.clone(page.selected);
-
-        // Move 10 pixels down right
-        page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + 10);
-        page.selected.style.top = ui.pixpos(ui.numpos(page.selected.style.top) + 10);
-        page.constrainwidget(page.selected);
-    
-        // Bring it to the top
-        page.bringtotop(page.selected);
-
-        // Select the element
-        page.selectwidget(page.selected, true, atitle, wvalue, wcopy, wdelete);
-
-        // Trigger widget select event
-        page.onselectwidget(page.selected);
-
-        // Trigger page change event
-        page.onpagechange(true);
-        return false;
-    };
-
-    return pagediv;
-};
+    // Update the copy and delete buttons
+    $('copyWidgetButton').disabled = false || !editable;
+    $('deleteWidgetButton').disabled = false || !editable;
+    return true;
+}
 
 /**
  * Return the text of a widget.
  */
-page.text = function(e) {
+function widgettext(e) {
     function formula(e) {
         var f = e.id;
         if (f.substring(0, 5) != 'page:')
@@ -483,43 +338,36 @@ page.text = function(e) {
     }
 
     function constant(e, f) {
-        if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+        var wc = widgetclass(e);
+        if (wc == 'hd1' || wc == 'hd2' || wc == 'text' || wc == 'section') {
             var t = car(childElements(e)).innerHTML;
             return t == f? '' : t;
         }
-        if (e.className == 'button' || e.className == 'checkbox') {
+        if (wc == 'button' || wc == 'checkbox') {
             var t = car(childElements(e)).value;
             return t == f? '' : t;
         }
-        if (e.className == 'entry' || e.className == 'password') {
+        if (wc == 'entry' || wc == 'password') {
             var t = car(childElements(e)).defaultValue;
             return t == f? '' : t;
         }
-        /*
-        if (e.className == 'select') {
+        if (wc == 'select') {
             var t = car(childElements(car(childElements(e)))).value;
             return t == f? '' : t;
         }
-        */
-        if (e.className == 'link') {
+        if (wc == 'link') {
             var lhr = car(childElements(e)).href;
             var hr = lhr.substring(0, 5) == 'link:'? lhr.substring(5) : '';
             var t = car(childElements(car(childElements(e)))).innerHTML;
             return t == f? hr : (t == hr? hr : (t == ''? hr : hr + ',' + t));
         }
-        if (e.className == 'img') {
+        if (wc == 'img') {
             var src = car(childElements(e)).src;
             return src == location.href? '' : src;
         }
-        /*
-        if (e.className == 'iframe') {
-            var hr = car(childElements(e)).href;
-            return hr == location.href? '' : hr;
-        }
-        */
-        if (e.className == 'list')
+        if (wc == 'list')
             return '';
-        if (e.className == 'table')
+        if (wc == 'table')
             return '';
         return '';
     }
@@ -527,41 +375,36 @@ page.text = function(e) {
     var f = formula(e);
     var c = constant(e, f);
     return f == ''? c : (c == ''? f : f + ',' + c);
-};
+}
 
 /**
  * Return true if a widget has editable text.
  */
-page.hastext = function(e) {
-    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
+function widgethastext(e) {
+    var wc = widgetclass(e);
+    if (wc == 'hd1' || wc == 'hd2' || wc == 'text' || wc == 'section')
         return true;
-    if (e.className == 'button' || e.className == 'checkbox')
+    if (wc == 'button' || wc == 'checkbox')
         return true;
-    if (e.className == 'entry' || e.className == 'password')
+    if (wc == 'entry' || wc == 'password')
         return true;
-    /*
-    if (e.className == 'select')
+    if (wc == 'select')
         return false;
-    */
-    if (e.className == 'link')
+    if (wc == 'link')
         return true;
-    if (e.className == 'img')
+    if (wc == 'img')
         return true;
-    /*
-    if (e.className == 'iframe')
-        return true;
-    */
-    if (e.className == 'list')
+    if (wc == 'list')
         return false;
-    if (e.className == 'table')
+    if (wc == 'table')
         return false;
     return false;
-};
+}
 
 /**
  * Set the text of a widget.
  */
-page.settext = function(e, t) {
+function setwidgettext(e, t) {
     function formula(t) {
         if (t.length > 1 && t.substring(0, 1) == '=')
             return car(t.split(','));
@@ -575,268 +418,690 @@ page.settext = function(e, t) {
     var f = formula(t);
     var c = constant(t);
 
-    e.id = f != ''? f.substring(1) : ('page:' + e.className);
+    var wc = widgetclass(e);
+    e.id = f != ''? f.substring(1) : ('page:' + wc);
 
-    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+    if (wc == 'hd1' || wc == 'hd2' || wc == 'text' || wc == 'section') {
         car(childElements(e)).innerHTML = isNil(c)? f : car(c);
         return t;
     }
-    if (e.className == 'button') {
+    if (wc == 'button') {
         car(childElements(e)).value = isNil(c)? f : car(c);
         return t;
     }
-    if (e.className == 'entry' || e.className == 'password') {
+    if (wc == 'entry' || wc == 'password') {
         car(childElements(e)).defaultValue = isNil(c)? f : car(c);
         return t;
     }
-    if (e.className == 'checkbox') {
+    if (wc == 'checkbox') {
         car(childElements(e)).value = isNil(c)? f : car(c);
         map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = isNil(c)? f : car(c); return n; }, nodeList(e.childNodes));
         return t;
     }
-    /*
-    if (e.className == 'select') {
+    if (wc == 'select') {
         var ce = car(childElements(car(childElements(e))));
         ce.value = isNil(c)? f : car(c);
         ce.innerHTML = isNil(c)? f : car(c);
         return t;
     }
-    */
-    if (e.className == 'list') {
+    if (wc == 'list') {
         e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + (isNil(c)? f : car(c)) + '</td></tr><tr><td class="datatd">...</td></tr></table>';
         return t;
     }
-    if (e.className == 'table') {
+    if (wc == 'table') {
         e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + (isNil(c)? f : car(c)) + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
         return t;
     }
-    if (e.className == 'link') {
+    if (wc == 'link') {
         var ce = car(childElements(e));
         ce.href = isNil(c)? 'link:/index.html' : ('link:' + car(c));
         car(childElements(ce)).innerHTML = isNil(c)? (f != ''? f : '/index.html') : isNil(cdr(c))? (f != ''? f : car(c)) : cadr(c);
         return t;
     }
-    if (e.className == 'img') {
+    if (wc == 'img') {
         car(childElements(e)).src = isNil(c)? '/public/img.png' : car(c);
         return t;
     }
-    /*
-    if (e.className == 'iframe') {
-        car(childElements(e)).href = isNil(c)? '/public/iframe-min.html' : car(c);
-        return t;
-    }
-    */
     return '';
-};
-
-/**
- * Initialize a widget.
- */
-page.initwidget = function(e) {
-
-    // Add a Webkit transform to leverage hardware acceleration
-    e.style.setProperty('-webkit-transform', 'translate(0px, 0px)', null);
-
-    /*
-    if (e.className == 'iframe') {
-        var f = car(childElements(e));
-        //e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
-        return e;
-    }
-    */
-
-    if (e.className == 'section') {
-        e.style.width = '100%';
-        return e;
-    }
-    if (e.className == 'text' || e.className == 'h1' || e.className == 'h2') {
-        return e;
-    }
-    if (e.className == 'button') {
-        return e;
-    }
-    if (e.className == 'checkbox') {
-        return e;
-    }
-    if (e.className == 'list' || e.className == 'table') {
-        e.style.width = '100%';
-        var t = car(childElements(e));
-        t.style.width = '100%';
-        return e;
-    }
-    if (e.className == 'img') {
-        var i = car(childElements(e));
-        if (i.src != '' && i.src.substring(0, 5) == 'data:')
-            i.src = '/public/img.png';
-        return e;
-    }
-    if (e.className == 'entry' || e.className == 'password') {
-        var i = car(childElements(e));
-        i.readOnly = true;
-        i.style.cursor = 'default';
-        return e;
-    }
-    if (e.className == 'link') {
-        var l = car(childElements(e));
-        l.onclick = function(e) { return false; };
-        return e;
-    }
-    return e;
-}
-
-/**
- * Enforce widget position and style constraints.
- */
-page.constrainwidget = function(e) {
-    if (e.className == 'section' || e.className == 'list' || e.className == 'table') {
-        e.style.left = ui.pixpos(page.palcx);
-        return e;
-    }
-    return e;
-};
-
-/**
- * Cleanup of a widget before saving it.
- */
-page.cleanupwidget = function(e) {
-    //debug('cleanupwidget', e);
-
-    // Clear outline
-    e.style.outline = null;
-
-    // Clear the Webkit transform
-    e.style.removeProperty('-webkit-transform');
-
-    if (e.className == 'entry' || e.className == 'password') {
-        var i = car(childElements(e));
-        i.readOnly = false;
-        i.style.cursor = null;
-        return e;
-    }
-    if (e.className == 'link') {
-        var l = car(childElements(e));
-        l.onclick = null;
-        return e;
-    }
-    return e;
-}
-
-/**
- * Find a draggable element in a hierarchy of elements.
- */
-page.draggable = function(n, e) {
-    if (n == e)
-        return null;
-    if (!isNil(n.id) && n.id != '')
-        return n;
-    return page.draggable(n.parentNode, e);
 }
 
 /**
  * Align a pos along a 9pixel grid.
  */
-page.gridsnap = function(x) {
-    return Math.round(x / 9) * 9;
+function snaptogrid(x) {
+    return Math.round(x / 10) * 10;
 }
 
 /**
- * Bring an element and its parent to the top.
+ * Bring a node to the top.
  */
-page.bringtotop = function(n) {
+function bringtotop(n) {
     n.parentNode.appendChild(n);
 }
 
 /**
- * Select a widget.
+ * Move a widget.
  */
-page.selectwidget = function(n, s, atitle, wvalue, wcopy, wdelete) {
-    //debug('selectwidget', n, s);
-    if (isNil(n) || !s) {
-        // Clear the widget value field
-        wvalue.value = '';
-        wvalue.readOnly = true;
-        wvalue.style.visibility = 'hidden';
-        atitle.style.visibility = 'visible';
-        wcopy.disabled = true;
-        wdelete.disabled = true;
+var iefixuptransform = ui.isMSIE();
+var fffixupoutline = ui.isFirefox() && (ui.firefoxVersion() > 4);
+function movewidget(e, x, y) {
+    var t = 'translate(' + x + 'px,' + y + 'px)';
+    e.style.setProperty('-webkit-transform', t, null);
+    e.style.setProperty('-moz-transform', t, null);
+    e.style.setProperty('-o-transform', t, null);
+    // On Internet Explorer set the property directly as setProperty
+    // doesn't seem to apply
+    if (iefixuptransform)
+        e.style.msTransform = t;
+    e.style.setProperty('transform', t, null);
+    e.xtranslate = x;
+    e.ytranslate = y;
+    return e;
+}
 
-        // Clear the widget outline
-        if (!isNil(n))
-            n.style.outline = null;
+/**
+ * Return a widget bounding rect.
+ */
+var fffixupbounds = ui.isFirefox() && (ui.firefoxVersion() < 12);
+function widgetbounds(e) {
+    var br = e.getBoundingClientRect();
+    if (!fffixupbounds)
+        return br;
+
+    // On Firefox < 12, apply CSS transform translation to bounding rect manually
+    //debug('fixup br', e, br.left, br.top, br.right, br.bottom, t[0], t[1]);
+    function fixuptransform(e) {
+        var t = widgettransform(e);
+        if (!isNil(e.xtranslate))
+            return [e.xtranslate, e.ytranslate];
+        var t = e.style.getPropertyValue('-webkit-transform') || e.style.getPropertyValue('-moz-transform') ||
+                e.style.getPropertyValue('-ms-transform') || e.style.getPropertyValue('-o-transform') ||
+                e.style.getPropertyValue('transform');
+        if (t) {
+            var xy = t.split('(')[1].split(')')[0].split(',');
+            return [ui.numpos(xy[0]), ui.numpos(xy[1])];
+        }
+        return [0, 0];
+    }
+
+    var t = fixuptransform(e);
+    var fbr = new Object();
+    fbr.left = br.left + t[0];
+    fbr.top = br.top + t[1];
+    fbr.right = fbr.left + e.offsetWidth;
+    fbr.bottom = fbr.top + e.offsetHeight;
+    return fbr;
+}
+
+/**
+ * Find a draggable element in a list.
+ */
+function draggable(x, y, l) {
+    //debug('draggable?', x, y, l);
+    if (isNil(l))
+        return null;
+    var n = car(l);
+    if (isNil(n.id) || n.id == '') {
+        var d = draggable(x, y, reverse(nodeList(n.childNodes)));
+        if (!isNil(d))
+            return d;
+        return draggable(x, y, cdr(l));
+    }
+    var br = widgetbounds(n);
+    //debug('element br', n, br.left, br.top, br.right, br.bottom);
+    if (x >= br.left && x <= br.right && y >= br.top && y <= br.bottom)
+        return n;
+    return draggable(x, y, cdr(l));
+}
+
+/**
+ * Play page in a frame.
+ */
+function showplaying() {
+    $('playPageButton').value = '<';
+    $('playdiv').style.display = 'block';
+    $('playdiv').visible = true;
+    $('playdiv').innerHTML = '';
+    $('playdiv').innerHTML = '<iframe id="playappframe" style="position: relative; border: 0px;" scrolling="no" frameborder="0" src="/' + appname + '"></iframe>';
+    if ($('pagediv').visible) {
+        $('pagediv').style.display = 'none'
+        $('pagediv').visible = false;
+    }
+    hidepalette();
+    return true;
+}
+
+/**
+ * Show the page editor.
+ */
+function showeditor() {
+    $('playPageButton').value = '>';
+    $('pagediv').style.display = 'block'
+    $('pagediv').visible = true;
+    if ($('playdiv').visible) {
+        $('playdiv').style.display = 'none';
+        $('playdiv').innerHTML = '';
+        $('playdiv').visible = false;
+    }
+    hidepalette();
+    return true;
+}
+
+/**
+ * Palette animation.
+ */
+function palettetransitionend(e) {
+    if ($('paletteview').className == 'paletteunloaded3dm')
+        $('paletteview').style.display = 'none';
+}
+
+$('paletteview').addEventListener('webkitTransitionEnd', palettetransitionend, false);
+$('paletteview').addEventListener('transitionend', palettetransitionend, false);
+
+/**
+ * Show the palette.
+ */
+function showpalette() {
+    if (ui.isMobile()) {
+        $('paletteview').className = 'paletteloading3dm';
+        $('paletteview').style.display = 'block';
+        $('paletteview').visible = true;
+        ui.async(function transitionview() {
+            $('paletteview').className = 'paletteloaded3dm';
+        });
+    } else {
+        $('paletteview').className = 'paletteloaded3d';
+        $('paletteview').style.display = 'block';
+        $('paletteview').visible = true;
+    }
+    return true;
+}
+
+/**
+ * Hide the palette.
+ */
+function hidepalette() {
+    if (ui.isMobile()) {
+        $('paletteview').className = 'paletteunloading3dm';
+        $('paletteview').visible = false;
+        ui.async(function transitionview() {
+            $('paletteview').className = 'paletteunloaded3dm';
+        });
+    } else {
+        $('paletteview').className = 'paletteunloaded3d';
+        $('paletteview').style.display = 'none';
+        $('paletteview').visible = false;
+    }
+    return true;
+}
+
+/**
+ * Create page editor.
+ */
+function mkeditor() {
+
+    // Initialize header elements
+    $('widgetValue').readOnly = true;
+    $('widgetValue').style.display = 'none';
+    $('appTitle').style.display = 'block';
+    $('copyWidgetButton').disabled = true;
+    $('deleteWidgetButton').disabled = true;
+    $('addWidgetButton').disabled = !editable;
+
+    // Track widget dragging and selection
+    var dragging = null;
+    var selected = null;
+    var moved = false;
+    var mdown = false;
+    var moveX = 0;
+    var moveY = 0;
+    var dragX = 0;
+    var dragY = 0;
+
+    /**
+    * Handle a page change event
+    */
+    function onpagechange(prop) {
+        if (!editable)
+            return false;
+
+        var newxml = pagexhtml();
+        if (savedxhtml == newxml)
+            return false;
+        showstatus('Modified');
+
+        // Save property changes right away
+        if (prop)
+            return save(newxml);
+
+        // Autosave other changes after 1 second
+        ui.delay(function autosave() {
+            if (savedxhtml == newxml) {
+                showstatus('Saved');
+                return false;
+            }
+            return save(newxml);
+        }, 1000);
+        return true;
+    }
+
+    /**
+    * Handle a widget select event.
+    */
+    function onselectwidget(w) {
+        if (w == selected)
+            return true;
+        selected = w;
+        return true;
+    }
+
+    /**
+     * Render widget move animation.
+     */
+    function onmoveanimation() {
+        //debug('onmoveanimation');
+
+        // Stop animation if we're not dragging an element anymore
+        if (dragging == null)
+            return true;
+
+        // Request the next animation frame
+        ui.animation(onmoveanimation);
+
+        // Nothing to do if the selected widget has not moved
+        if (moveX == dragX && moveY == dragY)
+            return true;
+
+        // Compute position of dragged element
+        var curX = widgetxpos(dragging);
+        var curY = widgetypos(dragging);
+        var newX = curX + (moveX - dragX);
+        var newY = curY + (moveY - dragY);
+
+        var okx = true;
+        if (newX + dragging.clientWidth > 1024) {
+            newX = 1024 - dragging.clientWidth;
+            okx = false;
+        }
+        if (newX < 0) {
+            newX = 0;
+            okx = false;
+        }
+        if (okx)
+            dragX = moveX;
+        var oky = true;
+        if (newY + dragging.clientHeight > 1024) {
+            newY = 1024 - dragging.clientHeight;
+            oky= false;
+        }
+        if (newY < 0) {
+            newY = 0;
+            oky = false;
+        }
+        if (oky)
+            dragY = moveY;
+
+        // On Firefox > 4, remove outline before moving widget as it's not
+        // correctly painted
+        if (fffixupoutline)
+            dragging.style.removeProperty('outline');
+
+        // Move the dragged element
+        movewidget(dragging, newX, newY);
 
         return true;
     }
 
-    // Outline the widget
-    n.style.outline = '2px solid #598edd';
+    /**
+     * Handle a mouse down event.
+     */
+    function onmousedown(e) {
+        // On mouse controlled devices, run component selection logic right away
+        if (!ui.isMobile()) {
+            //debug('onmousedown-click');
+            onclick(e);
+        }
 
-    // Update the widget value field
-    wvalue.value = page.text(n);
-    wvalue.readOnly = false || !editable;
-    wvalue.style.visibility = 'visible';
-    atitle.style.visibility = 'hidden';
-    wcopy.disabled = false || !editable;
-    wdelete.disabled = false || !editable;
+        // Find a draggable widget
+        var d = draggable(moveX, moveY, reverse(nodeList($('pagediv').childNodes)));
+        //debug('dragging', d, 'selected', selected);
+        if (d == null || d != selected)
+            return true;
+        dragging = d;
+
+        // Remember mouse position
+        dragX = moveX;
+        dragY = moveY;
+
+        // Start move animation
+        ui.animation(onmoveanimation);
+
+        e.preventDefault();
+        return true;
+    }
+
+    if (!ui.isMobile()) {
+        $('pagediv').onmousedown = function(e) {
+            //debug('onmousedown', e.target);
+            mdown = true;
+            moveX = e.clientX;
+            moveY = e.clientY;
+            moved = false;
+            return onmousedown(e);
+        };
+        $('palettecontent').onmousedown = function(e) {
+            //debug('onmousedown', e.target);
+            mdown = true;
+            moveX = e.clientX;
+            moveY = e.clientY;
+            moved = false;
+            return onmousedown(e);
+        };
+    } else {
+        $('pagediv').ontouchstart = function(e) {
+            //debug('ontouchstart');
+            mdown = true;
+            moveX = e.touches[0].clientX;
+            moveY = e.touches[0].clientY;
+            moved = false;
+            return onmousedown(e);
+        };
+        $('pagediv').addEventListener('touchstart', function(e) {
+            //debug('ontouchstart');
+            mdown = true;
+            moveX = e.touches[0].clientX;
+            moveY = e.touches[0].clientY;
+            moved = false;
+            return onmousedown(e);
+        }, false);
+        $('palettecontent').ontouchstart = function(e) {
+            //debug('ontouchstart');
+            mdown = true;
+            moveX = e.touches[0].clientX;
+            moveY = e.touches[0].clientY;
+            moved = false;
+            return onmousedown(e);
+        };
+    }
+
+    /**
+     * Handle a mouse up event.
+     */
+    function onmouseup(e) {
+        // Simulate onclick event
+        if (ui.isMobile() && !moved) {
+            //debug('ontouchend-click');
+            return onclick(e);
+        }
+
+        if (dragging == null)
+            return true;
+
+        // Snap dragged widget to grid
+        var newX = snaptogrid(widgetxpos(dragging));
+        var newY = snaptogrid(widgetypos(dragging));
+        movewidget(dragging, newX, newY);
+
+        // Forget dragged element
+        dragging = null;
+
+        // Trigger page change event
+        onpagechange(false);
+
+        // On Firefox > 4, re-apply the outline after the widget has been repositioned
+        if (fffixupoutline && !isNil(selected)) {
+            ui.delay(function() {
+                if (!isNil(selected))
+                    selected.style.outline = '2px solid #598edd';
+            }, 32);
+        }
+        return true;
+    }
+
+    if (!ui.isMobile()) {
+        window.onmouseup = function(e) {
+            //debug('onmouseup');
+            if (!mdown)
+                return true;
+            return onmouseup(e);
+        };
+    } else {
+        window.ontouchend = function(e) {
+            //debug('ontouchend');
+            if (!mdown)
+                return true;
+            return onmouseup(e);
+        }
+    }
+
+    if (!ui.isMobile()) {
+        window.onmousemove = function(e) {
+            //debug('onmousemove');
+
+            // Record mouse position
+            if (e.clientX != moveX) {
+                moved = true;
+                moveX = e.clientX;
+            }
+            if (e.clientY != moveY) {
+                moved = true;
+                moveY = e.clientY;
+            }
+            if (dragging == null)
+                return true;
+            return false;
+        };
+    } else {
+        window.ontouchmove = function(e) {
+            //debug('ontouchmove');
+
+            // Record touch position
+            var t = e.touches[0];
+            if (t.clientX != moveX) {
+                moved = true;
+                moveX = t.clientX;
+            }
+            if (t.clientY != moveY) {
+                moved = true;
+                moveY = t.clientY;
+            }
+            if (dragging == null)
+                return true;
+            return false;
+        };
+    }
+
+    /**
+     * Handle a mouse click event.
+     */
+    function onclick(e) {
+
+        // Find selected element
+        var palvis = $('paletteview').visible? true : false;
+        var s = draggable(moveX, moveY, reverse(nodeList((palvis? $('palettecontent') : $('pagediv')).childNodes)));
+        //debug('selected', s);
+        if (s == null) {
+            if (selected != null) {
+
+                // Reset current selection
+                selectwidget(selected, false);
+                selected = null;
+
+                // Trigger widget select event
+                onselectwidget(null);
+            }
+
+            // Dismiss the palette
+            if (palvis && isNil(draggable(moveX, moveY, mklist($('palettecontent')))))
+                hidepalette();
+
+            return true;
+        }
+
+        // Deselect the previously selected element
+        selectwidget(selected, false);
+
+        // Clone widget dragged from palette
+        if (s.id.substring(0, 8) == 'palette:') {
+            selected = clonewidget(s);
+
+            // Add it to the page
+            $('pagediv').appendChild(selected);
+            movewidget(selected, widgetxpos(selected) + $('viewcontent').scrollLeft, widgetypos(selected) + $('viewcontent').scrollTop);
+
+            // Hide the palette
+            hidepalette();
+
+            // Trigger page change event
+            onpagechange(true);
+
+            // Select the element
+            selectwidget(selected, true);
+
+            // Trigger widget select event
+            onselectwidget(selected);
+
+            return true;
+        }
+
+        // Bring selected widget to the top
+        selected = s;
+        bringtotop(selected);
+
+        // Select the widget
+        selectwidget(selected, true);
+
+        // Trigger widget select event
+        onselectwidget(selected);
+
+        return true;
+    }
+
+    /*
+    if (!ui.isMobile()) {
+        $('pagediv').onclick = function(e) {
+            //debug('onclick');
+            moveX = e.clientX;
+            moveY = e.clientY;
+            return onclick(e);
+        };
+    } else {
+        window.onclick = function(e) {
+            //debug('onclick');
+            moveX = e.touches[0].clientX;
+            moveY = e.touches[0].clientY;
+            return onclick(e);
+        };
+    }
+    */
+
+    /**
+     * Handle field on change events.
+     */
+    $('widgetValue').onchange = $('widgetValue').onblur = function() {
+        if (selected == null)
+            return false;
+        setwidgettext(selected, $('widgetValue').value);
+
+        // Trigger page change event
+        onpagechange(true);
+        return false;
+    };
+
+    // Handle add widget event.
+    $('addWidgetButton').onclick = function() {
+
+        // Show / hide the palette
+        if ($('paletteview').visible)
+            return hidepalette();
+        return showpalette();
+    };
+
+    // Handle delete event.
+    $('deleteWidgetButton').onclick = function() {
+        if (selected == null)
+            return false;
+
+        // Reset current selection
+        selectwidget(selected, false);
+
+        // Remove selected widget
+        selected.parentNode.removeChild(selected);
+        selected = null;
+
+        // Trigger widget select event
+        onselectwidget(null);
+
+        // Trigger page change event
+        onpagechange(true);
+        return false;
+    };
+
+    // Handle copy event.
+    $('copyWidgetButton').onclick = function() {
+        if (selected == null)
+            return false;
+        if (selected.id.substring(0, 8) == 'palette:')
+            return false;
+
+        // Reset current selection
+        selectwidget(selected, false);
+
+        // Clone selected widget
+        selected = clonewidget(selected);
+
+        // Add it to the page
+        $('pagediv').appendChild(selected);
+
+        // Move 10 pixels down right
+        movewidget(selected, widgetxpos(selected) + 10, widgetypos(selected) + 10);
+    
+        // Bring it to the top
+        bringtotop(selected);
+
+        // Select the element
+        selectwidget(selected, true);
+
+        // Trigger widget select event
+        onselectwidget(selected);
+
+        // Trigger page change event
+        onpagechange(true);
+        return false;
+    };
+
+    /**
+    * Handle play page button event.
+    */
+    $('playPageButton').onclick = function() {
+
+        // Show / hide the page play frame
+        if ($('playdiv').visible)
+            return showeditor();
+        return showplaying();
+    }
+
+    // Show the editor
+    showeditor();
 
     return true;
 };
 
 /**
- * Clone a palette element.
+ * Get and display the requested app page.
  */
-page.clone = function(e) {
-
-    /**
-     * Clone an element's HTML.
-     */
-    function mkclone(e) {
-        var ne = document.createElement('span');
-
-        // Skip the palette: prefix
-        ne.id = 'page:' + e.id.substr(8);
-
-        // Copy the class and HTML content
-        ne.className = e.className;
-        ne.innerHTML = e.innerHTML;
-
-        // Fixup the widget style
-        page.initwidget(ne);
-
-        return ne;
-    }
-
-    /**
-     * Clone an element's position.
-     */
-    function posclone(ne, e) {
-        ne.style.position = 'absolute';
-        ne.style.left = ui.pixpos(ui.numpos(e.style.left));
-        ne.style.top = ui.pixpos(ui.numpos(e.style.top));
-        e.parentNode.appendChild(ne);
-        return ne;
-    }
-
-    return posclone(mkclone(e), e);
-};
-
-/**
- * Track the current widget.
- */
-var widget = null;
-
-/**
- * Get and display an app page.
- */
-function getpage(name, pagediv) {
-    if (isNil(name))
+(function getpage() {
+    if (isNil(appname))
         return false;
-    showStatus('Loading');
+    workingstatus(true);
+    showstatus('Loading');
 
-    return pages.get(name, function(doc) {
+    return pages.get(appname, function(doc) {
 
         // Stop now if we didn't get a page
         if (doc == null) {
-            showError('App not available');
+            errorstatus('Couldn\'t get the app info');
+            workingstatus(false);
             return false;
         }
 
@@ -844,67 +1109,56 @@ function getpage(name, pagediv) {
         var pageentry = car(atom.readATOMEntry(mklist(doc)));
         var content = namedElementChild("'content", pageentry);
         var el = isNil(content)? mklist() : elementChildren(content);
-        var buffer = $('buffer');
         if (isNil(el))
-            buffer.innerHTML = '<div id="page"></div>';
+            $('xhtmlbuffer').innerHTML = '<div id="page"></div>';
         else
-            buffer.innerHTML = writeStrings(writeXML(el, false));
+            $('xhtmlbuffer').innerHTML = writeStrings(writeXML(el, false));
 
         // Remove any existing page nodes from the editor div
         var fnodes = filter(function(e) {
-            if (isNil(e.id) || e.id == '' || e.id.substr(0, 8) == 'palette:')
-                return false;
-            var x = ui.numpos(e.style.left) - 2500;
-            if (x < 0 || ui.numpos(e.style.top) < 0)
+            if (isNil(e.id) || e.id == '')
                 return false;
             return true;
-        }, nodeList(pagediv.childNodes));
+        }, nodeList($('pagediv').childNodes));
 
         map(function(e) {
-            pagediv.removeChild(e);
+            $('pagediv').removeChild(e);
         }, fnodes);
 
-        // Append new page nodes to editor
+        // Fixup widgets and append them to the editor
         map(function(e) {
-                pagediv.appendChild(e);
-                if (!isNil(e.style))
-                    e.style.left = ui.pixpos(ui.numpos(e.style.left) + 2500);
-                page.initwidget(e);
+                $('pagediv').appendChild(e);
+                fixupwidget(e);
                 return e;
-            }, nodeList(buffer.childNodes[0].childNodes));
+            }, nodeList($('xhtmlbuffer').childNodes[0].childNodes));
 
-        savedpagexhtml = pagexhtml(pagediv);
+        savedxhtml = pagexhtml($('pagediv'));
 
         // Enable author to edit the page
         author = elementValue(namedElementChild("'author", pageentry));
         editable = author == username;
-        wadd.disabled = !editable;
-        showStatus(editable? onlineStatus() : 'Read only');
+        $('addWidgetButton').disabled = !editable;
+        if (editable)
+            onlinestatus();
+        else
+            showstatus('Read only');
 
+        workingstatus(false);
         return true;
     });
-}
-
-/**
- * Handle add widget button click event.
- */
-wadd.onclick = function(e) {
-    // Show the widget palette
-    pagediv.style.left = ui.pixpos(0);
-};
+})();
 
 /**
  * Return the current page XHTML content.
  */
-function pagexhtml(pagediv) {
+function pagexhtml() {
 
     // Copy page DOM to hidden buffer
-    var buffer = $('buffer');
-    buffer.innerHTML = '<div id="page"></div>'
-    var div = buffer.childNodes[0];
+    $('xhtmlbuffer').innerHTML = '<div id="page"></div>'
+    var div = $('xhtmlbuffer').childNodes[0];
 
     // Capture the nodes inside the page div
-    div.innerHTML = pagediv.innerHTML;
+    div.innerHTML = $('pagediv').innerHTML;
     var nodes = nodeList(div.childNodes);
     map(function(e) {
         div.removeChild(e);
@@ -915,30 +1169,25 @@ function pagexhtml(pagediv) {
     // part of the page, as well as nodes positioned out the
     // editing area
     var fnodes = filter(function(e) {
-        if (isNil(e.id) || e.id == '' || e.id.substr(0, 8) == 'palette:')
-            return false;
-        var x = ui.numpos(e.style.left) - 2500;
-        if (x < 0 || ui.numpos(e.style.top) < 0)
+        if (isNil(e.id) || e.id == '')
             return false;
         return true;
     }, nodes);
 
     // Reposition and cleanup nodes
     map(function(e) {
-        var x = ui.numpos(e.style.left) - 2500;
-        e.style.left = ui.pixpos(x);
-        page.cleanupwidget(e);
+        cleanupwidget(e);
         return e;
     }, fnodes);
 
     // Sort them by position
     var snodes = fnodes.sort(function(a, b) {
-        var ay = ui.numpos(a.style.top);
-        var by = ui.numpos(b.style.top);
+        var ay = widgetypos(a);
+        var by = widgetypos(b);
         if (ay < by) return -1;
         if (ay > by) return 1;
-        var ax = ui.numpos(a.style.left);
-        var bx = ui.numpos(b.style.left);
+        var ax = widgetxpos(a);
+        var bx = widgetxpos(b);
         if (ax < bx) return -1;
         if (ax > bx) return 1;
         return 0;
@@ -960,10 +1209,11 @@ function pagexhtml(pagediv) {
  * Save the current page.
  */
 function save(newxml) {
-    showStatus('Saving');
+    workingstatus(true);
+    showstatus('Saving');
 
     // Get the current page XHTML content
-    savedpagexhtml = newxml;
+    savedxhtml = newxml;
 
     // Update the page ATOM entry
     var entry = '<?xml version="1.0" encoding="UTF-8"?>\n' + '<entry xmlns="http://www.w3.org/2005/Atom">' +
@@ -972,108 +1222,21 @@ function save(newxml) {
 
     pages.put(appname, entry, function(e) {
         if (e) {
-            showStatus('Local copy');
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
-        showStatus('Saved');
+        showstatus('Saved');
+        workingstatus(false);
         return false;
     });
     return true;
 };
 
 /**
- * Handle a page change event
- */
-function onpagechange(prop) {
-    if (!editable)
-        return false;
-
-    var newxml = pagexhtml(pagediv);
-    if (savedpagexhtml == newxml)
-        return false;
-    showStatus('Modified');
-
-    // Save property changes right away
-    if (prop)
-        return save(newxml);
-
-    // Autosave other changes after 1 second
-    setTimeout(function() {
-        if (savedpagexhtml == newxml) {
-            showStatus('Saved');
-            return false;
-        }
-        return save(newxml);
-    }, 1000);
-    return true;
-}
-
-/**
- * Handle a widget select event.
- */
-function onselectwidget(w) {
-    if (w == widget)
-        return true;
-    widget = w;
-    return true;
-}
-
-/**
- * Play page in a frame.
- */
-function playpage() {
-    if (!evisible)
-        return true;
-    page.selectwidget(widget, false, atitle, wvalue, wcopy, wdelete);
-    page.selected = null;
-    pplay.value = '<';
-    evisible = false;
-    pdiv.style.visibility = 'visible';
-    pdiv.innerHTML = '';
-    pdiv.innerHTML = '<iframe id="playappframe" style="position: relative; height: 5000px; width: 2500px; border: 0px;" scrolling="no" frameborder="0" src="/' +
-                        appname + '"></iframe>';
-    setTimeout(function() {
-        pagediv.style.visibility = 'hidden'
-    }, 0);
-    return true;
-}
-
-/**
-    * Show the page editor.
- */
-function showedit() {
-    if (evisible)
-        return true;
-    pplay.value = '>';
-    pagediv.style.visibility = 'visible'
-    evisible = true;
-    page.selectwidget(widget, true, atitle, wvalue, wcopy, wdelete);
-    page.selected = widget;
-    setTimeout(function() {
-        pdiv.style.visibility = 'hidden';
-        pdiv.innerHTML = '';
-    }, 0);
-    return true;
-}
-
-/**
- * Handle play page button event.
- */
-pplay.onclick = function() {
-    if (!evisible)
-        return showedit();
-    return playpage();
-}
-
-/**
  * Initialize the page editor.
  */
-page.mkedit(pagediv, atitle, wvalue, wadd, wcopy, wdelete, onpagechange, onselectwidget);
-
-/**
- * Get and display the current app page.
- */
-getpage(appname, pagediv);
+mkeditor();
 
 })();
 </script>

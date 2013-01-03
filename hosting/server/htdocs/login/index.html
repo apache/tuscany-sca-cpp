@@ -19,48 +19,77 @@
 -->
 <html>
 <head>
+<!-- Firebug inspector -->
+<!--
+<script type="text/javascript" src="https://getfirebug.com/releases/lite/1.3/firebug-lite.js"></script>
+-->
+<!-- Weinre inspector -->
+<!--
+<script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
+-->
 <title>Sign in</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
+<!--
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+-->
+<link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/login/"/>
 <script type="text/javascript">
-(function() {
+try {
+
+(function loginhead() {
 
 window.appcache = {};
 
 /**
  * Get and cache a resource.
  */
-appcache.get = function(uri) {
+appcache.get = function(uri, mode) {
     var h = uri.indexOf('#');
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
     var ls = window.lstorage || localStorage;
-    var item = null;
-    try { item = ls.getItem(u); } catch(e) {}
-    if (item != null && item != '')
-        return item;
+    if (mode != 'remote') {
+        var item = null;
+        try { item = ls.getItem('ui.r.' + u); } catch(e) {}
+        if (item != null && item != '')
+            return item;
+        if (mode == 'local')
+            return null;
+    }
 
     // Get resource from network
+    //if (window.debug) debug('appcache.get', u);
     var http = new XMLHttpRequest();
-    http.open("GET", u, false);
+    http.open("GET", mode == 'remote'? (u + '?t=' + new Date().getTime() + '&r=' + Math.random()) : u, false);
     http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
-        if (http.getResponseHeader("X-Login") != null) {
+        var xl = http.getResponseHeader("X-Login");
+        if (xl != null && xl != '') {
             if (window.debug) debug('http error', u, 'X-Login');
             return null;
-        } else if (http.responseText == '' || http.getResponseHeader("Content-Type") == null) {
+        }
+        var ct = http.getResponseHeader("Content-Type");
+        if (http.responseText == '' || ct == null || ct == '') {
             if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
-        try { ls.setItem(u, http.responseText); } catch(e) {}
+        try { ls.setItem('ui.r.' + u, http.responseText); } catch(e) {}
         return http.responseText;
     }
     if (window.debug) debug('http error', u, http.status, http.statusText);
     return null;
+};
+
+appcache.remove = function(uri) {
+    var h = uri.indexOf('#');
+    var u = h == -1? uri : uri.substring(0, h);
+    var ls = window.lstorage || localStorage;
+    try { ls.removeItem(u); } catch(e) {}
+    return true;
 };
 
 })();
@@ -68,38 +97,35 @@ appcache.get = function(uri) {
 /**
  * Load Javascript and CSS.
  */
-(function() {
+(function loginboot() {
 
-var bootjs = document.createElement('script');
-bootjs.type = 'text/javascript';
-bootjs.text = appcache.get('/all-min.js');
-document.head.appendChild(bootjs);
-document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+window.eval.call(window, 'try {\n' + appcache.get('/all-min.js') + '\n' + appcache.get('/public/config-min.js') + '\n} catch(e) { console.log(e.stack); throw e; }\n');
+ui.includeCSS(appcache.get('/ui-min.css'));
+
+// Disable cache for testing
+//lstorage.enabled = false;
 
 })();
 
+} catch(e) {
+    if (window.debug) debug(e.stack);
+    throw e;
+}
 </script>
 </head>
-<body class="delayed"">
-<div id="mainbodydiv" class="bodydiv">
+<body class="delayed">
 
-<div id="headdiv" class="hsection">
-<script type="text/javascript">
-(function() {
-
-$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
-
-})();
-</script>
+<div id="menucontainer" class="tbarmenu">
+<div id="menu"></div>
 </div>
 
-<div id="menubackground" class="tbarbackground fixed"></div>
-<div id="menu" class="tbarmenu fixed"></div>
-
-<div id="viewheadbackground" class="viewheadbackground fixed"></div>
-<div id="viewhead" class="viewhead fixed">
+<div id="viewheadcontainer" class="viewhead">
+<div id="viewhead">
 <span class="cmenu">Sign in</span>
 </div>
+</div>
+
+<div id="working" class="working" style="display: none;"></div>
 
 <div id="viewcontainer">
 <div id="view">
@@ -109,9 +135,9 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 <form id="formSignin" name="formSignin" method="POST" action="/login/dologin" style="width: 100%;">
 <table style="width: 100%;">
 <tr><td><span id="loginprompt" style="font-size: 16px;"></span></tr></td>
-<tr><td><input type="text" class="flatentry" name="httpd_username" value="" placeholder="User id"/></td></tr>
+<tr><td><input type="text" class="flatentry" name="httpd_username" value="" placeholder="Username or email"/></td></tr>
 <tr><td><input type="password" class="flatentry" name="httpd_password" value="" placeholder="Password"/></td></tr>
-<tr><td><input type="submit" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></td></tr>
+<tr><td><input type="submit" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></td></tr>
 </table>
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
@@ -120,7 +146,7 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 <form name="facebookOAuth2Form" style="width: 100%;">
 <table style="width: 100%;">
 <tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;">Facebook</span> account</span></td></tr>
-<tr><td><input type="button" id="facebookOAuth2Signin" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+<tr><td><input type="button" id="facebookOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
 </table>
 </form>
 <br/>
@@ -128,7 +154,7 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 <form name="googleOAuth2Form" style="width: 100%;">
 <table style="width: 100%;">
 <tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;" >Google</span> account</span></td></tr>
-<tr><td><input type="button" id="googleOAuth2Signin" value="Sign in" class="graybutton bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+<tr><td><input type="button" id="googleOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
 </table>
 </form>
 <br/>
@@ -147,78 +173,110 @@ $('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js'))
 </div>
 </div>
 
-<div id="viewfootbackground" class="viewfootbackground fixed"></div>
-<div id="viewfoot" class="viewfoot fixed"></div>
-<div id="status" class="status fixed" style="visibility: hidden;"></div>
+<div id="viewfootcontainer" class="viewfoot">
+<div id="viewfoot"></div>
+<div id="status"></div>
+</div>
+
+<div id="installer" class="installer"></div>
 
 <script type="text/javascript">
-(function() {
+try {
+
+(function loginbody() {
 
 /**
- * Init div variables.
+ * Setup page layout.
  */
-var mbdiv = $('menubackground'); 
-var mdiv = $('menu'); 
-var hdiv = $('viewhead'); 
-var hbdiv = $('viewheadbackground'); 
-$('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
-$('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
-$('loginprompt').innerHTML = config.loginprompt();
-var fdiv = $('viewfoot'); 
+(function layout() {
+    $('viewcontainer').className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
+    $('view').className = ui.isMobile()? 'viewloaded3dm' : 'viewloaded3d';
+    $('loginprompt').innerHTML = config.loginprompt();
+    document.title = config.windowtitle() + ' - Sign in';
+    $('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>' +
+        '<span class="rmenu"><input type="button" id="signUp" class="redbutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" title="' + config.signuptitle() + '" value="Sign up"/></span>';
+    if (!ui.isMobile())
+        $('viewcontent').className = 'viewcontent flatscrollbars';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+})();
 
 /**
- * Set page titles.
+ * Setup menu bar.
  */
-document.title = config.windowtitle() + ' - Sign in';
-$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
+(function showmenu() {
+    $('menu').innerHTML = ui.menubar(mklist(ui.menu('menuhome', 'Home', '/', '_self', false)), mklist());
+    $('viewfoot').innerHTML = config.viewfoot();
+})();
 
 /**
- * Build and show the menu bar.
+ * Initialize status message area.
  */
-function showmenu(mdiv) {
-    mdiv.innerHTML = ui.menubar(mklist(ui.menu('menuhome', 'Home', '/', '_self', false)), mklist());
-    fdiv.innerHTML = config.viewfoot();
-}
-
-showmenu(mdiv);
+(function initstatus() {
+    if (isNil($('status')))
+        return;
+    $('status').style.display = 'none';
+    
+    function divtransitionend(e) {
+        e.target.style.display = 'none';
+        e.target.className = ui.isMobile()? 'status3dm' : 'status3d';
+        e.target.error = false;
+    }
+    $('status').addEventListener('webkitTransitionEnd', divtransitionend, false);
+    $('status').addEventListener('transitionend', divtransitionend, false);
+})();
 
 /**
  * Show a status message.
  */
-window.showStatus = function(s, c) {
-    //debug('status', s);
-    var sdiv = $('status');
-    if (isNil(sdiv))
+window.showstatus = function(s, c) {
+    //debug('show status', s);
+    if (isNil($('status')) || $('status').error)
         return s;
-    sdiv.innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
-    sdiv.className = 'status fixed';
-    sdiv.style.visibility = 'visible';
-    
-    function divtransitionend(e) {
-        e.target.style.visibility = 'hidden';
-        e.target.className = 'status fixed';
-    }
-    if (!sdiv.addedTransitionEnd) {
-        sdiv.addEventListener('webkitTransitionEnd', divtransitionend, false);
-        sdiv.addEventListener('transitionend', divtransitionend, false);
-        sdiv.addedTransitionEnd = true;
-    }
-    sdiv.className = 'statusout3 fixed';
+    $('status').innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+    $('status').style.display = 'block';
+    $('status').error = c == 'errorstatus';
+    if ($('status').delay)
+        ui.cancelDelay($('status').delay);
+    $('status').delay = ui.delay(function hidestatus() {
+        $('status').className = ui.isMobile()? 'statusout3dm' : 'statusout3d';
+        $('status').error = false;
+    }, 3000);
     return s;
-}
+};
 
 /**
  * Show an error message.
  */
-window.showError = function(s) {
+window.errorstatus = function(s) {
     //debug('error', s);
-    return showStatus(s, 'errorstatus');
-}
+    return showstatus(s, 'errorstatus');
+};
 
 /**
- * Parse the query parameeters.
+ * Show working status.
  */
-function queryParams() {
+window.workingstatus = function(w, c) {
+    //debug('show working', w);
+    if (isNil($('working')))
+        return w;
+    if (!ui.isMobile())
+        $('working').style.top = ui.pixpos(Math.round(window.clientHeight / 2));
+    $('working').style.display = w? 'block' : 'none';
+    return w;
+};
+
+/**
+ * Show the online/offline status.
+ */
+window.onlinestatus = function() {
+    return navigator.onLine? (ui.isMobile()? showstatus('Online') : showstatus('Online')) : errorstatus('Offline');
+};
+
+/**
+ * Parse the query parameters.
+ */
+function qparams() {
     var qp = new Array();
     var qs = window.location.search.substring(1).split('&');
     for (var i = 0; i < qs.length; i++) {
@@ -232,20 +290,17 @@ function queryParams() {
 /**
  * Show login status.
  */
-function showLoginStatus() {
-    var a = queryParams()['openauth_attempt'];
-    debug('a', a);
+function loginstatus() {
+    var a = qparams()['openauth_attempt'];
     if (typeof(a) != 'undefined' && a == '1')
-        showError('Incorrect email or password, please try again');
+        errorstatus('Incorrect email or password, please try again');
 }
-
-showLoginStatus();
 
 /**
  * Return the referrer URL.
  */
-function openauthReferrer() {
-    var r = queryParams()['openauth_referrer'];
+function openauthreferrer() {
+    var r = qparams()['openauth_referrer'];
     if (typeof(r) == 'undefined' || domainname(r) != domainname(window.location.hostname))
         return '/';
     var q = r.indexOf('?');
@@ -257,9 +312,8 @@ function openauthReferrer() {
 /**
  * Signin with OAuth 2.0.
  */
-function submitOAuth2Signin(w) {
+function submitoauth2signin(w) {
     parms = w();
-    clearauthcookie();
     lstorage.removeItem('/r/Editor/accounts');
     lstorage.removeItem('/r/Editor/dashboards');
     document.oauth2Signin.oauth2_authorize.value = parms[0];
@@ -268,70 +322,195 @@ function submitOAuth2Signin(w) {
     document.oauth2Signin.oauth2_info.value = parms[3];
     document.oauth2Signin.oauth2_scope.value = parms[4];
     document.oauth2Signin.oauth2_display.value = parms[5];
-    document.oauth2Signin.openauth_referrer.value = openauthReferrer();
+    document.oauth2Signin.openauth_referrer.value = openauthreferrer();
     document.oauth2Signin.action = '/oauth2/authorize/';
     document.oauth2Signin.submit();
 }
 
-function withFacebook() {
+function withfacebook() {
     var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me', 'email', ui.isMobile()? 'touch' : 'page'];
     return parms;
 }
 
-function withGoogle() {
+function withgoogle() {
     var parms = ['https://accounts.google.com/o/oauth2/auth', 'https://accounts.google.com/o/oauth2/token', 'google.com', 'https://www.googleapis.com/oauth2/v1/userinfo', 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile', ''];
     return parms;
 }
 
 $('facebookOAuth2Signin').onclick = function() {
-    return submitOAuth2Signin(withFacebook);
+    return submitoauth2signin(withfacebook);
 };
 
 $('googleOAuth2Signin').onclick = function() {
-    return submitOAuth2Signin(withGoogle);
+    return submitoauth2signin(withgoogle);
 };
 
 /**
- * Signin with a userid and password.
+ * Signin with a username and password.
  */
-function submitFormSignin() {
-    clearauthcookie();
+$('formSignin').onsubmit = function submitformsignin() {
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
-}
+};
 
-$('formSignin').onsubmit = submitFormSignin;
+/**
+ * Signup.
+ */
+$('signUp').onclick = function submitsignup() {
+    ui.navigate('/public/notyet/', '_self');
+};
 
 /**
  * Handle orientation change.
  */
 document.body.onorientationchange = function(e) {
     //debug('onorientationchange');
-    ui.onorientationchange(e);
-
-    // Resize menu and view header
-    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    return true;
+    return ui.onorientationchange(e);
 };
+
+/**
+ * Populate cache with app resources.
+ */
+var appresources = [
+    ['/all-min.js'],
+    ['/ui-min.css'],
+    ['/public/config-min.js']
+];
+
+/**
+ * Install the application cache.
+ */
+(function installappcache() {
+    if (ui.isMobile()) {
+        // On mobile devices, trigger usage of an application cache manifest
+        window.onappcachechecking = function(e) {
+            //debug('appcache checking', e);
+            workingstatus(true);
+            showstatus('Checking');
+        };
+        window.onappcacheerror = function(e) {
+            //debug('appcache error', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachenoupdate = function(e) {
+            //debug('appcache noupdate', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachedownloading = function(e) {
+            //debug('appcache downloading', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheprogress = function(e) {
+            //debug('appcache progress', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheupdateready = function(e) {
+            //debug('appcache updateready', e);
+            try {
+                applicationCache.swapCache();
+            } catch(e) {}
+            onlinestatus();
+            workingstatus(false);
+            //debug('appcache swapped', e);
+
+            // Update offline resources in local storage and reload the page
+            map(function(res) {
+                showstatus('Updating');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+            window.location.reload();
+        };
+        window.onappcachecached = function(e) {
+            //debug('appcache cached', e);
+            onlinestatus();
+            workingstatus(false);
+
+            // Install offline resources in local storage
+            map(function(res) {
+                showstatus('Updating');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+        };
+
+        window.onloadappcache = function() {
+            //debug('appcache iframe loaded');
+        };
+
+        ui.delay(function() {
+            $('installer').innerHTML = '<iframe src="/public/cache/" class="installer"></iframe>';
+        });
+
+    } else {
+        // On non-mobile devices, check for cache-manifest changes ourselves.
+        workingstatus(true);
+        showstatus('Checking');
+        var lcmf = appcache.get('/public/cache/cache-manifest.cmf', 'local');
+        var rcmf = appcache.get('/public/cache/cache-manifest.cmf', 'remote');
+        if (lcmf == rcmf) {
+            onlinestatus();
+            workingstatus(false);
+            return true;
+        }
+
+        //debug('cache-manifest changed, reloading');
+        ui.delay(function() {
+            workingstatus(true);
+            showstatus('Updating');
+            ui.delay(function() {
+                workingstatus(true);
+                showstatus('Updating');
+                map(function(res) {
+                    appcache.remove(res[0]);
+                    appcache.get(res[0], 'remote');
+                }, append(appresources, config.appresources()));
+                if (!isNil(lcmf)) {
+                    //debug('reloading');
+                    window.location.reload();
+                }
+                onlinestatus();
+                workingstatus(false);
+            });
+        });
+    }
+})();
+
+/**
+ * Handle network offline/online events.
+ */
+window.addEventListener('offline', function(e) {
+    //debug('going offline');
+    showstatus('Offline');
+}, false);
+window.addEventListener('online', function(e) {
+    //debug('going online');
+    showstatus('Online');
+}, false);
 
 /**
  * Initialize the document.
  */
-function onload() {
+window.onload = function() {
     //debug('onload');
     ui.onload();
 
-    // Show the page
-    document.body.style.visibility = 'visible';
+    // Show the login status
+    loginstatus();
     return true;
-}
-
-onload();
+};
 
 })();
+
+} catch(e) {
+    debug(e.stack);
+    throw e;
+}
 </script>
 
-</div>
 </body>
 </html>

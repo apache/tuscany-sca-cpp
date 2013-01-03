@@ -37,12 +37,17 @@
         <implementation.widget location="/index.html"/>
         <reference name="user" target="User"/>
         <reference name="accounts" target="Accounts"/>
+        <reference name="pictures" target="Pictures"/>
         <reference name="dashboards" target="Dashboards"/>
         <reference name="apps" target="Apps"/>
         <reference name="store" target="AppStore"/>
+        <reference name="search" target="Search"/>
         <reference name="palettes" target="Palettes"/>
+        <reference name="icons" target="Icons"/>
         <reference name="composites" target="Composites"/>
         <reference name="pages" target="Pages"/>
+        <reference name="reviews" target="Reviews"/>
+        <reference name="ratings" target="Ratings"/>
         <reference name="log" target="Log"/>
     </component>
     
@@ -60,6 +65,12 @@
         <reference name="cache" target="Cache"/>
     </component>
     
+    <component name="Pictures">
+        <implementation.python script="pictures.py"/>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+    </component>
+    
     <component name="Authenticator">
         <implementation.python script="authn.py"/>
         <reference name="cache" target="Cache"/>
@@ -70,6 +81,7 @@
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
         <reference name="apps" target="Apps"/>
+        <reference name="ratings" target="Ratings"/>
     </component>
     
     <component name="AppStore">
@@ -77,6 +89,16 @@
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
         <reference name="apps" target="Apps"/>
+        <reference name="ratings" target="Ratings"/>
+    </component>
+    
+    <component name="Search">
+        <implementation.python script="search.py"/>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+        <reference name="db" target="Database"/>
+        <reference name="apps" target="Apps"/>
+        <reference name="ratings" target="Ratings"/>
     </component>
     
     <component name="Apps">
@@ -87,25 +109,49 @@
         <reference name="store" target="AppStore"/>
         <reference name="composites" target="Composites"/>
         <reference name="pages" target="Pages"/>
+        <reference name="icons" target="Icons"/>
     </component>
     
     <component name="Composites">
         <implementation.python script="composites.py"/>
         <reference name="user" target="User"/>
-        <reference name="cache" target="Doccache"/>
+        <reference name="cache" target="Cache"/>
         <reference name="apps" target="Apps"/>
     </component>
     
     <component name="Pages">
         <implementation.python script="pages.py"/>
         <reference name="user" target="User"/>
-        <reference name="cache" target="Doccache"/>
+        <reference name="cache" target="Cache"/>
+        <reference name="apps" target="Apps"/>
+    </component>
+    
+    <component name="Icons">
+        <implementation.python script="icons.py"/>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+        <reference name="apps" target="Apps"/>
+    </component>
+    
+    <component name="Reviews">
+        <implementation.python script="reviews.py"/>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+        <reference name="apps" target="Apps"/>
+        <reference name="ratings" target="Ratings"/>
+    </component>
+    
+    <component name="Ratings">
+        <implementation.python script="ratings.py"/>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="Cache"/>
+        <reference name="db" target="Database"/>
         <reference name="apps" target="Apps"/>
     </component>
     
     <component name="Palettes">
         <implementation.python script="palettes.py"/>
-        <reference name="cache" target="Doccache"/>
+        <reference name="cache" target="Cache"/>
     </component>
     
     <component name="Cache">
@@ -116,14 +162,6 @@
         <reference name="l2writer" target="Database"/>
     </component>
 
-    <component name="Doccache">
-        <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <reference name="l1reader" target="Memcache"/>
-        <reference name="l1writer" target="Memcache"/>
-        <reference name="l2reader" target="Documents"/>
-        <reference name="l2writer" target="Documents"/>
-    </component>
-
     <component name="Memcache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
         <property name="server">localhost:11211</property>
@@ -131,16 +169,11 @@
     </component>
 
     <component name="Database">
-        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
-        <property name="dbname">data</property>
-        <property name="format">scheme</property>
+        <implementation.cpp path="../../components/sqldb" library="libsqldb"/>
+        <property name="conninfo">host=localhost port=6432 dbname=db</property>
+        <property name="table">data</property>
     </component>
 
-    <component name="Documents">
-        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
-        <property name="dbname">data</property>
-        <property name="format">xml</property>
-    </component>
 
     <component name="Log">
         <implementation.python script="log.py"/>

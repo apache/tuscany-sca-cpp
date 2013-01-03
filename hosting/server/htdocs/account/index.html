@@ -19,19 +19,25 @@
 -->
 <div id="bodydiv" class="body">
 
-<div class="viewform">
+<div id="viewform" class="viewform">
 
 <form id="userForm">
 <table style="width: 100%;">
-<tr><tr><td><b>Photo:</b></td></tr>
-<tr><td><img id="userimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Name:</b></td></tr>
-<tr><td><input type="text" id="userTitle" class="flatentry" size="30" placeholder="Enter your name" style="width: 300px;"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>About Me:</b></td></tr>
-<tr><td><textarea id="userDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of yourself" style="width: 300px;"></textarea></td></tr>
+<tr><tr><td class="label">Username:</td></tr>
+<tr><td><input type="text" id="userName" class="readentry" size="30" readonly="readonly" placeholder="Your username" style="width: 300px;"/></td></tr>
+<tr><tr><td class="label">Email:</td></tr>
+<tr><td><input type="text" id="userEmail" class="readentry" size="30" readonly="readonly" placeholder="Your email address" style="width: 300px;"/></td></tr>
+<tr><tr><td class="label">Picture:</td></tr>
+<tr><td><img id="userPicture" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadPicture" type="button" class="lightbutton" value="Upload"/><input id="uploadFile" type="file" accept="image/*" style="display:none;"/><span id="refreshingPicture" class="refreshing" style="display:none;"/></td></tr>
+<tr><tr><td class="label">Name:</td></tr>
+<tr><td><input type="text" id="userFullname" class="flatentry" size="30" placeholder="Your name" style="width: 300px;"/></td></tr>
+<tr><tr><td class="label">Bio:</td></tr>
+<tr><td><textarea id="userDescription" class="flatentry" cols="40" rows="3" placeholder="About yourself, in fewer than 120 characters" style="width: 300px;"></textarea></td></tr>
 </table>
-
 <br/>
+
+<!--
+TODO Disabled for now
 <table style="width: 100%;">
 <tr>
 <th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Calendar</th>
@@ -66,60 +72,73 @@
 <tr><td style="padding-right: 2px;"><input type="text" id="name10" class="flatentry" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value10" class="flatentry" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
 </table>
 </form>
+<br/>
+-->
 
 </div>
 
 <script type="text/javascript">
-(function() {
+(function accountbody() {
 
 /**
- * Init service references.
+ * Setup page layout.
  */
-var editorComp = sca.component("Editor");
-var user= sca.defun(sca.reference(editorComp, "user"));
-var accounts = sca.reference(editorComp, "accounts");
-
-/**
- * Set page titles.
- */
-document.title = config.windowtitle() + ' - Account';
-$('viewhead').innerHTML = '<span class="cmenu">' + username + '</span>';
+(function layout() {
+    document.title = config.windowtitle() + ' - Account';
+    $('viewhead').innerHTML = '<span class="cmenu">' + username + '</span>' +
+        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteUser" value="-" title="Delete your account" disabled="true"/>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+    $('userName').value = username;
+})();
 
 /**
  * Set images.
  */
-$('userimg').src = ui.b64img(appcache.get('/public/user.b64'));
+$('userPicture').src = ui.b64png(appcache.get('/public/user.b64'));
+
+/**
+ * Initialize service references.
+ */
+var editorComp = sca.component("Editor");
+var user= sca.defun(sca.reference(editorComp, "user"));
+var accounts = sca.reference(editorComp, "accounts");
+var pictures = sca.reference(editorComp, "pictures");
 
 /**
  * The current account entry and corresponding saved XML content.
  */
-var accountentry;
-var savedaccountentryxml = '';
+var savedacctxml = '';
+var savedpicxml = '';
 
 /**
  * Get and display the user's account.
  */
-function getaccount() {
-    showStatus('Loading');
+(function getacct() {
+    workingstatus(true);
+    showstatus('Loading');
 
     return accounts.get('', function(doc) {
 
         // Stop now if we didn't get an account
         if (doc == null) {
-            showError('Account info not available');
+            errorstatus('Account info not available');
+            workingstatus(false);
             return false;
         }
-        showOnlineStatus();
 
-        accountentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
-        $('userTitle').value = cadr(assoc("'title", cdr(accountentry)));
+        var acctentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        $('userFullname').value = cadr(assoc("'title", acctentry));
 
-        var content = cadr(assoc("'content", cdr(accountentry)));
-        var acct = isNil(content)? mklist() : cdr(content);
+        var acct = cadr(assoc("'content", acctentry));
+
+        var email = assoc("'email", acct);
+        $('userEmail').value = isNil(email) || isNil(cdr(email))? '' : cadr(email);
 
         var desc = assoc("'description", acct);
         $('userDescription').innerHTML = isNil(desc) || isNil(cdr(desc))? '' : cadr(desc);
 
+        /* TODO disabled for now
         var cal = assoc("'calendar", acct);
         reduce(function(i, evt) {
                 var sched = assoc("'@schedule", evt);
@@ -137,27 +156,126 @@ function getaccount() {
                 $('value' + i).value = isNil(kv)? '' : cadr(kv);
                 return i + 1;
             }, 1, isNil(keys)? mklist() : cadr(cadr(keys)));
+        */
 
-        savedaccountentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(accountentry))));
+        savedacctxml = car(atom.writeATOMEntry(valuesToElements(mklist(acctentry))));
         return true;
     });
+    return true;
+})();
+
+/**
+ * Get and display the user's picture.
+ */
+(function getpic() {
+    workingstatus(true);
+    showstatus('Loading');
+
+    return pictures.get('', function(doc) {
+        // Stop now if we didn't get a picture
+        if (doc == null) {
+            errorstatus('Picture not available');
+            workingstatus(false);
+            return false;
+        }
+
+        var picentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        savedpicxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
+        var content = assoc("'content", picentry);
+        var picture = assoc("'picture", content);
+        var img = assoc("'image", picture);
+        if (!isNil(img))
+            $('userPicture').src = cadr(img);
+
+        onlinestatus();
+        workingstatus(false);
+        return true;
+    });
+    return true;
+})();
+
+/**
+ * Refresh picture.
+ */
+var refreshingpic = false;
+function refreshpic() {
+    if (!refreshingpic)
+        return false;
+    $('refreshingPicture').style.display = 'inline-block';
+    return pictures.get('', function(doc) {
+        if (doc == null) {
+            errorstatus('Picture not available');
+            $('refreshingPicture').style.display = 'none';
+            refreshingpic = false;
+            return false;
+        }
+
+        var picentry = car(elementsToValues(atom.readATOMEntry(mklist(doc))));
+        var content = assoc("'content", picentry);
+        var picture = assoc("'picture", content);
+        var token = assoc("'token", picture);
+
+        // Update picture
+        if (isNil(token)) {
+            var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
+            savedpicxml = entryxml;
+            var img = assoc("'image", picture);
+            if (!isNil(img))
+                $('userPicture').src = cadr(img);
+            $('refreshingPicture').style.display = 'none';
+            refreshingpic = false;
+            return true;
+        }
+
+        // Refresh in 2 secs
+        return ui.delay(refreshpic, 2000);
+    }, 'remote');
+    return true;
 }
 
 /**
  * Save the user's account.
  */
-function save(entryxml) {
+function saveacct(entryxml) {
     if (isNil(username))
         return false;
-    showStatus('Saving');
-    savedaccountentryxml = entryxml;
-    accounts.put('', savedaccountentryxml, function(e) {
+    workingstatus(true);
+    showstatus('Saving');
+
+    savedacctxml = entryxml;
+    accounts.put('', savedacctxml, function(e) {
         if (e) {
-            showStatus('Local copy');
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
 
-        showStatus('Saved');
+        showstatus('Saved');
+        workingstatus(false);
+        return true;
+    });
+    return true;
+}
+
+/**
+ * Save the user's picture.
+ */
+function savepic(entryxml) {
+    if (isNil(username))
+        return false;
+    workingstatus(true);
+    showstatus('Uploading');
+
+    savedpicxml = entryxml;
+    pictures.put('', savedpicxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+
+        showstatus('Uploaded');
+        workingstatus(false);
         return true;
     });
     return true;
@@ -167,8 +285,27 @@ function save(entryxml) {
  * Handle a change event
  */
 function onaccountchange() {
-    var title = $('userTitle').value;
-    var desc = $('userDescription').value;
+
+    // Validate user input
+    var title = $('userFullname').value;
+    if (title.length == 0) {
+        errorstatus('Name cannot be empty');
+        return false;
+    }
+    if (title.length > 40) {
+        errorstatus('Name cannot be longer than 40 characters');
+        return false;
+    }
+
+    var email = $('userEmail').value;
+
+    var description = $('userDescription').value;
+    if (description.length > 120) {
+        errorstatus('Bio cannot be longer than 120 characters');
+        return false;
+    }
+
+    /* TODO disabled for now
     var cal = map(function(i) {
         var sched = $('sched' + i).value;
         var svc = $('service' + i).value;
@@ -180,18 +317,24 @@ function onaccountchange() {
         return mklist("'key", mklist("'@name", kn), mklist("'@value", kv));
     }, range(1, 11));
 
-    var accountentry = mklist("'entry", mklist("'title", title != ''? title : username), mklist("'id", username),
-                        mklist("'content", mklist("'account", mklist("'description", desc), cons("'keys", keys), cons("'calendar", cal))));
-    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(accountentry))));
-    if (savedaccountentryxml == entryxml)
+    var acctentry = mklist("'entry", mklist("'title", title != ''? title : username), mklist("'id", username),
+                        mklist("'content", mklist("'account", mklist("'email", email), mklist("'description", description), cons("'keys", keys), cons("'calendar", cal))));
+    */
+
+    var acctentry = mklist("'entry", mklist("'title", title != ''? title : username), mklist("'id", username),
+                        mklist("'content", mklist("'account", mklist("'email", email), mklist("'description", description))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(acctentry))));
+    if (savedacctxml == entryxml)
         return false;
 
-    showStatus('Modified');
-    return save(entryxml);
+    showstatus('Modified');
+    return saveacct(entryxml);
 }
 
-$('userTitle').onchange = onaccountchange;
+$('userFullname').onchange = onaccountchange;
 $('userDescription').onchange = onaccountchange;
+
+/* TODO disabled for now
 map(function(i) {
     $('sched' + i).onchange = onaccountchange;
     $('service' + i).onchange = onaccountchange;
@@ -202,6 +345,19 @@ map(function(i) {
     $('value' + i).onchange = onaccountchange;
     return true;
 }, range(1, 11));
+*/
+
+/**
+ * Handle a key event.
+ */
+var lastkeyup = null;
+$('userFullname').onkeyup = $('userDescription').onkeyup = function() {
+    var t = new Date().getTime();
+    lastkeyup = t;
+    ui.delay(function() {
+            return t == lastkeyup? onaccountchange() : true;
+        }, 2000);
+};
 
 /**
  * Handle a form submit event.
@@ -212,9 +368,96 @@ $('userForm').onsubmit = function() {
 };
 
 /**
- * Get the user's account.
+ * Read and upload icon file.
  */
-getaccount();
+function readpic(files) {
+    if (!files || files.length == 0)
+        return false;
+    if (!files[0].type.match('image.*')) {
+        errorstatus('Please select an image');
+        return false;
+    }
+    workingstatus(true);
+    showstatus('Loading');
+
+    // Read the selected file into a 50x50 image
+    return ui.readimage(files[0],
+        function(e) {
+            errorstatus('Couldn\'t read the file');
+            workingstatus(false);
+        },
+        function(p) {
+            showstatus('Loading ' + p + '%');
+        },
+        function(url) {
+            // Update the user picture
+            $('userPicture').src = url;
+            showstatus('Loaded');
+
+            // Now upload it
+            ui.delay(function() {
+                var picentry = mklist("'entry", mklist("'title", username), mklist("'id", username), mklist("'author", username), mklist("'content", mklist("'picture", mklist("'image", url))));
+                var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
+                if (savedpicxml == entryxml) {
+                    onlinestatus();
+                    workingstatus(false);
+                    return false;
+                }
+                return savepic(entryxml);
+            });
+        }, 50, 50);
+}
+
+/**
+ * Upload a picture in an email.
+ */
+function emailpicture() {
+
+    // Generate and put a picture email upload token
+    workingstatus(true);
+    showstatus('Uploading');
+    var token = uuid4();
+    var picentry = mklist("'entry", mklist("'title", username), mklist("'id", username), mklist("'author", username), mklist("'content", mklist("'picture", mklist("'token", token))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
+    pictures.put('', entryxml, function(e) {
+        if (e) {
+            showstatus('Local copy');
+            workingstatus(false);
+            return false;
+        }
+        workingstatus(false);
+
+        // Open the email app
+        var mailto = safeb64encode('p/' + username + '/' + token);
+        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Email to upload&body=Paste picture here', '_self');
+
+        // Refresh app icon
+        refreshingpic = true;
+        return ui.delay(refreshpic, 500);
+    }, 'remote');
+}
+
+/**
+ * Handle picture upload events.
+ */
+$('uploadPicture').onclick = function() {
+    if (ui.isMobile())
+        return emailpicture();
+    return $('uploadFile').click();
+};
+$('uploadFile').onchange = function(e) {
+    return readpic(e.target.files);
+};
+$('userPicture').ondrag = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+};
+$('userPicture').ondrop = function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    return readpic(e.dataTransfer.files);
+};
 
 })();
 </script>

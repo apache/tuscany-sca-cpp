@@ -35,6 +35,17 @@ fi
 ../../components/cache/memcached-start tmp 11211
 ../../components/cache/memcached-start tmp 11212
 
+# Configure database
+../../components/sqldb/pgsql-conf tmp
+
+# Start database
+../../components/sqldb/pgsql-start tmp
+
+# Load database tables
+./drop-tables 1>/dev/null 2>/dev/null
+./create-tables >/dev/null
+./load-tables >/dev/null
+
 # Configure server
 ../../modules/http/httpd-conf tmp www.example.com 9090 htdocs
 ../../modules/http/httpd-event-conf tmp

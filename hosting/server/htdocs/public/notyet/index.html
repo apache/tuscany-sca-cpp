@@ -19,33 +19,50 @@
 -->
 <html>
 <head>
+<!-- Firebug inspector -->
+<!--
+<script type="text/javascript" src="https://getfirebug.com/releases/lite/1.3/firebug-lite.js"></script>
+-->
+<!-- Weinre inspector -->
+<!--
+<script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
+-->
 <title>Page not found</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
+<!--
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+-->
+<link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/public/notyet/"/>
 <script type="text/javascript">
-(function() {
+try {
+
+(function notyethead() {
 
 window.appcache = {};
 
 /**
  * Get and cache a resource.
  */
-appcache.get = function(uri) {
+appcache.get = function(uri, mode) {
     var h = uri.indexOf('#');
     var u = h == -1? uri : uri.substring(0, h);
 
     // Get resource from local storage first
     var ls = window.lstorage || localStorage;
-    var item = null;
-    try { item = ls.getItem(u); } catch(e) {}
-    if (item != null && item != '')
-        return item;
+    if (mode != 'remote') {
+        var item = null;
+        try { item = ls.getItem('ui.r.' + u); } catch(e) {}
+        if (item != null && item != '')
+            return item;
+        if (mode == 'local')
+            return null;
+    }
 
     // Get resource from network
     var http = new XMLHttpRequest();
-    http.open("GET", u, false);
+    http.open("GET", mode == 'remote'? (u + '?t=' + new Date().getTime() + '&r=' + Math.random()) : u, false);
     http.setRequestHeader("Accept", "*/*");
     http.send(null);
     if (http.status == 200) {
@@ -56,7 +73,7 @@ appcache.get = function(uri) {
             if (window.debug) debug('http error', u, 'No-Content');
             return null;
         }
-        try { ls.setItem(u, http.responseText); } catch(e) {}
+        try { ls.setItem('ui.r.' + u, http.responseText); } catch(e) {}
         return http.responseText;
     }
     if (window.debug) debug('http error', u, http.status, http.statusText);
@@ -68,127 +85,288 @@ appcache.get = function(uri) {
 /**
  * Load Javascript and CSS.
  */
-(function() {
+(function notyetboot() {
 
 var bootjs = document.createElement('script');
 bootjs.type = 'text/javascript';
-bootjs.text = appcache.get('/all-min.js');
-document.head.appendChild(bootjs);
-document.head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
+bootjs.text = 'try {\n' + appcache.get('/all-min.js') + '\n' + appcache.get('/public/config-min.js') + '\n} catch(e) { console.log(e.stack); throw e; }\n';
+var head = document.getElementsByTagName('head')[0];
+head.appendChild(bootjs);
+head.appendChild(ui.declareCSS(appcache.get('/ui-min.css')));
 
 })();
 
+} catch(e) {
+    if (window.debug) debug(e.stack);
+    throw e;
+}
 </script>
 </head>
 <body class="delayed">
-<div id="mainbodydiv" class="mainbodydiv">
 
-<div id="headdiv" class="hsection">
-<script type="text/javascript">
-(function() {
-
-$('headdiv').appendChild(ui.declareScript(appcache.get('/public/config-min.js')));
-
-})();
-</script>
+<div id="menucontainer" class="tbarmenu">
+<div id="menu"></div>
 </div>
 
-<div id="menubackground" class="tbarbackground fixed"></div>
-<div id="menu" class="tbarmenu fixed"></div>
-
-<div id="viewheadbackground" class="viewheadbackground fixed"></div>
-<div id="viewhead" class="viewhead fixed"></div>
+<div id="viewheadcontainer" class="viewhead">
+<div id="viewhead"></div>
+</div>
 
 <div id="viewcontainer">
 <div id="view">
 <div id="viewcontent" class="viewcontent" style="margin-left: auto; margin-right: auto; text-align: center;">
 
 <br/>
-<div class="hd2">Sorry, that page is still under construction.</div>
+<div class="hd2">Sorry, this page is still<br/>under construction.</div>
 <div>Please check back later.</div>
 
 </div>
 </div>
 </div>
 
-<div id="viewfootbackground" class="viewfootbackground fixed"></div>
-<div id="viewfoot" class="viewfoot fixed"></div>
+<div id="viewfootcontainer" class="viewfoot">
+<div id="viewfoot"></div>
+<div id="status"></div>
+</div>
+
+<div id="installer" class="installer"></div>
 
 <script type="text/javascript">
-(function() {
+try {
+
+(function notyetbody() {
 
 /**
- * Init div variables.
+ * Setup page layout.
  */
-var mdiv = $('menu'); 
-var hdiv = $('viewhead'); 
-$('viewcontainer').className = ui.isMobile()? 'viewcontainer3d' : 'viewcontainer3dm';
-$('view').className = ui.isMobile()? 'viewloaded3d' : 'viewloaded3dm';
-var fdiv = $('viewfoot'); 
+(function layout() {
+    $('viewcontainer').className = ui.isMobile()? 'viewcontainer3dm' : 'viewcontainer3d';
+    $('view').className = ui.isMobile()? 'viewloaded3dm' : 'viewloaded3d';
+    document.title = config.windowtitle() + ' - Page not found';
+    $('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
+    if (!ui.isMobile())
+        $('viewcontent').className = 'viewcontent flatscrollbars';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+})();
 
 /**
- * Set page title.
+ * Setup menu bar.
  */
-document.title = config.windowtitle() + ' - Page not found';
-$('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>';
+(function showmenu() {
+    $('menu').innerHTML = ui.menubar(
+        mklist(ui.menu('menuhome', 'Home', '/', '_self', false)), mklist());
+    $('viewfoot').innerHTML = config.viewfoot();
+})();
 
 /**
- * Build and show the menu bar.
+ * Initialize status message area.
  */
-function showmenu(mdiv) {
-    mdiv.innerHTML = ui.menubar(
-        mklist(ui.menu('menuhome', 'Home', '/', '_self', false)),
-            mklist(hasauthcookie()? ui.menufunc('menusignout', 'Sign out', 'return logout();', false) : ui.menu('menusignin', 'Sign in', '/login/', '_self', false)));
-    fdiv.innerHTML = config.viewfoot();
-}
-
-showmenu(mdiv);
+(function initstatus() {
+    if (isNil($('status')))
+        return;
+    $('status').style.display = 'none';
+    
+    function divtransitionend(e) {
+        e.target.style.display = 'none';
+        e.target.className = ui.isMobile()? 'status3dm' : 'status3d';
+        e.target.error = false;
+    }
+    $('status').addEventListener('webkitTransitionEnd', divtransitionend, false);
+    $('status').addEventListener('transitionend', divtransitionend, false);
+})();
 
 /**
- * Log the current user out.
+ * Show a status message.
  */
-window.logout = function() {
-    // Clear session cookie and user-specific local storage entries
-    clearauthcookie();
-    lstorage.removeItem('/r/Editor/accounts');
-    lstorage.removeItem('/r/Editor/dashboards');
-    document.location = '/login/';
-    return false;
-}
+window.showstatus = function(s, c) {
+    //debug('show status', s);
+    if (isNil($('status')) || $('status').error)
+        return s;
+    $('status').innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
+    $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
+    $('status').style.display = 'block';
+    $('status').error = c == 'errorstatus';
+    if ($('status').delay)
+        ui.cancelDelay($('status').delay);
+    $('status').delay = ui.delay(function hidestatus() {
+        $('status').className = ui.isMobile()? 'statusout3dm' : 'statusout3d';
+        $('status').error = false;
+    }, 3000);
+    return s;
+};
+
+/**
+ * Show an error message.
+ */
+window.errorstatus = function(s) {
+    //debug('error', s);
+    return showstatus(s, 'errorstatus');
+};
+
+/**
+ * Show working status.
+ */
+window.workingstatus = function(w, c) {
+    //debug('show working', w);
+    if (isNil($('working')))
+        return w;
+    if (!ui.isMobile())
+        $('working').style.top = ui.pixpos(Math.round(window.clientHeight / 2));
+    $('working').style.display = w? 'block' : 'none';
+    return w;
+};
+
+/**
+ * Show the online/offline status.
+ */
+window.onlinestatus = function() {
+    return navigator.onLine? (ui.isMobile()? showstatus('Online') : showstatus('Online')) : errorstatus('Offline');
+};
 
 /**
  * Handle orientation change.
  */
 document.body.onorientationchange = function(e) {
     //debug('onorientationchange');
-    ui.onorientationchange(e);
-
-    // Resize menu and view header
-    mdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    hdiv.style.width = ui.pixpos(document.documentElement.clientWidth);
-    return true;
+    return ui.onorientationchange(e);
 };
+
+/**
+ * Populate cache with app resources.
+ */
+var appresources = [
+    ['/all-min.js'],
+    ['/ui-min.css'],
+    ['/public/config-min.js']
+];
+
+/**
+ * Install the application cache.
+ */
+(function installappcache() {
+    if (ui.isMobile()) {
+        // On mobile devices, trigger usage of an application cache manifest
+        window.onappcachechecking = function(e) {
+            //debug('appcache checking', e);
+            workingstatus(true);
+            showstatus('Checking');
+        };
+        window.onappcacheerror = function(e) {
+            //debug('appcache error', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachenoupdate = function(e) {
+            //debug('appcache noupdate', e);
+            onlinestatus();
+            workingstatus(false);
+        };
+        window.onappcachedownloading = function(e) {
+            //debug('appcache downloading', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheprogress = function(e) {
+            //debug('appcache progress', e);
+            workingstatus(true);
+            showstatus('Updating');
+        };
+        window.onappcacheupdateready = function(e) {
+            //debug('appcache updateready', e);
+            try {
+                applicationCache.swapCache();
+            } catch(e) {}
+            onlinestatus();
+            workingstatus(false);
+            //debug('appcache swapped', e);
+
+            // Update offline resources in local storage and reload the page
+            map(function(res) {
+                showstatus('Updating');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+            window.location.reload();
+        };
+        window.onappcachecached = function(e) {
+            //debug('appcache cached', e);
+            onlinestatus();
+            workingstatus(false);
+
+            // Install offline resources in local storage
+            map(function(res) {
+                showstatus('Updating');
+                appcache.remove(res[0]);
+                appcache.get(res[0], 'remote');
+            }, append(appresources, config.appresources()));
+        };
+
+        window.onloadappcache = function() {
+            //debug('appcache iframe loaded');
+        };
+
+        ui.delay(function() {
+            $('installer').innerHTML = '<iframe src="/public/cache/" class="installer"></iframe>';
+        });
+
+    } else {
+        // On non-mobile devices, check for cache-manifest changes ourselves.
+        workingstatus(true);
+        showstatus('Checking');
+        var lcmf = appcache.get('/public/cache/cache-manifest.cmf', 'local');
+        var rcmf = appcache.get('/public/cache/cache-manifest.cmf', 'remote');
+        if (lcmf == rcmf) {
+            onlinestatus();
+            workingstatus(false);
+            return true;
+        }
+
+        //debug('cache-manifest changed, reloading');
+        ui.delay(function() {
+            showstatus('Updating');
+            ui.delay(function() {
+                map(function(res) {
+                    appcache.remove(res[0]);
+                    appcache.get(res[0], 'remote');
+                }, append(appresources, config.appresources()));
+                if (!isNil(lcmf)) {
+                    //debug('reloading');
+                    window.location.reload();
+                }
+                onlinestatus();
+                workingstatus(false);
+            });
+        });
+    }
+})();
+
+/**
+ * Handle network offline/online events.
+ */
+window.addEventListener('offline', function(e) {
+    //debug('going offline');
+    showstatus('Offline');
+}, false);
+window.addEventListener('online', function(e) {
+    //debug('going online');
+    showstatus('Online');
+}, false);
 
 /**
  * Initialize the document.
  */
-function onload() {
+window.onload = function() {
     //debug('onload');
-    ui.onload();
-
-    // Show the page
-    document.body.style.visibility = 'visible';
-    return true;
-}
-
-onload();
+    return ui.onload();
+};
 
 })();
+
+} catch(e) {
+    debug(e.stack);
+    throw e;
+}
 </script>
 
-<div id="footdiv" class="fsection">
-</div>
-
-</div>
 </body>
 </html>

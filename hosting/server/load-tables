@@ -1,0 +1,73 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
+
+tmp=$1
+if [ "$tmp" = "" ]; then
+    tmp="$here/tmp"
+fi
+host=$2
+if [ "$host" = "" ]; then
+    host="localhost"
+fi
+
+# Populate tables
+rm -f $tmp/sqldb/load-tables.sql
+for key in `ls $here/data/accounts`; do
+    val=`cat $here/data/accounts/$key/user.account | sed "s/'/''/g"`
+    cat >>$tmp/sqldb/load-tables.sql <<EOF
+insert into data values('("accounts" "$key" "user.account")', '$val');
+EOF
+done
+
+for key in `ls $here/data/store`; do
+    val=`cat $here/data/store/$key/store.apps | sed "s/'/''/g"`
+    cat >>$tmp/sqldb/load-tables.sql <<EOF
+insert into data values('("store" "$key" "store.apps")', '$val');
+EOF
+done
+
+for key in `ls $here/data/dashboards`; do
+    val=`cat $here/data/dashboards/$key/user.apps | sed "s/'/''/g"`
+    cat >>$tmp/sqldb/load-tables.sql <<EOF
+insert into data values('("dashboards" "$key" "user.apps")', '$val');
+EOF
+done
+
+for key in `ls $here/data/apps`; do
+    sval=`cat $here/data/apps/$key/app.info | sed "s/'/''/g"`
+    cval=`cat $here/data/apps/$key/app.composite | $here/../../modules/scheme/xml-element | $here/../../modules/scheme/element-value | sed "s/'/''/g"`
+    hval=`cat $here/data/apps/$key/htdocs/app.html | $here/../../modules/scheme/xml-element | $here/../../modules/scheme/element-value | sed "s/'/''/g"`
+    cat >>$tmp/sqldb/load-tables.sql <<EOF
+insert into data values('("apps" "$key" "app.info")', '$sval');
+insert into data values('("apps" "$key" "app.composite")', '$cval');
+insert into data values('("apps" "$key" "htdocs" "app.html")', '$hval');
+EOF
+done
+
+for key in `ls $here/data/palettes`; do
+    val=`cat $here/data//palettes/$key/palette.composite | $here/../../modules/scheme/xml-element | $here/../../modules/scheme/element-value | sed "s/'/''/g"`
+    cat >>$tmp/sqldb/load-tables.sql <<EOF
+insert into data values('("palettes" "$key" "palette.composite")', '$val');
+EOF
+done
+
+$here/../../components/sqldb/pgsql $host 6432 <$tmp/sqldb/load-tables.sql
+

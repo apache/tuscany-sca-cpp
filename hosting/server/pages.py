@@ -16,8 +16,8 @@
 #  under the License.
 
 # App pages collection implementation
-from time import strftime
 from util import *
+from atomutil import *
 from sys import debug
 
 # Convert an id to a page id
@@ -30,19 +30,18 @@ def put(id, page, user, cache, apps):
     debug('pages.py::put::page', page)
 
     # Get the requested app
-    app = apps.get(id);
-    if isNil(app) or app is None:
+    app = apps.get(id)
+    if isNil(app):
         debug('pages.py::put', 'app not found', id)
         return False
 
     # Check app author
-    author = cadr(assoc("'author", car(app)))
-    if author != user.get(()):
-        debug('pages.py::put', 'different author', author)
+    if author(app) != user.get(()):
+        debug('pages.py::put', 'different author', author(app))
         return False
 
     # Update the page in the page db
-    pageentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y')), assoc("'content", car(page))),)
+    pageentry = mkentry(title(app), car(id), user.get(()), now(), content(page))
     debug('pages.py::put::pageentry', pageentry)
     return cache.put(pageid(id), pageentry)
 
@@ -54,24 +53,24 @@ def get(id, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app) or app is None:
+    if isNil(app):
         debug('pages.py::get', 'app not found', id)
 
         # Return a default new page
-        return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'author", user.get(())), ("'updated", strftime('%b %d, %Y'))),)
+        return mkentry(car(id), car(id), user.get(()), now(), ())
 
     # Get the requested page
     page = cache.get(pageid(id))
-    if isNil(page) or page is None:
+    if isNil(page):
         debug('pages.py::get', 'page not found', id)
 
         # Return a default new page
-        return (("'entry", ("'title", car(id)), ("'id", car(id)), assoc("'author", car(app)), assoc("'updated", car(app))),)
+        return mkentry(title(app), car(id), author(app), now(), ())
 
     # Return the page
-    def updated(u):
-        return assoc("'updated", car(app)) if isNil(u) or u is None else u
-    pageentry = (("'entry", assoc("'title", car(app)), ("'id", car(id)), assoc("'author", car(app)), updated(assoc("'updated", car(page))), assoc("'content", car(page))),)
+    debug('pages.py::get::page', page)
+    debug('pages.py::get::page::content', content(page))
+    pageentry = mkentry(title(app), car(id), author(app), updated(page), content(page))
     debug('pages.py::get::pageentry', pageentry)
     return pageentry
 
@@ -80,15 +79,14 @@ def delete(id, user, cache, apps):
     debug('pages.py::delete::id', id)
 
     # Get the requested app
-    app = apps.get(id);
-    if isNil(app) or app is None:
+    app = apps.get(id)
+    if isNil(app):
         debug('pages.py::delete', 'app not found', id)
         return False
 
     # Check app author
-    author = cadr(assoc("'author", car(app)))
-    if author != user.get(()):
-        debug('pages.py::delete', 'different author', author)
+    if author(app) != user.get(()):
+        debug('pages.py::delete', 'different author', author(app))
         return False
 
     # Delete the page

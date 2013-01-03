@@ -19,29 +19,24 @@
 -->
 <div id="bodydiv" class="body">
 
-<div class="viewform">
+<div id="viewform" class="viewform">
 
 <form id="cloneAppForm">
 <table style="width: 100%;">
-<tr><td><b>New App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" class="flatentry" size="15" autocapitalize="off" placeholder="Your app name"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Icon:</b></td></tr>
-<tr><td><img id="appimg" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" class="flatentry" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
-<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" class="flatentry" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
-<tr><td>
-<input id="cloneAppOKButton" type="submit" class="graybutton bluebutton" style="font-weight: bold;" value="Clone" title="Clone the app"/>
+<tr><td class="label">New URL:</td></tr>
+<tr><td><span id="hostname" class="readentry"></span><input type="text" id="appName" class="flatentry" size="18" autocapitalize="off" placeholder="New app name"/></td></tr>
+<tr><td style="padding-top: 20px;">
+<input id="cloneAppOKButton" type="submit" class="bluebutton" style="font-weight: bold;" value="Clone" title="Clone this app"/>
 <input id="cloneAppCancelButton" type="button" class="graybutton" value="Cancel"/>
 </td></tr>
 </table>
 </form>
+<br/>
 
 </div>
 
 <script type="text/javascript">
-(function() {
+(function clonebody() {
 
 /**
  * Get the app name.
@@ -49,20 +44,20 @@
 var appname = ui.fragmentParams(location)['app'];
 
 /**
- * Set page titles.
+ * Setup page layout.
  */
-document.title = config.windowtitle() + ' - ' + config.clone() + ' - ' + appname;
-$('viewhead').innerHTML = '<span class="smenu">' + config.clone() + ' ' + appname + '</span>';
-$('cloneAppOKButton').value = config.clone();
-$('cloneAppOKButton').title = config.clone() + ' this app';
+(function layout() {
+    document.title = config.windowtitle() + ' - ' + config.clone() + ' - ' + appname;
+    $('viewhead').innerHTML = '<span class="smenu">' + config.clone() + ' ' + appname + '</span>';
+    if (!ui.isMobile())
+        $('viewform').className = 'viewform flatscrollbars';
+    $('hostname').innerHTML = window.location.hostname + '/';
+    $('cloneAppOKButton').value = config.clone();
+    $('cloneAppOKButton').title = config.clone() + ' this app';
+})();
 
 /**
- * Set images.
- */
-$('appimg').src = ui.b64img(appcache.get('/public/app.b64'));
-
-/**
- * Init service references.
+ * Initialize service references.
  */
 var editorComp = sca.component("Editor");
 var apps = sca.reference(editorComp, "apps");
@@ -71,50 +66,60 @@ var apps = sca.reference(editorComp, "apps");
  * The current app entry and corresponding saved XML content.
  */
 var appentry;
-var savedappentryxml = '';
+var savedappxml = '';
 
 /**
- * Get and display an app.
+ * Get and display the requested app.
  */
-function getapp(name) {
-    if (isNil(name))
+(function getapp() {
+    if (isNil(appname))
         return false;
-    showStatus('Loading');
+    workingstatus(true);
+    showstatus('Loading');
 
-    return apps.get(name, function(doc) {
+    return apps.get(appname, function(doc) {
 
         // Stop now if we didn't get the app
         if (doc == null) {
-            showError('App not available');
+            errorstatus('Couldn\'t get the app info');
+            workingstatus(false);
             return false;
         }
-        showOnlineStatus();
 
-        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
-        $('appTitle').value = cadr(assoc("'title", cdr(appentry)));
-        var content = cadr(assoc("'content", cdr(appentry)));
-        var description = assoc("'description", content);
-        $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
-        savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", appname));
+        var content = cadr(assoc("'content", appentry));
+        savedappxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+
+        onlinestatus();
+        workingstatus(false);
         return true;
     });
-}
+})();
 
 /**
  * Save an app.
  */
-function save(name, entryxml) {
-    showStatus('Saving');
-    savedappentryxml = entryxml;
-    apps.put(name, savedappentryxml, function(e) {
+function saveapp(name, entryxml) {
+    workingstatus(true);
+    showstatus('Saving');
+
+    savedappxml = entryxml;
+    apps.put(name, savedappxml, function(e) {
         if (e) {
-            showStatus('Local copy');
+            if (e.code && e.code == 404) {
+                errorstatus('App name is taken, please pick another name');
+                workingstatus(false);
+                return false;
+            }
+            showstatus('Local copy');
+            workingstatus(false);
             return false;
         }
-        showStatus('Saved');
+        showstatus('Saved');
+        workingstatus(false);
 
-        // Open it in the page editor
-        ui.navigate('/#view=page&app=' + name, '_view');
+        // Open the app in the page editor
+        ui.navigate('/#view=info&app=' + name, '_view');
         return false;
     });
     return false;
@@ -124,19 +129,36 @@ function save(name, entryxml) {
  * Clone an app.
  */
 $('cloneAppForm').onsubmit = function() {
+
+    // Validate app name
     var name = $('appName').value;
-    if (name == '') {
-        showError('Missing app name');
+    if (name.length < 3 || name.length > 10) {
+        errorstatus('App name must be between 3 and 10 characters');
         return false;
     }
-    showStatus('Saving');
+    name = name.toLowerCase();
+    var anum = name.split('').reduce(function(p, c, i, a) { return p && ((c >= 'a' && c <= 'z') || (c >= '0' && c<= '9')); }, true);
+    if (!anum) {
+        errorstatus('App name is taken, please pick another name');
+        return false;
+    }
+    if (name.charAt(0) < 'a' || name.charAt(0) > 'z') {
+        errorstatus('App name must start with a letter');
+        return false;
+    }
+
+    // Check reserved app names
+    var reserved = mklist('account', 'app', 'cache', 'clone', 'create', 'delete', 'graph', 'home', 'login', 'new', 'page', 'proxy', 'public', 'private', 'info', 'store');
+    if (!isNil(assoc(name, map(function(r) { return mklist(r, r); }, reserved)))) {
+        errorstatus('App name is taken, please pick another name');
+        return false;
+    }
 
     // Clone the app
-    var title = $('appTitle').value;
-    var description = $('appDescription').value;
-    appentry = mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname), mklist("'content", mklist("'stats", mklist("'description", description))));
+    showstatus('Modified');
+    appentry = mklist("'entry", mklist("'title", name), mklist("'id", appname), mklist("'author", username));
     var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
-    return save(name, entryxml);
+    return saveapp(name, entryxml);
 };
 
 /**
@@ -145,11 +167,6 @@ $('cloneAppForm').onsubmit = function() {
 $('cloneAppCancelButton').onclick = function() {
     history.back();
 };
-
-/**
- * Get the current app.
- */
-getapp(appname);
 
 })();
 </script>

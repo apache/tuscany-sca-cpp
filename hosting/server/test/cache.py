@@ -31,6 +31,10 @@ class cache:
         self.values[id] = value
         return True
 
+    def patch(self, id, value):
+        self.values[id] = value
+        return True
+
     def post(self, id):
         return self.put(id)
 

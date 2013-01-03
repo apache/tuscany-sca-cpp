@@ -31,6 +31,8 @@ ui.elementByID = function(node, id) {
         return null;
     for (var i in node.childNodes) {
         var child = node.childNodes[i];
+        if (isNil(child))
+            continue;
         if (child.id == id)
             return child;
         var gchild = ui.elementByID(child, id);
@@ -46,7 +48,16 @@ ui.elementByID = function(node, id) {
 function $(id) {
     if (id == document)
         return document;
-    return ui.elementByID($(document), id);
+    return memo(document, '$' + id, function() {
+        return ui.elementByID($(document), id);
+    });
+}
+
+/**
+ * Un-memoize elements previously found by id.
+ */
+ui.unmemo$ = function(prefix) {
+    return prefix? unmemo(document, '$' + prefix) : unmemo(document);
 };
 
 /**
@@ -114,10 +125,26 @@ ui.fragmentParams = function(url) {
 };
 
 /**
- * Convert a base64-encoded image to a data URL.
+ * Convert a base64-encoded PNG image to a data URL.
  */
-ui.b64img = function(b64) {
-    return 'data:image/png;base64,' + b64;
+ui.b64png = function(b64) {
+    return 'data:image/png;base64,' + b64.trim();
+};
+
+/**
+ * Convert a base64-encoded JPEG image to a data URL.
+ */
+ui.b64jpeg = function(b64) {
+    return 'data:image/jpeg;base64,' + b64.trim();
+};
+
+/**
+ * Convert a data URL to a base64-encoded image.
+ */
+ui.imgb64 = function(img) {
+    if (img.startsWith('data:'))
+        return img.split(',')[1]
+    return '';
 };
 
 /**
@@ -127,6 +154,16 @@ ui.declareCSS = function(s) {
     var e = document.createElement('style');
     e.type = 'text/css';
     e.textContent = s;
+    return e;
+};
+
+/**
+ * Include a CSS stylesheet.
+ */
+ui.includeCSS = function(s) {
+    var e = ui.declareCSS(s);
+    var head = document.getElementsByTagName('head')[0];
+    head.appendChild(e);
     return e;
 };
 
@@ -151,15 +188,15 @@ ui.innerScripts = function(e) {
  * Evaluate a script.
  */
 ui.evalScript = function(s) {
-    return eval('(function() {\n' + s + '\n})();');
+    return eval('(function evalscript() { try { \n' + s + '\n} catch(e) { debug(e.stack); throw e; }})();');
 };
 
 /**
  * Include a script.
  */
 ui.includeScript = function(s) {
-    //log('include', s);
-    return eval(s);
+    //debug('include', s);
+    return eval('try { \n' + s + '\n} catch(e) { debug(e.stack); throw e; }');
 };
 
 /**
@@ -171,10 +208,136 @@ ui.isMobile = function() {
     if (ui.mobiledetected)
         return ui.mobile;
     var ua = navigator.userAgent;
-    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
+    if (ua.match(/iPhone/i) || ua.match(/iPad/i) || ua.match(/iPod/i) || ua.match(/Android/i) || ua.match(/Blackberry/i) || ua.match(/WebOs/i))
         ui.mobile = true;
     ui.mobiledetected = true;
     return ui.mobile;
+};
+
+/**
+ * Return true if the client is Webkit based.
+ */
+ui.isWebkit = function() {
+    return navigator.userAgent.match(/WebKit/i);
+};
+
+/**
+ * Return the Webkit version.
+ */
+ui.webkitVersion = function() {
+    return Number(navigator.userAgent.replace(/.*AppleWebKit\/(\d+\.\d+).*/, '$1'));
+};
+
+/**
+ * Return true if the client is Firefox.
+ */
+ui.isFirefox = function() {
+    return navigator.userAgent.match(/Firefox/i);
+};
+
+/**
+ * Return the Firefox version.
+ */
+ui.firefoxVersion = function() {
+    return Number(navigator.userAgent.replace(/.*Firefox\/(\d+\.\d+).*/, '$1'));
+};
+
+/**
+ * Return true if the client is Safari.
+ */
+ui.isSafari = function() {
+    return navigator.userAgent.match(/Safari/i);
+};
+
+/**
+ * Return true if the client is Chrome.
+ */
+ui.isChrome = function() {
+    return navigator.userAgent.match(/Chrome/i);
+};
+
+/**
+ * Return true if the client is Internet Explorer.
+ */
+ui.isMSIE = function() {
+    return navigator.userAgent.match(/MSIE/i);
+};
+
+/**
+ * Return the Internet Explorer version.
+ */
+ui.msieVersion = function() {
+    return Number(navigator.userAgent.replace(/.*MSIE (\d+\.\d+).*/, '$1'));
+};
+
+/**
+ * Run a UI rendering function asynchronously.
+ */
+ui.asyncFrame = null;
+ui.async = function(f) {
+    if (isNil(ui.asyncFrame))
+        // Use requestAnimationFrame when available, fallback to setTimeout
+        ui.asyncFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+            function(f) {
+                return window.setTimeout(f, 16);
+            };
+    return ui.asyncFrame.call(window, f);
+};
+
+/**
+ * Delay the execution of a function.
+ */
+ui.delayed = {}
+ui.delay = function(f, t) {
+    var id =  window.setTimeout(function() {
+        delete ui.delayed[id];
+        return f();
+    }, isNil(t)? 16 : t);
+    ui.delayed[id] = id;
+    return id;
+};
+
+/**
+ * Cancel the execution of a delayed function.
+ */
+ui.cancelDelay = function(id) {
+    delete ui.delayed[id];
+    return window.clearTimeout(id);
+};
+
+/**
+ * Run a UI animation.
+ */
+ui.animationFrame = null;
+ui.animation = function(f) {
+    if (isNil(ui.animationFrame))
+        // Use requestAnimationFrame when available, fallback to setInterval
+        ui.animationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+            function(f) {
+                if (!('interval' in f) || isNil(f.interval)) {
+                    // First call, setup the interval
+                    f.interval = window.setInterval(function animation() {
+                        f.clearInterval = true;
+                        try {
+                            f();
+                        } catch(ex) {}
+                        // If the animation function didn't call ui.animation again to
+                        // request another animation frame, clear the interval
+                        if (f.clearInterval) {
+                            f.clearInterval = false;
+                            window.clearInterval(f.interval);
+                            f.interval = null;
+                        }
+                    }, 16);
+                } else {
+                    // Called to request another animation frame, do not clear the
+                    // interval
+                    f.clearInterval = false;
+                }
+            };
+    return ui.animationFrame.call(window, f);
 };
 
 /**
@@ -192,46 +355,49 @@ ui.pixpos = function(p) {
 };
 
 /**
- * Default orientation change behavior.
+ * Default page load behavior.
  */
-ui.onorientationchange = function(e) {
+ui.filler = null;
+ui.onload = function() {
 
-    // Scroll to the top and hide the address bar
+    // Add a filler div to make sure we can scroll
+    if (ui.isMobile()) {
+        ui.filler = document.createElement('div');
+        ui.filler.id = 'filler';
+        ui.filler.className = 'filler';
+        ui.filler.style.height = ui.pixpos(window.orientation == 0? screen.height : screen.width * 2);
+        document.body.appendChild(ui.filler);
+    } else {
+        // Style scroll bars
+        var h = document.getElementsByTagName('html');
+        if (!isNil(h))
+            h[0].className = h[0].className? h[0].classname + ' flatscrollbars' : 'flatscrollbars';
+    }
+
+    // Scroll to hide the address bar
+    document.body.style.display = 'block';
     window.scrollTo(0, 0);
 
-    // Change fixed position elements to absolute then back to fixed
-    // to make sure they're correctly layed out after the orientation
-    // change
-    map(function(e) {
-            e.style.position = 'absolute';
-            return e;
-        }, ui.elementsByClassName(document, 'fixed'));
+    // Set unload handler
+    window.onunload = function() {
+        window.scrollTo(0, 0);
+        return true;
+    };
 
-    setTimeout(function() {
-        map(function(e) {
-                e.style.position = 'fixed';
-                return e;
-            }, ui.elementsByClassName(document, 'fixed'));
-        }, 0);
     return true;
 };
 
 /**
- * Default page load behavior.
+ * Default orientation change behavior.
  */
-ui.onload = function() {
+ui.onorientationchange = function(e) {
 
-    // Scroll to the top and hide the address bar
+    // Adjust filler height
+    if (!isNil(ui.filler))
+        ui.filler.style.height = ui.pixpos(window.orientation == 0? screen.height : screen.width);
+
+    // Scroll to hide the address bar
     window.scrollTo(0, 0);
-
-    // Initialize fixed position elements only after the page is loaded,
-    // to workaround layout issues with fixed position on mobile devices
-    setTimeout(function() {
-        map(function(e) {
-                e.style.position = 'fixed';
-                return e;
-            }, ui.elementsByClassName(document, 'fixed'));
-        }, 0);
     return true;
 };
 
@@ -239,7 +405,7 @@ ui.onload = function() {
  * Navigate to a new document.
  */
 ui.navigate = function(url, win) {
-    //log('navigate', url, win);
+    //debug('navigate', url, win);
 
     // Open a new window
     if (win == '_blank') {
@@ -264,6 +430,27 @@ ui.navigate = function(url, win) {
     if (win == '_view') {
         if (!window.top.onnavigate)
             return window.top.open(url, '_self');
+
+        // Cleanup window event handlers
+        window.onclick = null;
+        if (!ui.isMobile()) {
+            window.onmousedown = null;
+            window.onmouseup = null;
+            window.onmousemove = null;
+        } else {
+            window.ontouchstart = null;
+            window.ontouchend = null;
+            window.ontouchmove = null;
+        }
+
+        // Cleanup memoized element lookups
+        ui.unmemo$();
+
+        // Cancel any timers
+        for (d in ui.delayed)
+            ui.cancelDelay(d);
+
+        // Navigate
         window.top.onnavigate(url);
         return false;
     }
@@ -369,7 +556,7 @@ ui.datatable = function(l) {
     }
 
     return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
-}
+};
 
 /**
  * Convert a list of elements to an HTML single column table.
@@ -405,5 +592,67 @@ ui.datalist = function(l) {
     }
 
     return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
-}
+};
+
+/**
+ * Read a file and convert it to a data url.
+ */
+ui.readfile = function(file, onerror, onprogress, onload) {
+    var reader = new FileReader();
+    reader.onerror = function(e) {
+        return onerror();
+    };
+    reader.onprogress = function(e) {
+        return onprogress(e.lengthComputable? Math.round((e.loaded / e.total) * 90) : 50);
+    };
+    reader.onload = function(r) {
+        return onload(r.target.result);
+    };
+    return reader.readAsDataURL(file);
+};
+
+/**
+ * Read an image url and convert it to a data url.
+ */
+ui.readimageurl = function(url, onerror, onprogress, onload, width, height) {
+    // Create a canvas to draw the image
+    var canvas = document.createElement('canvas');
+    if (width)
+        canvas.width = width;
+    if (height)
+        canvas.height = height;
+
+    // Create an image
+    var img = new Image();
+    img.onerror = function(e) {
+        return onerror();
+    };
+    img.onload = function() {
+        // Draw the image
+        var ctx = canvas.getContext('2d');
+        if (width || height)
+            ctx.drawImage(img, 0, 0, width, height);
+        else
+            ctx.drawImage(img, 0, 0);
+
+        // Convert new canvas image to a data url
+        return onload(canvas.toDataURL('image/png'));
+    };
+
+    // Load the image
+    onprogress(90);
+    img.src = url;
+    return true;
+};
+
+/**
+ * Read an image file or url and convert it to a data url.
+ */
+ui.readimage = function(img, onerror, onprogress, onload, width, height) {
+    if (isString(img))
+        return ui.readimageurl(img, onerror, onprogress, onload, width, height);
+    return ui.readfile(img, onerror, onprogress, function(url) {
+            return ui.readimageurl(url, onerror, onprogress, onload, width, height);
+        }, width, height);
+};
 

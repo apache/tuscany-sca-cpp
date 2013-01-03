@@ -16,7 +16,6 @@
 #  under the License.
 
 # User authenticator implementation
-from time import strftime
 from util import *
 
 # Convert a particular user id to an authentication id
@@ -26,7 +25,7 @@ def authnid(id):
 # Get a user's authentication
 def get(id, cache):
     authn = cache.get(authnid(id))
-    if isNil(authn) or authn is None:
+    if isNil(authn):
         return None
     return authn
 

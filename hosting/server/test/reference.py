@@ -26,7 +26,7 @@ class reference:
         return self.l(*args)
 
     def __getattr__(self, name):
-        if name == "get" or name == "put":
+        if name == 'get' or name == 'put' or name == 'patch' or name == 'post' or name == 'delete':
             return self
         raise AttributeError()
 

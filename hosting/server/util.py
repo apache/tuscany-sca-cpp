@@ -60,7 +60,7 @@ def reverse(l):
 def isNil(l):
     if isinstance(l, streampair):
         return l.isNil()
-    return l == ()
+    return l is None or l == ()
 
 def isSymbol(v):
     return isinstance(v, basestring) and v[0:1] == "'"
@@ -131,11 +131,24 @@ def cons_stream(car, cdr):
 # Scheme-like associations
 def assoc(k, l):
     if l == ():
-        return None
-
+        return ()
     if k == car(car(l)):
         return car(l)
     return assoc(k, cdr(l))
+
+def delAssoc(k, l):
+    if l == ():
+        return ()
+    if k == car(car(l)):
+        return delAssoc(k, cdr(l))
+    return cons(car(l), delAssoc(k, cdr(l)))
+
+def substAssoc(k, n, l, a = False):
+    if l == ():
+        return (n,) if a else ()
+    if k == car(car(l)):
+        return cons(n, substAssoc(k, n, cdr(l), False))
+    return cons(car(l), substAssoc(k, n, cdr(l), a))
 
 # Currying / partial function application
 def curry(f, *args):
