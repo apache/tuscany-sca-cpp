@@ -54,6 +54,7 @@ cat >>$root/conf/pubauth$sslsuffix.conf <<EOF
 # Allow access to /.well-known/host-meta location
 <Location /.well-known/host-meta>
 AuthType None
+Session Off
 Require all granted
 </Location>
 

@@ -94,3 +94,8 @@ mkdir -p $root/cert/hash
 cp $root/cert/ca.crt $root/cert/hash
 perl /usr/bin/c_rehash $root/cert/hash
 
+# Build CA certificate bundle
+curl_prefix=`cat $here/../http/curl.prefix`
+cp $curl_prefix/lib/cacert.pem $root/cert/cacert.pem
+cat $root/cert/ca.crt >> $root/cert/cacert.pem
+

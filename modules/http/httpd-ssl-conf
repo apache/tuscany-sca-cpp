@@ -68,6 +68,7 @@ SSLSessionCacheTimeout 300
 Mutex "file:$root/logs" ssl-cache
 SSLRandomSeed startup builtin
 SSLRandomSeed connect builtin
+SSLCompression Off
 
 # Listen on HTTPS port
 Listen $sslport
@@ -165,7 +166,10 @@ UseCanonicalName Off
 
 # Enable SSL
 SSLEngine on
-SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+SSLProtocol ALL -SSLv2
+SSLHonorCipherOrder On
+#SSLCipherSuite ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES128-SHA:RC4-SHA:AES128-SHA:HIGH:!MD5:!DHE:!3DES:!EXP:!ADH:!EDH:!aNULL:!eNULL:!NULL
+SSLCipherSuite ECDHE-RSA-RC4-SHA:RC4-SHA:ECDHE-RSA-AES128-SHA:AES128-SHA:ECDHE-RSA-AES256-SHA:AES256-SHA:!DHE:!3DES:!EXP:!ADH:!EDH:!aNULL:!eNULL:!NULL
 BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 SSLOptions +StrictRequire +OptRenegotiate +FakeBasicAuth
 
@@ -188,9 +192,12 @@ ProxyRequests Off
 ProxyPreserveHost On
 ProxyStatus On
 SSLProxyEngine on
-SSLProxyCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+SSLProxyProtocol ALL -SSLv2
+#SSLCipherSuite ECDHE-RSA-RC4-SHA:ECDHE-RSA-AES128-SHA:RC4-SHA:AES128-SHA:HIGH:!MD5:!DHE:!3DES:!EXP:!ADH:!EDH:!aNULL:!eNULL:!NULL
+SSLProxyCipherSuite ECDHE-RSA-RC4-SHA:RC4-SHA:ECDHE-RSA-AES128-SHA:AES128-SHA:ECDHE-RSA-AES256-SHA:AES256-SHA:!DHE:!3DES:!EXP:!ADH:!EDH:!aNULL:!eNULL:!NULL
 
 # Verify server certificates
+SSLProxyCACertificateFile "$root/cert/cacert.pem"
 SSLProxyVerify require
 SSLProxyVerifyDepth 1
 SSLProxyCheckPeerCN Off

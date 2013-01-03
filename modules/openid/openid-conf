@@ -36,7 +36,7 @@ fi
 if [ "$2" = "" ]; then
     providers="file"
 else
-    providers="$2"
+    providers="file $2"
 fi
 
 # Configure HTTPD mod_auth_openid module
@@ -84,6 +84,7 @@ cat >>$root/conf/pubauth$sslsuffix.conf <<EOF
 # Allow public access to /openid location
 <Location /openid>
 AuthType None
+Session Off
 Require all granted
 </Location>
 

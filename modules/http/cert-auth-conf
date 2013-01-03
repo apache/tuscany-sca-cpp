@@ -35,7 +35,7 @@ fi
 if [ "$2" = "" ]; then
     providers="file"
 else
-    providers="$2 file"
+    providers="file $2"
 fi
 
 # Disallow public access to server resources

@@ -42,7 +42,7 @@ fi
 if [ "$2" = "" ]; then
     providers="file"
 else
-    providers="$2 file"
+    providers="file $2"
 fi
 
 # Configure HTTPD mod_tuscany_oauth module
