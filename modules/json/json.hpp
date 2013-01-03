@@ -58,13 +58,13 @@ public:
  * Returns true if a list represents a JS array.
  */
 inline const bool isJSArray(const list<value>& l) {
-    if(isNil(l))
+    if(isNull(l))
         return true;
     const value v = car(l);
     if (isSymbol(v))
         return false;
     if(isList(v)) {
-        if(!isNil((list<value>)v) && isSymbol(car<value>(v)))
+        if(!isNull((list<value>)v) && isSymbol(car<value>(v)))
             return false;
     }
     return true;
@@ -94,7 +94,7 @@ inline const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar
     const char* const name = json_object_iter_key(i);
     json_t* const jsv = json_object_iter_value(i);
     const value val = jsValToValue(jsv);
-    if (isNil(val) && !isList(val))
+    if (isNull(val) && !isList(val))
         return jsPropertiesToValues(cons<value> (mklist<value> (element, c_str(name), val), propertiesSoFar), o, json_object_iter_next(o, i));
     if (substr(name, 0, 1) == atsign)
         return jsPropertiesToValues(cons<value>(mklist<value>(attribute, c_str(substr(name, 1)), val), propertiesSoFar), o, json_object_iter_next(o, i));
@@ -148,7 +148,7 @@ const value jsValToValue(json_t* const jsv) {
  */
 inline json_t* const valuesToJSElements(json_t* const a, const list<value>& l) {
     json_t* const valueToJSVal(const value& val);
-    if (isNil(l))
+    if (isNull(l))
         return a;
     json_t* const v = valueToJSVal(car(l));
     json_array_append(a, v);
@@ -199,7 +199,7 @@ inline json_t* const valueToJSVal(const value& val) {
  * Converts a list of values to JS properties.
  */
 inline json_t* const valuesToJSProperties(json_t* const o, const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return o;
 
     // Write an attribute
@@ -235,7 +235,7 @@ inline json_t* const valuesToJSProperties(json_t* const o, const list<value>& l)
  * Return true if a list of strings contains a JSON document.
  */
 inline const bool isJSON(const list<string>& ls) {
-    if (isNil(ls))
+    if (isNull(ls))
         return false;
     const string s = substr(car(ls), 0, 1);
     return s == "[" || s == "{";
@@ -390,7 +390,7 @@ inline const string funcName(const string& f) {
  * of key value pairs.
  */
 inline const list<value> queryParams(const list<value>& a) {
-    if (isNil(a))
+    if (isNull(a))
         return nilListValue;
     const list<value> p = car(a);
     if (car(p) == value("id") || car(p) == value("method"))

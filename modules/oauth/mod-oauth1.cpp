@@ -104,7 +104,7 @@ public:
  * Run the authnz hooks to authenticate a request.
  */
 const failable<int> checkAuthnzProviders(const string& user, request_rec* const r, const list<AuthnProviderConf>& apcs) {
-    if (isNil(apcs))
+    if (isNull(apcs))
         return mkfailure<int>("Authentication failure for: " + user, HTTP_UNAUTHORIZED);
     const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
     if (apc.provider == NULL || !apc.provider->check_password)
@@ -122,7 +122,7 @@ const failable<int> checkAuthnz(const string& user, request_rec* const r, const 
     if (substr(user, 0, 1) == "/")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
-    if (isNil(apcs)) {
+    if (isNull(apcs)) {
         const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
         return checkAuthnzProviders(user, r, mklist<AuthnProviderConf>(AuthnProviderConf(AUTHN_DEFAULT_PROVIDER, provider)));
     }
@@ -142,11 +142,11 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 const failable<int> authenticated(const list<value>& userinfo, const bool check, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
-    if (isNil(scopeattrs)) {
+    if (isNull(scopeattrs)) {
 
         // Store user id in an environment variable
         const list<value> id = assoc<value>("id", userinfo);
-        if (isNil(id) || isNil(cdr(id)))
+        if (isNull(id) || isNull(cdr(id)))
             return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
         apr_table_set(r->subprocess_env, "OAUTH2_ID", apr_pstrdup(r->pool, c_str(cadr(id))));
 
@@ -164,7 +164,7 @@ const failable<int> authenticated(const list<value>& userinfo, const bool check,
     // Store each configured OAuth scope attribute in an environment variable
     const list<value> a = car(scopeattrs);
     const list<value> v = assoc<value>(cadr(a), userinfo);
-    if (!isNil(v) && !isNil(cdr(v))) {
+    if (!isNull(v) && !isNull(cdr(v))) {
 
         // Map the REMOTE_USER attribute to the request user field
         if (string(car(a)) == "REMOTE_USER")
@@ -192,7 +192,7 @@ const string header(const string& qs, const string& redir, const string& verif) 
         << "oauth_consumer_key=\"" << string(cadr(assoc<value>("oauth_consumer_key", args))) << "\", ";
 
     const list<value> atok = assoc<value>("oauth_token", args);
-    if (!isNil(atok) && !isNil(cdr(atok)))
+    if (!isNull(atok) && !isNull(cdr(atok)))
         hdr << "oauth_token=\"" << string(cadr(atok)) << "\", ";
 
     if (length(verif) != 0)
@@ -223,22 +223,22 @@ const list<string> sign(const string& verb, const string& uri, const list<value>
 const failable<int> authorize(const list<value>& args, request_rec* const r, const list<value>& appkeys, const memcache::MemCached& mc) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> ref = assoc<value>("openauth_referrer", args);
-    if (isNil(ref) || isNil(cdr(ref)))
+    if (isNull(ref) || isNull(cdr(ref)))
         return mkfailure<int>("Missing openauth_referrer parameter");
     const list<value> req = assoc<value>("oauth1_request_token", args);
-    if (isNil(req) || isNil(cdr(req)))
+    if (isNull(req) || isNull(cdr(req)))
         return mkfailure<int>("Missing oauth1_request_token parameter");
     const list<value> auth = assoc<value>("oauth1_authorize", args);
-    if (isNil(auth) || isNil(cdr(auth)))
+    if (isNull(auth) || isNull(cdr(auth)))
         return mkfailure<int>("Missing oauth1_authorize parameter");
     const list<value> tok = assoc<value>("oauth1_access_token", args);
-    if (isNil(tok) || isNil(cdr(tok)))
+    if (isNull(tok) || isNull(cdr(tok)))
         return mkfailure<int>("Missing oauth1_access_token parameter");
     const list<value> cid = assoc<value>("oauth1_client_id", args);
-    if (isNil(cid) || isNil(cdr(cid)))
+    if (isNull(cid) || isNull(cdr(cid)))
         return mkfailure<int>("Missing oauth1_client_id parameter");
     const list<value> info = assoc<value>("oauth1_info", args);
-    if (isNil(info) || isNil(cdr(info)))
+    if (isNull(info) || isNull(cdr(info)))
         return mkfailure<int>("Missing oauth1_info parameter");
 
     // Build the redirect URI
@@ -248,7 +248,7 @@ const failable<int> authorize(const list<value>& args, request_rec* const r, con
 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
-    if (isNil(app) || isNil(cdr(app)))
+    if (isNull(app) || isNull(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     list<value> appkey = cadr(app);
 
@@ -271,13 +271,13 @@ const failable<int> authorize(const list<value>& args, request_rec* const r, con
 
     // Retrieve the request token
     const list<value> conf = assoc<value>("oauth_callback_confirmed", resargs);
-    if (isNil(conf) || isNil(cdr(conf)) || cadr(conf) != "true")
+    if (isNull(conf) || isNull(cdr(conf)) || cadr(conf) != "true")
         return mkfailure<int>("Couldn't confirm oauth_callback");
     const list<value> tv = assoc<value>("oauth_token", resargs);
-    if (isNil(tv) || isNil(cdr(tv)))
+    if (isNull(tv) || isNull(cdr(tv)))
         return mkfailure<int>("Couldn't retrieve oauth_token");
     const list<value> sv = assoc<value>("oauth_token_secret", resargs);
-    if (isNil(sv) || isNil(cdr(sv)))
+    if (isNull(sv) || isNull(cdr(sv)))
         return mkfailure<int>("Couldn't retrieve oauth_token_secret");
 
     // Store the request token in memcached
@@ -301,12 +301,12 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
     if (b == "[") {
         // Twitter JSON profile
         const list<value> infov(content(json::readValue(mklist<string>(info))));
-        if (isNil(infov))
+        if (isNull(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         debug(infov, "modoauth1::access_token::info");
         const list<value> uv = assoc<value>("user", car(infov));
         debug(uv, "modoauth1::access_token::userInfo");
-        if (isNil(uv) || isNil(cdr(uv)))
+        if (isNull(uv) || isNull(cdr(uv)))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         const list<value> iv = cdr(uv);
         return cons<value>(mklist<value>("realm", cid), iv);
@@ -314,12 +314,12 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
     if (b == "{") {
         // Foursquare JSON profile
         const list<value> infov(content(json::readValue(mklist<string>(info))));
-        if (isNil(infov))
+        if (isNull(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         debug(infov, "modoauth1::access_token::info");
         const list<value> uv = assoc<value>("user", infov);
         debug(uv, "modoauth1::access_token::userInfo");
-        if (isNil(uv) || isNil(cdr(uv)))
+        if (isNull(uv) || isNull(cdr(uv)))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         const list<value> iv = cdr(uv);
         return cons<value>(mklist<value>("realm", cid), iv);
@@ -327,12 +327,12 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
     if (b == "<") {
         // XML profile
         const list<value> infov = elementsToValues(content(xml::readElements(mklist<string>(info))));
-        if (isNil(infov))
+        if (isNull(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         debug(infov, "modoauth1::access_token::info");
         const list<value> pv = car(infov);
         debug(pv, "modoauth1::access_token::userInfo");
-        if (isNil(pv) || isNil(cdr(pv)))
+        if (isNull(pv) || isNull(cdr(pv)))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         const list<value> iv = cdr(pv);
         return cons<value>(mklist<value>("realm", cid), iv);
@@ -347,27 +347,27 @@ const failable<int> accessToken(const list<value>& args, request_rec* r, const l
 
     // Extract access_token URI, client ID and verification code
     const list<value> ref = assoc<value>("openauth_referrer", args);
-    if (isNil(ref) || isNil(cdr(ref)))
+    if (isNull(ref) || isNull(cdr(ref)))
         return mkfailure<int>("Missing openauth_referrer parameter");
     const list<value> tok = assoc<value>("oauth1_access_token", args);
-    if (isNil(tok) || isNil(cdr(tok)))
+    if (isNull(tok) || isNull(cdr(tok)))
         return mkfailure<int>("Missing oauth1_access_token parameter");
     const list<value> cid = assoc<value>("oauth1_client_id", args);
-    if (isNil(cid) || isNil(cdr(cid)))
+    if (isNull(cid) || isNull(cdr(cid)))
         return mkfailure<int>("Missing oauth1_client_id parameter");
     const list<value> info = assoc<value>("oauth1_info", args);
-    if (isNil(info) || isNil(cdr(info)))
+    if (isNull(info) || isNull(cdr(info)))
         return mkfailure<int>("Missing oauth1_info parameter");
     const list<value> tv = assoc<value>("oauth_token", args);
-    if (isNil(tv) || isNil(cdr(tv)))
+    if (isNull(tv) || isNull(cdr(tv)))
         return mkfailure<int>("Missing oauth_token parameter");
     const list<value> vv = assoc<value>("oauth_verifier", args);
-    if (isNil(vv) || isNil(cdr(vv)))
+    if (isNull(vv) || isNull(cdr(vv)))
         return mkfailure<int>("Missing oauth_verifier parameter");
 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
-    if (isNil(app) || isNil(cdr(app)))
+    if (isNull(app) || isNull(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     const list<value> appkey = cadr(app);
 
@@ -395,10 +395,10 @@ const failable<int> accessToken(const list<value>& args, request_rec* r, const l
 
     // Retrieve the access token
     const list<value> atv = assoc<value>("oauth_token", tokresargs);
-    if (isNil(atv) || isNil(cdr(atv)))
+    if (isNull(atv) || isNull(cdr(atv)))
         return mkfailure<int>("Couldn't retrieve oauth_token");
     const list<value> asv = assoc<value>("oauth_token_secret", tokresargs);
-    if (isNil(asv) || isNil(cdr(asv)))
+    if (isNull(asv) || isNull(cdr(asv)))
         return mkfailure<int>("Couldn't retrieve oauth_token_secret");
     debug(atv, "modoauth1::access_token::token");
 
@@ -498,7 +498,7 @@ static int checkAuthn(request_rec *r) {
         hasContent(openauth::sessionID(r, "TuscanyOpenAuth")) ||
         hasContent(openauth::sessionID(r, "TuscanyOAuth2")))
         return DECLINED;
-    if ((substr(string(r->uri), 0, 8) == "/oauth2/") || !isNil(assoc<value>("openid_identifier", args)))
+    if ((substr(string(r->uri), 0, 8) == "/oauth2/") || !isNull(assoc<value>("openid_identifier", args)))
         return DECLINED;
 
     r->ap_auth_type = const_cast<char*>(atype);
@@ -515,9 +515,9 @@ int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
     debug(httpd::serverName(s), "modoauth1::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil((list<value>)sc.appkeys))
+    if (isNull((list<value>)sc.appkeys))
         sc.appkeys = mainsc.appkeys;
-    if (isNil((list<string>)sc.mcaddrs))
+    if (isNull((list<string>)sc.mcaddrs))
         sc.mcaddrs = mainsc.mcaddrs;
     sc.mc = mainsc.mc;
     sc.cs = mainsc.cs;
@@ -549,7 +549,7 @@ void childInit(apr_pool_t* const p, server_rec* const s) {
     ServerConf& sc = *psc;
 
     // Connect to Memcached
-    if (isNil((list<string>)sc.mcaddrs))
+    if (isNull((list<string>)sc.mcaddrs))
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("localhost", 11211));
     else
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));

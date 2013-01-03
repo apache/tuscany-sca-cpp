@@ -412,7 +412,7 @@ const failable<OpenCLBuffer> readOnlyBuffer(const size_t size, const void* const
  * Fill an array of write events for a given list of buffers.
  */
 const cl_uint writeBufferEvents(const list<OpenCLBuffer>& buf, cl_event* const evt) {
-    if (isNil(buf))
+    if (isNull(buf))
         return 0;
     const cl_event e = car(buf).evt;
     if (e == 0)
@@ -486,7 +486,7 @@ const failable<OpenCLBuffer> valueToKernelArg(const value& v, const cl_uint i, c
  * Convert a list of values to kernel args.
  */
 const failable<list<OpenCLBuffer>> valuesToKernelArgsListHelper(const list<value>& v, const cl_uint i, const OpenCLKernel& kernel, const OpenCLContext& cl, const cl_command_queue cq) {
-    if (isNil(v))
+    if (isNull(v))
         return list<OpenCLBuffer>();
     const failable<OpenCLBuffer> a = valueToKernelArg(car(v), i, kernel, cl, cq);
     if (!hasContent(a))

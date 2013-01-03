@@ -46,7 +46,7 @@ inline void* stream_memcpy(void* t, const void* s, const size_t n) {
  * Write a list of strings into a buffer.
  */
 const bool writeList(const list<string>& l, char* const buf) {
-    if (isNil(l))
+    if (isNull(l))
         return true;
     const string c = car(l);
     char* b = buf - length(c);
@@ -114,7 +114,7 @@ public:
 private:
     inline const string str() {
         spill();
-        if (isNil((const list<string>)buf))
+        if (isNull((const list<string>)buf))
             return emptyString;
         char* const sbuf = gc_cnew(len + 1);
         writeList(buf, sbuf + len);
@@ -239,10 +239,10 @@ inline const list<string> tokenize(const char* const sep, const string& str) {
 inline const string join(const char* const sep, const list<string>& l) {
     ostringstream os;
     const lambda<ostringstream&(const char* const, const list<string>&, ostringstream&)> join = [&join](const char* const sep, const list<string>& l, ostringstream& os) -> ostringstream& {
-        if (isNil(l))
+        if (isNull(l))
             return os;
         os << car(l);
-        if (!isNil(cdr(l)))
+        if (!isNull(cdr(l)))
             os << sep;
         return join(sep, cdr(l), os);
     };
@@ -277,7 +277,7 @@ inline const list<string> fragment(const list<string>& l, const size_t max) {
  * Write a list of strings to an output stream.
  */
 inline ostream& write(const list<string>& l, ostream& os) {
-    if(isNil(l))
+    if(isNull(l))
         return os;
     os << car(l);
     return write(cdr(l), os);
@@ -287,9 +287,9 @@ inline ostream& write(const list<string>& l, ostream& os) {
  * Convert a list of strings to a string.
  */
 inline const string write(const list<string>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return emptyString;
-    if (isNil(cdr(l)))
+    if (isNull(cdr(l)))
         return car(l);
     ostringstream os;
     write(l, os);

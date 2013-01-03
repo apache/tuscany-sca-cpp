@@ -20,9 +20,9 @@ from util import *
 
 # Get the database to use for a particular key
 def get(id, db):
-    if isNil(id):
+    if isNull(id):
         return db
-    if not isNil(filter(lambda i: isList(i) and not isNil(i) and car(i) == "'limit", id)):
+    if not isNull(filter(lambda i: isList(i) and not isNull(i) and car(i) == "'limit", id)):
         return db
     if cadr(id)[0:1].lower() < 'm':
         return (db[0],)

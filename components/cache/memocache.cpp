@@ -47,7 +47,7 @@ const failable<value> memoize(const list<value>& params, const lvvlambda& relay,
 
     // Lookup memoized value from cache
     const value val = cache(mklist<value>("get", params));
-    if (!isNil(val)) {
+    if (!isNull(val)) {
         debug(val, "memocache::memoize::cached");
         return val;
     }

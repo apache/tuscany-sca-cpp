@@ -60,7 +60,7 @@ $('getstarted').onclick = function() {
  */
 (function homeanimation() {
     var anim = $('homeanimation');
-    if (!isNil(anim)) {
+    if (!isNull(anim)) {
         anim.style.background = 'url(\'' + ui.b64png(appcache.get('/home/home.b64')) + '\')';
         var bgpos = 0;
         setInterval(function homeanimation() {

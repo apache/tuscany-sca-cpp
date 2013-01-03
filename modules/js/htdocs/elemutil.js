@@ -29,14 +29,14 @@ var atsign = "'@"
  * Return true if a value is an element.
  */
 function isElement(v) {
-    return (!(!isList(v) || isNil(v) || car(v) != element));
+    return (!(!isList(v) || isNull(v) || car(v) != element));
 }
 
 /**
  * Return true if a value is an attribute.
  */
 function isAttribute(v) {
-    return (!(!isList(v) || isNil(v) || car(v) != attribute));
+    return (!(!isList(v) || isNull(v) || car(v) != attribute));
 }
 
 /**
@@ -58,7 +58,7 @@ elementName = cadr;
  * Return true if an element has children.
  */
 function elementHasChildren(l) {
-    return !isNil(cddr(l));
+    return !isNull(cddr(l));
 }
 
 /**
@@ -73,7 +73,7 @@ function elementHasValue(l) {
     var r = reverse(l);
     if (isSymbol(car(r)))
         return false;
-    return (!(isList(car(r)) && !isNil(car(r)) && isSymbol(car(car(r)))))
+    return (!(isList(car(r)) && !isNull(car(r)) && isSymbol(car(car(r)))))
 }
 
 /**
@@ -89,7 +89,7 @@ function elementValue(l) {
 function elementToValueIsList(v) {
     if (!isList(v))
         return false;
-    return isNil(v) || !isSymbol(car(v));
+    return isNull(v) || !isSymbol(car(v));
 }
 
 function elementToValue(t) {
@@ -112,11 +112,11 @@ function elementToValue(t) {
  * Convert a list of elements to a list of values.
  */
 function elementToValueIsSymbol(v) {
-    return (!(!isList(v)) || isNil(v) || !isSymbol(car(v)));
+    return (!(!isList(v)) || isNull(v) || !isSymbol(car(v)));
 }
 
 function elementToValueGroupValues(v, l) {
-    if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
+    if (isNull(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
         return cons(v, l);
     if (car(car(l)) != car(v))
         return cons(v, l);
@@ -129,7 +129,7 @@ function elementToValueGroupValues(v, l) {
 }
 
 function elementsToValues(e) {
-    if (isNil(e))
+    if (isNull(e))
         return e;
     return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)));
 }
@@ -138,15 +138,15 @@ function elementsToValues(e) {
  * Convert a value to an element.
  */
 function valueToElement(t) {
-    if (isList(t) && !isNil(t) && isSymbol(car(t))) {
+    if (isList(t) && !isNull(t) && isSymbol(car(t))) {
         var n = car(t);
-        var v = isNil(cdr(t))? mklist() : cadr(t);
+        var v = isNull(cdr(t))? mklist() : cadr(t);
         if (!isList(v)) {
             if (n.substring(0, 2) == atsign)
                 return mklist(attribute, "'" + n.substring(2), v);
             return mklist(element, n, v);
         }
-        if (isNil(v) || !isSymbol(car(v)))
+        if (isNull(v) || !isSymbol(car(v)))
             return cons(element, cons(n, mklist(valuesToElements(v))));
         return cons(element, cons(n, valuesToElements(cdr(t))));
     }
@@ -159,7 +159,7 @@ function valueToElement(t) {
  * Convert a list of values to a list of elements.
  */
 function valuesToElements(l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons(valueToElement(car(l)), valuesToElements(cdr(l)));
 }
@@ -169,9 +169,9 @@ function valuesToElements(l) {
  */
 function selector(s) {
     function evalSelect(s, v) {
-        if (isNil(s))
+        if (isNull(s))
             return true;
-        if (isNil(v))
+        if (isNull(v))
             return false;
         if (car(s) != car(v))
             return false;
@@ -187,7 +187,7 @@ function selector(s) {
 function namedAttribute(name, l) {
     return memo(l, name, function() {
         var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
-        if (isNil(f))
+        if (isNull(f))
             return null;
         return car(f);
     });
@@ -217,7 +217,7 @@ function namedElementChildren(name, l) {
  */
 function namedElementChild(name, l) {
     var f = namedElementChildren(name, l);
-    if (isNil(f))
+    if (isNull(f))
         return null;
     return car(f);
 }

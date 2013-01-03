@@ -109,7 +109,7 @@ const list<future<int> > submitSquares(worker& w, const int max, const int i) {
 }
 
 bool checkSquareResults(const list<future<int> > r, int i) {
-    if (isNil(r))
+    if (isNull(r))
         return true;
     assert(car(r) == i * i);
     checkSquareResults(cdr(r), i + 1);
@@ -160,7 +160,7 @@ const list<future<long int> > submitTLSSets(worker& w, wqueue<bool>& wq, wqueue<
 }
 
 const bool checkTLSSets(const list<future<long int> > s) {
-    if (isNil(s))
+    if (isNull(s))
         return true;
     assert(car(s) == 0);
     return checkTLSSets(cdr(s));
@@ -174,7 +174,7 @@ const list<future<bool> > submitTLSChecks(worker& w, wqueue<bool>& wq, wqueue<bo
 }
 
 const bool checkTLSResults(const list<future<bool> > r) {
-    if (isNil(r))
+    if (isNull(r))
         return true;
     assert(car(r) == true);
     return checkTLSResults(cdr(r));

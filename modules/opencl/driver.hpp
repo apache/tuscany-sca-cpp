@@ -38,7 +38,7 @@ namespace opencl {
 const value evalDriverLoop(const OpenCLProgram& clprog, istream& in, ostream& out, const OpenCLContext& cl) {
     scheme::promptForInput(scheme::evalInputPrompt, out);
     const value input = content(scheme::readValue(in));
-    if (isNil(input))
+    if (isNull(input))
         return input;
     const failable<value> output = evalKernel(createKernel(input, clprog), input, 1, value::String, 512, cl);
     scheme::announceOutput(scheme::evalOutputPrompt, out);

@@ -83,7 +83,7 @@ var appentry;
  * Get and display the requested app.
  */
 (function getapp() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -103,7 +103,7 @@ var appentry;
         $('appUpdated').value = xmldatetime(cadr(assoc("'updated", appentry))).toLocaleDateString();
         var content = cadr(assoc("'content", appentry));
         var description = assoc("'description", content);
-        $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
+        $('appDescription').value = isNull(description) || isNull(cadr(description))? '' : cadr(description);
 
         onlinestatus();
         workingstatus(false);

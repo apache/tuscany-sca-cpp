@@ -17,7 +17,7 @@
  * under the License.    
  */
 
-if (isNil(config))
+if (isNull(config))
     config = {};
 
 /**

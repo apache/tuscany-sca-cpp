@@ -367,7 +367,7 @@ public:
  */
 size_t readCallback(void *ptr, size_t size, size_t nmemb, void *data) {
     CURLReadContext& rcx = *(CURLReadContext*)data;
-    if (isNil((const list<string>)rcx.ilist))
+    if (isNull((const list<string>)rcx.ilist))
         return 0;
     const list<string> f(fragment(rcx.ilist, size * nmemb));
     const string s = car(f);
@@ -403,7 +403,7 @@ template<typename R> size_t writeCallback(void *ptr, size_t size, size_t nmemb, 
  * a reduce function used to process the response.
  */
 curl_slist* headers(curl_slist* const cl, const list<string>& h) {
-    if (isNil(h))
+    if (isNull(h))
         return cl;
     return headers(curl_slist_append(cl, c_str(string(car(h)))), cdr(h));
 }
@@ -508,7 +508,7 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
  * Find and return a header.
  */
 const maybe<string> header(const char* const prefix, const list<string>& h) {
-    if (isNil(h))
+    if (isNull(h))
         return maybe<string>();
     const string s = car(h);
     if (find(s, prefix) != 0)
@@ -676,7 +676,7 @@ const failable<list<list<string> > > contentRequest(const value& c, unused const
 
     // Write in the format requested by the client, if any
     const list<value> fmt = assoc<value>("format", nilListValue);
-    if (!isNil(fmt)) {
+    if (!isNull(fmt)) {
         if (cadr(fmt) == "scheme")
             return writeRequest(scheme::writeValue(c), "text/x-scheme; charset=utf-8");
         if (cadr(fmt) == "json")
@@ -692,26 +692,26 @@ const failable<list<list<string> > > contentRequest(const value& c, unused const
     }
 
     // Write an empty list as a JSON value
-    if (isNil((list<value>)c)) {
+    if (isNull((list<value>)c)) {
         debug(nilListValue, "http::contentRequest::empty");
         return writeRequest(json::writeValue(c), "application/json; charset=utf-8");
     }
 
     // Write content-type / content-list pair
-    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
+    if (isString(car<value>(c)) && !isNull(cdr<value>(c)) && isList(cadr<value>(c)))
         return writeRequest(convertValues<string>(cadr<value>(c)), car<value>(c));
 
     // Write an assoc value as a JSON value
-    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
+    if (isSymbol(car<value>(c)) && !isNull(cdr<value>(c))) {
         debug(c, "http::contentRequest::assoc");
         return writeRequest(json::writeValue(c), "application/json; charset=utf-8");
     }
 
     // Write an ATOM feed or entry
     const list<value> e = valuesToElements(c);
-    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
+    if (isList(car<value>(e)) && !isNull(car<value>(e))) {
         const list<value> el = car<value>(e);
-        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNull(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
             if (cadr<value>(el) == atom::feed)
                 return writeRequest(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8");
             if (cadr<value>(el) == atom::entry)
@@ -943,14 +943,14 @@ const failable<size_t> recv(char* const c, const size_t l, const CURLSession& cs
  * Converts a list of key value pairs to a query string.
  */
 ostringstream& queryString(const list<value>& args, ostringstream& os) {
-    if (isNil(args))
+    if (isNull(args))
         return os;
     const list<value> arg = car(args);
     debug(arg, "http::queryString::arg");
-    if (isNil(arg) || isNil(cdr(arg)))
+    if (isNull(arg) || isNull(cdr(arg)))
         return queryString(cdr(args), os);
     os << car(arg) << "=" << c_str(cadr(arg));
-    if (!isNil(cdr(args)))
+    if (!isNull(cdr(args)))
         os << "&";
     return queryString(cdr(args), os);
 }

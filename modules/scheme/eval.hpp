@@ -87,7 +87,7 @@ const list<value> operands(const value& exp) {
 }
 
 const list<value> listOfValues(const list<value> exps, Env& env) {
-    if(isNil(exps))
+    if(isNull(exps))
         return list<value> ();
     return cons(evalExpr(car(exps), env), listOfValues(cdr(exps), env));
 }
@@ -117,7 +117,7 @@ const Env procedureEnvironment(const value& exp) {
 }
 
 const bool isLastExp(const list<value>& seq) {
-    return isNil(cdr(seq));
+    return isNull(cdr(seq));
 }
 
 const value firstExp(const list<value>& seq) {
@@ -151,7 +151,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments) {
 }
 
 const value sequenceToExp(const list<value> exps) {
-    if(isNil(exps))
+    if(isNull(exps))
         return exps;
     if(isLastExp(exps))
         return firstExp(exps);
@@ -179,7 +179,7 @@ const value ifConsequent(const value& exp) {
 }
 
 const value ifAlternative(const value& exp) {
-    if(!isNil(cdr(cdr(cdr((list<value> )exp)))))
+    if(!isNull(cdr(cdr(cdr((list<value> )exp)))))
         return car(cdr(cdr(cdr((list<value> )exp))));
     return false;
 }
@@ -201,12 +201,12 @@ const value makeIf(value predicate, value consequent, value alternative) {
 }
 
 const value expandClauses(const list<value>& clauses) {
-    if(isNil(clauses))
+    if(isNull(clauses))
         return false;
     const value first = car(clauses);
     const list<value> rest = cdr(clauses);
     if(isCondElseClause(first)) {
-        if(isNil(rest))
+        if(isNull(rest))
             return sequenceToExp(condActions(first));
         logStream() << "else clause isn't last " << clauses << endl;
         return nilValue;
@@ -259,7 +259,7 @@ const value evalExpr(const value& exp, Env& env) {
 }
 
 const list<value> quotedParameters(const list<value>& p) {
-    if (isNil(p))
+    if (isNull(p))
         return p;
     return cons<value>(mklist<value>(quoteSymbol, car(p)), quotedParameters(cdr(p)));
 }
@@ -268,7 +268,7 @@ const list<value> quotedParameters(const list<value>& p) {
  * Evaluate an expression against a script provided as a list of values.
  */
 const value evalScriptLoop(const value& expr, const list<value>& script, scheme::Env& env) {
-    if (isNil(script))
+    if (isNull(script))
         return scheme::evalExpr(expr, env);
     scheme::evalExpr(car(script), env);
     return evalScriptLoop(expr, cdr(script), env);

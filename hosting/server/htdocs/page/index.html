@@ -132,7 +132,7 @@ var pages = sca.reference(editorComp, 'pages');
  */
 var msiefixupbounds = ui.isMSIE();
 function widgettransform(e) {
-    if (!isNil(e.xtranslate))
+    if (!isNull(e.xtranslate))
         return [e.xtranslate, e.ytranslate];
     var t = e.style.getPropertyValue('-webkit-transform') || e.style.getPropertyValue('-moz-transform') ||
             e.style.getPropertyValue('-ms-transform') || e.style.getPropertyValue('-o-transform') ||
@@ -156,7 +156,7 @@ function widgettransform(e) {
  */
 function widgetxpos(e) {
     var t = widgettransform(e)[0];
-    return ui.numpos(e.style.left) + (isNil(t)? 0 : t);
+    return ui.numpos(e.style.left) + (isNull(t)? 0 : t);
 }
 
 /**
@@ -164,7 +164,7 @@ function widgetxpos(e) {
  */
 function widgetypos(e) {
     var t = widgettransform(e)[1];
-    return ui.numpos(e.style.top) + (isNil(t)? 0 : t);
+    return ui.numpos(e.style.top) + (isNull(t)? 0 : t);
 }
 
 /**
@@ -290,7 +290,7 @@ function clonewidget(e) {
  */
 function selectwidget(n, s) {
     //debug('selectwidget', n, s);
-    if (isNil(n) || !s) {
+    if (isNull(n) || !s) {
         // Clear the widget value field
         $('widgetValue').value = '';
         $('widgetValue').readOnly = true;
@@ -304,7 +304,7 @@ function selectwidget(n, s) {
         $('deleteWidgetButton').disabled = true;
 
         // Clear the widget outline
-        if (!isNil(n))
+        if (!isNull(n))
             n.style.removeProperty('outline');
         return true;
     }
@@ -422,44 +422,44 @@ function setwidgettext(e, t) {
     e.id = f != ''? f.substring(1) : ('page:' + wc);
 
     if (wc == 'hd1' || wc == 'hd2' || wc == 'text' || wc == 'section') {
-        car(childElements(e)).innerHTML = isNil(c)? f : car(c);
+        car(childElements(e)).innerHTML = isNull(c)? f : car(c);
         return t;
     }
     if (wc == 'button') {
-        car(childElements(e)).value = isNil(c)? f : car(c);
+        car(childElements(e)).value = isNull(c)? f : car(c);
         return t;
     }
     if (wc == 'entry' || wc == 'password') {
-        car(childElements(e)).defaultValue = isNil(c)? f : car(c);
+        car(childElements(e)).defaultValue = isNull(c)? f : car(c);
         return t;
     }
     if (wc == 'checkbox') {
-        car(childElements(e)).value = isNil(c)? f : car(c);
-        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = isNil(c)? f : car(c); return n; }, nodeList(e.childNodes));
+        car(childElements(e)).value = isNull(c)? f : car(c);
+        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = isNull(c)? f : car(c); return n; }, nodeList(e.childNodes));
         return t;
     }
     if (wc == 'select') {
         var ce = car(childElements(car(childElements(e))));
-        ce.value = isNil(c)? f : car(c);
-        ce.innerHTML = isNil(c)? f : car(c);
+        ce.value = isNull(c)? f : car(c);
+        ce.innerHTML = isNull(c)? f : car(c);
         return t;
     }
     if (wc == 'list') {
-        e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + (isNil(c)? f : car(c)) + '</td></tr><tr><td class="datatd">...</td></tr></table>';
+        e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + (isNull(c)? f : car(c)) + '</td></tr><tr><td class="datatd">...</td></tr></table>';
         return t;
     }
     if (wc == 'table') {
-        e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + (isNil(c)? f : car(c)) + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
+        e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + (isNull(c)? f : car(c)) + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
         return t;
     }
     if (wc == 'link') {
         var ce = car(childElements(e));
-        ce.href = isNil(c)? 'link:/index.html' : ('link:' + car(c));
-        car(childElements(ce)).innerHTML = isNil(c)? (f != ''? f : '/index.html') : isNil(cdr(c))? (f != ''? f : car(c)) : cadr(c);
+        ce.href = isNull(c)? 'link:/index.html' : ('link:' + car(c));
+        car(childElements(ce)).innerHTML = isNull(c)? (f != ''? f : '/index.html') : isNull(cdr(c))? (f != ''? f : car(c)) : cadr(c);
         return t;
     }
     if (wc == 'img') {
-        car(childElements(e)).src = isNil(c)? '/public/img.png' : car(c);
+        car(childElements(e)).src = isNull(c)? '/public/img.png' : car(c);
         return t;
     }
     return '';
@@ -512,7 +512,7 @@ function widgetbounds(e) {
     //debug('fixup br', e, br.left, br.top, br.right, br.bottom, t[0], t[1]);
     function fixuptransform(e) {
         var t = widgettransform(e);
-        if (!isNil(e.xtranslate))
+        if (!isNull(e.xtranslate))
             return [e.xtranslate, e.ytranslate];
         var t = e.style.getPropertyValue('-webkit-transform') || e.style.getPropertyValue('-moz-transform') ||
                 e.style.getPropertyValue('-ms-transform') || e.style.getPropertyValue('-o-transform') ||
@@ -538,12 +538,12 @@ function widgetbounds(e) {
  */
 function draggable(x, y, l) {
     //debug('draggable?', x, y, l);
-    if (isNil(l))
+    if (isNull(l))
         return null;
     var n = car(l);
-    if (isNil(n.id) || n.id == '') {
+    if (isNull(n.id) || n.id == '') {
         var d = draggable(x, y, reverse(nodeList(n.childNodes)));
-        if (!isNil(d))
+        if (!isNull(d))
             return d;
         return draggable(x, y, cdr(l));
     }
@@ -849,9 +849,9 @@ function mkeditor() {
         onpagechange(false);
 
         // On Firefox > 4, re-apply the outline after the widget has been repositioned
-        if (fffixupoutline && !isNil(selected)) {
+        if (fffixupoutline && !isNull(selected)) {
             ui.delay(function() {
-                if (!isNil(selected))
+                if (!isNull(selected))
                     selected.style.outline = '2px solid #598edd';
             }, 32);
         }
@@ -932,7 +932,7 @@ function mkeditor() {
             }
 
             // Dismiss the palette
-            if (palvis && isNil(draggable(moveX, moveY, mklist($('palettecontent')))))
+            if (palvis && isNull(draggable(moveX, moveY, mklist($('palettecontent')))))
                 hidepalette();
 
             return true;
@@ -1091,7 +1091,7 @@ function mkeditor() {
  * Get and display the requested app page.
  */
 (function getpage() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -1108,15 +1108,15 @@ function mkeditor() {
         // Get the page from the ATOM entry, convert it to XHTML and place it in a hidden buffer
         var pageentry = car(atom.readATOMEntry(mklist(doc)));
         var content = namedElementChild("'content", pageentry);
-        var el = isNil(content)? mklist() : elementChildren(content);
-        if (isNil(el))
+        var el = isNull(content)? mklist() : elementChildren(content);
+        if (isNull(el))
             $('xhtmlbuffer').innerHTML = '<div id="page"></div>';
         else
             $('xhtmlbuffer').innerHTML = writeStrings(writeXML(el, false));
 
         // Remove any existing page nodes from the editor div
         var fnodes = filter(function(e) {
-            if (isNil(e.id) || e.id == '')
+            if (isNull(e.id) || e.id == '')
                 return false;
             return true;
         }, nodeList($('pagediv').childNodes));
@@ -1169,7 +1169,7 @@ function pagexhtml() {
     // part of the page, as well as nodes positioned out the
     // editing area
     var fnodes = filter(function(e) {
-        if (isNil(e.id) || e.id == '')
+        if (isNull(e.id) || e.id == '')
             return false;
         return true;
     }, nodes);

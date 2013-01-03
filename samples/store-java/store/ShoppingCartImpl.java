@@ -58,7 +58,7 @@ public class ShoppingCartImpl {
      * Find an item in the cart.
      */
     Iterable<?> find(final String id, final Iterable<?> cart) {
-        if(isNil(cart))
+        if(isNull(cart))
             return list(list("'entry", list("'title", "Item"), list("'id", "0")));
         if(id.equals(cadr(caddr(car(cart)))))
             return list(car(cart));
@@ -69,7 +69,7 @@ public class ShoppingCartImpl {
      * Return items from the cart.
      */
     public Iterable<?> get(final Iterable<String> id, final Service cache) {
-        if(isNil(id))
+        if(isNull(id))
             return list(append(list("'feed", list("'title", "Your Cart"), list("'id", cartId)), this.getcart(cartId, cache)));
         return this.find((String)car(id), this.getcart(cartId, cache));
     }
@@ -78,7 +78,7 @@ public class ShoppingCartImpl {
      * Delete items from the cart.
      */
     public Boolean delete(final Iterable<String> id, final Service cache) {
-        if(isNil(id)) {
+        if(isNull(id)) {
             final Iterable<String> iid = list(cartId);
             return cache.delete(iid);
         }
@@ -97,7 +97,7 @@ public class ShoppingCartImpl {
      * Sum the prices of a list of items.
      */
     Double sum(final Iterable<?> items) {
-        if(isNil(items))
+        if(isNull(items))
             return 0.0;
         return this.price((Iterable<?>)car(items)) + this.sum(cdr(items));
     }

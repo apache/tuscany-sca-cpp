@@ -49,13 +49,13 @@ const char* const cookieName(const char* const cs) {
 }
 
 const maybe<string> sessionID(const list<string>& c, const string& key) {
-    if (isNil(c))
+    if (isNull(c))
         return maybe<string>();
     const string cn = cookieName(c_str(car(c)));
     const size_t i = find(cn, "=");
     if (i < length(cn)) {
         const list<string> kv = mklist<string>(substr(cn, 0, i), substr(cn, i+1));
-        if (!isNil(kv) && !isNil(cdr(kv))) {
+        if (!isNull(kv) && !isNull(cdr(kv))) {
             if (car(kv) == key)
                 return cadr(kv);
         }
@@ -92,10 +92,10 @@ const string cookie(const string& key, const string& sid, const string& domain) 
  * Redirect to the configured login page.
  */
 const failable<int> login(const string& page, const value& ref, const value& attempt, request_rec* const r) {
-    const list<value> rarg = ref == string("/")? nilListValue : mklist<value>(mklist<value>("openauth_referrer", httpd::escape(httpd::url(isNil(ref)? r->uri : ref, r))));
-    const list<value> aarg = isNil(attempt)? nilListValue : mklist<value>(mklist<value>("openauth_attempt", attempt));
+    const list<value> rarg = ref == string("/")? nilListValue : mklist<value>(mklist<value>("openauth_referrer", httpd::escape(httpd::url(isNull(ref)? r->uri : ref, r))));
+    const list<value> aarg = isNull(attempt)? nilListValue : mklist<value>(mklist<value>("openauth_attempt", attempt));
     const list<value> largs = append(rarg, aarg);
-    const string loc = isNil(largs)? httpd::url(page, r) : httpd::url(page, r) + string("?") + http::queryString(largs);
+    const string loc = isNull(largs)? httpd::url(page, r) : httpd::url(page, r) + string("?") + http::queryString(largs);
     debug(loc, "openauth::login::uri");
     return httpd::externalRedirect(loc, r);
 }

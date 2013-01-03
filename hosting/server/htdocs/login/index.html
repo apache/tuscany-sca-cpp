@@ -212,7 +212,7 @@ try {
  * Initialize status message area.
  */
 (function initstatus() {
-    if (isNil($('status')))
+    if (isNull($('status')))
         return;
     $('status').style.display = 'none';
     
@@ -230,7 +230,7 @@ try {
  */
 window.showstatus = function(s, c) {
     //debug('show status', s);
-    if (isNil($('status')) || $('status').error)
+    if (isNull($('status')) || $('status').error)
         return s;
     $('status').innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
     $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
@@ -258,7 +258,7 @@ window.errorstatus = function(s) {
  */
 window.workingstatus = function(w, c) {
     //debug('show working', w);
-    if (isNil($('working')))
+    if (isNull($('working')))
         return w;
     if (!ui.isMobile())
         $('working').style.top = ui.pixpos(Math.round(window.clientHeight / 2));
@@ -469,7 +469,7 @@ var appresources = [
                     appcache.remove(res[0]);
                     appcache.get(res[0], 'remote');
                 }, append(appresources, config.appresources()));
-                if (!isNil(lcmf)) {
+                if (!isNull(lcmf)) {
                     //debug('reloading');
                     window.location.reload();
                 }

@@ -32,11 +32,11 @@
  */
 var appname = ui.fragmentParams(location)['app'];
 var ispalette = false;
-if (isNil(appname)) {
+if (isNull(appname)) {
     appname = ui.fragmentParams(location)['palette'];
 
     // Edit a palette instead of a regular app
-    if (!isNil(appname))
+    if (!isNull(appname))
         ispalette = true;
 }
 
@@ -179,7 +179,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
         //debug('draggable', n);
         if (n == graphdiv || n == null)
             return null;
-        if (n.className == 'g' && !isNil(n.id) && n.id != '')
+        if (n.className == 'g' && !isNull(n.id) && n.id != '')
             return n;
         return draggable(n.parentNode);
     }
@@ -301,7 +301,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
         if (graph.dragging.parentNode == graphdiv && graph.dragging.id.substring(0, 8) != 'palette:') {
 
             // Add new dragged component to the composite
-            if (isNil(graph.dragging.compos)) {
+            if (isNull(graph.dragging.compos)) {
                 var compos = scdl.composite(graphdiv.compos);
                 setElement(compos, graph.sortcompos(graph.addcomps(mklist(graph.dragging.comp), compos)));
                 graph.dragging.compos = graphdiv.compos;
@@ -311,7 +311,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
             setElement(graph.dragging.comp, graph.movecomp(graph.dragging.comp, graph.abspos(graph.draggingg)));
 
             // Wire component to neighboring reference
-            if (!isNil(graph.dragging.svcpos)) {
+            if (!isNull(graph.dragging.svcpos)) {
                 var compos = scdl.composite(graphdiv.compos);
                 setElement(compos, graph.sortcompos(graph.clonerefs(graph.wire(graph.dragging, compos, graphdiv))));
             }
@@ -332,7 +332,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
         var nodes = graph.refresh(graphdiv);
 
         // Reselect the previously selected component
-        if (!isNil(graph.selected)) {
+        if (!isNull(graph.selected)) {
             graph.selected = graph.findcompnode(scdl.name(graph.selected.comp), nodes);
             graph.compselect(graph.selected, true, atitle, cvalue, ccopy, cdelete);
 
@@ -544,7 +544,7 @@ graph.mkedit = function(graphdiv, pos, atitle, cvalue, cadd, ccopy, cdelete, onc
 
             // Remove selected component
             var compos = scdl.composite(graphdiv.compos);
-            if (isNil(graph.selected.compos))
+            if (isNull(graph.selected.compos))
                 setElement(compos, graph.sortcompos(graph.cutwire(graph.selected, compos, graphdiv)));
             setElement(compos, graph.sortcompos(graph.clonerefs(graph.gcollect(graph.removecomp(graph.selected.comp, compos)))));
 
@@ -752,8 +752,8 @@ graph.drawshape = function(g) {
 
     // Draw the shape
     ctx.fillStyle = g.fillStyle;
-    ctx.strokeStyle = !isNil(g.strokeStyle)? g.strokeStyle : graph.colors.gray;
-    ctx.lineWidth = !isNil(g.lineWidth)? g.lineWidth : 1;
+    ctx.strokeStyle = !isNull(g.strokeStyle)? g.strokeStyle : graph.colors.gray;
+    ctx.lineWidth = !isNull(g.lineWidth)? g.lineWidth : 1;
     g.path.draw(ctx);
 
     // Reset canvas context
@@ -794,7 +794,7 @@ graph.comptitle = function(comp) {
  */
 graph.comptitlewidth = function(comp) {
     var title = graph.comptitle(comp);
-    if (isNil(title))
+    if (isNull(title))
         return 0;
     return title.clientWidth;
 };
@@ -803,14 +803,14 @@ graph.comptitlewidth = function(comp) {
  * Draw a component shape selection.
  */
 graph.compselect = function(g, s, atitle, cvalue, ccopy, cdelete) {
-    if (isNil(g) || !s) {
+    if (isNull(g) || !s) {
         cvalue.value = '';
         cvalue.readOnly = true;
         cvalue.style.display = 'none';
         atitle.style.display = 'block';
         ccopy.disabled = true;
         cdelete.disabled = true;
-        if (isNil(g))
+        if (isNull(g))
             return true;
         g.shape.strokeStyle = null;
         g.shape.lineWidth = null;
@@ -836,7 +836,7 @@ graph.compselect = function(g, s, atitle, cvalue, ccopy, cdelete) {
  * Draw a palette shape selection.
  */
 graph.paletteselect = function(g, s) {
-    if (isNil(g))
+    if (isNull(g))
         return true;
     if (!s) {
         g.shape.strokeStyle = null;
@@ -879,7 +879,7 @@ graph.compnode = function(comp, cassoc, pos) {
     g.shape = shape;
     g.style.width = ui.pixpos(shape.width);
     g.style.height = ui.pixpos(shape.height);
-    if (!isNil(title)) {
+    if (!isNull(title)) {
         title.style.left = ui.pixpos(shape.path.xmin * -1);
         g.appendChild(title);
     }
@@ -895,14 +895,14 @@ graph.compnode = function(comp, cassoc, pos) {
  * Find the node representing a component.
  */
 graph.findcompnode = function(name, nodes) {
-    if (isNil(nodes))
+    if (isNull(nodes))
         return null;
-    if (isNil(car(nodes).comp))
+    if (isNull(car(nodes).comp))
         return graph.findcompnode(name, cdr(nodes));
     if (name == scdl.name(car(nodes).comp))
         return car(nodes);
     var node = graph.findcompnode(name, nodeList(car(nodes).childNodes));
-    if (!isNil(node))
+    if (!isNull(node))
         return node;
     return graph.findcompnode(name, cdr(nodes));
 }
@@ -969,7 +969,7 @@ graph.move = function(g, pos) {
  * Return the absolute position of a component node.
  */
 graph.abspos = function(e) {
-    if (isNil(e) || e == graphdiv)
+    if (isNull(e) || e == graphdiv)
         return graph.mkpath();
     var gpos = graph.relpos(e);
     var pgpos = graph.abspos(e.parentNode);
@@ -1010,7 +1010,7 @@ graph.title = function(e) {
  */
 graph.property = function(e) {
     var p = scdl.properties(e);
-    if (isNil(p))
+    if (isNull(p))
         return '';
     if (scdl.visible(car(p)) == 'false')
         return '';
@@ -1034,7 +1034,7 @@ graph.propertytitle = function(e) {
  */
 graph.hasproperty = function(e) {
     var p = scdl.properties(e);
-    if (isNil(p))
+    if (isNull(p))
         return false;
     if (scdl.visible(car(p)) == 'false')
         return false;
@@ -1046,7 +1046,7 @@ graph.hasproperty = function(e) {
  */
 graph.setproperty = function(e, value) {
     var p = scdl.properties(e);
-    if (isNil(p))
+    if (isNull(p))
         return '';
     if (scdl.visible(car(p)) == 'false')
         return '';
@@ -1071,14 +1071,14 @@ graph.color = function(comp) {
 graph.lsvcs = function(comp) {
     return memo(comp, 'lsvcs', function() {
         var svcs = scdl.services(comp);
-        if (isNil(svcs))
+        if (isNull(svcs))
             return mklist(mklist("'element","'service","'attribute","'name",scdl.name(comp)));
         var l = filter(function(s) {
                 var a = scdl.align(s);
                 var v = scdl.visible(s);
                 return (a == null || a == 'left') && v != 'false';
             }, svcs);
-        if (isNil(l))
+        if (isNull(l))
             return mklist();
         return mklist(car(l));
     });
@@ -1103,7 +1103,7 @@ graph.rrefs = function(comp) {
 graph.rrefheight = function(ref, cassoc) {
     return memo(ref, 'rheight', function() {
         var target = assoc(scdl.target(ref), cassoc);
-        if (isNil(target))
+        if (isNull(target))
             return graph.tabsz * 8;
         return graph.compclosureheight(cadr(target), cassoc);
     });
@@ -1113,7 +1113,7 @@ graph.rrefheight = function(ref, cassoc) {
  * Return the total height of the references on the right side of a component.
  */
 graph.rrefsheight = function(refs, cassoc) {
-    if (isNil(refs))
+    if (isNull(refs))
         return 0;
     return graph.rrefheight(car(refs), cassoc) + graph.rrefsheight(cdr(refs), cassoc);
 };
@@ -1144,7 +1144,7 @@ graph.compclosureheight = function(comp, cassoc) {
  * Return the max width of the references on the right side of a component.
  */
 graph.rrefswidth = function(refs, cassoc) {
-    if (isNil(refs))
+    if (isNull(refs))
         return 0;
     return Math.max(graph.rrefwidth(car(refs), cassoc), graph.rrefswidth(cdr(refs), cassoc));
 };
@@ -1155,7 +1155,7 @@ graph.rrefswidth = function(refs, cassoc) {
 graph.compwidth = function(comp, cassoc) {
     return memo(comp, 'width', function() {
         var ctw = graph.comptitlewidth(comp);
-        var rrefsw = (isNil(graph.rrefs(comp))? 0 : (graph.tabsz * 4));
+        var rrefsw = (isNull(graph.rrefs(comp))? 0 : (graph.tabsz * 4));
         var twidth = (graph.titlex * 2) + ctw + rrefsw;
         var width = Math.max(twidth, (graph.tabsz * 8) + (graph.tabsz * 4));
         return width;
@@ -1205,7 +1205,7 @@ graph.comppath = function(comp, cassoc) {
      * Apply a path rendering function to a list of services or references.
      */
     function renderpath(x, f, cassoc, path, height) {
-        if (isNil(x))
+        if (isNull(x))
             return path;
         return renderpath(cdr(x), f, cassoc, f(car(x), cassoc, path, height), height);
     }
@@ -1290,7 +1290,7 @@ graph.composite = function(compos, pos, aspalette) {
              */
             function renderrref(ref, cassoc, pos, gcomp) {
                 var target = assoc(scdl.target(ref), cassoc);
-                if (isNil(target))
+                if (isNull(target))
                     return null;
 
                 // Render the component target of the reference
@@ -1304,7 +1304,7 @@ graph.composite = function(compos, pos, aspalette) {
                 return pos.clone().rmove(0, graph.rrefheight(ref, cassoc));
             }
 
-            if (isNil(refs))
+            if (isNull(refs))
                 return mklist();
 
             // Return list of (ref, comp rendering) pairs
@@ -1322,7 +1322,7 @@ graph.composite = function(compos, pos, aspalette) {
 
         // Store list of (ref, pos, component rendering) triplets in the component
         function refposgcomp(refpos, grefs) {
-            if (isNil(refpos))
+            if (isNull(refpos))
                 return mklist();
 
             // Append component rendering to component
@@ -1347,7 +1347,7 @@ graph.composite = function(compos, pos, aspalette) {
          */
         function promcomp(svc, cassoc) {
             var c = assoc(scdl.promote(svc), cassoc);
-            if (isNil(c))
+            if (isNull(c))
                 return mklist();
             return cadr(c);
         }
@@ -1359,13 +1359,13 @@ graph.composite = function(compos, pos, aspalette) {
             return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + Math.max((graph.tabsz * 2), 8));
         }
 
-        if (isNil(svcs))
+        if (isNull(svcs))
             return mklist();
 
         // Render the first promoted component in the list
         // then recurse to render the rest of the list
         var comp = promcomp(car(svcs), cassoc);
-        if (isNil(comp))
+        if (isNull(comp))
             return renderproms(cdr(svcs), cassoc, rendermove(car(svcs), cassoc, pos));
 
         var cpos = graph.comppos(comp, pos);
@@ -1401,14 +1401,14 @@ graph.ucid = function(prefix, compos1, compos2, clone) {
     // Build an assoc list keyed by component name
     var comps = map(function(c) { return mklist(scdl.name(c), c); }, append(namedElementChildren("'component", compos1), namedElementChildren("'component", compos2)));
 
-    if (!clone && isNil(assoc(prefix, comps)))
+    if (!clone && isNull(assoc(prefix, comps)))
         return prefix;
 
     /**
      * Find a free component id.
      */
     function ucid(p, id) {
-        if (isNil(assoc(p + id, comps)))
+        if (isNull(assoc(p + id, comps)))
             return p + id;
         return ucid(p, id + 1);
     }
@@ -1447,7 +1447,7 @@ graph.clonepalette = function(e, compos) {
  * Move a SCDL component to the given position.
  */
 graph.movecomp = function(comp, pos) {
-    if (isNil(pos))
+    if (isNull(pos))
         return append(mklist(element, "'component"),
                 filter(function(e) { return !(isAttribute(e) && (attributeName(e) == "'x" || attributeName(e) == "'y")); }, elementChildren(comp)));
     return append(mklist(element, "'component", mklist(attribute, "'x", '' + (pos.x - graph.palcx)), mklist(attribute, "'y", '' + pos.y)),
@@ -1469,11 +1469,11 @@ graph.clonecomp = function(e, compos) {
     // Write the component and the components it references to XML
     function collectcomp(e) {
         function collectrefs(refpos) {
-            if (isNil(refpos))
+            if (isNull(refpos))
                 return mklist();
             var r = car(refpos);
             var n = caddr(r);
-            if (isNil(n))
+            if (isNull(n))
                 return collectrefs(cdr(refpos));
             return append(collectcomp(n), collectrefs(cdr(refpos)));
         }
@@ -1578,7 +1578,7 @@ graph.gcollect = function(compos) {
     // Filter out the unused components
     var used = append(proms, refs);
     return append(mklist(element, "'composite"),
-            filter(function(c) { return !(isElement(c) && elementName(c) == "'component" && isNil(assoc(scdl.name(c), used))); }, elementChildren(compos)));
+            filter(function(c) { return !(isElement(c) && elementName(c) == "'component" && isNull(assoc(scdl.name(c), used))); }, elementChildren(compos)));
 }
 
 /**
@@ -1592,7 +1592,7 @@ graph.clonerefs = function(compos) {
 
                 // If the references are clonable
                 var refs = scdl.references(c);
-                if (isNil(refs))
+                if (isNull(refs))
                     return c;
                 if (scdl.clonable(car(refs)) != 'true')
                     return c;
@@ -1611,7 +1611,7 @@ graph.clonerefs = function(compos) {
  * Refactor references to a component.
  */
 graph.refactorrefs = function(refs, oname, nname) {
-    if (isNil(refs))
+    if (isNull(refs))
         return true;
     var ref = car(refs);
     if (scdl.target(ref) != oname)
@@ -1636,7 +1636,7 @@ graph.renamecomp = function(comp, compos, name) {
 
     // Rename the SCDL promoted service and component
     var proms = filter(function(s) { return scdl.name(s) == oname }, scdl.services(compos));
-    if (!isNil(proms))
+    if (!isNull(proms))
         setElement(car(proms), mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name)));
     setElement(comp, append(mklist(element, "'component"),
         cons(mklist(attribute, "'name", name),
@@ -1655,7 +1655,7 @@ graph.cutwire = function(node, compos, g) {
      * Find the reference wired to a node and cut its wire.
      */
     function cutref(refs, node) {
-        if (isNil(refs))
+        if (isNull(refs))
             return true;
         var ref = car(refs);
         if (caddr(ref) == node) {
@@ -1702,13 +1702,13 @@ graph.wire = function(n, compos, g) {
          * references of a node.
          */
         function closerefs(npos, refs, spos, cref) {
-            if (isNil(refs))
+            if (isNull(refs))
                 return cref;
             var fdist = cadddr(cref);
             var ref = car(refs);
 
             // Skip wired reference
-            if (!isNil(filter(function(n) { return isAttribute(n) && attributeName(n) == "'target"; }, car(ref))))
+            if (!isNull(filter(function(n) { return isAttribute(n) && attributeName(n) == "'target"; }, car(ref))))
                 return closerefs(npos, cdr(refs), spos, cref);
 
             // Compute distance between service node and reference node
@@ -1723,12 +1723,12 @@ graph.wire = function(n, compos, g) {
             return closerefs(npos, cdr(refs), spos, fdist < rdist? cref : mklist(car(ref), cadr(ref), caddr(ref), rdist));
         }
 
-        if (isNil(nodes))
+        if (isNull(nodes))
             return cref;
 
         // Skip non-component nodes
         var node = car(nodes);
-        if (isNil(node.comp))
+        if (isNull(node.comp))
             return closecomprefs(cdr(nodes), spos, cref);
 
         // Compute the component absolute position
@@ -1771,7 +1771,7 @@ graph.display = function(nodes, g) {
 graph.hide = function(g) {
 
     // Remove nodes from the graph
-    map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
+    map(function(n) { if (!isNull(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
     return g;
 };
 
@@ -1782,7 +1782,7 @@ graph.refresh = function(g) {
     //debug('refresh');
 
     // Remove existing nodes from the graph
-    map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
+    map(function(n) { if (!isNull(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
 
     // Redisplay the composite associated with the graph
     var nodes = graph.composite(g.compos, graph.mkpath().pos(graph.palcx,0), false);
@@ -1802,7 +1802,7 @@ graph.edit = function(appname, compos, nodes, g) {
     setElement(scompos, graph.sortcompos(scompos));
 
     // Remove existing nodes from the graph
-    map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
+    map(function(n) { if (!isNull(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
 
     // Display the composite nodes
     appendNodes(nodes, g);
@@ -1829,7 +1829,7 @@ var bpalette = null;
  * Get and display an application composite.
  */
 function getapp(name, g) {
-    if (isNil(name))
+    if (isNull(name))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -1846,8 +1846,8 @@ function getapp(name, g) {
         // Get the composite from the ATOM entry
         var composentry = car(atom.readATOMEntry(mklist(doc)));
         var content = namedElementChild("'content", composentry);
-        composite = isNil(content)? mklist() : elementChildren(content);
-        if (isNil(composite)) {
+        composite = isNull(content)? mklist() : elementChildren(content);
+        if (isNull(composite)) {
 
             // Create a default empty composite if necessary
             var x = '<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" ' +
@@ -1879,15 +1879,15 @@ function getapp(name, g) {
  * Display a palette. Get it from the server if needed.
  */
 function displaypalette(name, g, palette, gpalettes) {
-    if (isNil(name))
+    if (isNull(name))
         return;
-    if (isNil(gpalettes[name])) {
+    if (isNull(gpalettes[name])) {
 
         // Get the palette from the server
         palettes.get(name, function(doc) {
             var entry = car(atom.readATOMEntry(mklist(doc)));
             var content = namedElementChild("'content", entry);
-            var compos = isNil(content)? mklist() : elementChildren(content);
+            var compos = isNull(content)? mklist() : elementChildren(content);
             gpalettes[name] = graph.composite(compos, graph.mkpath().move(2580,0), true, g);
             graph.display(gpalettes[name], g);
         });
@@ -1985,7 +1985,7 @@ function oncomposchange(prop) {
  * Return the link to a component.
  */
 function complink(appname, cname) {
-    if (cname == '' || isNil(cname))
+    if (cname == '' || isNull(cname))
         return '';
     var protocol = location.protocol;
     var host = location.hostname;
@@ -2004,9 +2004,9 @@ function oncompselect(gsel) {
         return true;
     gcomp = gsel;
 
-    cdelete.disabled = isNil(gsel) || !editable;
-    ccopy.disabled = isNil(gsel) || !editable;
-    cplay.disabled = isNil(gsel);
+    cdelete.disabled = isNull(gsel) || !editable;
+    ccopy.disabled = isNull(gsel) || !editable;
+    cplay.disabled = isNull(gsel);
     return true;
 }
 
@@ -2016,7 +2016,7 @@ function oncompselect(gsel) {
 function showdata(gcomp) {
     if (!gvisible)
         return true;
-    if (isNil(gcomp))
+    if (isNull(gcomp))
         return true;
     cvalue.value = complink(appname, gcomp.id);
     cplay.value = '<';

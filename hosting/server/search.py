@@ -30,10 +30,10 @@ def mergeratings(entries, ratings):
         info = content(app)
         rating = ratings.get(id)
         rates = content(rating)
-        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNil(info) else cdr(info)) + (() if isNil(rates) else cdr(rates)))
+        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNull(info) else cdr(info)) + (() if isNull(rates) else cdr(rates)))
         return mergedentry
 
-    mergedentries = tuple(filter(lambda e: not isNil(e), map(lambda e: car(mergerating((e,))), entries)))
+    mergedentries = tuple(filter(lambda e: not isNull(e), map(lambda e: car(mergerating((e,))), entries)))
     debug('search.py::mergeratings::mergedentries', mergedentries)
     return mergedentries
 
@@ -41,7 +41,7 @@ def mergeratings(entries, ratings):
 def get(id, user, cache, db, apps, ratings):
     debug('search.py::get::id', id)
     q = assoc("'q", id)
-    if isNil(q):
+    if isNull(q):
         return None
 
     # Run the search
@@ -49,7 +49,7 @@ def get(id, user, cache, db, apps, ratings):
     debug('search.py::get::foundentries', foundentries)
 
     # Merge app ratings
-    appentries = mergeratings(tuple(map(lambda v: car(v), () if isNil(foundentries) else foundentries)), ratings)
+    appentries = mergeratings(tuple(map(lambda v: car(v), () if isNull(foundentries) else foundentries)), ratings)
 
     results = ((("'feed", ("'title", "Search Results"), ("'id", 'search')) + appentries),)
     debug('search.py::get::results', results)

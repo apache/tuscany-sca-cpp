@@ -28,10 +28,10 @@ def reviewsid(user):
 def getreviews(id, cache):
     debug('reviews.py::getreviews::id', id)
     val = cache.get(id)
-    if isNil(val):
+    if isNull(val):
         return ()
     reviews = cdddr(car(val))
-    if not isNil(reviews) and isList(car(cadr(car(reviews)))):
+    if not isNull(reviews) and isList(car(cadr(car(reviews)))):
         # Expand list of entries
         ereviews = tuple(map(lambda e: cons("'entry", e), cadr(car(reviews))))
         debug('reviews.py::getreviews::ereviews', ereviews)
@@ -42,7 +42,7 @@ def getreviews(id, cache):
 
 # Get a review from a user's reviews
 def getreview(id, reviews):
-    if isNil(reviews):
+    if isNull(reviews):
         return None
     if car(id) == entryid(reviews):
         return (car(reviews),)
@@ -51,20 +51,20 @@ def getreview(id, reviews):
 # Get reviews from the user's reviews
 def get(id, user, cache, apps, ratings):
     debug('reviews.py::get::id', id)
-    if isNil(id):
+    if isNull(id):
         reviews = ((("'feed", ("'title", "Your Reviews"), ("'id", user.get(()))) + getreviews(reviewsid(user), cache)),)
         debug('reviews.py::get::reviews', reviews)
         return reviews
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('reviews.py::get', 'app not found', id)
         return False
 
     # Get the review
     review = getreview(id, getreviews(reviewsid(user), cache))
-    if isNil(review):
+    if isNull(review):
         debug('reviews.py::get', 'review not found', id)
 
         # Return a default empty review
@@ -75,7 +75,7 @@ def get(id, user, cache, apps, ratings):
 
 # Patch an app ratings
 def patchratings(id, user, ratings, oreview, nreview):
-    patch = ("'patch", ("'old", "0" if isNil(oreview) else cadr(content(oreview))), ("'new", "0" if isNil(nreview) else cadr(content(nreview))))
+    patch = ("'patch", ("'old", "0" if isNull(oreview) else cadr(content(oreview))), ("'new", "0" if isNull(nreview) else cadr(content(nreview))))
     patchentry = mkentry(car(id), car(id), user.get(()), now(), patch);
     debug('reviews.py::patchratings::patchentry', patchentry)
     return ratings.patch(id, patchentry)
@@ -89,7 +89,7 @@ def putreviews(id, reviews, cache):
 
 # Put a review into a user's reviews
 def putreview(id, review, reviews):
-    if isNil(reviews):
+    if isNull(reviews):
         return review
     if car(id) == entryid(reviews):
         return cons(car(review), cdr(reviews))
@@ -102,7 +102,7 @@ def put(id, review, user, cache, apps, ratings):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('reviews.py::put', 'app not found', id)
         return False
 
@@ -122,7 +122,7 @@ def put(id, review, user, cache, apps, ratings):
 
 # Delete a review from a reviews record
 def deletereview(id, reviews):
-    if isNil(reviews):
+    if isNull(reviews):
         return ()
     if car(id) == entryid(reviews):
         return cdr(reviews)
@@ -131,19 +131,19 @@ def deletereview(id, reviews):
 # Delete reviews from the user's reviews record
 def delete(id, user, cache, apps, ratings):
     debug('reviews.py::delete::id', id)
-    if isNil(id):
+    if isNull(id):
         return cache.delete(reviewsid(user))
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('reviews.py::delete', 'app not found', id)
         return False
 
     # Get the review
     reviews = getreviews(reviewsid(user), cache)
     review = getreview(id, reviews)
-    if isNil(review):
+    if isNull(review):
         debug('reviews.py::delete', 'review not found', id)
         return False
 

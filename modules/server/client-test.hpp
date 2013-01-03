@@ -190,7 +190,7 @@ const list<future<bool> > startPost(worker& w, const int threads, const blambda&
 }
 
 const bool checkPost(const list<future<bool> >& r) {
-    if (isNil(r))
+    if (isNull(r))
         return true;
     assert(car(r) == true);
     return checkPost(cdr(r));
@@ -244,7 +244,7 @@ const list<pid_t> startPost(const int procs, const blambda& l) {
 }
 
 const bool checkPost(const list<pid_t>& r) {
-    if (isNil(r))
+    if (isNull(r))
         return true;
     int status;
     waitpid(car(r), &status, 0);

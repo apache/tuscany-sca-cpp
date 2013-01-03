@@ -28,10 +28,10 @@ def dashboardid(user):
 def getdashboard(id, cache):
     debug('dashboards.py::getdashboard::id', id)
     val = cache.get(id)
-    if isNil(val):
+    if isNull(val):
         return ()
     dashboard = cdddr(car(val))
-    if not isNil(dashboard) and isList(car(cadr(car(dashboard)))):
+    if not isNull(dashboard) and isList(car(cadr(car(dashboard)))):
         # Expand list of entries
         edashboard = tuple(map(lambda e: cons("'entry", e), cadr(car(dashboard))))
         debug('dashboards.py::getdashboard::edashboard', edashboard)
@@ -53,7 +53,7 @@ def put(id, app, user, cache, apps, ratings):
     debug('dashboards.py::put::app', app)
 
     def putapp(id, app, dashboard):
-        if isNil(dashboard):
+        if isNull(dashboard):
             return app
         if car(id) == entryid(dashboard):
             return cons(car(app), cdr(dashboard))
@@ -73,15 +73,15 @@ def mergeapps(entries, apps, ratings):
         debug('store.py::mergeapp::entry', entry)
         id = (entryid(entry),)
         app = apps.get(id)
-        if isNil(app):
+        if isNull(app):
             return ((),)
         info = content(app)
         rating = ratings.get(id)
         rates = content(rating)
-        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNil(info) else cdr(info)) + (() if isNil(rates) else cdr(rates)))
+        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNull(info) else cdr(info)) + (() if isNull(rates) else cdr(rates)))
         return mergedentry
 
-    mergedentries = tuple(filter(lambda e: not isNil(e), map(lambda e: car(mergeapp((e,))), entries)))
+    mergedentries = tuple(filter(lambda e: not isNull(e), map(lambda e: car(mergeapp((e,))), entries)))
     debug('store.py::mergeapps::mergedentries', mergedentries)
     return mergedentries
 
@@ -90,13 +90,13 @@ def get(id, user, cache, apps, ratings):
     debug('dashboards.py::get::id', id)
 
     def findapp(id, dashboard):
-        if isNil(dashboard):
+        if isNull(dashboard):
             return None
         if car(id) == entryid(dashboard):
             return (car(dashboard),)
         return findapp(id, cdr(dashboard))
 
-    if isNil(id):
+    if isNull(id):
         dashboardapps = mergeapps(getdashboard(dashboardid(user), cache), apps, ratings)
         dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + dashboardapps),)
         debug('dashboards.py::get::dashboard', dashboard)
@@ -109,11 +109,11 @@ def get(id, user, cache, apps, ratings):
 # Delete apps from the user's dashboard
 def delete(id, user, cache, apps, ratings):
     debug('dashboards.py::delete::id', id)
-    if isNil(id):
+    if isNull(id):
         return cache.delete(dashboardid(user))
 
     def deleteapp(id, dashboard):
-        if isNil(dashboard):
+        if isNull(dashboard):
             return ()
         if car(id) == entryid(dashboard):
             return cdr(dashboard)

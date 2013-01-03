@@ -192,7 +192,7 @@ inline const value readToken(XMLReader& reader) {
  */
 inline const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
     const value token = readToken(reader);
-    if(isNil(token) || endElement == token)
+    if(isNull(token) || endElement == token)
         return reverse(listSoFar);
     if(startElement == token)
         return readList(cons<value>(readList(mklist(element), reader), listSoFar), reader);
@@ -225,7 +225,7 @@ public:
  */
 inline int readCallback(void *context, char* buffer, int len) {
     XMLReadContext& rc = *(XMLReadContext*)context;
-    if (isNil((const list<string>)rc.ilist))
+    if (isNull((const list<string>)rc.ilist))
         return 0;
     const list<string> f(fragment(rc.ilist, len));
     const string s(car(f));
@@ -238,7 +238,7 @@ inline int readCallback(void *context, char* buffer, int len) {
  * Return true if a list of strings contains an XML document.
  */
 inline const bool isXML(const list<string>& ls) {
-    if (isNil(ls))
+    if (isNull(ls))
         return false;
     return substr(car(ls), 0, 5) == "<?xml";
 }
@@ -266,13 +266,13 @@ const char* const encoding = "UTF-8";
  * Write a list of XML element or attribute tokens.
  */
 inline const list<value> expandElementValues(const value& n, const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons<value>(value(cons<value>(element, cons<value>(n, isList(car(l))? (list<value>)car(l) : mklist(car(l))))), expandElementValues(n, cdr(l)));
 }
 
 inline const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml) {
-    if (isNil(l))
+    if (isNull(l))
         return true;
 
     // Write an attribute

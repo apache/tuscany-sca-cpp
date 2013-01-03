@@ -98,7 +98,7 @@ public:
  * Run the authnz hooks to authenticate a request.
  */
 const failable<int> checkAuthnzProviders(const string& user, request_rec* const r, const list<AuthnProviderConf>& apcs) {
-    if (isNil(apcs))
+    if (isNull(apcs))
         return mkfailure<int>("Authentication failure for: " + user, HTTP_UNAUTHORIZED);
     const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
     if (apc.provider == NULL || !apc.provider->check_password)
@@ -116,7 +116,7 @@ const failable<int> checkAuthnz(const string& user, request_rec* const r, const 
     if (substr(user, 0, 1) == "/")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
-    if (isNil(apcs)) {
+    if (isNull(apcs)) {
         const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
         return checkAuthnzProviders(user, r, mklist<AuthnProviderConf>(AuthnProviderConf(AUTHN_DEFAULT_PROVIDER, provider)));
     }
@@ -136,11 +136,11 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 const failable<int> authenticated(const list<value>& userinfo, const bool check, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
-    if (isNil(scopeattrs)) {
+    if (isNull(scopeattrs)) {
 
         // Store user id in an environment variable
         const list<value> id = assoc<value>("id", userinfo);
-        if (isNil(id) || isNil(cdr(id)))
+        if (isNull(id) || isNull(cdr(id)))
             return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
         apr_table_set(r->subprocess_env, "OAUTH2_ID", apr_pstrdup(r->pool, c_str(cadr(id))));
 
@@ -158,7 +158,7 @@ const failable<int> authenticated(const list<value>& userinfo, const bool check,
     // Store each configured OAuth scope attribute in an environment variable
     const list<value> a = car(scopeattrs);
     const list<value> v = assoc<value>(cadr(a), userinfo);
-    if (!isNil(v) && !isNil(cdr(v))) {
+    if (!isNull(v) && !isNull(cdr(v))) {
 
         // Map the REMOTE_USER attribute to the request user field
         if (string(car(a)) == "REMOTE_USER")
@@ -175,22 +175,22 @@ const failable<int> authenticated(const list<value>& userinfo, const bool check,
 const failable<int> authorize(const list<value>& args, request_rec* const r, const list<value>& appkeys) {
     // Extract authorize, access_token, client ID and info URIs
     const list<value> ref = assoc<value>("openauth_referrer", args);
-    if (isNil(ref) || isNil(cdr(ref)))
+    if (isNull(ref) || isNull(cdr(ref)))
         return mkfailure<int>("Missing openauth_referrer parameter");
     const list<value> auth = assoc<value>("oauth2_authorize", args);
-    if (isNil(auth) || isNil(cdr(auth)))
+    if (isNull(auth) || isNull(cdr(auth)))
         return mkfailure<int>("Missing oauth2_authorize parameter");
     const list<value> tok = assoc<value>("oauth2_access_token", args);
-    if (isNil(tok) || isNil(cdr(tok)))
+    if (isNull(tok) || isNull(cdr(tok)))
         return mkfailure<int>("Missing oauth2_access_token parameter");
     const list<value> cid = assoc<value>("oauth2_client_id", args);
-    if (isNil(cid) || isNil(cdr(cid)))
+    if (isNull(cid) || isNull(cdr(cid)))
         return mkfailure<int>("Missing oauth2_client_id parameter");
     const list<value> info = assoc<value>("oauth2_info", args);
-    if (isNil(info) || isNil(cdr(info)))
+    if (isNull(info) || isNull(cdr(info)))
         return mkfailure<int>("Missing oauth2_info parameter");
     const list<value> scope = assoc<value>("oauth2_scope", args);
-    if (isNil(scope) || isNil(cdr(scope)))
+    if (isNull(scope) || isNull(cdr(scope)))
         return mkfailure<int>("Missing oauth2_scope parameter");
     const list<value> display = assoc<value>("oauth2_display", args);
 
@@ -205,12 +205,12 @@ const failable<int> authorize(const list<value>& args, request_rec* const r, con
 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
-    if (isNil(app) || isNil(cdr(app)))
+    if (isNull(app) || isNull(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     list<value> appkey = cadr(app);
 
     // Redirect to the authorize URI
-    const list<value> adisplay = (isNil(display) || isNil(cdr(display)))? nilListValue : mklist<value>("display", cadr(display));
+    const list<value> adisplay = (isNull(display) || isNull(cdr(display)))? nilListValue : mklist<value>("display", cadr(display));
     const list<value> aargs = mklist<value>(mklist<value>("response_type", "code"), mklist<value>("client_id", car(appkey)), mklist<value>("scope", cadr(scope)), adisplay, mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("state", httpd::escape(state)));
     const string uri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(aargs);
     debug(uri, "modoauth2::authorize::uri");
@@ -233,28 +233,28 @@ const failable<int> accessToken(const list<value>& args, request_rec* r, const l
 
     // Extract access_token URI, client ID and authorization code parameters
     const list<value> state = assoc<value>("state", args);
-    if (isNil(state) || isNil(cdr(state)))
+    if (isNull(state) || isNull(cdr(state)))
         return mkfailure<int>("Missing state parameter");
     const list<value>& stargs = httpd::queryArgs(httpd::unescape(cadr(state)));
     const list<value> ref = assoc<value>("openauth_referrer", stargs);
-    if (isNil(ref) || isNil(cdr(ref)))
+    if (isNull(ref) || isNull(cdr(ref)))
         return mkfailure<int>("Missing openauth_referrer parameter");
     const list<value> tok = assoc<value>("oauth2_access_token", stargs);
-    if (isNil(tok) || isNil(cdr(tok)))
+    if (isNull(tok) || isNull(cdr(tok)))
         return mkfailure<int>("Missing oauth2_access_token parameter");
     const list<value> cid = assoc<value>("oauth2_client_id", stargs);
-    if (isNil(cid) || isNil(cdr(cid)))
+    if (isNull(cid) || isNull(cdr(cid)))
         return mkfailure<int>("Missing oauth2_client_id parameter");
     const list<value> info = assoc<value>("oauth2_info", stargs);
-    if (isNil(info) || isNil(cdr(info)))
+    if (isNull(info) || isNull(cdr(info)))
         return mkfailure<int>("Missing oauth2_info parameter");
     const list<value> code = assoc<value>("code", args);
-    if (isNil(code) || isNil(cdr(code)))
+    if (isNull(code) || isNull(cdr(code)))
         return mkfailure<int>("Missing code parameter");
 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), appkeys);
-    if (isNil(app) || isNil(cdr(app)))
+    if (isNull(app) || isNull(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + (string)cadr(cid));
     list<value> appkey = cadr(app);
 
@@ -274,12 +274,12 @@ const failable<int> accessToken(const list<value>& args, request_rec* r, const l
         return mkfailure<int>(ftr);
     const value tr = content(ftr);
     debug(tr, "modoauth2::access_token::response");
-    if (!isList(tr) || isNil(tr))
+    if (!isList(tr) || isNull(tr))
         return mkfailure<int>("Empty access token");
     const list<value> tv = isString(car<value>(tr)) ?
         assoc<value>("access_token", httpd::queryArgs(join("", convertValues<string>(cadr<value>(tr))))) :
         assoc<value>("access_token", tr);
-    if (isNil(tv) || isNil(cdr(tv)))
+    if (isNull(tv) || isNull(cdr(tv)))
         return mkfailure<int>("Couldn't retrieve access_token");
     debug(tv, "modoauth2::access_token::token");
 
@@ -373,7 +373,7 @@ static int checkAuthn(request_rec *r) {
         hasContent(openauth::sessionID(r, "TuscanyOpenAuth")) ||
         hasContent(openauth::sessionID(r, "TuscanyOAuth1")))
         return DECLINED;
-    if ((substr(string(r->uri), 0, 8) == "/oauth1/") || !isNil(assoc<value>("openid_identifier", args)))
+    if ((substr(string(r->uri), 0, 8) == "/oauth1/") || !isNull(assoc<value>("openid_identifier", args)))
         return DECLINED;
 
     r->ap_auth_type = const_cast<char*>(atype);
@@ -390,9 +390,9 @@ int postConfigMerge(const ServerConf& mainsc, server_rec* const s) {
     debug(httpd::serverName(s), "modoauth2::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil((list<value>)sc.appkeys))
+    if (isNull((list<value>)sc.appkeys))
         sc.appkeys = mainsc.appkeys;
-    if (isNil((list<string>)sc.mcaddrs))
+    if (isNull((list<string>)sc.mcaddrs))
         sc.mcaddrs = mainsc.mcaddrs;
     sc.mc = mainsc.mc;
     sc.cs = mainsc.cs;
@@ -424,7 +424,7 @@ void childInit(apr_pool_t* const p, server_rec* const s) {
     ServerConf& sc = *psc;
 
     // Connect to Memcached
-    if (isNil((list<string>)sc.mcaddrs))
+    if (isNull((list<string>)sc.mcaddrs))
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("localhost", 11211));
     else
         sc.mc = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(sc.mcaddrs));

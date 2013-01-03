@@ -176,7 +176,7 @@ int messageHandler(unused xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, 
     XMPPClient& xc = *(XMPPClient*)udata;
     const char* const from = xmpp_stanza_get_attribute(stanza, "from");
     const char* const text = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
-    if (isNil((lambda<const failable<bool>(const value&, const value&, XMPPClient&)>)xc.listener))
+    if (isNull((lambda<const failable<bool>(const value&, const value&, XMPPClient&)>)xc.listener))
         return 1;
     const value val(content(scheme::readValue(text)));
     debug(from, "chat::messageHandler::from");
@@ -315,7 +315,7 @@ const failable<bool> listen(const lambda<const failable<bool>(const value&, cons
     xc.listener = listener;
     xmpp_handler_add(xc.conn, messageHandler, NULL, "message", NULL, &xc);
     xc.ctx->loop_status = XMPP_LOOP_RUNNING;
-    while(xc.connected && !isNil((lambda<const failable<bool>(const value&, const value&, XMPPClient&)>)xc.listener) && xc.ctx->loop_status == XMPP_LOOP_RUNNING)
+    while(xc.connected && !isNull((lambda<const failable<bool>(const value&, const value&, XMPPClient&)>)xc.listener) && xc.ctx->loop_status == XMPP_LOOP_RUNNING)
         xmpp_run_once(xc.ctx, 1000L);
     return true;
 }

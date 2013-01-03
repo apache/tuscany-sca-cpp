@@ -260,7 +260,7 @@ const string cookie(const request_rec* const r) {
  * Return the remaining part of a uri after the given path (aka the path info.)
  */
 const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
-    if (isNil(path))
+    if (isNull(path))
         return uri;
     return pathInfo(cdr(uri), cdr(path));
 }
@@ -347,14 +347,14 @@ const list<value> unescapeArgs(const list<value>& args) {
 const value queryArg(const string& s) {
     debug(s, "httpd::queryArg::string");
     const list<string> t = tokenize("=", s);
-    if (isNil(cdr(t)))
+    if (isNull(cdr(t)))
         return mklist<value>(c_str(car(t)), emptyString);
     return mklist<value>(c_str(car(t)), cadr(t));
 }
 
 const string fixupQueryArgs(const string& a) {
     const list<string> t = tokenize("?", a);
-    if (isNil(t) || isNil(cdr(t)))
+    if (isNull(t) || isNull(cdr(t)))
         return a;
     return join("&", t);
 }
@@ -376,7 +376,7 @@ const list<value> queryArgs(const request_rec* const r) {
  * Converts the args received in a POST to a list of key value pairs.
  */
 const list<value> postArgs(const list<value>& a) {
-    if (isNil(a))
+    if (isNull(a))
         return nilListValue;
     const list<value> l = car(a);
     return cons<value>(l, postArgs(cdr(a)));

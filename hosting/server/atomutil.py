@@ -21,42 +21,42 @@ from time import strftime, gmtime
 
 # Make an ATOM entry
 def mkentry(title, id, author, updated, content):
-    return (("'entry", ("'title", title), ("'id", id), ("'author", author), ("'updated", updated), ("'content",) if isNil(content) else ("'content", content)),)
+    return (("'entry", ("'title", title), ("'id", id), ("'author", author), ("'updated", updated), ("'content",) if isNull(content) else ("'content", content)),)
 
 # Make an ATOM feed
 def mkfeed(title, id, author, updated, entries):
-    return (("'entry", ("'title", title), ("'id", id), ("'author", author), ("'updated", updated), ("'content",) if isNil(content) else ("'content", content)),)
+    return (("'entry", ("'title", title), ("'id", id), ("'author", author), ("'updated", updated), ("'content",) if isNull(content) else ("'content", content)),)
 
 # Return ATOM attributes
 def title(e):
-    if isNil(e):
+    if isNull(e):
         return ()
     t = assoc("'title", car(e))
-    return None if isNil(t) else cadr(t)
+    return None if isNull(t) else cadr(t)
 
 def entryid(e):
-    if isNil(e):
+    if isNull(e):
         return ()
     id = assoc("'id", car(e))
-    return None if isNil(id) else cadr(id)
+    return None if isNull(id) else cadr(id)
 
 def author(e):
-    if isNil(e):
+    if isNull(e):
         return ()
     a = assoc("'author", car(e))
-    return None if isNil(a) else cadr(a)
+    return None if isNull(a) else cadr(a)
 
 def updated(e):
-    if isNil(e):
+    if isNull(e):
         return ()
     u = assoc("'updated", car(e))
-    return None if isNil(u) else cadr(u)
+    return None if isNull(u) else cadr(u)
 
 def content(e):
-    if isNil(e):
+    if isNull(e):
         return ()
     c = assoc("'content", car(e))
-    return () if isNil(c) or isNil(cdr(c)) else c[len(c) - 1]
+    return () if isNull(c) or isNull(cdr(c)) else c[len(c) - 1]
 
 # Return the current time
 def now():

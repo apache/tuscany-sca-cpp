@@ -207,7 +207,7 @@ window.addEventListener('online', function(e) {
  * as a list of ids.
  */
 function namedvalue(l, id) {
-    if (isNil(l))
+    if (isNull(l))
         return null;
     var e = car(l);
 
@@ -215,7 +215,7 @@ function namedvalue(l, id) {
     if (car(id) == elementName(e)) {
 
         // Found element matching the whole id path
-        if (isNil(cdr(id)))
+        if (isNull(cdr(id)))
             return e;
 
         // Search for next id segments in child elements
@@ -267,15 +267,15 @@ function setwidgetvalue(e, dv) {
     }
 
     function vattr(dv) {
-        return (elementHasValue(dv) && !isNil(elementValue(dv)))? mklist(mklist('value', isNil(elementValue(dv))? '' : elementValue(dv))) : mklist();
+        return (elementHasValue(dv) && !isNull(elementValue(dv)))? mklist(mklist('value', isNull(elementValue(dv))? '' : elementValue(dv))) : mklist();
     }
 
     function sattr(dv) {
         var s = namedElementChild("'htstyle", dv);
-        return isNil(s)? mklist() : mklist(mklist('style', elementHasValue(s)? elementValue(s) : elementChildren(s)))
+        return isNull(s)? mklist() : mklist(mklist('style', elementHasValue(s)? elementValue(s) : elementChildren(s)))
     }
 
-    var attrs = append(append(isNil(htattrs)?  mklist() : map(attr, elementChildren(htattrs)), vattr(dv)), sattr(dv));
+    var attrs = append(append(isNull(htattrs)?  mklist() : map(attr, elementChildren(htattrs)), vattr(dv)), sattr(dv));
 
     // Set the attributes of the widget
     function setattrs(vsetter, attrs, ce) {
@@ -312,7 +312,7 @@ function setwidgetvalue(e, dv) {
                 // Define the stylesheet
                 if (s != '') {
                     var esheet = ui.elementByID(contentdiv, 'style_' + e.id);
-                    if (isNil(esheet)) {
+                    if (isNull(esheet)) {
                         var nesheet = document.createElement('style');
                         nesheet.id = 'style_' + e.id;
                         nesheet.type = 'text/css';
@@ -330,7 +330,7 @@ function setwidgetvalue(e, dv) {
                 ce.setAttribute('style', p);
 
                 // Restart current animation if necessary
-                if (!isNil(aname) && ce.style.webkitAnimationName == aname) {
+                if (!isNull(aname) && ce.style.webkitAnimationName == aname) {
                     ce.style.webkitAnimationName = '';
                     ui.async(function restartanimation() {
                         ce.style.webkitAnimationName = aname;
@@ -381,12 +381,12 @@ function setwidgetvalue(e, dv) {
         return setattrs(setselectvalue, attrs, ce);
     }
     if (e.className == 'list') {
-        var dl = ui.datalist(isNil(dv)? mklist() : mklist(dv));
+        var dl = ui.datalist(isNull(dv)? mklist() : mklist(dv));
         e.innerHTML = dl;
         return dl;
     }
     if (e.className == 'table') {
-        var dl = ui.datatable(isNil(dv)? mklist() : mklist(dv));
+        var dl = ui.datatable(isNull(dv)? mklist() : mklist(dv));
         e.innerHTML = dl;
         return dl;
     }
@@ -422,19 +422,19 @@ function setwidgetvalue(e, dv) {
  * Update the app page with the given app data.
  */
 function updatepage(l) {
-    if (isNil(l))
+    if (isNull(l))
         return true;
 
     // Update the widgets values
     function updatewidget(e) {
         var dv = namedvalue(l, map(function(t) { return "'" + t; }, e.id.split('.')));
-        if (dv == null || isNil(dv))
+        if (dv == null || isNull(dv))
             return e;
         setwidgetvalue(e, dv);
         return e;
     }
 
-    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
+    map(updatewidget, filter(function(e) { return !isNull(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
     return true;
 }
 
@@ -442,7 +442,7 @@ function updatepage(l) {
  * Convert a document to application data.
  */
 function docdata(doc) {
-    if (isNil(doc))
+    if (isNull(doc))
         return null;
 
     if (json.isJSON(mklist(doc)))
@@ -566,7 +566,7 @@ function fixupwidget(e) {
  * Set initial value of a widget.
  */
 function initwidget(e) {
-    if (!isNil(e.id) && e.id.substring(0, 5) != 'page:')
+    if (!isNull(e.id) && e.id.substring(0, 5) != 'page:')
         setwidgetvalue(e, mklist());
     return e;
 }
@@ -575,9 +575,9 @@ function initwidget(e) {
  * Return the component bound to a uri.
  */
 function isbound(uri, comps) {
-    return !isNil(filter(function(comp) {
-        return !isNil(filter(function(svc) {
-            return !isNil(filter(function(b) {
+    return !isNull(filter(function(comp) {
+        return !isNull(filter(function(svc) {
+            return !isNull(filter(function(b) {
                 return uri == scdl.uri(b);
             }, scdl.bindings(svc)));
         }, scdl.services(comp)));
@@ -592,7 +592,7 @@ function getappdata(appname, page, compos) {
 
         // Eval a component init script
         function evalcompinit(doc) {
-            if (isNil(doc))
+            if (isNull(doc))
                 return true;
             var js = car(json.readJSON(mklist(doc)));
             if (!elementHasValue(js))
@@ -609,7 +609,7 @@ function getappdata(appname, page, compos) {
         }
 
         // Setup the widgets
-        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
+        map(setupwidget, filter(function(e) { return !isNull(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
 
         // Get the app components
         var comps = scdl.components(compos);
@@ -617,7 +617,7 @@ function getappdata(appname, page, compos) {
         // Get the component app data
         if (isbound("start", comps)) {
             startcomp.get(location.search, function(doc, e) {
-                if (isNil(doc)) {
+                if (isNull(doc)) {
                     debug('error on get(start, ' + location.search + ')', e);
                     return false;
                 }
@@ -630,7 +630,7 @@ function getappdata(appname, page, compos) {
         // Get and eval the optional timer, animation and location watch setup scripts
         if (isbound("timer", comps)) {
             timercomp.get('setup', function(doc, e) {
-                if (isNil(doc)) {
+                if (isNull(doc)) {
                     debug('error on get(timer, setup)', e);
                     return false;
                 }
@@ -642,7 +642,7 @@ function getappdata(appname, page, compos) {
 
         if (isbound("animation", comps)) {
             animationcomp.get('setup', function(doc, e) {
-                if (isNil(doc)) {
+                if (isNull(doc)) {
                     debug('error on get(animation, setup)', e);
                     return false;
                 }
@@ -654,7 +654,7 @@ function getappdata(appname, page, compos) {
 
         if (isbound("location", comps)) {
             locationcomp.get('setup', function(doc, e) {
-                if (isNil(doc)) {
+                if (isNull(doc)) {
                     debug('error on get(location, setup)', e);
                     return false;
                 }
@@ -677,7 +677,7 @@ function getappdata(appname, page, compos) {
  */
 function atompage(doc) {
     var entry = atom.readATOMEntry(mklist(doc));
-    if (isNil(entry))
+    if (isNull(entry))
         return mklist();
     var content = namedElementChild("'content", car(entry));
     if (content == null)
@@ -691,7 +691,7 @@ function atompage(doc) {
 function getapppage(appname, compos) {
     pagecomp.get(appname, function(doc, e) {
         //debug('page get');
-        if (isNil(doc)) {
+        if (isNull(doc)) {
             debug('error in getapppage', e);
             return false;
         }
@@ -702,7 +702,7 @@ function getapppage(appname, compos) {
         apppage = page;
 
         // Merge in the app data
-        if (!isNil(appcomposite))
+        if (!isNull(appcomposite))
             getappdata(appname, apppage, appcomposite);
 });
 
@@ -720,10 +720,10 @@ function compquery() {
         return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(contentdiv, 'page'))));
+    var args = map(queryarg, filter(function(e) { return !isNull(e.id) && !isNull(inputvalue(e)); }, childrenList(ui.elementByID(contentdiv, 'page'))));
 
     // Append current location properties if known
-    if (!isNil(geoposition)) {
+    if (!isNull(geoposition)) {
         var g = geoposition;
         args = append(args, mklist('latitude=' + g.coords.latitude, 'longitude=' + g.coords.longitude, 'altitude=' + g.coords.altitude,
                         'accuracy=' + g.coords.accuracy, 'altitudeAccuracy=' + g.coords.altitudeAccuracy, 'heading=' + g.coords.heading,
@@ -740,7 +740,7 @@ function buttonClickHandler(id, appname) {
     try {
         var uri = compquery();
         return sca.component(id, appname).get(uri, function(doc, e) {
-            if (isNil(doc)) {
+            if (isNull(doc)) {
                 debug('error on get(button, ' + uri + ')', e);
                 return false;
             }
@@ -761,7 +761,7 @@ function intervalHandler() {
     try {
         var uri = compquery();
         return timercomp.get(uri, function(doc, e) {
-            if (isNil(doc)) {
+            if (isNull(doc)) {
                 debug('error on get(timer, ' + uri + ')', e);
                 return false;
             }
@@ -804,7 +804,7 @@ function animationHandler() {
             updatepage(car(currentAnimationData));
 
             // End of animation?
-            if (isNil(cdr(currentAnimationData))) {
+            if (isNull(cdr(currentAnimationData))) {
                 if (currentAnimationLoop == -1) {
                     // Repeat current animation forever
                     currentAnimationData = animationData;
@@ -830,12 +830,12 @@ function animationHandler() {
         }
 
         // Get new animation data if necessary
-        if (isNil(animationData)) {
+        if (isNull(animationData)) {
             if (gettingAnimationData)
                 return true;
             var uri = compquery();
             return animationcomp.get(uri, function(doc, e) {
-                if (isNil(doc)) {
+                if (isNull(doc)) {
                     debug('error on get(animation, ' + uri + ')', e);
                     return false;
                 }
@@ -882,7 +882,7 @@ function locationHandler(pos) {
         geoposition = pos;
         var uri = compquery();
         return locationcomp.get(uri, function(doc, e) {
-            if (isNil(doc)) {
+            if (isNull(doc)) {
                 debug('error on get(location, ' + uri + ')', e);
                 return false;
             }
@@ -897,7 +897,7 @@ function locationHandler(pos) {
 
 function locationErrorHandler(e) {
     debug('location error', e);
-    if (!isNil(locationWatch)) {
+    if (!isNull(locationWatch)) {
         try {
             navigator.geolocation.clearWatch(locationWatch);
         } catch(e) {}
@@ -911,7 +911,7 @@ function locationErrorHandler(e) {
  */
 function setupLocationHandler() {
     function installLocationHandler() {
-        if (!isNil(locationWatch))
+        if (!isNull(locationWatch))
             return true;
         try {
             locationWatch = navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
@@ -940,7 +940,7 @@ document.body.onorientationchange = function(e) {
  */
 function atomcomposite(doc) {
     var entry = atom.readATOMEntry(mklist(doc));
-    if (isNil(entry))
+    if (isNull(entry))
         return mklist();
     var content = namedElementChild("'content", car(entry));
     if (content == null)
@@ -954,13 +954,13 @@ function atomcomposite(doc) {
 function getappcomposite(appname) {
     return composcomp.get(appname, function(doc, e) {
         //debug('page get');
-        if (isNil(doc)) {
+        if (isNull(doc)) {
             debug('error in getappcomposite', e);
             return false;
         }
 
         var compos = atomcomposite(doc);
-        if (isNil(compos)) {
+        if (isNull(compos)) {
 
             // Create a default empty composite if necessary
             var x = '<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" ' +
@@ -970,7 +970,7 @@ function getappcomposite(appname) {
         appcomposite = compos;
 
         // Merge in the app data
-        if (!isNil(apppage))
+        if (!isNull(apppage))
             getappdata(appname, apppage, appcomposite);
     });
 }

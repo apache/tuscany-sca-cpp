@@ -59,7 +59,7 @@ def requestIfNoneMatch(e):
 
 # Hash a list of strings into an MD5 signature
 def md5update(md, s):
-    if isNil(s):
+    if isNull(s):
         return md.hexdigest()
     md.update(car(s))
     return md5update(md, cdr(s))
@@ -113,7 +113,7 @@ def fileresult(e, r, ct, f):
 
 # Converts the args received in a POST to a list of key value pairs
 def postArgs(a):
-    if isNil(a):
+    if isNull(a):
         return ((),)
     l = car(a);
     return cons(l, postArgs(cdr(a)))
@@ -188,16 +188,16 @@ def application(e, r):
             return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(()))
 
         # Write content-type / content-list pair
-        if isString(car(v)) and not isNil(cdr(v)) and isList(cadr(v)):
+        if isString(car(v)) and not isNull(cdr(v)) and isList(cadr(v)):
             return result(e, r, 200, (("Content-type", car(v)),), cadr(v))
         
         # Convert list of values to element values
         ve = valuesToElements(v)
 
         # Write an assoc result as a JSON value
-        if isList(car(ve)) and not isNil(car(ve)):
+        if isList(car(ve)) and not isNull(car(ve)):
             el = car(ve)
-            if isSymbol(car(el)) and car(el) == element and not isNil(cdr(el)) and isSymbol(cadr(el)):
+            if isSymbol(car(el)) and car(el) == element and not isNull(cdr(el)) and isSymbol(cadr(el)):
                 if cadr(el) == "'feed":
                     return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMFeed(ve))
                 if cadr(el) == "'entry":
@@ -224,7 +224,7 @@ def application(e, r):
         if contains(ct, "application/atom+xml"):
             ae = elementsToValues(readATOMEntry(requestBody(e)))
             v = comp("post", id, ae)
-            if isNil(v):
+            if isNull(v):
                 return failure(e, r, 500)
             return result(e, r, 201, (("Location", request_uri(e) + "/" + "/".join(v)),))
         return failure(e, r, 500)

@@ -46,7 +46,7 @@ namespace modcpp {
  * Apply a C++ component implementation function.
  */
 const list<value> failableResult(const value& func, const list<value>& v) {
-    if (isNil(cdr(v)))
+    if (isNull(cdr(v)))
         return v;
 
     // Report a failure with an empty reason as 'function not supported'
@@ -69,7 +69,7 @@ const failable<lvvlambda > evalImplementation(const string& path, const value& i
     // Configure the implementation's lambda function
     const value ipath(attributeValue("path", impl));
     const value iname(attributeValue("library", impl));
-    const string fpath(isNil(ipath)? path + (string)iname : path + (string)ipath + "/" + (string)iname);
+    const string fpath(isNull(ipath)? path + (string)iname : path + (string)ipath + "/" + (string)iname);
     const lib ilib(*(new (gc_new<lib>()) lib(fpath + dynlibExt)));
     const failable<lvvlambda > fappl(dynlambda<const value(const list<value>&)>("apply", ilib));
     if (!hasContent(fappl))

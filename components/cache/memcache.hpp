@@ -95,10 +95,10 @@ private:
     }
 
     const failable<bool> addServers(apr_memcache_t* const m, const list<string>& servers) {
-        if (isNil(servers))
+        if (isNull(servers))
             return true;
         const list<string> toks = tokenize(":", car(servers));
-        const failable<bool> r = addServer(m, car(toks), isNil(cdr(toks))? 11211 : atoi(c_str(cadr(toks))));
+        const failable<bool> r = addServer(m, car(toks), isNull(cdr(toks))? 11211 : atoi(c_str(cadr(toks))));
         if (!hasContent(r))
             return r;
         return addServers(m, cdr(servers));

@@ -68,7 +68,7 @@ const failable<value> put(const list<value>& params, const memcache::MemCached& 
 const failable<value> patch(const list<value>& params, const memcache::MemCached& ch) {
     // Read patch
     value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
-    if (isNil(p))
+    if (isNull(p))
         return mkfailure<value>("Couldn't read patch script");
     const string script = cadr<value>(p);
     debug(script, "memcache::patch::script");
@@ -82,7 +82,7 @@ const failable<value> patch(const list<value>& params, const memcache::MemCached
     // Apply patch
     scheme::Env env = scheme::setupEnvironment();
     const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(car(params), hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
-    if (isNil(pval)) {
+    if (isNull(pval)) {
         ostringstream os;
         os << "Couldn't patch memcached entry: " << car(params);
         return mkfailure<value>(str(os), 404, false);
@@ -109,7 +109,7 @@ const failable<value> del(const list<value>& params, const memcache::MemCached& 
  * Convert a list of properties to a list of server addresses.
  */
 const list<string> servers(const list<value>& params) {
-    if (isNil(params))
+    if (isNull(params))
         return list<string>();
     const value s = ((lvvlambda)car(params))(nilListValue);
     return cons<string>(s, servers(cdr(params)));

@@ -91,7 +91,7 @@ private:
  * Convert a key to a file name.
  */
 const string filename(const list<value>& path, const string& root) {
-    if (isNil(path))
+    if (isNull(path))
         return root;
     const string name = root + "/" + (isString(car(path))? (string)car(path) : write(content(scheme::writeValue(car(path)))));
     return filename(cdr(path), name);
@@ -107,7 +107,7 @@ const string filename(const value& key, const string& root) {
  * Make the parent directories of a keyed file.
  */
 const failable<bool> mkdirs(const list<value>& path, const string& root) {
-    if (isNil(cdr(path)))
+    if (isNull(cdr(path)))
         return true;
     const string dir = root + "/" + (isString(car(path))? (string)car(path) : write(content(scheme::writeValue(car(path)))));
     mkdir(c_str(dir), S_IRWXU);

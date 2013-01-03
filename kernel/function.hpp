@@ -160,7 +160,7 @@ public:
     }
 
     template<typename S> friend ostream& operator<<(ostream&, const lambda<S>&);
-    template<typename S> friend const bool isNil(const lambda<S>& l) noexcept;
+    template<typename S> friend const bool isNull(const lambda<S>& l) noexcept;
 
 private:
     typedef Callable<R,P...> CallableType;
@@ -179,7 +179,7 @@ template<typename S> inline ostream& operator<<(ostream& out, const lambda<S>& l
 /**
  * Return true if a lambda is nil.
  */
-template<typename S> inline const bool isNil(const lambda<S>& l) noexcept {
+template<typename S> inline const bool isNull(const lambda<S>& l) noexcept {
     return (const void*)l.callable == NULL;
 }
 

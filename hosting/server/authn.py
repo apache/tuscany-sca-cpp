@@ -25,7 +25,7 @@ def authnid(id):
 # Get a user's authentication
 def get(id, cache):
     authn = cache.get(authnid(id))
-    if isNil(authn):
+    if isNull(authn):
         return None
     return authn
 

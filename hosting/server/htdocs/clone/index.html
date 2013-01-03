@@ -72,7 +72,7 @@ var savedappxml = '';
  * Get and display the requested app.
  */
 (function getapp() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -149,7 +149,7 @@ $('cloneAppForm').onsubmit = function() {
 
     // Check reserved app names
     var reserved = mklist('account', 'app', 'cache', 'clone', 'create', 'delete', 'graph', 'home', 'login', 'new', 'page', 'proxy', 'public', 'private', 'info', 'store');
-    if (!isNil(assoc(name, map(function(r) { return mklist(r, r); }, reserved)))) {
+    if (!isNull(assoc(name, map(function(r) { return mklist(r, r); }, reserved)))) {
         errorstatus('App name is taken, please pick another name');
         return false;
     }

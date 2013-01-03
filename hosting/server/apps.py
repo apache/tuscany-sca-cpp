@@ -34,7 +34,7 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
     if car(id) == eid:
         # Check app author
         eapp = cache.get(appid(id))
-        if (not isNil(eapp)) and (author(eapp) != user.get(())):
+        if (not isNull(eapp)) and (author(eapp) != user.get(())):
             debug('apps.py::put', 'different author', author(eapp))
             return False
 
@@ -45,7 +45,7 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
         dashboard.put(id, appentry)
 
         # Create new page and composite if necessary
-        if isNil(eapp):
+        if isNull(eapp):
             comp = mkentry(car(id), car(id), user.get(()), now(), ())
             composites.put(id, comp)
             page = mkentry(car(id), car(id), user.get(()), now(), ())
@@ -57,13 +57,13 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
 
     # Check app author
     eapp = cache.get(appid(id))
-    if (not isNil(eapp)) and (author(eapp) != user.get(())):
+    if (not isNull(eapp)) and (author(eapp) != user.get(())):
         debug('apps.py::put', 'different author', author(eapp))
         return False
 
     # Get app to clone
     capp = cache.get(appid((eid,)))
-    if isNil(capp):
+    if isNull(capp):
         debug('apps.py::put', 'cloned app not found', (eid,))
         return False
 
@@ -80,12 +80,12 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
 # Get an app from the apps db
 def get(id, user, cache, dashboard, store, composites, pages, icons):
     debug('apps.py::get::id', id)
-    if isNil(id):
+    if isNull(id):
         return (("'feed", ("'title", "Apps"), ("'id", "apps")),)
 
     # Get the requested app
     app = cache.get(appid(id))
-    if isNil(app):
+    if isNull(app):
         debug('apps.py::get', 'app not found', id)
         return None
 
@@ -99,7 +99,7 @@ def delete(id, user, cache, dashboard, store, composites, pages, icons):
 
     # Get the requested app
     app = cache.get(appid(id))
-    if isNil(app):
+    if isNull(app):
         debug('apps.py::delete', 'app not found', id)
         return False
 

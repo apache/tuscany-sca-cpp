@@ -38,7 +38,7 @@ namespace python {
 const value evalDriverLoop(PyObject* const script, istream& in, ostream& out, PythonRuntime& py) {
     scheme::promptForInput(scheme::evalInputPrompt, out);
     const value input = content(scheme::readValue(in));
-    if (isNil(input))
+    if (isNull(input))
         return input;
     const failable<value> output = evalScript(input, script, py);
     scheme::announceOutput(scheme::evalOutputPrompt, out);

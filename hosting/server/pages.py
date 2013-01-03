@@ -31,7 +31,7 @@ def put(id, page, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('pages.py::put', 'app not found', id)
         return False
 
@@ -48,12 +48,12 @@ def put(id, page, user, cache, apps):
 # Get a page from the page db
 def get(id, user, cache, apps):
     debug('pages.py::get::id', id)
-    if isNil(id):
+    if isNull(id):
         return (("'feed", ("'title", "Pages"), ("'id", "pages")),)
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('pages.py::get', 'app not found', id)
 
         # Return a default new page
@@ -61,7 +61,7 @@ def get(id, user, cache, apps):
 
     # Get the requested page
     page = cache.get(pageid(id))
-    if isNil(page):
+    if isNull(page):
         debug('pages.py::get', 'page not found', id)
 
         # Return a default new page
@@ -80,7 +80,7 @@ def delete(id, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('pages.py::delete', 'app not found', id)
         return False
 

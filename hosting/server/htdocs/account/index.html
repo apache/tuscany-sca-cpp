@@ -133,29 +133,29 @@ var savedpicxml = '';
         var acct = cadr(assoc("'content", acctentry));
 
         var email = assoc("'email", acct);
-        $('userEmail').value = isNil(email) || isNil(cdr(email))? '' : cadr(email);
+        $('userEmail').value = isNull(email) || isNull(cdr(email))? '' : cadr(email);
 
         var desc = assoc("'description", acct);
-        $('userDescription').innerHTML = isNil(desc) || isNil(cdr(desc))? '' : cadr(desc);
+        $('userDescription').innerHTML = isNull(desc) || isNull(cdr(desc))? '' : cadr(desc);
 
         /* TODO disabled for now
         var cal = assoc("'calendar", acct);
         reduce(function(i, evt) {
                 var sched = assoc("'@schedule", evt);
                 var svc = assoc("'@service", evt);
-                $('sched' + i).value = isNil(sched)? '' : cadr(sched);
-                $('service' + i).value = isNil(svc)? '' : cadr(svc);
+                $('sched' + i).value = isNull(sched)? '' : cadr(sched);
+                $('service' + i).value = isNull(svc)? '' : cadr(svc);
                 return i + 1;
-            }, 1, isNil(cal)? mklist() : cadr(cadr(cal)));
+            }, 1, isNull(cal)? mklist() : cadr(cadr(cal)));
 
         var keys = assoc("'keys", acct);
         reduce(function(i, key) {
                 var kn = assoc("'@name", key);
                 var kv = assoc("'@value", key);
-                $('name' + i).value = isNil(kn)? '' : cadr(kn);
-                $('value' + i).value = isNil(kv)? '' : cadr(kv);
+                $('name' + i).value = isNull(kn)? '' : cadr(kn);
+                $('value' + i).value = isNull(kv)? '' : cadr(kv);
                 return i + 1;
-            }, 1, isNil(keys)? mklist() : cadr(cadr(keys)));
+            }, 1, isNull(keys)? mklist() : cadr(cadr(keys)));
         */
 
         savedacctxml = car(atom.writeATOMEntry(valuesToElements(mklist(acctentry))));
@@ -184,7 +184,7 @@ var savedpicxml = '';
         var content = assoc("'content", picentry);
         var picture = assoc("'picture", content);
         var img = assoc("'image", picture);
-        if (!isNil(img))
+        if (!isNull(img))
             $('userPicture').src = cadr(img);
 
         onlinestatus();
@@ -216,11 +216,11 @@ function refreshpic() {
         var token = assoc("'token", picture);
 
         // Update picture
-        if (isNil(token)) {
+        if (isNull(token)) {
             var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
             savedpicxml = entryxml;
             var img = assoc("'image", picture);
-            if (!isNil(img))
+            if (!isNull(img))
                 $('userPicture').src = cadr(img);
             $('refreshingPicture').style.display = 'none';
             refreshingpic = false;
@@ -237,7 +237,7 @@ function refreshpic() {
  * Save the user's account.
  */
 function saveacct(entryxml) {
-    if (isNil(username))
+    if (isNull(username))
         return false;
     workingstatus(true);
     showstatus('Saving');
@@ -261,7 +261,7 @@ function saveacct(entryxml) {
  * Save the user's picture.
  */
 function savepic(entryxml) {
-    if (isNil(username))
+    if (isNull(username))
         return false;
     workingstatus(true);
     showstatus('Uploading');

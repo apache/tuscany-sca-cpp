@@ -489,7 +489,7 @@ inline const value::ValueType type(const value& v) noexcept {
 /**
  * Returns true if a value is nil.
  */
-inline const bool isNil(const value& v) noexcept {
+inline const bool isNull(const value& v) noexcept {
     return type(v) == value::Nil;
 }
 
@@ -546,7 +546,7 @@ inline const bool isPtr(const value& v) noexcept {
  * Returns true if a value is a tagged list.
  */
 inline const bool isTaggedList(const value& exp, const value& tag) noexcept {
-    if(isList(exp) && !isNil((list<value>)exp))
+    if(isList(exp) && !isNull((list<value>)exp))
         return car((list<value>)exp) == tag;
     return false;
 }
@@ -555,14 +555,14 @@ inline const bool isTaggedList(const value& exp, const value& tag) noexcept {
  * Returns true if a value is an assoc.
  */
 inline const bool isAssoc(const value& exp) noexcept {
-    return isList(exp) && !isNil((list<value>)exp) && isSymbol(car<value>(exp));
+    return isList(exp) && !isNull((list<value>)exp) && isSymbol(car<value>(exp));
 }
 
 /**
  * Make a list of values from a list of other things.
  */
 template<typename T> inline const list<value> mkvalues(const list<T>& l) noexcept {
-    if (isNil(l))
+    if (isNull(l))
         return nilListValue;
     return cons<value>(car(l), mkvalues(cdr(l)));
 }
@@ -571,7 +571,7 @@ template<typename T> inline const list<value> mkvalues(const list<T>& l) noexcep
  * Convert a list of values to a list of other things.
  */
 template<typename T> inline const list<T> convertValues(const list<value>& l) noexcept {
-    if (isNil(l))
+    if (isNull(l))
         return list<T>();
     return cons<T>(car(l), convertValues<T>(cdr(l)));
 }
@@ -580,7 +580,7 @@ template<typename T> inline const list<T> convertValues(const list<value>& l) no
  * Convert a list of lists of values to a list of values.
  */
 inline const list<value> listOfValues(const list<list<value> >& l) noexcept {
-    if (isNil(l))
+    if (isNull(l))
         return nilListValue;
     return cons<value>(car(l), listOfValues(cdr(l)));
 }
@@ -589,7 +589,7 @@ inline const list<value> listOfValues(const list<list<value> >& l) noexcept {
  * Convert a list of values to a list of lists of values.
  */
 inline const list<list<value> > listOfListOfValues(const list<value>& l) noexcept {
-    if (isNil(l))
+    if (isNull(l))
         return list<list<value> >();
     return cons<list<value> >(type(car(l)) == value::List? list<value>(car(l)) : nilPairValue, listOfListOfValues(cdr(l)));
 }
@@ -613,7 +613,7 @@ inline const list<value> pathValues(const value& p) noexcept {
  * Convert a path represented as a list of values to a string value.
  */
 inline const value path(const list<value>& p) noexcept {
-    if (isNil(p))
+    if (isNull(p))
         return emptyString;
     return string("/") + (string)car(p) + (string)path(cdr(p));
 }

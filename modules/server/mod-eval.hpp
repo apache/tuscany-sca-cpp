@@ -161,9 +161,9 @@ static APR_OPTIONAL_FN_TYPE(ap_authn_cache_store) *authnCacheStore = NULL;
  * failable monad.
  */
 const failable<value> failableResult(const list<value>& v) {
-    if (isNil(cdr(v)))
+    if (isNull(cdr(v)))
         return car(v);
-    return mkfailure<value>(string(cadr(v)), isNil(cddr(v))? -1 : (int)caddr(v), false);
+    return mkfailure<value>(string(cadr(v)), isNull(cddr(v))? -1 : (int)caddr(v), false);
 }
 
 /**
@@ -207,7 +207,7 @@ public:
 
         // Lookup the component implementation
         const list<value> impl(rbtreeAssoc<value>(cname, (list<value>)impls));
-        if (isNil(impl))
+        if (isNull(impl))
             return mkfailure<value>(string("Couldn't find component implementation: ") + (string)cname);
 
         // Call its lambda function
@@ -225,7 +225,7 @@ public:
         debug(params, "modeval::implProxy::input");
 
         // If the reference was 'wiredByImpl' use the first param as target
-        if (isNil(name)) {
+        if (isNull(name)) {
             const value uri = cadr(params);
             const list<value> aparams = cons<value>(car(params), cddr(params));
             debug(uri, "modeval::implProxy::wiredByImpl::uri");
@@ -313,7 +313,7 @@ const value mkrefProxy(const value& ref, const gc_mutable_ref<list<value> >& imp
     // Use an HTTP proxy or an internal proxy to the component implementation
     if (wbyimpl)
         return mkimplProxy(nilValue, impls, sslc, timeout);
-    if (isNil(target))
+    if (isNull(target))
         return mkunwiredProxy(scdl::name(ref));
     if (http::isAbsolute(target))
         return mkhttpProxy(target, timeout);
@@ -321,7 +321,7 @@ const value mkrefProxy(const value& ref, const gc_mutable_ref<list<value> >& imp
 }
 
 const list<value> refProxies(const list<value>& refs, const gc_mutable_ref<list<value> >& impls, const SSLConf& sslc, const int timeout) {
-    if (isNil(refs))
+    if (isNull(refs))
         return refs;
     return cons(mkrefProxy(car(refs), impls, sslc, timeout), refProxies(cdr(refs), impls, sslc, timeout));
 }
@@ -352,7 +352,7 @@ const lvvlambda mkappPropProxy(const value& v) {
         if (currentRequest == NULL)
             return v;
         const RequestConf& reqc = httpd::requestConf<RequestConf>(currentRequest, &mod_tuscany_eval);
-        const value a = isNil((const list<value>)reqc.vpath)? v : car((const list<value>)reqc.vpath);
+        const value a = isNull((const list<value>)reqc.vpath)? v : car((const list<value>)reqc.vpath);
         debug(a, "modeval::appPropProxy::value");
         return a;
     };
@@ -463,7 +463,7 @@ const value mkpropProxy(const value& prop) {
 }
 
 const list<value> propProxies(const list<value>& props) {
-    if (isNil(props))
+    if (isNull(props))
         return props;
     return cons(mkpropProxy(car(props)), propProxies(cdr(props)));
 }
@@ -505,7 +505,7 @@ const value evalComponent(const string& contribPath, const value& comp, const gc
  * Return a list of component-name + configured-implementation pairs.
  */
 const list<value> componentToImplementationAssoc(const list<value>& c, const string& contribPath, const gc_mutable_ref<list<value> >& impls, const lvvlambda& lifecycle, const SSLConf& sslc, const int timeout) {
-    if (isNil(c))
+    if (isNull(c))
         return c;
     return cons<value>(mklist<value>(scdl::name(car(c)),
                 evalComponent(contribPath, car(c), impls, lifecycle, sslc, timeout)),
@@ -531,11 +531,11 @@ const failable<list<value> > getComponents(const lvvlambda& contributor, const s
         return mkfailure<list<value> >(val);
     debug(content(val), "modeval::getComponents::val");
     const list<value> valc = assoc<value>(value("content"), cdr<value>(car<value>(content(val))));
-    if (isNil(valc))
+    if (isNull(valc))
         return mkfailure<list<value> >(string("Could not get composite: ") + name);
     const list<value> comp = assoc<value>(value("composite"), cdr<value>(valc));
     debug(comp, "modeval::getComponents::comp");
-    if (isNil(comp))
+    if (isNull(comp))
         return mkfailure<list<value> >(string("Could not get composite: ") + name);
     const failable<list<string> > x = xml::writeElements(car<value>(valuesToElements(mklist<value>(mklist<value>(comp)))));
     if (!hasContent(x))
@@ -548,7 +548,7 @@ const failable<list<value> > getComponents(const lvvlambda& contributor, const s
  * Return the functions returned by the component implementations.
  */
 const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const list<value>& expr) {
-    if (isNil(impls))
+    if (isNull(impls))
         return nilListValue;
 
     // Evaluate lifecycle expression against a component implementation lambda
@@ -559,7 +559,7 @@ const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const 
     const lvvlambda rl = content(r);
 
     // Use the returned lambda function, if any, from now on
-    const lvvlambda al = isNil(rl)? l : rl;
+    const lvvlambda al = isNull(rl)? l : rl;
 
     // Continue with the rest of the list
     const failable<list<value> > nr = applyLifecycleExpr(cdr(impls), expr);
@@ -577,7 +577,7 @@ const list<value> componentReferenceToTargetTree(const value& c) {
 }
 
 const list<value> componentReferenceToTargetAssoc(const list<value>& c) {
-    if (isNil(c))
+    if (isNull(c))
         return c;
     return cons<value>(componentReferenceToTargetTree(car(c)), componentReferenceToTargetAssoc(cdr(c)));
 }
@@ -591,26 +591,26 @@ const list<value> defaultBindingURI(const string& cn, const string& sn) {
 }
 
 const list<value> bindingToComponentAssoc(const string& cn, const string& sn, const list<value>& b) {
-    if (isNil(b))
+    if (isNull(b))
         return b;
     const value uri(scdl::uri(car(b)));
-    if (isNil(uri))
+    if (isNull(uri))
         return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
     return cons<value>(mklist<value>(pathValues(c_str(string(uri))), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
 }
 
 const list<value> serviceToComponentAssoc(const string& cn, const list<value>& s) {
-    if (isNil(s))
+    if (isNull(s))
         return s;
     const string sn(scdl::name(car(s)));
     const list<value> btoc(bindingToComponentAssoc(cn, sn, scdl::bindings(car(s))));
-    if (isNil(btoc))
+    if (isNull(btoc))
         return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), serviceToComponentAssoc(cn, cdr(s)));
     return append<value>(btoc, serviceToComponentAssoc(cn, cdr(s)));
 }
 
 const list<value> uriToComponentAssoc(const list<value>& c) {
-    if (isNil(c))
+    if (isNull(c))
         return c;
     return append<value>(serviceToComponentAssoc(scdl::name(car(c)), scdl::services(car(c))), uriToComponentAssoc(cdr(c)));
 }
@@ -625,7 +625,7 @@ const failable<Composite> confComponents(const string& contribPath, const string
     debug(vhost, "modeval::confComponents::vhost");
     debug(impls, "modeval::confComponents::impls");
 
-    const failable<list<value> > fcomps = isNil(contributor)?
+    const failable<list<value> > fcomps = isNull(contributor)?
         readComponents(scdl::resourcePath(length(vhost) != 0? contribPath + vhost + "/" : contribPath, composName)) :
         getComponents(contributor, vhost);
     if (!hasContent(fcomps))
@@ -641,7 +641,7 @@ const failable<Composite> confComponents(const string& contribPath, const string
     debug(flatten(svcs), "modeval::confComponents::svcs");
 
     const list<value> cimpls = mkbrbtree(sort(componentToImplementationAssoc(comps,
-                    isNil(contributor)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
+                    isNull(contributor)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
                     impls, lifecycle, sslc, timeout)));
     debug(flatten(cimpls), "modeval::confComponents::impls");
 
@@ -701,7 +701,7 @@ const failable<int> get(const list<value>& rpath, request_rec* const r, const lv
     const list<value> ma = assoc(value("method"), args);
 
     // Evaluate a JSON-RPC request and return a JSON result
-    if (!isNil(ia) && !isNil(ma)) {
+    if (!isNull(ia) && !isNull(ma)) {
 
         // Extract the request id, method and params
         const value id = cadr(ia);
@@ -725,13 +725,13 @@ const failable<int> get(const list<value>& rpath, request_rec* const r, const lv
     debug(c, "modeval::get::content");
 
     // Return a nil value as a not found status
-    if (!isList(c) && isNil(c))
+    if (!isList(c) && isNull(c))
         return HTTP_NOT_FOUND;
 
     // Write in the format requested by the client, if any
     const list<value> fmt = assoc<value>("format", args);
-    const value mtype = !isNil(fmt)? cadr(fmt) : acceptMediaType(r);
-    if (!isNil(mtype)) {
+    const value mtype = !isNull(fmt)? cadr(fmt) : acceptMediaType(r);
+    if (!isNull(mtype)) {
         if (mtype == "scheme")
             return httpd::writeResult(scheme::writeValue(c), "text/x-scheme; charset=utf-8", r);
         if (mtype == "json")
@@ -747,26 +747,26 @@ const failable<int> get(const list<value>& rpath, request_rec* const r, const lv
     }
 
     // Write an empty list as a JSON value
-    if (isNil((list<value>)c)) {
+    if (isNull((list<value>)c)) {
         debug(nilListValue, "modeval::get::empty");
         return httpd::writeResult(json::writeValue(c), "application/json; charset=utf-8", r);
     }
 
     // Write content-type / content-list pair
-    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
+    if (isString(car<value>(c)) && !isNull(cdr<value>(c)) && isList(cadr<value>(c)))
         return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
 
     // Write an assoc value as a JSON value
-    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
+    if (isSymbol(car<value>(c)) && !isNull(cdr<value>(c))) {
         debug(c, "modeval::get::assoc");
         return httpd::writeResult(json::writeValue(c), "application/json; charset=utf-8", r);
     }
 
     // Write an ATOM feed or entry
     const list<value> e = valuesToElements(c);
-    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
+    if (isList(car<value>(e)) && !isNull(car<value>(e))) {
         const list<value> el = car<value>(e);
-        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNull(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
             if (cadr<value>(el) == atom::feed)
                 return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8", r);
             if (cadr<value>(el) == atom::entry)
@@ -829,7 +829,7 @@ const failable<int> post(const list<value>& rpath, request_rec* const r, const l
 
         // Report HTTP status code
         const value rval = content(val);
-        if (isNil(rval) || rval == falseValue)
+        if (isNull(rval) || rval == falseValue)
             return HTTP_NOT_FOUND;
         if (isNumber(rval))
             return (int)rval;
@@ -870,7 +870,7 @@ const failable<int> put(const list<value>& rpath, request_rec* const r, const lv
 
     // Report HTTP status
     const value rval = content(val);
-    if (isNil(rval) || rval == falseValue)
+    if (isNull(rval) || rval == falseValue)
         return HTTP_NOT_FOUND;
     if (isNumber(rval))
         return (int)rval;
@@ -898,7 +898,7 @@ const failable<int> patch(const list<value>& rpath, request_rec* const r, const 
 
     // Report HTTP status
     const value rval = content(val);
-    if (isNil(rval) || rval == falseValue)
+    if (isNull(rval) || rval == falseValue)
         return HTTP_NOT_FOUND;
     if (isNumber(rval))
         return (int)rval;
@@ -918,7 +918,7 @@ const failable<int> del(const list<value>& rpath, request_rec* const r, const lv
 
     // Report HTTP status
     const value rval = content(val);
-    if (isNil(rval) || rval == falseValue)
+    if (isNull(rval) || rval == falseValue)
         return HTTP_NOT_FOUND;
     if (isNumber(rval))
         return (int)rval;
@@ -954,10 +954,10 @@ int translateComponent(request_rec* const r, const list<value>& rpath, const lis
     debug(flatten(impls), "modeval::translateComponent::impls");
 
     // Find the requested component
-    if (isNil(cdr(rpath)))
+    if (isNull(cdr(rpath)))
         return HTTP_NOT_FOUND;
     const list<value> impl(rbtreeAssoc(cadr(rpath), impls));
-    if (isNil(impl))
+    if (isNull(impl))
         return HTTP_NOT_FOUND;
     debug(impl, "modeval::translateComponent::impl");
 
@@ -973,16 +973,16 @@ int translateReference(request_rec* const r, const list<value>& rpath, const lis
     debug(flatten(refs), "modeval::translateReference::refs");
 
     // Find the requested component
-    if (isNil(cdr(rpath)))
+    if (isNull(cdr(rpath)))
         return HTTP_NOT_FOUND;
     const list<value> comp(rbtreeAssoc(cadr(rpath), refs));
-    if (isNil(comp))
+    if (isNull(comp))
         return HTTP_NOT_FOUND;
     debug(comp, "modeval::translateReference::comp");
 
     // Find the requested reference and target configuration
     const list<value> ref(rbtreeAssoc<value>(caddr(rpath), cadr(comp)));
-    if (isNil(ref))
+    if (isNull(ref))
         return HTTP_NOT_FOUND;
     debug(ref, "modeval::translateReference::ref");
 
@@ -1014,9 +1014,9 @@ int translateReference(request_rec* const r, const list<value>& rpath, const lis
  * Find a leaf matching a request path in a tree of URI paths.
  */
 const int matchPath(const list<value>& k, const list<value>& p) {
-    if (isNil(p))
+    if (isNull(p))
         return true;
-    if (isNil(k))
+    if (isNull(k))
         return false;
     if (car(k) != car(p))
         return false;
@@ -1024,7 +1024,7 @@ const int matchPath(const list<value>& k, const list<value>& p) {
 }
 
 const list<value> assocPath(const value& k, const list<value>& tree) {
-    if (isNil(tree))
+    if (isNull(tree))
         return tree;
     if (matchPath(k, car<value>(car(tree))))
         return car(tree);
@@ -1041,10 +1041,10 @@ int translateService(request_rec* const r, const list<value>& rpath, const list<
     debug(flatten(svcs), "modeval::translateService::svcs");
 
     // Find the requested component
-    if (isNil(rpath))
+    if (isNull(rpath))
         return HTTP_NOT_FOUND;
     const list<value> svc(assocPath(rpath, svcs));
-    if (isNil(svc))
+    if (isNull(svc))
         return DECLINED;
     debug(svc, "modeval::translateService::svc");
 
@@ -1061,7 +1061,7 @@ int translateService(request_rec* const r, const list<value>& rpath, const list<
 const int translateRequest(request_rec* const r, const list<value>& rpath, const list<value>& vpath, const list<value>& refs, const list<value>& svcs, const list<value>& impls) {
     debug(vpath, "modeval::translateRequest::vpath");
     debug(rpath, "modeval::translateRequest::rpath");
-    const string prefix = isNil(rpath)? emptyStringValue : car(rpath);
+    const string prefix = isNull(rpath)? emptyStringValue : car(rpath);
 
     // Translate a component request
     if ((prefix == string("components") || prefix == string("c")) && translateComponent(r, rpath, vpath, impls) == OK)
@@ -1076,7 +1076,7 @@ const int translateRequest(request_rec* const r, const list<value>& rpath, const
         return proceedToHandler(r, OK);
 
     // Attempt to map a request targeting the main host to an actual file
-    if (isNil(vpath)) {
+    if (isNull(vpath)) {
         const failable<request_rec*> fnr = httpd::internalSubRequest(r->uri, r);
         if (!hasContent(fnr))
             return rcode(fnr);
@@ -1095,7 +1095,7 @@ const int translateRequest(request_rec* const r, const list<value>& rpath, const
 
         // Make sure a document root request ends with a '/' using
         // an external redirect
-        if (isNil(rpath) && r->uri[strlen(r->uri) - 1] != '/') {
+        if (isNull(rpath) && r->uri[strlen(r->uri) - 1] != '/') {
             const string target = string(r->uri) + string("/") + (r->args != NULL? string("?") + string(r->args) : emptyString);
             debug(target, "modeval::translateRequest::location");
             return proceedToHandler(r, httpd::externalRedirect(target, r));
@@ -1128,7 +1128,7 @@ int translate(request_rec *r) {
     const list<value> rpath = pathValues(r->uri);
 
     // Let default handler handle a resource request
-    const string prefix = isNil(rpath)? emptyStringValue : car(rpath);
+    const string prefix = isNull(rpath)? emptyStringValue : car(rpath);
     if (prefix == string("vhosts") || prefix == string("v"))
         return DECLINED;
 
@@ -1137,7 +1137,7 @@ int translate(request_rec *r) {
 
     // If the request is targeting a virtual host, configure the components
     // in that virtual host
-    if (length(sc.vhostc.domain) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.contributor)) && httpd::isVhostRequest(sc.server, sc.vhostc.domain, r)) {
+    if (length(sc.vhostc.domain) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNull(sc.vhostc.contributor)) && httpd::isVhostRequest(sc.server, sc.vhostc.domain, r)) {
         const string vname = http::subDomain(httpd::hostName(r));
         const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.contributor, vname, reqc.impls, (value)sc.lifecycle, sc.sslc, sc.timeout);
         if (!hasContent(fvcompos))
@@ -1158,7 +1158,7 @@ int translate(request_rec *r) {
         return rc;
 
     // Attempt to map the first segment of the request path to a virtual host
-    if (length(prefix) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNil(sc.vhostc.contributor))) {
+    if (length(prefix) != 0 && (length(sc.vhostc.contribPath) != 0 || !isNull(sc.vhostc.contributor))) {
         const string vname = prefix;
         const failable<Composite> fvcompos = confComponents(sc.vhostc.contribPath, sc.vhostc.composName, sc.vhostc.contributor, vname, reqc.impls, (value)sc.lifecycle, sc.sslc, sc.timeout);
         if (!hasContent(fvcompos))
@@ -1180,7 +1180,7 @@ const int handleRequest(const list<value>& rpath, request_rec* const r, const li
 
     // Get the component implementation lambda
     const list<value> impl(rbtreeAssoc<value>(cadr(rpath), impls));
-    if (isNil(impl)) {
+    if (isNull(impl)) {
         mkfailure<int>(string("Couldn't find component implementation: ") + (string)cadr(rpath));
         return HTTP_NOT_FOUND;
     }
@@ -1233,14 +1233,14 @@ int handler(request_rec* r) {
         debug(redir, "modeval::handler::internalredirect");
         return httpd::internalRedirect(redir, r);
     }
-    if (isNil((const list<value>)reqc.rpath))
+    if (isNull((const list<value>)reqc.rpath))
         return HTTP_NOT_FOUND;
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
 
     // Handle a request targeting a component in a virtual host
-    if (!isNil((const list<value>)reqc.vpath)) {
+    if (!isNull((const list<value>)reqc.vpath)) {
 
         // Start the components in the virtual host
         const failable<list<value> > fsimpls = startComponents(reqc.impls);
@@ -1280,7 +1280,7 @@ authn_status checkPassword(request_rec* r, const char* u, const char* p) {
 
     // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
-    if (isNil(sc.vhostc.authenticator)) {
+    if (isNull(sc.vhostc.authenticator)) {
         mkfailure<int>("SCA authenticator not configured");
         return AUTH_GENERAL_ERROR;
     }
@@ -1293,9 +1293,9 @@ authn_status checkPassword(request_rec* r, const char* u, const char* p) {
         return AUTH_USER_NOT_FOUND;
     }
     const value hval = content(val);
-    const list<value> hcontent = isList(hval) && !isNil(hval) && isList(car<value>(hval)) && !isNil(car<value>(hval))?  assoc<value>(value("content"), cdr<value>(car<value>(hval))) : nilListValue;
-    const list<value> hassoc = isNil(hcontent)? nilListValue : assoc<value>(value("hash"), cdr<value>(hcontent));
-    if (isNil(hassoc)) {
+    const list<value> hcontent = isList(hval) && !isNull(hval) && isList(car<value>(hval)) && !isNull(car<value>(hval))?  assoc<value>(value("content"), cdr<value>(car<value>(hval))) : nilListValue;
+    const list<value> hassoc = isNull(hcontent)? nilListValue : assoc<value>(value("hash"), cdr<value>(hcontent));
+    if (isNull(hassoc)) {
         mkfailure<int>(string("SCA authentication check user failed, hash not found: ") + user, -1, user != "admin");
         return AUTH_USER_NOT_FOUND;
     }
@@ -1330,10 +1330,10 @@ apr_status_t serverCleanup(void* v) {
     stopComponents(sc.compos.impls);
 
     // Call the module lifecycle function
-    if (isNil((value)sc.lifecycle))
+    if (isNull((value)sc.lifecycle))
         return APR_SUCCESS;
     const lvvlambda ll = (value)sc.lifecycle;
-    if (isNil(ll))
+    if (isNull(ll))
         return APR_SUCCESS;
 
     debug((value)sc.lifecycle, "modeval::serverCleanup::stop");
@@ -1449,7 +1449,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
     // Get the vhost contributor component implementation lambda
     if (length(sc.vhostc.contributorName) != 0) {
         const list<value> impl(rbtreeAssoc<value>((string)sc.vhostc.contributorName, (const list<value>)sc.compos.impls));
-        if (isNil(impl)) {
+        if (isNull(impl)) {
             mkfailure<int>(string("Couldn't find contributor component implementation: ") + sc.vhostc.contributorName);
             failureExitChild();
         }
@@ -1459,7 +1459,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
     // Get the vhost authenticator component implementation lambda
     if (length(sc.vhostc.authenticatorName) != 0) {
         const list<value> impl(rbtreeAssoc<value>((string)sc.vhostc.authenticatorName, (const list<value>)sc.compos.impls));
-        if (isNil(impl)) {
+        if (isNull(impl)) {
             mkfailure<int>(string("Couldn't find authenticator component implementation: ") + sc.vhostc.authenticatorName);
             failureExitChild();
         }

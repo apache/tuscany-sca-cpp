@@ -47,7 +47,7 @@ def put(id, picture, user, cache):
     debug('pictures.py::put::id', id)
     debug('pictures.py::put::picture', picture)
 
-    picid = user.get(()) if isNil(id) else car(id)
+    picid = user.get(()) if isNull(id) else car(id)
 
     # Only the admin can update other user's pictures
     if picid != user.get(()) and user.get(()) != 'admin':
@@ -57,23 +57,23 @@ def put(id, picture, user, cache):
     # Get image and token from input picture
     def image(c):
         img = assoc("'image", c)
-        return None if isNil(img) else to50x50png(cadr(img))
+        return None if isNull(img) else to50x50png(cadr(img))
     def token(c):
         tok = assoc("'token", c)
-        return None if isNil(tok) else cadr(tok)
+        return None if isNull(tok) else cadr(tok)
     img = image(content(picture))
     tok = token(content(picture))
 
     # Update the picture
     # Put with an upload token
-    if not isNil(tok):
+    if not isNull(tok):
         debug('pictures.py::put::token', tok)
 
         # Token alone, store token with existing image, if any
-        if isNil(img):
+        if isNull(img):
             epicture = cache.get(pictureid(picid))
-            eimg = None if isNil(epicture) else image(content(epicture))
-            if isNil(eimg):
+            eimg = None if isNull(epicture) else image(content(epicture))
+            if isNull(eimg):
                 picentry = mkentry(title(picture), picid, picid, now(), ("'picture", ("'token", tok)))
                 debug('pictures.py::put::picentry', picentry)
                 return cache.put(pictureid(picid), picentry)
@@ -86,9 +86,9 @@ def put(id, picture, user, cache):
         # Token plus image, put image if token is valid, removing the token
         debug('pictures.py::put::img', img)
         epicture = cache.get(pictureid(picid))
-        etok = None if isNil(epicture) else token(content(epicture))
+        etok = None if isNull(epicture) else token(content(epicture))
         debug('pictures.py::put::etok', etok)
-        if isNil(etok) or tok != etok:
+        if isNull(etok) or tok != etok:
             debug('pictures.py::put', 'invalid token', tok)
             return False
 
@@ -97,7 +97,7 @@ def put(id, picture, user, cache):
         return cache.put(pictureid(picid), picentry)
 
     # Update picture image
-    if not isNil(img):
+    if not isNull(img):
         debug('pictures.py::put::img', img)
         picentry = mkentry(title(picture), picid, picid, now(), ("'picture", ("'image", img)))
         debug('pictures.py::put::picentry', picentry)
@@ -113,24 +113,24 @@ def get(id, user, cache):
     debug('pictures.py::get::id', id)
 
     # Get the requested picture
-    picid = user.get(()) if isNil(id) else car(id)
+    picid = user.get(()) if isNull(id) else car(id)
     picture = cache.get(pictureid(picid))
-    if isNil(picture):
+    if isNull(picture):
         return mkentry(picid, picid, picid, now(), ())
 
     # Get image and token from picture
     def image(c):
         img = assoc("'image", c)
-        return None if isNil(img) else cadr(img)
+        return None if isNull(img) else cadr(img)
     def token(c):
         tok = assoc("'token", c)
-        return None if isNil(tok) else cadr(tok)
+        return None if isNull(tok) else cadr(tok)
     img = image(content(picture))
     tok = token(content(picture))
 
     # Return the picture
-    picc = (() if isNil(img) else (("'image", img),)) + (() if isNil(tok) or (user.get(()) != author(picture) and user.get(()) != 'admin') else (("'token", tok),))
-    if isNil(picc):
+    picc = (() if isNull(img) else (("'image", img),)) + (() if isNull(tok) or (user.get(()) != author(picture) and user.get(()) != 'admin') else (("'token", tok),))
+    if isNull(picc):
         picentry = mkentry(title(picture), picid, author(picture), updated(picture), ())
         debug('pictures.py::get::picentry', picentry)
         return picentry

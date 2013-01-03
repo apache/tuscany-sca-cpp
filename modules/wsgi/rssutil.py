@@ -24,22 +24,22 @@ from xmlutil import *
 # Convert a list of elements to a list of values representing an RSS entry
 def entryElementsToValues(e):
     lt = filter(selector((element, "'title")), e)
-    t = "" if isNil(lt) else elementValue(car(lt))
+    t = "" if isNull(lt) else elementValue(car(lt))
     li = filter(selector((element, "'link")), e)
-    i = "" if isNil(li) else elementValue(car(li))
+    i = "" if isNull(li) else elementValue(car(li))
     lc = filter(selector((element, "'description")), e)
     return (t, i, elementValue(car(lc)))
 
 # Convert a list of elements to a list of values representing RSS entries
 def entriesElementsToValues(e):
-    if isNil(e):
+    if isNull(e):
         return e
     return cons(entryElementsToValues(car(e)), entriesElementsToValues(cdr(e)))
 
 # Convert a list of strings to a list of values representing an RSS entry
 def readRSSEntry(l):
     e = readXML(l)
-    if isNil(e):
+    if isNull(e):
         return ()
     return entryElementsToValues(car(e))
 
@@ -57,19 +57,19 @@ def isRSSFeed(l):
 # Convert a list of strings to a list of values representing an RSS feed
 def readRSSFeed(l):
     f = readXML(l)
-    if isNil(f):
+    if isNull(f):
         return ()
     c = filter(selector((element, "'channel")), car(f))
     t = filter(selector((element, "'title")), car(c))
     i = filter(selector((element, "'link")), car(c))
     e = filter(selector((element, "'item")), car(c))
-    if isNil(e):
+    if isNull(e):
         return (elementValue(car(t)), elementValue(car(i)))
     return cons(elementValue(car(t)), cons(elementValue(car(i)), entriesElementsToValues(e)))
 
 # Convert an RSS feed containing elements to an RSS feed containing values
 def feedValuesLoop(e):
-    if (isNil(e)):
+    if (isNull(e)):
         return e
     return cons(entryValue(car(e)), feedValuesLoop(cdr(e)))
 
@@ -85,7 +85,7 @@ def entryElement(l):
 
 # Convert a list of values representing RSS entries to a list of elements
 def entriesElements(l):
-    if isNil(l):
+    if isNull(l):
         return l
     return cons(entryElement(car(l)), entriesElements(cdr(l)))
 
@@ -98,7 +98,7 @@ def writeRSSFeed(l):
     c = ((element, "'title", car(l)),
             (element, "'link", cadr(l)),
             (element, "'description", car(l)))
-    ce = c if isNil(cddr(l)) else append(c, entriesElements(cddr(l)))
+    ce = c if isNull(cddr(l)) else append(c, entriesElements(cddr(l)))
     fe = (element, "'rss", (attribute, "'version", "2.0"), append((element, "'channel"), ce))
     return writeXML((fe,), True)
 
@@ -108,7 +108,7 @@ def entryValuesToElements(v):
 
 # Convert an RSS feed containing values to an RSS feed containing elements
 def feedValuesToElementsLoop(v):
-    if isNil(v):
+    if isNull(v):
         return v
     return cons(entryValuesToElements(car(v)), feedValuesToElementsLoop(cdr(v)))
 

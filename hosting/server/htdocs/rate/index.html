@@ -116,7 +116,7 @@ var savedxml = '';
  * Get and display the requested app rating.
  */
 (function getrating() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -133,7 +133,7 @@ var savedxml = '';
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", appname));
         savedxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
         var content = cadr(assoc("'content", appentry));
-        if (!isNil(content))
+        if (!isNull(content))
             selectrating(parseInt(cadr(content)));
 
         onlinestatus();

@@ -43,7 +43,7 @@ namespace modscheme {
  * Convert proxy lambdas to evaluator primitive procedures.
  */
 const list<value> primitiveProcedures(const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons<value>(mklist<value>(scheme::primitiveSymbol, car(l)), primitiveProcedures(cdr(l)));
 }
@@ -58,7 +58,7 @@ const failable<lvvlambda > evalImplementation(const string& path, const value& i
     if (fail(is))
         return mkfailure<lvvlambda >(string("Could not read implementation: ") + fpath);
     const value script = scheme::readScript(is);
-    if (isNil(script))
+    if (isNull(script))
         return mkfailure<lvvlambda >(string("Could not read implementation: ") + fpath);
     const list<value> pxproc = scheme::quotedParameters(primitiveProcedures(px));
 
@@ -68,7 +68,7 @@ const failable<lvvlambda > evalImplementation(const string& path, const value& i
         debug(expr, "modeval::scheme::applyImplementation::input");
         scheme::Env env = scheme::setupEnvironment();
         const value res = scheme::evalScript(expr, script, env);
-        const value val = isNil(res)? mklist<value>(nilValue, string("Could not evaluate expression")) : mklist<value>(res);
+        const value val = isNull(res)? mklist<value>(nilValue, string("Could not evaluate expression")) : mklist<value>(res);
         debug(val, "modeval::scheme::applyImplementation::result");
         return val;
     };

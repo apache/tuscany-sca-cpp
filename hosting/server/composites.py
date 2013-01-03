@@ -31,7 +31,7 @@ def put(id, comp, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('composites.py::put', 'app not found', id)
         return False
 
@@ -48,12 +48,12 @@ def put(id, comp, user, cache, apps):
 # Get a composite from the composite db
 def get(id, user, cache, apps):
     debug('composites.py::get::id', id)
-    if isNil(id):
+    if isNull(id):
         return (("'feed", ("'title", "Composites"), ("'id", "composites")),)
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('composites.py::get', 'app not found', id)
 
         # Return a default new composite
@@ -61,7 +61,7 @@ def get(id, user, cache, apps):
 
     # Get the requested composite
     comp = cache.get(compid(id))
-    if isNil(comp):
+    if isNull(comp):
         debug('composites.py::get', 'composite not found', id)
 
         # Return a default new composite
@@ -78,7 +78,7 @@ def delete(id, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('composites.py::delete', 'app not found', id)
         return False
 

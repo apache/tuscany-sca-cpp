@@ -57,9 +57,9 @@ def reverse(l):
     r.reverse()
     return tuple(r)
 
-def isNil(l):
+def isNull(l):
     if isinstance(l, streampair):
-        return l.isNil()
+        return l.isNull()
     return l is None or l == ()
 
 def isSymbol(v):
@@ -76,7 +76,7 @@ def isList(v):
     return True
 
 def isTaggedList(v, t):
-    return isList(v) and not isNil(v) and car(v) == t
+    return isList(v) and not isNull(v) and car(v) == t
 
 
 # Scheme-like streams
@@ -88,7 +88,7 @@ class streampair(object):
     def __repr__(self):
         return repr(self[0:len(self)])
 
-    def isNil(self):
+    def isNull(self):
         return self.cdr == ()
 
     def __len__(self):
@@ -102,7 +102,7 @@ class streampair(object):
         return self.cdr()[i - 1]
 
     def __getslice__(self, i, j):
-        if isNil(self):
+        if isNull(self):
             return ()
         if i > 0:
             if j == maxint:
@@ -156,7 +156,7 @@ def curry(f, *args):
 
 # Convert a path represented as a list of values to a string
 def path(p):
-    if isNil(p):
+    if isNull(p):
         return ""
     return "/" + car(p) + path(cdr(p))
 

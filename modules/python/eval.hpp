@@ -483,7 +483,7 @@ PyObject* const mkPyLambda(const lvvlambda& l, PythonRuntime* const py) {
  * Convert a list of values to a python list.
  */
 PyObject* const valuesToPyListHelper(PyObject* const l, const list<value>& v, PythonRuntime* const py) {
-    if (isNil(v))
+    if (isNull(v))
         return l;
     PyObject* const pyv = valueToPyObject(car(v), py);
     PyList_Append(l, pyv);

@@ -100,7 +100,7 @@ var savediconxml;
  * Get and display the requested app.
  */
 (function getapp() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -118,10 +118,10 @@ var savediconxml;
         author = cadr(assoc("'author", appentry));
         $('appAuthor').value = author.split('@')[0];
         var updated = assoc("'updated", appentry);
-        $('appUpdated').value = isNil(updated)? '' : xmldatetime(cadr(updated)).toLocaleDateString();
+        $('appUpdated').value = isNull(updated)? '' : xmldatetime(cadr(updated)).toLocaleDateString();
         var content = cadr(assoc("'content", appentry));
         var description = assoc("'description", content);
-        $('appDescription').value = isNil(description) || isNil(cadr(description))? '' : cadr(description);
+        $('appDescription').value = isNull(description) || isNull(cadr(description))? '' : cadr(description);
         //var ratingy = -20 * (4 - Math.floor(Math.random() * 4));
         //$('appRating').style.backgroundPosition = '0px ' + ratingy + 'px';
         //$('appRatings').value = '';
@@ -165,7 +165,7 @@ var savediconxml;
         var content = assoc("'content", picentry);
         var picture = assoc("'picture", content);
         var img = assoc("'image", picture);
-        if (!isNil(img))
+        if (!isNull(img))
             $('authorPicture').src = cadr(img);
 
         onlinestatus();
@@ -179,7 +179,7 @@ var savediconxml;
  * Get and display the app icon.
  */
 (function geticon() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -197,7 +197,7 @@ var savediconxml;
         var content = assoc("'content", iconentry);
         var icon = assoc("'icon", content);
         var img = assoc("'image", icon);
-        if (!isNil(img))
+        if (!isNull(img))
             $('appIcon').src = cadr(img);
 
         onlinestatus();
@@ -212,7 +212,7 @@ var savediconxml;
  */
 var refreshingicon = false;
 function refreshicon() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     if (!refreshingicon)
         return false;
@@ -231,11 +231,11 @@ function refreshicon() {
         var token = assoc("'token", icon);
 
         // Update icon
-        if (isNil(token)) {
+        if (isNull(token)) {
             var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
             savediconxml = entryxml;
             var img = assoc("'image", icon);
-            if (!isNil(img))
+            if (!isNull(img))
                 $('appIcon').src = cadr(img);
             $('refreshingIcon').style.display = 'none';
             refreshingicon = false;
@@ -252,7 +252,7 @@ function refreshicon() {
  * Get and display the app ratings.
  */
 (function getratings() {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
     workingstatus(true);
     showstatus('Loading');
@@ -272,8 +272,8 @@ function refreshicon() {
         var ar2 = assoc("'rating2", aratings);
         var ar3 = assoc("'rating3", aratings);
         var ar4 = assoc("'rating4", aratings);
-        var rating = isNil(ar)? 0 : Number(cadr(ar));
-        var reviews = (isNil(ar1)? 0 : Number(cadr(ar1))) + (isNil(ar2)? 0 : Number(cadr(ar2))) + (isNil(ar3)? 0 : Number(cadr(ar3))) + (isNil(ar4)? 0 : Number(cadr(ar4)));
+        var rating = isNull(ar)? 0 : Number(cadr(ar));
+        var reviews = (isNull(ar1)? 0 : Number(cadr(ar1))) + (isNull(ar2)? 0 : Number(cadr(ar2))) + (isNull(ar3)? 0 : Number(cadr(ar3))) + (isNull(ar4)? 0 : Number(cadr(ar4)));
 
         var ratingy = -20 * (4 - Math.floor(rating));
         $('appRating').style.backgroundPosition = '0px ' + ratingy + 'px';

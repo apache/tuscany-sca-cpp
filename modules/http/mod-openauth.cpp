@@ -127,7 +127,7 @@ static apr_status_t (*ap_session_set_fn)(request_rec * r, session_rec * z, const
  * Run the authnz hooks to authenticate a request.
  */
 const failable<int> checkAuthnzProviders(const string& user, const string& pw, request_rec* const r, const list<AuthnProviderConf>& apcs) {
-    if(isNil(apcs))
+    if(isNull(apcs))
         return mkfailure<int>("Authentication failure for: " + user, HTTP_UNAUTHORIZED);
     const AuthnProviderConf apc = car<AuthnProviderConf>(apcs);
     if(apc.provider == NULL || !apc.provider->check_password)
@@ -145,7 +145,7 @@ const failable<int> checkAuthnz(const string& user, const string& pw, request_re
     if(substr(user, 0, 1) == "/" && pw == "password")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
-    if(isNil((const list<AuthnProviderConf>)dc.apcs)) {
+    if(isNull((const list<AuthnProviderConf>)dc.apcs)) {
         const authn_provider* provider = (const authn_provider*)ap_lookup_provider(AUTHN_PROVIDER_GROUP, AUTHN_DEFAULT_PROVIDER, AUTHN_PROVIDER_VERSION);
         return checkAuthnzProviders(user, pw, r, mklist<AuthnProviderConf>(AuthnProviderConf(AUTHN_DEFAULT_PROVIDER, provider)));
     }
@@ -181,10 +181,10 @@ const failable<value> userInfoFromCookie(const value& sid, const string& realm, 
     const list<value> info = httpd::queryArgs(sid);
     debug(info, "modopenauth::userInfoFromCookie::info");
     const list<value> user = assoc<value>(realm + "-user", info);
-    if(isNil(user))
+    if(isNull(user))
         return userInfoFromSession(realm, r);
     const list<value> pw = assoc<value>(realm + "-pw", info);
-    if(isNil(pw))
+    if(isNull(pw))
         return mkfailure<value>("Couldn't retrieve password", HTTP_UNAUTHORIZED);
     return value(mklist<value>(mklist<value>("realm", realm), mklist<value>("id", cadr(user)), mklist<value>("password", cadr(pw))));
 }
@@ -217,12 +217,12 @@ const failable<int> authenticated(const list<value>& info, request_rec* const r)
 
     // Store user info in the request
     const list<value> realm = assoc<value>("realm", info);
-    if(isNil(realm) || isNil(cdr(realm)))
+    if(isNull(realm) || isNull(cdr(realm)))
         return mkfailure<int>("Couldn't retrieve realm", HTTP_UNAUTHORIZED);
     apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "REALM"), apr_pstrdup(r->pool, c_str(cadr(realm))));
 
     const list<value> id = assoc<value>("id", info);
-    if(isNil(id) || isNil(cdr(id)))
+    if(isNull(id) || isNull(cdr(id)))
         return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
     r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
 
@@ -313,7 +313,7 @@ static int checkAuthn(request_rec* const r) {
     }
 
     // Decline if the request is for another authentication provider
-    if(!isNil(assoc<value>("openid_identifier", args)))
+    if(!isNull(assoc<value>("openid_identifier", args)))
         return DECLINED;
 
     // Redirect to the login page, unless we have a session id from another module

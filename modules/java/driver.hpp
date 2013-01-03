@@ -38,7 +38,7 @@ namespace java {
 const value evalDriverLoop(const JavaRuntime& jr, const JavaClass jc, istream& in, ostream& out) {
     scheme::promptForInput(scheme::evalInputPrompt, out);
     const value input = content(scheme::readValue(in));
-    if (isNil(input))
+    if (isNull(input))
         return input;
     const failable<value> output = evalClass(jr, input, jc);
     scheme::announceOutput(scheme::evalOutputPrompt, out);

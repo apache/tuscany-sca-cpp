@@ -31,7 +31,7 @@ ui.elementByID = function(node, id) {
         return null;
     for (var i in node.childNodes) {
         var child = node.childNodes[i];
-        if (isNil(child))
+        if (isNull(child))
             continue;
         if (child.id == id)
             return child;
@@ -275,7 +275,7 @@ ui.msieVersion = function() {
  */
 ui.asyncFrame = null;
 ui.async = function(f) {
-    if (isNil(ui.asyncFrame))
+    if (isNull(ui.asyncFrame))
         // Use requestAnimationFrame when available, fallback to setTimeout
         ui.asyncFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
@@ -293,7 +293,7 @@ ui.delay = function(f, t) {
     var id =  window.setTimeout(function() {
         delete ui.delayed[id];
         return f();
-    }, isNil(t)? 16 : t);
+    }, isNull(t)? 16 : t);
     ui.delayed[id] = id;
     return id;
 };
@@ -311,12 +311,12 @@ ui.cancelDelay = function(id) {
  */
 ui.animationFrame = null;
 ui.animation = function(f) {
-    if (isNil(ui.animationFrame))
+    if (isNull(ui.animationFrame))
         // Use requestAnimationFrame when available, fallback to setInterval
         ui.animationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
             function(f) {
-                if (!('interval' in f) || isNil(f.interval)) {
+                if (!('interval' in f) || isNull(f.interval)) {
                     // First call, setup the interval
                     f.interval = window.setInterval(function animation() {
                         f.clearInterval = true;
@@ -370,7 +370,7 @@ ui.onload = function() {
     } else {
         // Style scroll bars
         var h = document.getElementsByTagName('html');
-        if (!isNil(h))
+        if (!isNull(h))
             h[0].className = h[0].className? h[0].classname + ' flatscrollbars' : 'flatscrollbars';
     }
 
@@ -393,7 +393,7 @@ ui.onload = function() {
 ui.onorientationchange = function(e) {
 
     // Adjust filler height
-    if (!isNil(ui.filler))
+    if (!isNull(ui.filler))
         ui.filler.style.height = ui.pixpos(window.orientation == 0? screen.height : screen.width);
 
     // Scroll to hide the address bar
@@ -524,7 +524,7 @@ ui.datatable = function(l) {
     }
 
     function rows(l, i) {
-        if (isNil(l))
+        if (isNull(l))
             return '';
         var e = car(l);
 
@@ -564,7 +564,7 @@ ui.datatable = function(l) {
 ui.datalist = function(l) {
 
     function rows(l, i) {
-        if (isNil(l))
+        if (isNull(l))
             return '';
         var e = car(l);
 

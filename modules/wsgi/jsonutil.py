@@ -28,19 +28,19 @@ from elemutil import *
 
 # Return true if a list represents a JS array
 def isJSArray(l):
-    if isNil(l):
+    if isNull(l):
         return True
     v = car(l)
     if isSymbol(v):
         return False
     if isList(v):
-        if not isNil(v) and isSymbol(car(v)):
+        if not isNull(v) and isSymbol(car(v)):
             return False
     return True
 
 # Converts JSON properties to values
 def jsPropertiesToValues(propertiesSoFar, o, i):
-    if isNil(i):
+    if isNull(i):
         return propertiesSoFar
     p = car(i)
     jsv = o[p]
@@ -69,7 +69,7 @@ def jsValToValue(jsv):
 
 # Return true if a list of strings contains a JSON document
 def isJSON(l):
-    if isNil(l):
+    if isNull(l):
         return False
     s = car(l)[0:1]
     return s == "[" or s == "{"
@@ -83,7 +83,7 @@ def readJSON(l):
 
 # Convert a list of values to JSON array elements
 def valuesToJSElements(a, l, i):
-    if isNil(l):
+    if isNull(l):
         return a
     pv = valueToJSVal(car(l))
     a[i] = pv
@@ -99,7 +99,7 @@ def valueToJSVal(v):
 
 # Convert a list of values to JSON properties
 def valuesToJSProperties(o, l):
-    if isNil(l):
+    if isNull(l):
         return o
     token = car(l)
     if isTaggedList(token, attribute):

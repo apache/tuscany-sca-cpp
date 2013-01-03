@@ -48,12 +48,12 @@ const failable<value> get(const value& key, const lvvlambda& rcache1, const lvvl
 
     // Lookup level1 cache
     const value val1 = rcache1(mklist<value>("get", key));
-    if (!isNil(val1))
+    if (!isNull(val1))
         return val1;
 
     // Lookup level2 cache
     const value val2 = rcache2(mklist<value>("get", key));
-    if (isNil(val2)) {
+    if (isNull(val2)) {
         ostringstream os;
         os << "Couldn't get cache entry: " << key;
         return mkfailure<value>(str(os), 404, false);

@@ -203,7 +203,7 @@ var appresources = [
  * Init status message area.
  */
 (function initstatus() {
-    if (isNil($('status')))
+    if (isNull($('status')))
         return;
     $('status').style.display = 'none';
     
@@ -221,7 +221,7 @@ var appresources = [
  */
 window.showstatus = function(s, c) {
     //debug('show status', s);
-    if (isNil($('status')) || $('status').error)
+    if (isNull($('status')) || $('status').error)
         return s;
     $('status').innerHTML = '<span class="' + (c? c : 'okstatus') + '">' + s + '</span>';
     $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
@@ -249,7 +249,7 @@ window.errorstatus = function(s) {
  */
 window.workingstatus = function(w, c) {
     //debug('show working', w);
-    if (isNil($('working')))
+    if (isNull($('working')))
         return w;
     if (!ui.isMobile())
         $('working').style.top = ui.pixpos(Math.round(window.clientHeight / 2));
@@ -286,10 +286,10 @@ map(function(res) {
  */
 function viewtransition(ouri, uri) {
     var ot = apptransitions[ouri];
-    if (isNil(ot))
+    if (isNull(ot))
         return 'left';
     var t = apptransitions[uri];
-    if (isNil(t))
+    if (isNull(t))
         return 'left';
     return t < ot? 'right' : 'left';
 }
@@ -330,7 +330,7 @@ function showmenu(view, appname) {
         append(mklist(ui.menu('menuhome', 'Home', '/', '_view', view == 'home'),
                     ui.menu('menustore', 'Store', '/#view=store&category=' + storecat + '&idx=' + storeidx, '_view', view == 'store'),
                     ui.menu('menusearch', 'Search', '/#view=search', '_view', view == 'search')),
-                (isNil(appname) || appname == 'undefined')?
+                (isNull(appname) || appname == 'undefined')?
                     mklist() :
                     mklist(
                         ui.menu('menuinfo', 'Info', '/#view=info&app=' + appname, '_view', view == 'info'),
@@ -341,7 +341,7 @@ function showmenu(view, appname) {
                         ui.menu('menurun', '<span class="greentext" style="font-weight: bold">Run!</span>', '/' + appname + '/', '_blank', false)
                         */
                         )),
-        (isNil(appname) || appname == 'undefined')? mklist(
+        (isNull(appname) || appname == 'undefined')? mklist(
             ui.menufunc('menusignout', 'Sign out', 'return logout();', false),
             ui.menu('menuaccount', 'Account', '/#view=account', '_view', view == 'account')) :
             mklist());
@@ -376,13 +376,13 @@ function showview(url) {
 
     // Determine the view to show
     var params = ui.fragmentParams(url);
-    var view = isNil(params['view'])? 'home' : params['view'];;
+    var view = isNull(params['view'])? 'home' : params['view'];;
     var uri = '/' + view + '/';
-    var idx = isNil(params['idx'])? 0 : parseInt(params['idx']);
+    var idx = isNull(params['idx'])? 0 : parseInt(params['idx']);
 
     // Track store category view
     if (view == 'store') {
-        storecat = isNil(params['category'])? 'top' : params['category'];
+        storecat = isNull(params['category'])? 'top' : params['category'];
         storeidx = idx;
     }
 
@@ -406,7 +406,7 @@ function showview(url) {
     if (ui.isMobile()) {
         // Prepare current view for transition out
         var ovdiv = viewdiv;
-        if (!isNil(ovdiv)) {
+        if (!isNull(ovdiv)) {
             ovdiv.skipNode = true;
             ovdiv.className = 'viewunloading3dm';
         }
@@ -420,7 +420,7 @@ function showview(url) {
 
         ui.async(function mtransitionview() {
             // Transition the old view out
-            if (!isNil(ovdiv))
+            if (!isNull(ovdiv))
                 ovdiv.className = vtransition + 'viewunloaded3dm';
 
             // Transition the new view in
@@ -430,7 +430,7 @@ function showview(url) {
     } else {
         // Prepare current view for transition out
         var ovdiv = viewdiv;
-        if (!isNil(ovdiv))
+        if (!isNull(ovdiv))
             ovdiv.skipNode = true;
 
         // Load the requested doc into the view
@@ -445,7 +445,7 @@ function showview(url) {
             vdiv.className = 'viewloaded3d';
 
             // Transition the old view out
-            if (!isNil(ovdiv))
+            if (!isNull(ovdiv))
                 ovdiv.parentNode.removeChild(ovdiv);
         });
     }
@@ -649,7 +649,7 @@ document.body.onorientationchange = function(e) {
                     appcache.remove(res[0]);
                     appcache.get(res[0], 'remote');
                 }, append(appresources, config.appresources()));
-                if (!isNil(lcmf)) {
+                if (!isNull(lcmf)) {
                     //debug('reloading');
                     window.location.reload();
                 }
@@ -697,7 +697,7 @@ window.onload = function() {
         document.referrer.indexOf('//accounts.google.com/ServiceLogin') != -1 ||
         document.referrer.indexOf('//www.facebook.com/login.php') != -1)) {
         var lv = lastvisited();
-        var url = isNil(lv)? location.pathname : lv;
+        var url = isNull(lv)? location.pathname : lv;
         updatelocation(url);
         if (url == viewurl)
             return true;

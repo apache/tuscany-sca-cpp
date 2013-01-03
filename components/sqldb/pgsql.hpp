@@ -320,7 +320,7 @@ const failable<bool> patch(const value& key, const value& val, const PGSql& pgsq
  * Convert a key to an item id.
  */
 const list<value> keyid(const list<value>& key) {
-    if (isNil(key))
+    if (isNull(key))
         return nilListValue;
     if (isList(car(key)))
         return keyid(cdr(key));
@@ -331,7 +331,7 @@ const list<value> keyid(const list<value>& key) {
  * Convert a key to a (param name, value) assoc.
  */
 const list<value> keyparams(const list<value>& key) {
-    if (isNil(key))
+    if (isNull(key))
         return nilListValue;
     if (!isList(car(key)))
         return keyparams(cdr(key));
@@ -386,11 +386,11 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     const list<value> rank = assoc<value>("rank", kparams);
     const list<value> id = lk? keyid(key) : nilListValue;
     const list<value> atable = assoc<value>("table", kparams);
-    const string table = isNil(atable)? pgsql.table : (string)cadr(atable);
+    const string table = isNull(atable)? pgsql.table : (string)cadr(atable);
     const list<value> akname = assoc<value>("kcolumn", kparams);
-    const string kname = isNil(akname)? pgsql.kname : (string)cadr(akname);
+    const string kname = isNull(akname)? pgsql.kname : (string)cadr(akname);
     const list<value> avname = assoc<value>("vcolumn", kparams);
-    const string vname = isNil(avname)? pgsql.vname : (string)cadr(avname);
+    const string vname = isNull(avname)? pgsql.vname : (string)cadr(avname);
 
     // Build the SQL query
     const char* sqlparams[6];
@@ -398,60 +398,60 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     int w = 0;
     ostringstream sqlos;
     sqlos << "select data." << kname << ", data." << vname;
-    if (!isNil(textsearch)) {
+    if (!isNull(textsearch)) {
         // Text search, setup text result ranking
         sqlos << ", ts_rank_cd(to_tsvector(data." << vname << "), tsquery, 32) as tsrank";
     }
-    if (!isNil(rank)) {
+    if (!isNull(rank)) {
         // Ranking, setup rank expression
         const string rs = (string)cadr(rank);
         sqlparams[p++] = c_str(rs);
         sqlos << ", $" << p << " as rank";
     }
     sqlos << " from " << table << " data";
-    if (!isNil(textsearch)) {
+    if (!isNull(textsearch)) {
         // Text search, define the query
         const string ts = tstranslate((string)cadr(textsearch));
         sqlparams[p++] = c_str(ts);
         sqlos << ", plainto_tsquery($" << p << ") tsquery";
     }
-    if (!lk || !isNil(id)) {
+    if (!lk || !isNull(id)) {
         // Query of the form key = id
         sqlparams[p++] = c_str(write(content(scheme::writeValue(lk? (value)id : key))));
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " = $" << p;
         w++;
     }
-    if (!isNil(regex)) {
+    if (!isNull(regex)) {
         // Query of the form key ~ param
         sqlparams[p++] = c_str((string)cadr(regex));
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " ~ $" << p;
         w++;
     }
-    if (!isNil(like)) {
+    if (!isNull(like)) {
         // Query of the form key like param
         sqlparams[p++] = c_str((string)cadr(like));
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " like $" << p;
         w++;
     }
-    if (!isNil(textsearch)) {
+    if (!isNull(textsearch)) {
         // Text search, apply the query
         sqlos << (w == 0? " where" : " and");
         sqlos << " tsquery @@ to_tsvector(data." << vname << ")";
         w++;
     }
-    if (!isNil(textsearch) || !isNil(rank)) {
+    if (!isNull(textsearch) || !isNull(rank)) {
         // Result ordering
-        sqlos << " order by" << (isNil(rank)? "" : " rank desc") << ((isNil(rank) || isNil(textsearch))? "" : ",") << (isNil(textsearch)? "" : " tsrank desc");
+        sqlos << " order by" << (isNull(rank)? "" : " rank desc") << ((isNull(rank) || isNull(textsearch))? "" : ",") << (isNull(textsearch)? "" : " tsrank desc");
     }
-    if (!isNil(offset)) {
+    if (!isNull(offset)) {
         // Result pagination offset
         sqlos << " offset " << atoi(c_str((string)cadr(offset)));
     }
     // Result limit count
-    const int l = isNil(limit)? 1 : atoi(c_str((string)cadr(limit)));
+    const int l = isNull(limit)? 1 : atoi(c_str((string)cadr(limit)));
     sqlos << " limit " << l << ";";
     
     // Execute the query

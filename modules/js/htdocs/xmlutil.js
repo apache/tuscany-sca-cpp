@@ -26,7 +26,7 @@
  */
 function nodeList(n) {
     var l = new Array();
-    if (isNil(n))
+    if (isNull(n))
         return l;
     for (var i = 0; i < n.length; i++)
         l[i] = n[i];
@@ -37,7 +37,7 @@ function nodeList(n) {
  * Append a list of nodes to a parent node.
  */
 function appendNodes(nodes, p) {
-    if (isNil(nodes))
+    if (isNull(nodes))
         return p;
     p.appendChild(car(nodes));
     return appendNodes(cdr(nodes), p);
@@ -71,7 +71,7 @@ function childText(e) {
  * Read a list of XML attributes.
  */
 function readAttributes(p, a) {
-    if (isNil(a))
+    if (isNull(a))
         return a;
     var x = car(a);
     return cons(mklist(attribute, "'" + x.nodeName, x.nodeValue), readAttributes(p, cdr(a)));
@@ -83,7 +83,7 @@ function readAttributes(p, a) {
 function readElement(e, childf) {
     var l = append(append(mklist(element, "'" + e.nodeName), readAttributes(e, childf(e))), readElements(childElements(e), childf));
     var t = childText(e);
-    if (isNil(t))
+    if (isNull(t))
         return l;
     return append(l, mklist(car(t).nodeValue));
 }
@@ -92,7 +92,7 @@ function readElement(e, childf) {
  * Read a list of XML elements.
  */
 function readElements(l, childf) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons(readElement(car(l), childf), readElements(cdr(l), childf));
 }
@@ -101,7 +101,7 @@ function readElements(l, childf) {
  * Return true if a list of strings contains an XML document.
  */
 function isXML(l) {
-    if (isNil(l))
+    if (isNull(l))
         return false;
     return car(l).substring(0, 5) == '<?xml';
 }
@@ -120,7 +120,7 @@ function parseXML(l) {
  */
 function readXMLDocument(doc) {
     var root = childElements(doc);
-    if (isNil(root))
+    if (isNull(root))
         return mklist();
     return mklist(readElement(car(root), childAttributes));
 }
@@ -133,7 +133,7 @@ function readXHTMLElement(xhtml) {
     function ieChildAttributes(e) {
         var a = filter(function(n) {
             // Filter out empty and internal DOM attributes
-            if (n.nodeType != 2 || isNil(n.nodeValue) || n.nodeValue == '')
+            if (n.nodeType != 2 || isNull(n.nodeValue) || n.nodeValue == '')
                 return false;
             if (n.nodeName == 'contentEditable' || n.nodeName == 'maxLength' || n.nodeName == 'loop' || n.nodeName == 'start')
                 return false;
@@ -174,13 +174,13 @@ function writeXMLDocument(doc) {
  * Write a list of XML element and attribute tokens.
  */
 function expandElementValues(n, l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons(cons(element, cons(n, car(l))), expandElementValues(n, cdr(l)));
 }
 
 function writeList(l, node, doc) {
-    if (isNil(l))
+    if (isNull(l))
         return node;
 
     var token = car(l);
@@ -196,7 +196,7 @@ function writeList(l, node, doc) {
 
         function mkelem(tok, doc) {
             function xmlns(l) {
-                if (isNil(l))
+                if (isNull(l))
                     return null;
                 var t = car(l);
                 if (isTaggedList(t, attribute)) {

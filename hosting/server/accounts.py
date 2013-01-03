@@ -28,7 +28,7 @@ def accountid(user):
 def get(id, user, cache):
     debug('accounts.py::get::id', id)
     account = cache.get(accountid(user))
-    if isNil(account):
+    if isNull(account):
         return mkentry(user.get(()), user.get(()), user.get(()), now(), ())
     return account
 

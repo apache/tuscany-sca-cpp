@@ -46,14 +46,14 @@ const value entry("entry");
  */
 const list<value> entryElementValues(const list<value>& e) {
     const list<value> lt = elementChildren("title", e);
-    const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
+    const value t = isNull(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = elementChildren("link", e);
-    const value i = isNil(li)? value(emptyString) : elementValue(car(li));
+    const value i = isNull(li)? value(emptyString) : elementValue(car(li));
     const list<value> ld = elementChildren("description", e);
     return append<value>(nilListValue + element + entry 
                 + value(nilListValue + element + value("title") + t)
                 + value(nilListValue + element + value("id") + i),
-                isNil(ld)? nilListValue : isAttribute(elementValue(car(ld)))? nilListValue :
+                isNull(ld)? nilListValue : isAttribute(elementValue(car(ld)))? nilListValue :
                     mklist<value>(value(nilListValue + element + value("content") + elementValue(car(ld)))));
 }
 
@@ -61,7 +61,7 @@ const list<value> entryElementValues(const list<value>& e) {
  * Convert a list of elements to a list of element values representing ATOM entries.
  */
 const list<value> entriesElementValues(const list<value>& e) {
-    if (isNil(e))
+    if (isNull(e))
         return e;
     return cons<value>(entryElementValues(car(e)), entriesElementValues(cdr(e)));
 }
@@ -80,7 +80,7 @@ const bool isRSSFeed(const list<string>& ls) {
  */
 const failable<list<value> > readRSSEntry(const list<string>& ilist) {
     const list<value> e = content(xml::readElements(ilist));
-    if (isNil(e))
+    if (isNull(e))
         return mkfailure<list<value> >("Empty entry");
     return mklist<value>(entryElementValues(car(e)));
 }
@@ -90,7 +90,7 @@ const failable<list<value> > readRSSEntry(const list<string>& ilist) {
  */
 const failable<list<value> > readRSSFeed(const list<string>& ilist) {
     const list<value> f = content(xml::readElements(ilist));
-    if (isNil(f))
+    if (isNull(f))
         return mkfailure<list<value> >("Empty feed");
     const list<value> c = elementChildren("channel", car(f));
     const list<value> t = elementChildren("title", car(c));
@@ -109,12 +109,12 @@ const list<value> entryElement(const list<value>& l) {
     const value title = elementValue(elementChild("title", l));
     const value id = elementValue(elementChild("id", l));
     const value content = elementChild("content", l);
-    const bool text = isNil(content)? false : elementHasValue(content);
+    const bool text = isNull(content)? false : elementHasValue(content);
     return append<value>(nilListValue
         + element + "item"
         + (nilListValue + element + "title" + title)
         + (nilListValue + element + "link" + id),
-        isNil(content)?
+        isNull(content)?
             nilListValue :
             mklist<value>(append<value>(nilListValue + element + "description",
                 text? mklist<value>(elementValue(content)) : elementChildren(content))));
@@ -124,7 +124,7 @@ const list<value> entryElement(const list<value>& l) {
  * Convert a list of values representing RSS entries to a list of elements.
  */
 const list<value> entriesElements(const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons<value>(entryElement(car(l)), entriesElements(cdr(l)));
 }
@@ -134,7 +134,7 @@ const list<value> entriesElements(const list<value>& l) {
  * The first two values in the list are the entry id and title.
  */
 template<typename R> const failable<R> writeRSSEntry(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
-    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
+    const list<value> l = isNull(ll)? ll : (list<value>)car(ll);
     return xml::writeElements<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
@@ -150,11 +150,11 @@ const failable<list<string> > writeRSSEntry(const list<value>& l) {
  * The first two values in the list are the feed id and title.
  */
 template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
-    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
+    const list<value> l = isNull(ll)? ll : (list<value>)car(ll);
     const list<value> lt = elementChildren("title", l);
-    const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
+    const value t = isNull(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = elementChildren("id", l);
-    const value i = isNil(li)? value(emptyString) : elementValue(car(li));
+    const value i = isNull(li)? value(emptyString) : elementValue(car(li));
     const list<value> c = nilListValue
         + (nilListValue + element + "title" + t)
         + (nilListValue + element + "link" + i)
@@ -162,7 +162,7 @@ template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const s
 
     // Write RSS entries
     const list<value> le = elementChildren(entry, l);
-    if (isNil(le)) {
+    if (isNull(le)) {
         const list<value> fe = nilListValue
             + element + "rss" + (nilListValue + attribute + "version" + "2.0")
             + append(nilListValue + element + "channel", c);
@@ -170,7 +170,7 @@ template<typename R> const failable<R> writeRSSFeed(const lambda<const R(const s
     }
 
     // Write a single RSS entry element with a list of values
-    if (!isNil(le) && !isNil(car(le)) && isList(car<value>(caddr<value>(car(le))))) {
+    if (!isNull(le) && !isNull(car(le)) && isList(car<value>(caddr<value>(car(le))))) {
         const list<value> ce = append(c, entriesElements(caddr<value>(car(le))));
         const list<value> fe = nilListValue
             + element + "rss" + (nilListValue + attribute + "version" + "2.0")

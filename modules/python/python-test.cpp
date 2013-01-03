@@ -197,7 +197,7 @@ const list<future<bool> > submitEvals(worker& w, const int max, const int i, PyO
 }
 
 const bool checkEvalResults(const list<future<bool> > r) {
-    if (isNil(r))
+    if (isNull(r))
         return true;
     assert(car(r) == true);
     return checkEvalResults(cdr(r));

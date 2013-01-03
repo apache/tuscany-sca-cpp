@@ -55,7 +55,7 @@ const failable<value> post(const list<value>& params, XMPPClient& xc) {
  */
 const failable<value> start(const list<value>& params) {
     // Extract the relay reference and the XMPP JID and password
-    const bool hasRelay = !isNil(cddr(params));
+    const bool hasRelay = !isNull(cddr(params));
     const lvvlambda rel = hasRelay? (lvvlambda)car(params) : lvvlambda();
     const list<value> props = hasRelay? cdr(params) : params;
     const value jid = ((lvvlambda)car(props))(nilListValue);
@@ -71,7 +71,7 @@ const failable<value> start(const list<value>& params) {
     worker w(3);
     const lambda<const failable<bool>(const value&, const value&, XMPPClient&)> rl = [rel](const value& jid, const value& val, unused XMPPClient& xc) -> const failable<bool> {
         // A relay function that posts the XMPP messages it receives to a relay component reference.
-        if (isNil(rel))
+        if (isNull(rel))
             return true;
         debug(jid, "chat::relay::jid");
         debug(val, "chat::relay::value");

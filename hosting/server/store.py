@@ -30,10 +30,10 @@ def getstore(id, cache):
 
     # Lookup the requested store
     val = cache.get(id)
-    if isNil(val):
+    if isNull(val):
         return ()
     store = cdddr(car(val))
-    if not isNil(store) and isList(car(cadr(car(store)))):
+    if not isNull(store) and isList(car(cadr(car(store)))):
         # Expand list of entries
         estore = tuple(map(lambda e: cons("'entry", e), cadr(car(store))))
         debug('store.py::getstore::estore', estore)
@@ -57,7 +57,7 @@ def put(id, app, user, cache, apps, ratings):
     appid = cdr(id)
 
     def putapp(appid, app, store):
-        if isNil(store):
+        if isNull(store):
             return app
         if car(appid) == entryid(store):
             return cons(car(app), cdr(store))
@@ -77,15 +77,15 @@ def mergeapps(entries, apps, ratings):
         debug('store.py::mergeapp::entry', entry)
         id = (entryid(entry),)
         app = apps.get(id)
-        if isNil(app):
+        if isNull(app):
             return ((),)
         info = content(app)
         rating = ratings.get(id)
         rates = content(rating)
-        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNil(info) else cdr(info)) + (() if isNil(rates) else cdr(rates)))
+        mergedentry = mkentry(title(app), car(id), author(app), updated(app), ("'info",) + (() if isNull(info) else cdr(info)) + (() if isNull(rates) else cdr(rates)))
         return mergedentry
 
-    mergedentries = tuple(filter(lambda e: not isNil(e), map(lambda e: car(mergeapp((e,))), entries)))
+    mergedentries = tuple(filter(lambda e: not isNull(e), map(lambda e: car(mergeapp((e,))), entries)))
     debug('store.py::mergeapps::mergedentries', mergedentries)
     return mergedentries
 
@@ -105,13 +105,13 @@ def get(id, user, cache, apps, ratings):
     # Collect the featured apps
     appid = cdr(id)
     def findapp(appid, store):
-        if isNil(store):
+        if isNull(store):
             return None
         if car(appid) == entryid(store):
             return (car(store),)
         return findapp(appid, cdr(store))
 
-    if isNil(appid):
+    if isNull(appid):
         storeapps = mergeapps(getstore(storeid(tag), cache), apps, ratings)
         store = ((("'feed", ("'title", "App Store"), ("'id", tag)) + storeapps),)
         debug('store.py::get::store', store)
@@ -127,11 +127,11 @@ def delete(id, user, cache, apps, ratings):
     tag = car(id)
     appid = cdr(id)
 
-    if isNil(appid):
+    if isNull(appid):
         return cache.delete(storeid(tag))
 
     def deleteapp(appid, store):
-        if isNil(store):
+        if isNull(store):
             return ()
         if car(appid) == entryid(store):
             return cdr(store)

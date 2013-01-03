@@ -44,7 +44,7 @@ const failable<list<value> > partition(const value& key, const lvvlambda& select
 
     // Call the selector component to convert the given key to a list of partitions
     const value p = selector(mklist<value>("get", key, partitions));
-    if (isNil(p)) {
+    if (isNull(p)) {
         ostringstream os;
         os << "Couldn't get partition: " << key;
         return mkfailure<list<value> >(str(os), -1, false);
@@ -57,12 +57,12 @@ const failable<list<value> > partition(const value& key, const lvvlambda& select
  * Get lists of items from a list of partitions.
  */
 const failable<list<value> > getlist(const value& key, const list<value>& partitions) {
-    if (isNil(partitions))
+    if (isNull(partitions))
         return nilListValue;
 
     const lvvlambda l = car(partitions);
     const value val = l(mklist<value>("get", key));
-    if (isNil(val))
+    if (isNull(val))
         return getlist(key, cdr(partitions));
     if (!isList(val)) {
         ostringstream os;
@@ -92,7 +92,7 @@ const failable<value> get(const value& key, const lvvlambda& selector, const lis
     if (length(p) == 1) {
         const lvvlambda l = car(p);
         const value val = l(mklist<value>("get", key));
-        if (isNil(val)) {
+        if (isNull(val)) {
             ostringstream os;
             os << "Couldn't get entry from partition: " << key;
             return mkfailure<value>(str(os), 404, false);

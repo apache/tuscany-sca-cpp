@@ -27,7 +27,7 @@ var scdl = {};
  */
 scdl.composite = function(l) {
     var cs = namedElementChildren("'composite", l);
-    if (isNil(cs))
+    if (isNull(cs))
         return cs;
     return car(cs);
 };
@@ -37,7 +37,7 @@ scdl.composite = function(l) {
  */
 scdl.components = function(l) {
     var cs = namedElementChildren("'composite", l);
-    if (isNil(cs))
+    if (isNull(cs))
         return cs;
     return namedElementChildren("'component", car(cs));
 };
@@ -47,7 +47,7 @@ scdl.components = function(l) {
  */
 scdl.promotions = function(l) {
     var cs = namedElementChildren("'composite", l);
-    if (isNil(cs))
+    if (isNull(cs))
         return cs;
     return namedElementChildren("'service", car(cs));
 };
@@ -57,7 +57,7 @@ scdl.promotions = function(l) {
  */
 scdl.promote = function(l) {
     var puri = namedAttributeValue("'promote", l);
-    if (isNil(puri))
+    if (isNull(puri))
         return puri;
     return car(tokens(puri));
 };
@@ -74,7 +74,7 @@ scdl.name = function(l) {
  */
 scdl.documentation = function(l) {
     var d = namedElementChildren("'documentation", l);
-    if (isNil(d))
+    if (isNull(d))
         return null;
     if (!elementHasValue(car(d)))
         return null;
@@ -126,7 +126,7 @@ scdl.implementation = function(l) {
     }
 
     var n = filter(filterImplementation, l);
-    if (isNil(n))
+    if (isNull(n))
         return null;
     return car(n);
 };
@@ -204,21 +204,21 @@ scdl.bindingType = function(l) {
 scdl.target = function(l) {
     function targetURI() {
         function bindingsTarget(l) {
-            if (isNil(l))
+            if (isNull(l))
                 return null;
             var u = scdl.uri(car(l));
-            if (!isNil(u))
+            if (!isNull(u))
                 return u;
             return bindingsTarget(cdr(l));
         }
     
         var t = namedAttributeValue("'target", l);
-        if (!isNil(t))
+        if (!isNull(t))
             return t;
         return bindingsTarget(scdl.bindings(l));
     }
     var turi = targetURI();
-    if (isNil(turi))
+    if (isNull(turi))
         return turi;
     return car(tokens(turi));
 };
@@ -243,7 +243,7 @@ scdl.propertyValue = function(l) {
  * Convert a list of elements to a name -> element assoc list.
  */
 scdl.nameToElementAssoc = function(l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons(mklist(scdl.name(car(l)), car(l)), scdl.nameToElementAssoc(cdr(l)));
 };

@@ -24,23 +24,23 @@ from xmlutil import *
 # Convert a list of elements to a list of values representing an ATOM entry
 def entryElementValues(e):
     lt = filter(selector((element, "'title")), e)
-    t = "" if isNil(lt) else elementValue(car(lt))
+    t = "" if isNull(lt) else elementValue(car(lt))
     li = filter(selector((element, "'id")), e)
-    i = "" if isNil(li) else elementValue(car(li))
+    i = "" if isNull(li) else elementValue(car(li))
     lc = filter(selector((element, "'content")), e)
     return append((element, "'entry", (element, "'title", t), (element, "'id", i)),
-            () if isNil(lc) else () if isAttribute(elementValue(car(lc))) else ((element, "'content", elementValue(car(lc))),))
+            () if isNull(lc) else () if isAttribute(elementValue(car(lc))) else ((element, "'content", elementValue(car(lc))),))
 
 # Convert a list of elements to a list of values representing ATOM entries
 def entriesElementValues(e):
-    if isNil(e):
+    if isNull(e):
         return e
     return cons(entryElementValues(car(e)), entriesElementValues(cdr(e)))
 
 # Convert a list of strings to a list of values representing an ATOM entry
 def readATOMEntry(l):
     e = readXML(l)
-    if isNil(e):
+    if isNull(e):
         return ()
     return (entryElementValues(car(e)),)
 
@@ -59,7 +59,7 @@ def isATOMEntry(l):
 # Convert a list of strings to a list of values representing an ATOM feed
 def readATOMFeed(l):
     f = readXML(l)
-    if isNil(f):
+    if isNull(f):
         return ()
     t = filter(selector((element, "'title")), car(f))
     i = filter(selector((element, "'id")), car(f))
@@ -73,44 +73,44 @@ def entryElement(l):
     title = elementValue(namedElementChild("'title", l))
     id = elementValue(namedElementChild("'id", l))
     content = namedElementChild("'content", l)
-    text = False if isNil(content) else elementHasValue(content)
+    text = False if isNull(content) else elementHasValue(content)
     return append(append(
             (element, "'entry", (attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
              (element, "'title", (attribute, "'type", "text"), title),
              (element, "'id", id)),
-            () if isNil(content) else (append(
+            () if isNull(content) else (append(
                 (element, "'content", (attribute, "'type", "text" if text else "application/xml")), (elementValue(content),) if text else elementChildren(content)),)),
             ((element, "'link", (attribute, "'href", id)),))
 
 # Convert a list of values representing ATOM entries to a list of elements
 def entriesElements(l):
-    if isNil(l):
+    if isNull(l):
         return l
     return cons(entryElement(car(l)), entriesElements(cdr(l)))
 
 # Convert a list of values representing an ATOM entry to an ATOM entry
 def writeATOMEntry(ll):
-    l = ll if isNil(ll) else car(ll)
+    l = ll if isNull(ll) else car(ll)
     return writeXML((entryElement(l),), True)
 
 # Convert a list of values representing an ATOM feed to an ATOM feed
 def writeATOMFeed(ll):
-    l = ll if isNil(ll) else car(ll)
+    l = ll if isNull(ll) else car(ll)
     lt = filter(selector((element, "'title")), l)
-    t = '' if isNil(lt) else elementValue(car(lt))
+    t = '' if isNull(lt) else elementValue(car(lt))
     li = filter(selector((element, "'id")), l)
-    i = '' if isNil(li) else elementValue(car(li))
+    i = '' if isNull(li) else elementValue(car(li))
     f = (element, "'feed", (attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
             (element, "'title", (attribute, "'type", "text"), t),
             (element, "'id", i))
 
     # Write ATOM entries
     le = filter(selector((element, "'entry")), l)
-    if isNil(le):
+    if isNull(le):
         return writeXML((f,), True)
 
     # Write a single ATOM entry element with a list of values
-    if not isNil(le) and not isNil(car(le)) and isList(car(caddr(car(le)))):
+    if not isNull(le) and not isNull(car(le)) and isList(car(caddr(car(le)))):
         fe = append(f, entriesElements(caddr(car(le))))
         return writeXML((fe,), True)
 

@@ -225,7 +225,7 @@ const bool testMutable() {
     }
     {
         gc_mutable_ref<value> v;
-        assert(isNil((value)v));
+        assert(isNull((value)v));
         v = 1;
         assert(v == 1);
     }
@@ -386,7 +386,7 @@ ostream& operator<<(ostream& out, const Element& v) {
 const bool testCons() {
     assert(car(cons(2, mklist(3))) == 2);
     assert(car(cdr(cons(2, mklist(3)))) == 3);
-    assert(isNil(cdr(cdr(cons(2, mklist(3))))));
+    assert(isNull(cdr(cdr(cons(2, mklist(3))))));
 
     assert(cons(Element(1), mklist(Element(2))) == mklist(Element(1), Element(2)));
     return true;
@@ -471,7 +471,7 @@ const bool testAppend() {
     assert(car(append(mklist(1), mklist(2))) == 1);
     assert(car(cdr(append(mklist(1), mklist(2)))) == 2);
     assert(car(cdr(cdr(append(mklist(1), mklist(2, 3))))) == 3);
-    assert(isNil(cdr(cdr(cdr(append(mklist(1), mklist(2, 3)))))));
+    assert(isNull(cdr(cdr(cdr(append(mklist(1), mklist(2, 3)))))));
 
     assert(list<int>() + 1 + 2 + 3 == mklist(1, 2, 3));
     return true;
@@ -497,12 +497,12 @@ const bool testComplex() {
     const list<Complex> p = mklist(Complex(1, 2), Complex(3, 4));
     assert(car(p).x == 1);
     assert(car(cdr(p)).x == 3);
-    assert(isNil(cdr(cdr(p))));
+    assert(isNull(cdr(cdr(p))));
     return true;
 }
 
 const bool testMap() {
-    assert(isNil(map<int, int>(square, list<int>())));
+    assert(isNull(map<int, int>(square, list<int>())));
 
     const list<int> m = map<int, int>(square, mklist(2, 3));
     assert(car(m) == 4);
@@ -535,7 +535,7 @@ const bool testFilter() {
 }
 
 const bool testMember() {
-    assert(isNil(member(4, mklist(1, 2, 3))));
+    assert(isNull(member(4, mklist(1, 2, 3))));
     assert(car(member(1, mklist(1, 2, 3))) == 1);
     assert(car(member(2, mklist(1, 2, 3))) == 2);
     assert(car(member(3, mklist(1, 2, 3))) == 3);
@@ -543,7 +543,7 @@ const bool testMember() {
 }
 
 const bool testReverse() {
-    assert(isNil(reverse(list<int>())));
+    assert(isNull(reverse(list<int>())));
     assert(car(reverse(mklist(1, 2, 3))) == 3);
     assert(cadr(reverse(mklist(1, 2, 3))) == 2);
     return true;
@@ -566,7 +566,7 @@ const bool testSubst() {
 const bool testAssoc() {
     const list<list<string> > l = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"));
     assert(assoc<string>("a", l) == mklist<string>("a", "A"));
-    assert(isNil(assoc<string>("z", l)));
+    assert(isNull(assoc<string>("z", l)));
 
     const list<list<string> > l3 = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("a", "AA"));
     assert(delAssoc<string>("y", l) == l3);
@@ -762,7 +762,7 @@ const bool testBinaryTreeAssoc() {
     assert(rbtreeAssoc<value>("a", bt) == mklist<value>("a", "aa"));
     assert(rbtreeAssoc<value>("b", bt) == mklist<value>("b", "bb"));
     assert(rbtreeAssoc<value>("f", bt) == mklist<value>("f", "ff"));
-    assert(isNil(rbtreeAssoc<value>("x", bt)));
+    assert(isNull(rbtreeAssoc<value>("x", bt)));
     return true;
 }
 

@@ -231,7 +231,7 @@ inline const failable<list<string> > writeValue(const value& val) {
 
 inline const value readScript(istream& in) {
     const value val = content(readValue(in));
-    if (isNil(val))
+    if (isNull(val))
         return nilListValue;
     return cons(val, (list<value>)readScript(in));
 }

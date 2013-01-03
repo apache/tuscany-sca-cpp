@@ -28,7 +28,7 @@ public class ServerImpl {
     }
 
     public Iterable<?> get(final Iterable<String> id) {
-        if (isNil(id))
+        if (isNull(id))
             return list(list("'feed", list("'title", "Sample Feed"), list("'id", "123456789"), list("'entry", list(
                     list(list("'title", "Item"), list("'id", "111"),
                         list("'content", list("'item", list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99)))),

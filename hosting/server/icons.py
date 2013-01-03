@@ -49,7 +49,7 @@ def put(id, icon, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('icons.py::put', 'app not found', id)
         return False
 
@@ -61,23 +61,23 @@ def put(id, icon, user, cache, apps):
     # Get image and token from input icon
     def image(c):
         img = assoc("'image", c)
-        return None if isNil(img) else to50x50png(cadr(img))
+        return None if isNull(img) else to50x50png(cadr(img))
     def token(c):
         tok = assoc("'token", c)
-        return None if isNil(tok) else cadr(tok)
+        return None if isNull(tok) else cadr(tok)
     img = image(content(icon))
     tok = token(content(icon))
 
     # Update the icon
     # Put with an upload token
-    if not isNil(tok):
+    if not isNull(tok):
         debug('icons.py::put::token', tok)
 
         # Token alone, store token with existing image, if any
-        if isNil(img):
+        if isNull(img):
             eicon = cache.get(iconid(id))
-            eimg = None if isNil(eicon) else image(content(eicon))
-            if isNil(eimg):
+            eimg = None if isNull(eicon) else image(content(eicon))
+            if isNull(eimg):
                 iconentry = mkentry(title(app), car(id), author(app), now(), ("'icon", ("'token", tok)))
                 debug('icons.py::put::iconentry', iconentry)
                 return cache.put(iconid(id), iconentry)
@@ -90,9 +90,9 @@ def put(id, icon, user, cache, apps):
         # Token plus image, put image if token is valid, removing the token
         debug('icons.py::put::img', img)
         eicon = cache.get(iconid(id))
-        etok = None if isNil(eicon) else token(content(eicon))
+        etok = None if isNull(eicon) else token(content(eicon))
         debug('icons.py::put::etok', etok)
-        if isNil(etok) or tok != etok:
+        if isNull(etok) or tok != etok:
             debug('icons.py::put', 'invalid token', tok)
             return False
 
@@ -101,7 +101,7 @@ def put(id, icon, user, cache, apps):
         return cache.put(iconid(id), iconentry)
 
     # Update icon image
-    if not isNil(img):
+    if not isNull(img):
         debug('icons.py::put::img', img)
         iconentry = mkentry(title(app), car(id), author(app), now(), ("'icon", ("'image", img)))
         debug('icons.py::put::iconentry', iconentry)
@@ -115,12 +115,12 @@ def put(id, icon, user, cache, apps):
 # Get an icon
 def get(id, user, cache, apps):
     debug('icons.py::get::id', id)
-    if isNil(id):
+    if isNull(id):
         return (("'feed", ("'title", "Icons"), ("'id", "icons")),)
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('icons.py::get', 'app not found', id)
 
         # Return a default new icon
@@ -128,7 +128,7 @@ def get(id, user, cache, apps):
 
     # Get the requested icon
     icon = cache.get(iconid(id))
-    if isNil(icon):
+    if isNull(icon):
         debug('icons.py::get', 'icon not found', id)
 
         # Return a default new icon
@@ -137,16 +137,16 @@ def get(id, user, cache, apps):
     # Get image, token, and updated date from icon
     def image(c):
         img = assoc("'image", c)
-        return None if isNil(img) else cadr(img)
+        return None if isNull(img) else cadr(img)
     def token(c):
         tok = assoc("'token", c)
-        return None if isNil(tok) else cadr(tok)
+        return None if isNull(tok) else cadr(tok)
     img = image(content(icon))
     tok = token(content(icon))
 
     # Return the icon
-    iconc = (() if isNil(img) else (("'image", img),)) + (() if isNil(tok) or (user.get(()) != author(app) and user.get(()) != 'admin') else (("'token", tok),))
-    if isNil(iconc):
+    iconc = (() if isNull(img) else (("'image", img),)) + (() if isNull(tok) or (user.get(()) != author(app) and user.get(()) != 'admin') else (("'token", tok),))
+    if isNull(iconc):
         iconentry = mkentry(title(app), car(id), author(app), updated(icon), ())
         debug('icons.py::get::iconentry', iconentry)
         return iconentry
@@ -161,7 +161,7 @@ def delete(id, user, cache, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('icons.py::delete', 'app not found', id)
         return False
 

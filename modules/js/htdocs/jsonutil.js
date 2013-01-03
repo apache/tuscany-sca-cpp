@@ -41,13 +41,13 @@ json.Exception.prototype.toString = function() {
  * Return true if a list represents a JS array.
  */
 json.isJSArray = function(l) {
-    if (isNil(l))
+    if (isNull(l))
         return true;
     var v = car(l);
     if (isSymbol(v))
         return false;
     if (isList(v))
-        if (!isNil(v) && isSymbol(car(v)))
+        if (!isNull(v) && isSymbol(car(v)))
             return false;
     return true;
 };
@@ -56,7 +56,7 @@ json.isJSArray = function(l) {
  * Converts JSON properties to values.
  */
 json.jsPropertiesToValues = function(propertiesSoFar, o, i) {
-    if (isNil(i))
+    if (isNull(i))
         return propertiesSoFar;
     var p = car(i);
     var jsv = o[p];
@@ -92,7 +92,7 @@ json.jsValToValue = function(jsv) {
  * Return true if a list of strings contains a JSON document.
  */
 json.isJSON = function(l) {
-    if (isNil(l))
+    if (isNull(l))
         return false;
     var s = car(l).slice(0, 1);
     return s == "[" || s == "{";
@@ -112,7 +112,7 @@ json.readJSON = function(l) {
  * Convert a list of values to JSON array elements.
  */
 json.valuesToJSElements = function(a, l, i) {
-    if (isNil(l))
+    if (isNull(l))
         return a;
     var pv = json.valueToJSVal(car(l));
     a[i] = pv
@@ -134,7 +134,7 @@ json.valueToJSVal = function(v) {
  * Convert a list of values to JSON properties.
  */
 json.valuesToJSProperties = function(o, l) {
-    if (isNil(l))
+    if (isNull(l))
         return o;
     var token = car(l);
     if (isTaggedList(token, attribute)) {

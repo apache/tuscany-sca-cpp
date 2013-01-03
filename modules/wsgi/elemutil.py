@@ -25,13 +25,13 @@ atsign = "'@"
 
 # Return true if a value is an element
 def isElement(v):
-    if not isList(v) or isNil(v) or v == None or car(v) != element:
+    if not isList(v) or isNull(v) or v == None or car(v) != element:
         return False
     return True
 
 # Return true if a value is an attribute
 def isAttribute(v):
-    if not isList(v) or isNil(v) or v == None or car(v) != attribute:
+    if not isList(v) or isNull(v) or v == None or car(v) != attribute:
         return False
     return True
 
@@ -49,7 +49,7 @@ def elementName(l):
 
 # Return true if an element has children
 def elementHasChildren(l):
-    return not isNil(cddr(l))
+    return not isNull(cddr(l))
 
 # Return the children of an element
 def elementChildren(l):
@@ -60,7 +60,7 @@ def elementHasValue(l):
     r = reverse(l)
     if isSymbol(car(r)):
         return False
-    if isList(car(r)) and not isNil(car(r)) and isSymbol(car(car(r))):
+    if isList(car(r)) and not isNull(car(r)) and isSymbol(car(car(r))):
         return False
     return True
 
@@ -72,7 +72,7 @@ def elementValue(l):
 def elementToValueIsList(v):
     if not isList(v):
         return False
-    return isNil(v) or not isSymbol(car(v))
+    return isNull(v) or not isSymbol(car(v))
 
 def elementToValue(t):
     if isTaggedList(t, attribute):
@@ -91,14 +91,14 @@ def elementToValue(t):
 def elementToValueIsSymbol(v):
     if not isList(v):
         return False
-    if (isNil(v)):
+    if (isNull(v)):
         return False
     if not isSymbol(car(v)):
         return False
     return True
 
 def elementToValueGroupValues(v, l):
-    if isNil(l) or not elementToValueIsSymbol(v) or not elementToValueIsSymbol(car(l)):
+    if isNull(l) or not elementToValueIsSymbol(v) or not elementToValueIsSymbol(car(l)):
         return cons(v, l)
     if car(car(l)) != car(v):
         return cons(v, l)
@@ -109,20 +109,20 @@ def elementToValueGroupValues(v, l):
     return elementToValueGroupValues(g, cdr(l))
 
 def elementsToValues(e):
-    if isNil(e):
+    if isNull(e):
         return e
     return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)))
 
 # Convert a value to an element
 def valueToElement(t):
-    if isList(t) and not isNil(t) and isSymbol(car(t)):
+    if isList(t) and not isNull(t) and isSymbol(car(t)):
         n = car(t)
-        v = () if isNil(cdr(t)) else cadr(t)
+        v = () if isNull(cdr(t)) else cadr(t)
         if not isList(v):
             if n[0:2] == atsign:
                 return (attribute, "'" + n[2:], v)
             return (element, n, v)
-        if isNil(v) or not isSymbol(car(v)):
+        if isNull(v) or not isSymbol(car(v)):
             return cons(element, cons(n, (valuesToElements(v),)))
         return cons(element, cons(n, valuesToElements(cdr(t))))
     if not isList(t):
@@ -131,15 +131,15 @@ def valueToElement(t):
 
 # Convert a list of values to a list of elements
 def valuesToElements(l):
-    if isNil(l):
+    if isNull(l):
         return l
     return cons(valueToElement(car(l)), valuesToElements(cdr(l)))
 
 # Return a selector lambda function which can be used to filter elements
 def evalSelect(s, v):
-    if isNil(s):
+    if isNull(s):
         return True
-    if isNil(v):
+    if isNull(v):
         return False
     if car(s) != car(v):
         return False
@@ -151,7 +151,7 @@ def selector(s):
 # Return the value of the attribute with the given name
 def namedAttributeValue(name, l):
     f = filter(lambda v: isAttribute(v) and attributeName(v) == name, l)
-    if isNil(f):
+    if isNull(f):
         return None
     return caddr(car(f))
 
@@ -162,7 +162,7 @@ def namedElementChildren(name, l):
 # Return the child element with the given name
 def namedElementChild(name, l):
     f = namedElementChildren(name, l)
-    if isNil(f):
+    if isNull(f):
         return None
     return car(f)
 

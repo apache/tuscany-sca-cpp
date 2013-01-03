@@ -81,16 +81,16 @@ const bool isDotVariable(const value& var) {
 }
 
 const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, const list<value> values) {
-    if (isNil(variables)) {
-        if (!isNil(values))
+    if (isNull(variables)) {
+        if (!isNull(values))
             logStream() << "Too many arguments supplied " << values << endl;
         return frameSoFar;
     }
     if (isDotVariable(car(variables)))
         return makeBinding(frameSoFar, cdr(variables), mklist<value>(values));
 
-    if (isNil(values)) {
-        if (!isNil(variables))
+    if (isNull(values)) {
+        if (!isNull(variables))
             logStream() << "Too few arguments supplied " << variables << endl;
         return frameSoFar;
     }
@@ -118,7 +118,7 @@ const value definitionVariable(const value& exp) {
 const value definitionValue(const value& exp) {
     const list<value> exps(exp);
     if(isSymbol(car(cdr(exps)))) {
-        if (isNil(cdr(cdr(exps))))
+        if (isNull(cdr(cdr(exps))))
             return nilValue;
         return car(cdr(cdr(exps)));
     }
@@ -158,7 +158,7 @@ const Env setupEnvironment() {
 const value lookupEnvLoop(const value& var, const Env& env);
 
 const value lookupEnvScan(const value& var, const list<value>& vars, const list<value>& vals, const Env& env) {
-    if(isNil(vars))
+    if(isNull(vars))
         return lookupEnvLoop(var, enclosingEnvironment(env));
     if(var == car(vars))
         return car(vals);

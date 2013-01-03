@@ -43,7 +43,7 @@ const string atsign("@");
  * Returns true if a value is an element.
  */
 inline const bool isElement(const value& v) {
-    if (!isList(v) || isNil(v) || element != car<value>(v))
+    if (!isList(v) || isNull(v) || element != car<value>(v))
         return false;
     return true;
 }
@@ -52,7 +52,7 @@ inline const bool isElement(const value& v) {
  * Returns true if a value is an attribute.
  */
 inline const bool isAttribute(const value& v) {
-    if (!isList(v) || isNil(v) || attribute != car<value>(v))
+    if (!isList(v) || isNull(v) || attribute != car<value>(v))
         return false;
     return true;
 }
@@ -82,7 +82,7 @@ inline const value elementName(const list<value>& l) {
  * Returns true if an element has children.
  */
 inline const bool elementHasChildren(const list<value>& l) {
-    return !isNil(cddr(l));
+    return !isNull(cddr(l));
 }
 
 /**
@@ -99,7 +99,7 @@ inline const bool elementHasValue(const list<value>& l) {
     const list<value> r = reverse(l);
     if (isSymbol(car(r)))
         return false;
-    if(isList(car(r)) && !isNil((list<value>)car(r)) && isSymbol(car<value>(car(r))))
+    if(isList(car(r)) && !isNull((list<value>)car(r)) && isSymbol(car<value>(car(r))))
         return false;
     return true;
 }
@@ -118,7 +118,7 @@ inline const bool elementToValueIsList(const value& v) {
     if (!isList(v))
         return false;
     const list<value> l = v;
-    return (isNil(l) || !isSymbol(car(l)));
+    return (isNull(l) || !isSymbol(car(l)));
 }
 
 inline const value elementToValue(const value& t) {
@@ -159,7 +159,7 @@ inline const bool elementToValueIsSymbol(const value& v) {
     if (!isList(v))
         return false;
     const list<value> l = v;
-    if (isNil(l))
+    if (isNull(l))
         return false;
     if (!isSymbol(car(l)))
         return false;
@@ -167,7 +167,7 @@ inline const bool elementToValueIsSymbol(const value& v) {
 }
 
 inline const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
-    if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
+    if (isNull(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
         return cons(v, l);
     if (car<value>(car(l)) != car<value>(v))
         return cons(v, l);
@@ -181,7 +181,7 @@ inline const list<value> elementToValueGroupValues(const value& v, const list<va
 }
 
 inline const list<value> elementsToValues(const list<value>& e) {
-    if (isNil(e))
+    if (isNull(e))
         return e;
     return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)));
 }
@@ -193,9 +193,9 @@ inline const value valueToElement(const value& t) {
     const list<value> valuesToElements(const list<value>& l);
 
     // Convert a name value pair
-    if (isList(t) && !isNil((list<value>)t) && isSymbol(car<value>(t))) {
+    if (isList(t) && !isNull((list<value>)t) && isSymbol(car<value>(t))) {
         const value n = car<value>(t);
-        const value v = isNil(cdr<value>(t))? nilValue : cadr<value>(t);
+        const value v = isNull(cdr<value>(t))? nilValue : cadr<value>(t);
 
         // Convert a single value to an attribute or an element
         if (!isList(v)) {
@@ -205,7 +205,7 @@ inline const value valueToElement(const value& t) {
         }
 
         // Convert a list value
-        if (isNil((list<value>)v) || !isSymbol(car<value>(v)))
+        if (isNull((list<value>)v) || !isSymbol(car<value>(v)))
             return cons(element, cons(n, mklist<value>(valuesToElements(v))));
 
         // Convert a nested name value pair value
@@ -222,7 +222,7 @@ inline const value valueToElement(const value& t) {
  * Convert a list of values to a list of elements.
  */
 inline const list<value> valuesToElements(const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     return cons<value>(valueToElement(car(l)), valuesToElements(cdr(l)));
 }
@@ -234,7 +234,7 @@ inline const value attributeValue(const value& name, const list<value>& l) {
     const list<value> f = filter<value>([name](const value& v) {
                 return isAttribute(v) && attributeName((list<value>)v) == name;
            }, l);
-    if (isNil(f))
+    if (isNull(f))
         return nilValue;
     return caddr<value>(car(f));
 }
@@ -253,7 +253,7 @@ inline const list<value> elementChildren(const value& name, const list<value>& l
  */
 inline const value elementChild(const value& name, const list<value>& l) {
     const list<value> f = elementChildren(name, l);
-    if (isNil(f))
+    if (isNull(f))
         return nilValue;
     return car(f);
 }

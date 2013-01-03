@@ -31,7 +31,7 @@ def put(id, ratings, user, cache, db, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('ratings.py::put', 'app not found', id)
         return False
 
@@ -52,7 +52,7 @@ def patch(id, ratings, user, cache, db, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('ratings.py::patch', 'app not found', id)
         return False
 
@@ -107,9 +107,9 @@ def get(id, user, cache, db, apps):
     debug('ratings.py::get::id', id)
 
     # Return the top ratings
-    if isNil(id):
+    if isNull(id):
         topentries = db.get((("'regex", '("ratings" .* "app.ratings")'), ("'rank", "(regexp_matches(value, '(.*\(rating )([^\)]+)(\).*)'))[2]::float"), ("'limit", 25)))
-        flatentries = tuple(map(lambda v: car(v), () if isNil(topentries) else topentries))
+        flatentries = tuple(map(lambda v: car(v), () if isNull(topentries) else topentries))
         def rating(e):
             return cadr(assoc("'rating", assoc("'ratings", assoc("'content", e))))
         sortedentries = tuple(sorted(flatentries, key = rating, reverse = True))
@@ -119,7 +119,7 @@ def get(id, user, cache, db, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('ratings.py::get', 'app not found', id)
 
         # Return default ratings
@@ -127,7 +127,7 @@ def get(id, user, cache, db, apps):
 
     # Get the requested ratings
     ratings = cache.get(ratingsid(id))
-    if isNil(ratings):
+    if isNull(ratings):
         debug('ratings.py::get', 'ratings not found', id)
 
         # Return default ratings
@@ -144,7 +144,7 @@ def delete(id, user, cache, db, apps):
 
     # Get the requested app
     app = apps.get(id)
-    if isNil(app):
+    if isNull(app):
         debug('ratings.py::delete', 'app not found', id)
         return False
 

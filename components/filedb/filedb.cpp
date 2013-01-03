@@ -68,7 +68,7 @@ const failable<value> put(const list<value>& params, const filedb::FileDB& db) {
 const failable<value> patch(const list<value>& params, const filedb::FileDB& db) {
     // Read patch
     value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
-    if (isNil(p))
+    if (isNull(p))
         return mkfailure<value>("Couldn't read patch script");
     const string script = cadr<value>(p);
     debug(script, "filedb::patch::script");
@@ -82,7 +82,7 @@ const failable<value> patch(const list<value>& params, const filedb::FileDB& db)
     // Apply patch
     scheme::Env env = scheme::setupEnvironment();
     const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(car(params), hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
-    if (isNil(pval)) {
+    if (isNull(pval)) {
         ostringstream os;
         os << "Couldn't patch file database entry: " << car(params);
         return mkfailure<value>(str(os), 404, false);

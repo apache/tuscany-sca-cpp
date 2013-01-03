@@ -56,7 +56,7 @@ const bool userPrint(const value val, ostream& out) {
 const value evalDriverLoop(istream& in, ostream& out, Env& env) {
     promptForInput(evalInputPrompt, out);
     const value input = content(readValue(in));
-    if (isNil(input))
+    if (isNull(input))
         return input;
     const value output = evalExpr(input, env);
     announceOutput(evalOutputPrompt, out);

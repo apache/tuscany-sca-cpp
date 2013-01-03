@@ -118,10 +118,10 @@ inline const value treeSelectAssocProc(const list<value>& args) {
 
 inline const value nullProc(const list<value>& args) {
     const value v(car(args));
-    if (isNil(v))
+    if (isNull(v))
         return true;
     if (isList(v))
-        return isNil(list<value>(v));
+        return isNull(list<value>(v));
     return false;
 }
 
@@ -138,13 +138,13 @@ inline const value lesserProc(const list<value>& args) {
 }
 
 inline const value addProc(const list<value>& args) {
-    if (isNil(cdr(args)))
+    if (isNull(cdr(args)))
         return (double)car(args);
     return (double)car(args) + (double)cadr(args);
 }
 
 inline const value subProc(const list<value>& args) {
-    if (isNil(cdr(args)))
+    if (isNull(cdr(args)))
         return (double)0 - (double)car(args);
     return (double)car(args) - (double)cadr(args);
 }
@@ -162,7 +162,7 @@ inline const value sqrtProc(const list<value>& args) {
 }
 
 inline const value displayProc(const list<value>& args) {
-    if (isNil(args)) {
+    if (isNull(args)) {
         displayStream() << endl;
         return true;
     }
@@ -171,7 +171,7 @@ inline const value displayProc(const list<value>& args) {
 }
 
 inline const value logProc(const list<value>& args) {
-    if (isNil(args)) {
+    if (isNull(args)) {
         logStream() << endl;
         return true;
     }
@@ -225,7 +225,7 @@ inline const bool isPrimitiveProcedure(const value& proc) {
 }
 
 inline const bool isSelfEvaluating(const value& exp) {
-    if(isNil(exp))
+    if(isNull(exp))
         return true;
     if(isNumber(exp))
         return true;

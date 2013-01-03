@@ -81,7 +81,7 @@ function range(a, b) {
     return l;
 }
 
-function isNil(v) {
+function isNull(v) {
     return (v == null || typeof v == 'undefined' || (v.constructor == Array && v.length == 0));
 }
 
@@ -98,7 +98,7 @@ function isList(v) {
 }
 
 function isTaggedList(v, t) {
-    return (isList(v) && !isNil(v) && car(v) == t);
+    return (isList(v) && !isNull(v) && car(v) == t);
 }
 
 var emptylist = new Array();
@@ -120,7 +120,7 @@ function length(l) {
  * Scheme-like associations.
  */
 function assoc(k, l) {
-    if (isNil(l))
+    if (isNull(l))
         return emptylist;
     var n = l.length;
     for(var i = 0; i < n; i++) {
@@ -134,7 +134,7 @@ function assoc(k, l) {
  * Map, filter and reduce functions.
  */
 function map(f, l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     var n = l.length;
     var a = new Array();
@@ -145,7 +145,7 @@ function map(f, l) {
 }
 
 function filter(f, l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     var n = l.length;
     var a = new Array();
@@ -157,7 +157,7 @@ function filter(f, l) {
 }
 
 function reduce(f, i, l) {
-    if (isNil(l))
+    if (isNull(l))
         return i;
     return reduce(f, f(i, car(l)), cdr(l));
 }
@@ -223,7 +223,7 @@ function isIE() {
  * External build configuration.
  */
 var config;
-if (isNil(config))
+if (isNull(config))
     config = {};
 
 /**
@@ -245,7 +245,7 @@ function assert(exp) {
  * Write a list of strings.
  */
 function writeStrings(l) {
-    if (isNil(l))
+    if (isNull(l))
         return '';
     var s = '';
     var n = l.length;
@@ -268,14 +268,14 @@ function writeValue(v) {
     }
 
     function writeList(l) {
-        if (isNil(l))
+        if (isNull(l))
             return '';
         return ' ' + writeValue(car(l)) + writeList(cdr(l));
     }
 
     if (!isList(v))
         return writePrimitive(v);
-    if (isNil(v))
+    if (isNull(v))
         return '()';
     return '(' + writeValue(car(v)) + writeList(cdr(v)) + ')';
 }
@@ -403,7 +403,7 @@ function domainname(host) {
     if (s != -1)
         return domainname(host.substring(0, s));
     var h = reverse(host.split('.'));
-    var d = (!isNil(cddr(h)) && caddr(h) == 'www')? mklist(car(h), cadr(h), caddr(h)) : mklist(car(h), cadr(h));
+    var d = (!isNull(cddr(h)) && caddr(h) == 'www')? mklist(car(h), cadr(h), caddr(h)) : mklist(car(h), cadr(h));
     return reverse(d).join('.');
 }
 
@@ -536,7 +536,7 @@ function setcaddr(l, v) {
  * Append the elements of a list to a list.
  */
 function setappend(a, b) {
-    if (isNil(b))
+    if (isNull(b))
         return a;
     a.push(car(b));
     return setappend(a, cdr(b));

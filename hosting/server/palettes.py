@@ -30,7 +30,7 @@ def put(id, palette, cache):
 
 # Get a palette from the palettes db
 def get(id, cache):
-    if isNil(id):
+    if isNull(id):
         return (("'feed", ("'title", "Palettes"), ("'id", "palettes")),)
     return mkentry(car(id), car(id), None, now(), car(cache.get(paletteid(id))))
 

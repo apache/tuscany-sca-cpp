@@ -46,7 +46,7 @@ def readElements(l):
 
 # Return true if a list of strings represents an XML document
 def isXML(l):
-    if isNil(l):
+    if isNull(l):
         return False
     if car(l)[0:5] != "<?xml":
         return False
@@ -86,12 +86,12 @@ def readXML(l):
 
 # Write a list of XML element and attribute tokens
 def expandElementValues(n, l):
-    if isNil(l):
+    if isNull(l):
         return l
     return cons(cons(element, cons(n, car(l))), expandElementValues(n, cdr(l)))
 
 def writeList(l, xml):
-    if isNil(l):
+    if isNull(l):
         return xml
     token = car(l)
     if isTaggedList(token, attribute):

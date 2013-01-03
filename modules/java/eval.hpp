@@ -132,7 +132,7 @@ public:
         h.invokerLambda = h.env->GetFieldID(h.invokerClass, "lambda", "J");
         h.iterableUtilClass = h.env->FindClass("org/apache/tuscany/IterableUtil");
         h.iterableValueOf = h.env->GetStaticMethodID(h.iterableUtilClass, "list", "([Ljava/lang/Object;)Ljava/lang/Iterable;");
-        h.iterableIsNil = h.env->GetStaticMethodID(h.iterableUtilClass, "isNil", "(Ljava/lang/Object;)Z");
+        h.iterableIsNil = h.env->GetStaticMethodID(h.iterableUtilClass, "isNull", "(Ljava/lang/Object;)Z");
         h.iterableCar = h.env->GetStaticMethodID(h.iterableUtilClass, "car", "(Ljava/lang/Object;)Ljava/lang/Object;");
         h.iterableCdr = h.env->GetStaticMethodID(h.iterableUtilClass, "cdr", "(Ljava/lang/Object;)Ljava/lang/Iterable;");
         h.uuidClass = h.env->FindClass("org/apache/tuscany/UUIDUtil");
@@ -257,7 +257,7 @@ public:
     }
 
     const value operator()(const list<value>& expr) const {
-        if (isNil(expr))
+        if (isNull(expr))
             return func(expr);
         const value& op(car(expr));
         if (op == "equals")
@@ -331,7 +331,7 @@ const jobject mkJavaLambda(const JavaRuntime& jr, unused const value& iface, con
  * Convert a list of values to a Java jobjectArray.
  */
 const jobjectArray valuesToJarrayHelper(const JavaRuntime& jr, jobjectArray a, const list<value>& v, const int i) {
-    if (isNil(v))
+    if (isNull(v))
         return a;
     jr.h.env->SetObjectArrayElement(a, i, valueToJobject(jr, nilValue, car(v)));
     return valuesToJarrayHelper(jr, a, cdr(v), i + 1);
@@ -375,7 +375,7 @@ const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const va
  * Convert a list of values to an array of jvalues.
  */
 const jvalue* valuesToJvaluesHelper(const JavaRuntime& jr, jvalue* const a, const list<value>& types, const list<value>& v) {
-    if (isNil(v))
+    if (isNull(v))
         return a;
     a->l = valueToJobject(jr, car(types), car(v));
     return valuesToJvaluesHelper(jr, a + 1, cdr(types), cdr(v));
@@ -542,7 +542,7 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
 
     // Lookup the Java function named as the expression operand
     const list<value> func = assoc<value>(car<value>(expr), jc.m);
-    if (isNil(func)) {
+    if (isNull(func)) {
 
         // The start, stop, and restart functions are optional
         const value fn = car<value>(expr);

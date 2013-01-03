@@ -61,9 +61,9 @@ public class IterableUtil {
     /**
      * Return true if a list is nil (empty).
      */
-    public static boolean isNil(final Object l) {
+    public static boolean isNull(final Object l) {
         if(l instanceof BasicIterable<?>)
-            return ((BasicIterable<?>)l).isNil();
+            return ((BasicIterable<?>)l).isNull();
         if(l instanceof Collection<?>)
             return ((Collection<?>)l).isEmpty();
         return !((Iterable<?>)l).iterator().hasNext();
@@ -144,7 +144,7 @@ public class IterableUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> Iterable<T> append(final Object a, final Object b) {
-        if (isNil(a))
+        if (isNull(a))
             return (Iterable<T>)b;
         return cons(car(a), append(cdr(a), b));
     }
@@ -153,7 +153,7 @@ public class IterableUtil {
      * Return the first pair matching a key from a list of key value pairs.
      */
     public static <T> Iterable<T> assoc(final Object k, final Object l) {
-        if(isNil(l))
+        if(isNull(l))
             return list();
         if(k.equals(car(car(l))))
             return car(l);
@@ -168,11 +168,11 @@ public class IterableUtil {
 
         abstract Iterable<T> cdr();
 
-        abstract Boolean isNil();
+        abstract Boolean isNull();
 
         @Override
         public int size() {
-            return this.isNil()? 0 : 1 + ((List<T>)this.cdr()).size();
+            return this.isNull()? 0 : 1 + ((List<T>)this.cdr()).size();
         }
 
         @Override
@@ -194,7 +194,7 @@ public class IterableUtil {
         }
 
         @Override
-        Boolean isNil() {
+        Boolean isNull() {
             return this.a.length - this.start == 0;
         }
 
@@ -243,7 +243,7 @@ public class IterableUtil {
         }
 
         @Override
-        Boolean isNil() {
+        Boolean isNull() {
             return this.l.size() - this.start == 0;
         }
 
@@ -292,7 +292,7 @@ public class IterableUtil {
         }
 
         @Override
-        Boolean isNil() {
+        Boolean isNull() {
             return false;
         }
 
@@ -365,12 +365,12 @@ public class IterableUtil {
             assert jl.get(2) == Integer.valueOf(2);
 
             final Iterable<Object> n = list();
-            assert isNil(n);
+            assert isNull(n);
             assert n.toString().equals("[]");
 
             final Iterable<Object> cn = cons(0, n);
-            assert !isNil(cn);
-            assert isNil(cdr(cn));
+            assert !isNull(cn);
+            assert isNull(cdr(cn));
             assert cn.toString().equals("[0]");
 
             final Iterable<Object> al = new ArrayList<Object>(Arrays.asList(1, 2, 3));

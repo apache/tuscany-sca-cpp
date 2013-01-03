@@ -74,7 +74,7 @@ function viewapp(appname) {
  * Get and display an app icon.
  */
 function geticon(appname) {
-    if (isNil(appname))
+    if (isNull(appname))
         return false;
 
     return icons.get(appname, function(doc) {
@@ -86,9 +86,9 @@ function geticon(appname) {
         var content = assoc("'content", iconentry);
         var icon = assoc("'icon", content);
         var img = assoc("'image", icon);
-        if (!isNil(img)) {
+        if (!isNull(img)) {
             var appimg = $('search_app_img_' + appname);
-            if (!isNil(appimg))
+            if (!isNull(appimg))
                 appimg.src = cadr(img);
         }
         return true;
@@ -114,7 +114,7 @@ function getapps(query) {
 
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var aentries = assoc("'entry", feed);
-        var entries = isNil(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
+        var entries = isNull(aentries)? mklist() : isList(car(cadr(aentries)))? cadr(aentries) : mklist(cdr(aentries));
 
         var defappimg = ui.b64png(appcache.get('/public/app.b64'));
 
@@ -122,7 +122,7 @@ function getapps(query) {
         var icons = mklist();
 
         (function displayentries(entries) {
-            if (isNil(entries))
+            if (isNull(entries))
                 return apps;
             var entry = car(entries);
             var title = cadr(assoc("'title", entry))
@@ -136,8 +136,8 @@ function getapps(query) {
             var ar2 = assoc("'rating2", aratings);
             var ar3 = assoc("'rating3", aratings);
             var ar4 = assoc("'rating4", aratings);
-            var rating = isNil(ar)? 0 : Number(cadr(ar));
-            var reviews = (isNil(ar1)? 0 : Number(cadr(ar1))) + (isNil(ar2)? 0 : Number(cadr(ar2))) + (isNil(ar3)? 0 : Number(cadr(ar3))) + (isNil(ar4)? 0 : Number(cadr(ar4)));
+            var rating = isNull(ar)? 0 : Number(cadr(ar));
+            var reviews = (isNull(ar1)? 0 : Number(cadr(ar1))) + (isNull(ar2)? 0 : Number(cadr(ar2))) + (isNull(ar3)? 0 : Number(cadr(ar3))) + (isNull(ar4)? 0 : Number(cadr(ar4)));
 
             apps += '<div class="box">'
             apps += '<div class="appicon">'
@@ -165,7 +165,7 @@ function getapps(query) {
         ui.unmemo$('search_app_');
 
         (function displayicons(icons) {
-            if (isNil(icons))
+            if (isNull(icons))
                 return true;
             geticon(car(icons));
             return displayicons(cdr(icons));

@@ -40,7 +40,7 @@ namespace scdl {
  */
 const list<value> components(const value& l) {
     const list<value> cs = elementChildren("composite", l);
-    if (isNil(cs))
+    if (isNull(cs))
         return cs;
     return elementChildren("component", car(cs));
 }
@@ -50,7 +50,7 @@ const list<value> components(const value& l) {
  */
 const list<value> promotions(const value& l) {
     const list<value> cs = elementChildren("composite", l);
-    if (isNil(cs))
+    if (isNull(cs))
         return cs;
     return elementChildren("service", car(cs));
 }
@@ -73,7 +73,7 @@ const value name(const value& l) {
  * Convert a list of elements to a name -> element assoc list.
  */
 const list<value> nameToElementAssoc(const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return l;
     const value e(car(l));
     return cons<value>(mklist<value>(name(e), e), nameToElementAssoc(cdr(l)));
@@ -87,7 +87,7 @@ const value named(const value& n, const value& l) {
         return name(v) == n;
     };
     const list<value> c = filter<value>(filterName, l);
-    if (isNil(c))
+    if (isNull(c))
         return nilValue;
     return car(c);
 }
@@ -100,7 +100,7 @@ const value implementation(const value& l) {
         return isElement(v) && contains(string(cadr<value>(v)), "implementation.");
     };
     const list<value> n = filter<value>(filterImplementation, l);
-    if (isNil(n))
+    if (isNull(n))
         return nilValue;
     return car(n);
 }
@@ -148,17 +148,17 @@ const list<value> bindings(const value& l) {
  * Returns the target of a reference.
  */
 const value bindingsTarget(const list<value>& l) {
-    if (isNil(l))
+    if (isNull(l))
         return nilValue;
     const value u = uri(car(l));
-    if (!isNil(u))
+    if (!isNull(u))
         return u;
     return bindingsTarget(cdr(l));
 }
 
 const value target(const value& l) {
     const value target = attributeValue("target", l);
-    if (!isNil(target))
+    if (!isNull(target))
         return target;
     return bindingsTarget(bindings(l));
 }
@@ -167,7 +167,7 @@ const value target(const value& l) {
  * Convert a list of references to a reference name -> target assoc list.
  */
 const list<value> referenceToTargetAssoc(const list<value>& r) {
-    if (isNil(r))
+    if (isNull(r))
         return r;
     const value ref(car(r));
     return cons<value>(mklist<value>(scdl::name(ref), scdl::target(ref)), referenceToTargetAssoc(cdr(r)));
