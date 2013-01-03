@@ -40,6 +40,8 @@ const bool testTinyCDB() {
     assert((get(k, cdb)) == value(string("AAA")));
     assert(hasContent(put(k, string("aaa"), cdb)));
     assert((get(k, cdb)) == value(string("aaa")));
+    assert(hasContent(patch(k, string("bbb"), cdb)));
+    assert((get(k, cdb)) == value(string("bbb")));
     assert(hasContent(del(k, cdb)));
     assert(!hasContent(get(k, cdb)));
 

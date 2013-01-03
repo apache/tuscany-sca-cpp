@@ -63,6 +63,39 @@ const failable<value> put(const list<value>& params, const tinycdb::TinyCDB& cdb
 }
 
 /**
+ * Patch an item in the database.
+ */
+const failable<value> patch(const list<value>& params, const tinycdb::TinyCDB& cdb) {
+    // Read patch
+    value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
+    if (isNil(p))
+        return mkfailure<value>("Couldn't read patch script");
+    const string script = cadr<value>(p);
+    debug(script, "tinycdb::patch::script");
+    istringstream is(script);
+
+    // Get existing value from database
+    const failable<value> ival = tinycdb::get(car(params), cdb);
+    if (!hasContent(ival) && rcode(ival) != 404)
+        return mkfailure<value>(ival);
+
+    // Apply patch
+    scheme::Env env = scheme::setupEnvironment();
+    const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(car(params), hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
+    if (isNil(pval)) {
+        ostringstream os;
+        os << "Couldn't patch tinycdb entry: " << car(params);
+        return mkfailure<value>(str(os), 404, false);
+    }
+
+    // Push patched value to database
+    const failable<bool> val = tinycdb::patch(car(params), pval, cdb);
+    if (!hasContent(val))
+        return mkfailure<value>(val);
+    return value(content(val));
+}
+
+/**
  * Delete an item from the database.
  */
 const failable<value> del(const list<value>& params, const tinycdb::TinyCDB& cdb) {
@@ -89,6 +122,8 @@ const failable<value> start(unused const list<value>& params) {
             return post(cdr(params), cdb);
         if (func == "put")
             return put(cdr(params), cdb);
+        if (func == "patch")
+            return patch(cdr(params), cdb);
         if (func == "delete")
             return del(cdr(params), cdb);
         return mkfailure<value>();

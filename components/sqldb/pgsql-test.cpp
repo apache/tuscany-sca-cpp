@@ -49,6 +49,8 @@ const bool testPGSql() {
 
     assert(hasContent(put(k, string("aaa"), pg)));
     assert(content(get(k, pg)) == value(string("aaa")));
+    assert(hasContent(patch(k, string("bbb"), pg)));
+    assert(content(get(k, pg)) == value(string("bbb")));
     assert(hasContent(del(k, pg)));
     assert(!hasContent(get(k, pg)));
 

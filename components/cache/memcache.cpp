@@ -63,6 +63,39 @@ const failable<value> put(const list<value>& params, const memcache::MemCached& 
 }
 
 /**
+ * Patch an item in the cache.
+ */
+const failable<value> patch(const list<value>& params, const memcache::MemCached& ch) {
+    // Read patch
+    value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
+    if (isNil(p))
+        return mkfailure<value>("Couldn't read patch script");
+    const string script = cadr<value>(p);
+    debug(script, "memcache::patch::script");
+    istringstream is(script);
+
+    // Get existing value from cache
+    const failable<value> ival = memcache::get(car(params), ch);
+    if (!hasContent(ival) && rcode(ival) != 404)
+        return mkfailure<value>(ival);
+
+    // Apply patch
+    scheme::Env env = scheme::setupEnvironment();
+    const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(car(params), hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
+    if (isNil(pval)) {
+        ostringstream os;
+        os << "Couldn't patch memcached entry: " << car(params);
+        return mkfailure<value>(str(os), 404, false);
+    }
+
+    // Push patched value to cache
+    const failable<bool> val = memcache::patch(car(params), pval, ch);
+    if (!hasContent(val))
+        return mkfailure<value>(val);
+    return value(content(val));
+}
+
+/**
  * Delete an item from the cache.
  */
 const failable<value> del(const list<value>& params, const memcache::MemCached& ch) {
@@ -98,6 +131,8 @@ const failable<value> start(const list<value>& params) {
             return post(cdr(params), ch);
         if (func == "put")
             return put(cdr(params), ch);
+        if (func == "patch")
+            return patch(cdr(params), ch);
         if (func == "delete")
             return del(cdr(params), ch);
         return mkfailure<value>();

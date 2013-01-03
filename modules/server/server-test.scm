@@ -22,7 +22,7 @@
 ; ATOMPub test case
 
 (define (get id)
-  (if (nul id)
+  (if (null? id)
     '((feed (title "Sample Feed") (id "123456789") (entry
        (((title "Item") (id "111") (content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
         ((title "Item") (id "222") (content (item (name "Orange") (currencyCode "USD") (currencySymbol "$") (price 3.55))))
@@ -36,6 +36,10 @@
 )
 
 (define (put id item)
+  true
+)
+
+(define (patch id item)
   true
 )
 

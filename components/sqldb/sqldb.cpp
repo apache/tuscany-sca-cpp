@@ -64,6 +64,65 @@ const failable<value> put(const list<value>& params, const pgsql::PGSql& pg) {
 }
 
 /**
+ * Patch an item in the database.
+ */
+const failable<value> patch(const list<value>& params, const pgsql::PGSql& pg) {
+    // Read patch
+    value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
+    if (isNil(p))
+        return mkfailure<value>("Couldn't read patch script");
+    const string script = cadr<value>(p);
+    debug(script, "pgsql::patch::script");
+
+    const lambda<const failable<value>(const value&, const pgsql::PGSql&, const string&, const int)> tryPatch = [&tryPatch](const value& key, const pgsql::PGSql& pg, const string& script, const int count) -> const failable<value> {
+
+        // Begin database transaction
+        const failable<bool> brc = pgsql::begin(pg);
+        if (!hasContent(brc))
+            return mkfailure<value>(brc);
+
+        // Get existing value from database
+        const failable<value> ival = pgsql::get(key, pg);
+        if (!hasContent(ival) && rcode(ival) != 404) {
+            pgsql::rollback(pg);
+            return mkfailure<value>(ival);
+        }
+
+        // Apply patch
+        istringstream is(script);
+        scheme::Env env = scheme::setupEnvironment();
+        const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(key, hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
+        if (isNil(pval)) {
+            ostringstream os;
+            os << "Couldn't patch postgresql entry: " << key;
+            return mkfailure<value>(str(os), 404, false);
+        }
+
+        // Push patched value to database
+        const failable<bool> val = pgsql::patch(key, pval, pg);
+        if (!hasContent(val)) {
+            pgsql::rollback(pg);
+
+            // Retry on a transaction serialization error
+            if (rcode(val) == 409 && count > 0)
+                return tryPatch(key, pg, script, count - 1);
+            return mkfailure<value>(val);
+        }
+
+        // Commit database transaction
+        const failable<bool> crc = pgsql::commit(pg);
+        if (!hasContent(crc))
+            return mkfailure<value>(crc);
+
+        return value(content(val));
+    };
+
+    // Try patching the entry and automatically retry a few times on transaction
+    // serialization errors
+    return tryPatch(car(params), pg, script, 5);
+}
+
+/**
  * Delete an item from the database.
  */
 const failable<value> del(const list<value>& params, const pgsql::PGSql& pg) {
@@ -98,6 +157,8 @@ const failable<value> start(const list<value>& params) {
             return post(cdr(params), *pg);
         if (func == "put")
             return put(cdr(params), *pg);
+        if (func == "patch")
+            return patch(cdr(params), *pg);
         if (func == "delete")
             return del(cdr(params), *pg);
         return mkfailure<value>();

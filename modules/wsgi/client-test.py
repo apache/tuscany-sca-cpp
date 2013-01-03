@@ -36,5 +36,8 @@ def post(collection, item, ref):
 def put(id, item, ref):
     return ref.put(id, item)
 
+def patch(id, item, ref):
+    return ref.patch(id, item)
+
 def delete(id, ref):
     return ref.delete(id)

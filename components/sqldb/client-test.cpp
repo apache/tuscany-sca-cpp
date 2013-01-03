@@ -77,6 +77,32 @@ const bool testSqlDb() {
         assert(hasContent(val));
         assert(content(val) == b);
     }
+
+    const list<value> k = nilListValue + "content" + (nilListValue + "item" 
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$3.99")));
+    const list<value> c = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + k);
+
+    {
+        const list<value> s = nilListValue + "content" +
+            (nilListValue + "patch" + string("(define (patch id e) (tree-subst-assoc '(price) '(price \"$3.99\") e))"));
+        const list<value> ps = nilListValue + (nilListValue + "entry" 
+                + (nilListValue + "title" + string("item"))
+                + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+                + s);
+
+        const failable<value> r = http::patch(ps, uri + p, cs);
+        assert(hasContent(r));
+        assert(content(r) == trueValue);
+    }
+    {
+        const failable<value> val = http::get(uri + p, cs);
+        assert(hasContent(val));
+        assert(content(val) == c);
+    }
     {
         const failable<value> r = http::del(uri + p, cs);
         assert(hasContent(r));

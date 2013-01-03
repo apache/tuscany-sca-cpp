@@ -143,6 +143,23 @@ const failable<value> put(const value& key, const value& val, const lvvlambda& s
 }
 
 /**
+ * Patch an item in a partition.
+ */
+const failable<value> patch(const value& key, const value& val, const lvvlambda& selector, const list<value>& partitions) {
+
+    // Select partition
+    const failable<list<value> > p = partition(key, selector, partitions);
+    if (!hasContent(p))
+        return mkfailure<value>(p);
+
+    // Path item in selected partition
+    const lvvlambda l = car(content(p));
+    l(mklist<value>("patch", key, val));
+
+    return trueValue;
+}
+
+/**
  * Delete an item from a partition.
  */
 const failable<value> del(const value& key, const lvvlambda& selector, const list<value>& partitions) {
@@ -172,6 +189,8 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::partitioner::post(cadr(params), caddr(params), cadddr(params), cddddr(params));
     if (func == "put")
         return tuscany::partitioner::put(cadr(params), caddr(params), cadddr(params), cddddr(params));
+    if (func == "patch")
+        return tuscany::partitioner::patch(cadr(params), caddr(params), cadddr(params), cddddr(params));
     if (func == "delete")
         return tuscany::partitioner::del(cadr(params), caddr(params), cdddr(params));
     return tuscany::mkfailure<tuscany::value>();

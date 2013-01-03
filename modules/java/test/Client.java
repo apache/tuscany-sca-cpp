@@ -29,6 +29,8 @@ public interface Client {
     
     Boolean put(Iterable<String> id, Iterable<?> item);
     
+    Boolean patch(Iterable<String> id, Iterable<?> item);
+    
     Boolean delete(Iterable<String> id);
     
 }

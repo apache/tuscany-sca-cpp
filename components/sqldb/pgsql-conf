@@ -96,6 +96,7 @@ archive_command = '$here/pgsql-archive $root $host $bport %p %f'
 wal_level = hot_standby
 max_wal_senders = 5
 wal_keep_segments = 32
+#synchronous_standby_names = '*'
 
 EOF
 
@@ -166,7 +167,6 @@ cat >$root/sqldb/data/pgbouncer.conf <<EOF
 db = host=$host port=$port dbname=db user=bouncer
 
 [pgbouncer]
-pool_mode = session
 listen_addr = $listen
 listen_port = $bport
 unix_socket_dir =
@@ -177,9 +177,9 @@ pidfile = $root/logs/pgbouncer.pid
 max_client_conn = 1000
 pool_mode = transaction
 server_reset_query =
-default_pool_size = 500
+default_pool_size = 50
 min_pool_size = 5
-reserve_pool_size = 50
+reserve_pool_size = 5
 log_connections = 0
 log_disconnections = 0
 stats_period = 3600

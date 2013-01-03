@@ -40,6 +40,8 @@ bool testMemCached() {
     assert(get(k, ch) == value(string("AAA")));
     assert(hasContent(put(k, string("aaa"), ch)));
     assert(get(k, ch) == value(string("aaa")));
+    assert(hasContent(patch(k, string("bbb"), ch)));
+    assert(get(k, ch) == value(string("bbb")));
     assert(hasContent(del(k, ch)));
     assert(!hasContent(get(k, ch)));
 

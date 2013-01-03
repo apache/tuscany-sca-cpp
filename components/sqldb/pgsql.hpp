@@ -75,12 +75,15 @@ public:
         string ks = string("select a.attname from pg_attribute a, pg_class c where a.attrelid = c.relfilenode and c.relname = '") + table + string("' and a.attnum in (1, 2) order by a.attnum;");
         PGresult* const kr = PQexec(conn, c_str(ks));
         if (PQresultStatus(kr) != PGRES_TUPLES_OK) {
-            mkfailure<bool>(string("Couldn't execute postgresql column select statement: ") + pgfailure(kr, conn));
+            const string rs = string("Couldn't execute postgresql column select statement: ") + pgfailure(kr, conn);
+            PQclear(kr);
+            mkfailure<bool>(rs);
             return;
         }
         if (PQntuples(kr) != 2) {
+            const string rs = "Couldn't find postgresql table key and value column names";
             PQclear(kr);
-            mkfailure<bool>(string("Couldn't find postgresql table key and value column names"));
+            mkfailure<bool>(rs);
             return;
         }
         kname = c_str(string(PQgetvalue(kr, 0, 0)));
@@ -95,12 +98,10 @@ public:
     PGSql& operator=(const PGSql& c) = delete;
 
     ~PGSql() {
-        debug("pgsql::~pgsql");
         if (!owner)
             return;
         if (conn == NULL)
             return;
-        debug(conn, "pgsql::~pgsql::conn");
         PQfinish(conn);
     }
 
@@ -113,8 +114,12 @@ private:
     const char* vname;
 
     friend const failable<bool> setup(const PGSql& pgsql);
+    friend const failable<bool> begin(const PGSql& pgsql);
+    friend const failable<bool> commit(const PGSql& pgsql);
+    friend const failable<bool> rollback(const PGSql& pgsql);
     friend const failable<bool> post(const value& key, const value& val, const PGSql& pgsql);
     friend const failable<bool> put(const value& key, const value& val, const PGSql& pgsql);
+    friend const failable<bool> patch(const value& key, const value& val, const PGSql& pgsql);
     friend const failable<value> get(const value& key, const PGSql& pgsql);
     friend const failable<bool> del(const value& key, const PGSql& pgsql);
 };
@@ -134,6 +139,69 @@ const failable<bool> setup(const PGSql& pgsql) {
 }
 
 /**
+ * Begin a database transaction.
+ */
+const failable<bool> begin(const PGSql& pgsql) {
+    debug("pgsql::begin");
+    debug(pgsql.conninfo, "pgsql::begin::conninfo");
+    debug(pgsql.table, "pgsql::begin::table");
+    setup(pgsql);
+
+    PGresult* const r = PQexec(pgsql.conn, "begin transaction isolation level repeatable read");
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute begin SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    PQclear(r);
+
+    debug(true, "pgsql::begin::result");
+    return true;
+}
+
+/**
+ * Commit a database transaction.
+ */
+const failable<bool> commit(const PGSql& pgsql) {
+    debug("pgsql::commit");
+    debug(pgsql.conninfo, "pgsql::commit::conninfo");
+    debug(pgsql.table, "pgsql::commit::table");
+    setup(pgsql);
+
+    PGresult* const r = PQexec(pgsql.conn, "commit");
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute commit SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    PQclear(r);
+
+    debug(true, "pgsql::commit::result");
+    return true;
+}
+
+/**
+ * Rollback a database transaction.
+ */
+const failable<bool> rollback(const PGSql& pgsql) {
+    debug("pgsql::rollback");
+    debug(pgsql.conninfo, "pgsql::rollback::conninfo");
+    debug(pgsql.table, "pgsql::rollback::table");
+    setup(pgsql);
+
+    PGresult* const r = PQexec(pgsql.conn, "rollback");
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute rollback SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    PQclear(r);
+
+    debug(true, "pgsql::rollback::result");
+    return true;
+}
+
+/**
  * Post a new item to the database.
  */
 const failable<bool> post(const value& key, const value& val, const PGSql& pgsql) {
@@ -147,8 +215,11 @@ const failable<bool> post(const value& key, const value& val, const PGSql& pgsql
     const string vs(write(content(scheme::writeValue(val))));
     const char* const params[2] = { c_str(ks), c_str(vs) };
     PGresult* const r = PQexecParams(pgsql.conn, c_str(string("insert into ") + pgsql.table + string(" values($1, $2);")), 2, NULL, params, NULL, NULL, 0);
-    if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Couldn't execute insert postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute insert postgresql SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
     PQclear(r);
 
     debug(true, "pgsql::post::result");
@@ -169,10 +240,13 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
     const string vs(write(content(scheme::writeValue(val))));
     const char* const params[2] = { c_str(ks), c_str(vs) };
     PGresult* const r = PQexecParams(pgsql.conn, c_str(string("update ") + pgsql.table + string(" set ") + pgsql.vname + string(" = $2 where ") + pgsql.kname + string(" = $1;")), 2, NULL, params, NULL, NULL, 0);
-    if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Couldn't execute update postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
-    const string t = PQcmdTuples(r);
-    if (t != "0") {
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute update postgresql SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    const char* const t = PQcmdTuples(r);
+    if (t != NULL && strcmp(t, "0")) {
         PQclear(r);
         debug(true, "pgsql::put::result");
         return true;
@@ -180,11 +254,65 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
     PQclear(r);
 
     PGresult* const pr = PQexecParams(pgsql.conn, c_str(string("insert into ") + pgsql.table + string(" values($1, $2);")), 2, NULL, params, NULL, NULL, 0);
-    if (PQresultStatus(pr) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Couldn't execute insert postgresql SQL statement: ") + pgfailure(pr, pgsql.conn));
+    if (PQresultStatus(pr) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute insert postgresql SQL statement: ") + pgfailure(pr, pgsql.conn);
+        PQclear(pr);
+        return mkfailure<bool>(rs);
+    }
     PQclear(pr);
 
     debug(true, "pgsql::put::result");
+    return true;
+}
+
+/**
+ * Patch an item in the database. If the item doesn't exist it is added.
+ */
+const failable<bool> patch(const value& key, const value& val, const PGSql& pgsql) {
+    debug(key, "pgsql::patch::key");
+    debug(val, "pgsql::patch::value");
+    debug(pgsql.conninfo, "pgsql::patch::conninfo");
+    debug(pgsql.table, "pgsql::patch::table");
+    setup(pgsql);
+
+    const string ks(write(content(scheme::writeValue(key))));
+    const string vs(write(content(scheme::writeValue(val))));
+    const char* const params[2] = { c_str(ks), c_str(vs) };
+    PGresult* const r = PQexecParams(pgsql.conn, c_str(string("update ") + pgsql.table + string(" set ") + pgsql.vname + string(" = $2 where ") + pgsql.kname + string(" = $1;")), 2, NULL, params, NULL, NULL, 0);
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute update postgresql SQL statement: ") + pgfailure(r, pgsql.conn);
+        const char* const st = PQresultErrorField(r, PG_DIAG_SQLSTATE);
+        if (st != NULL && !strncmp(st, "40", 2)) {
+
+            // Report a transaction serialization conflict
+            PQclear(r);
+            return mkfailure<bool>(rs, 409);
+        }
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    const char* const t = PQcmdTuples(r);
+    if (t != NULL && strcmp(t, "0")) {
+        PQclear(r);
+        debug(true, "pgsql::patch::result");
+        return true;
+    }
+    PQclear(r);
+
+    PGresult* const pr = PQexecParams(pgsql.conn, c_str(string("insert into ") + pgsql.table + string(" values($1, $2);")), 2, NULL, params, NULL, NULL, 0);
+    if (PQresultStatus(pr) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute insert postgresql SQL statement: ") + pgfailure(pr, pgsql.conn);
+        const char* const st = PQresultErrorField(pr, PG_DIAG_SQLSTATE);
+        if (st != NULL && !strncmp(st, "40", 2)) {
+            PQclear(pr);
+            return mkfailure<bool>(rs, 40);
+        }
+        PQclear(pr);
+        return mkfailure<bool>(rs);
+    }
+    PQclear(pr);
+
+    debug(true, "pgsql::patch::result");
     return true;
 }
 
@@ -200,14 +328,14 @@ const list<value> keyid(const list<value>& key) {
 }
 
 /**
- * Convert a key to an param name / value assoc.
+ * Convert a key to a (param name, value) assoc.
  */
-const list<list<value> > keyparams(const list<value>& key) {
+const list<value> keyparams(const list<value>& key) {
     if (isNil(key))
         return nilListValue;
     if (!isList(car(key)))
         return keyparams(cdr(key));
-    return cons<list<value> >((list<value>)car(key), keyparams(cdr(key)));
+    return cons<value>(car(key), keyparams(cdr(key)));
 }
 
 /**
@@ -216,9 +344,8 @@ const list<list<value> > keyparams(const list<value>& key) {
 const list<value> getitems(PGresult* const r, const int i, const int n) {
     if (i == n)
         return nilListValue;
-    const value key(content(scheme::readValue(string(PQgetvalue(r, i, 0)))));
     const value val(content(scheme::readValue(string(PQgetvalue(r, i, 1)))));
-    return cons<value>(mklist<value>(key, val), getitems(r, i + 1, n));
+    return cons<value>(val, getitems(r, i + 1, n));
 }
 
 /**
@@ -250,12 +377,13 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
 
     // Get item and id and get parameters from the key
     const bool lk = isList(key);
-    const list<list<value> > kparams = lk? keyparams(key) : list<list<value> >();
+    const list<value> kparams = lk? keyparams(key) : nilListValue;
     const list<value> regex = assoc<value>("regex", kparams);
     const list<value> like = assoc<value>("like", kparams);
     const list<value> textsearch = assoc<value>("textsearch", kparams);
     const list<value> limit = assoc<value>("limit", kparams);
     const list<value> offset = assoc<value>("offset", kparams);
+    const list<value> rank = assoc<value>("rank", kparams);
     const list<value> id = lk? keyid(key) : nilListValue;
     const list<value> atable = assoc<value>("table", kparams);
     const string table = isNil(atable)? pgsql.table : (string)cadr(atable);
@@ -265,14 +393,20 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     const string vname = isNil(avname)? pgsql.vname : (string)cadr(avname);
 
     // Build the SQL query
-    const char* sqlparams[5];
+    const char* sqlparams[6];
     int p = 0;
     int w = 0;
     ostringstream sqlos;
-    sqlos << "select data.*";
+    sqlos << "select data." << kname << ", data." << vname;
     if (!isNil(textsearch)) {
-        // Text search, setup result ranking
-        sqlos << ", ts_rank_cd(to_tsvector(data." << vname << "), tsquery, 32) as rank";
+        // Text search, setup text result ranking
+        sqlos << ", ts_rank_cd(to_tsvector(data." << vname << "), tsquery, 32) as tsrank";
+    }
+    if (!isNil(rank)) {
+        // Ranking, setup rank expression
+        const string rs = (string)cadr(rank);
+        sqlparams[p++] = c_str(rs);
+        sqlos << ", $" << p << " as rank";
     }
     sqlos << " from " << table << " data";
     if (!isNil(textsearch)) {
@@ -305,8 +439,12 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     if (!isNil(textsearch)) {
         // Text search, apply the query
         sqlos << (w == 0? " where" : " and");
-        sqlos << " tsquery @@ to_tsvector(data." << vname << ") order by rank desc";
+        sqlos << " tsquery @@ to_tsvector(data." << vname << ")";
         w++;
+    }
+    if (!isNil(textsearch) || !isNil(rank)) {
+        // Result ordering
+        sqlos << " order by" << (isNil(rank)? "" : " rank desc") << ((isNil(rank) || isNil(textsearch))? "" : ",") << (isNil(textsearch)? "" : " tsrank desc");
     }
     if (!isNil(offset)) {
         // Result pagination offset
@@ -320,8 +458,11 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     const string sqls = str(sqlos);
     debug(sqls, "pgsql::get::sqls");
     PGresult* r = PQexecParams(pgsql.conn, c_str(sqls), p, NULL, sqlparams, NULL, NULL, 0);
-    if (PQresultStatus(r) != PGRES_TUPLES_OK)
-        return mkfailure<value>(string("Couldn't execute select postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
+    if (PQresultStatus(r) != PGRES_TUPLES_OK) {
+        const string rs = string("Couldn't execute select postgresql SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<value>(rs);
+    }
     const int n = PQntuples(r);
     if (n < 1) {
         PQclear(r);
@@ -330,7 +471,7 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
         return mkfailure<value>(str(os), 404, false);
     }
 
-    // Return a collection of key / item pairs
+    // Return a collection of items
     if (l != 1) {
         const list<value> lval = getitems(r, 0, n);
         PQclear(r);
@@ -357,8 +498,18 @@ const failable<bool> del(const value& key, const PGSql& pgsql) {
     const string ks(write(content(scheme::writeValue(key))));
     const char* const params[1] = { c_str(ks) };
     PGresult* const r = PQexecParams(pgsql.conn, c_str(string("delete from ") + pgsql.table + string(" where ") + pgsql.kname + string(" = $1;")), 1, NULL, params, NULL, NULL, 0);
-    if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Couldn't execute delete postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
+    if (PQresultStatus(r) != PGRES_COMMAND_OK) {
+        const string rs = string("Couldn't execute delete postgresql SQL statement: ") + pgfailure(r, pgsql.conn);
+        PQclear(r);
+        return mkfailure<bool>(rs);
+    }
+    const char* const t = PQcmdTuples(r);
+    if (t != NULL && !strcmp(t, "0")) {
+        PQclear(r);
+        ostringstream os;
+        os << "Couldn't delete postgresql entry: " << key;
+        return mkfailure<bool>(str(os), 404, false);
+    }
     PQclear(r);
 
     debug(true, "pgsql::delete::result");

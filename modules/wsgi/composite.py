@@ -237,6 +237,14 @@ def application(e, r):
             return failure(e, r, 404)
         return result(e, r, 200)
     
+    if m == "PATCH":
+        # Handle an ATOM entry PATCH
+        ae = elementsToValues(readATOMEntry(requestBody(e)))
+        v = comp("patch", id, ae)
+        if v == False:
+            return failure(e, r, 404)
+        return result(e, r, 200)
+    
     if m == "DELETE":
         v = comp("delete", id)
         if v == False:

@@ -73,6 +73,7 @@ private:
 
     friend const failable<bool> post(const value& key, const value& val, const MemCached& cache);
     friend const failable<bool> put(const value& key, const value& val, const MemCached& cache);
+    friend const failable<bool> patch(const value& key, const value& val, const MemCached& cache);
     friend const failable<value> get(const value& key, const MemCached& cache);
     friend const failable<bool> del(const value& key, const MemCached& cache);
 
@@ -177,6 +178,26 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
 }
 
 /**
+ * Patch an item in the cache. If the item doesn't exist it is added.
+ */
+const failable<bool> patch(const value& key, const value& val, const MemCached& cache) {
+    debug(key, "memcache::patch::key");
+    debug(val, "memcache::patch::value");
+
+    const string ks(write(content(scheme::writeValue(key))));
+    const string vs(write(content(scheme::writeValue(val))));
+    const apr_status_t rc = apr_memcache_set(cache.mc, nospaces(c_str(ks)), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
+    if (rc != APR_SUCCESS) {
+        ostringstream os;
+        os << "Couldn't set memcached entry: " << key;
+        return mkfailure<bool>(str(os));
+    }
+
+    debug(true, "memcache::patch::result");
+    return true;
+}
+
+/**
  * Get an item from the cache.
  */
 const failable<value> get(const value& key, const MemCached& cache) {
@@ -209,7 +230,7 @@ const failable<bool> del(const value& key, const MemCached& cache) {
     if (rc != APR_SUCCESS) {
         ostringstream os;
         os << "Couldn't delete memcached entry: " << key;
-        return mkfailure<bool>(str(os));
+        return rc == APR_NOTFOUND? mkfailure<bool>(str(os), 404, false) : mkfailure<bool>(str(os));
     }
 
     debug(true, "memcache::delete::result");

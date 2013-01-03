@@ -29,7 +29,7 @@ def entryElementValues(e):
     i = "" if isNil(li) else elementValue(car(li))
     lc = filter(selector((element, "'content")), e)
     return append((element, "'entry", (element, "'title", t), (element, "'id", i)),
-            () if isNil(lc) else ((element, "'content", elementValue(car(lc))),))
+            () if isNil(lc) else () if isAttribute(elementValue(car(lc))) else ((element, "'content", elementValue(car(lc))),))
 
 # Convert a list of elements to a list of values representing ATOM entries
 def entriesElementValues(e):

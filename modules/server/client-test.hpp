@@ -294,6 +294,21 @@ const bool testPut() {
     return true;
 }
 
+const bool testPatch() {
+    const gc_scoped_pool pool;
+    const list<value> i = nilListValue + "content" + (nilListValue + "item"
+            + (nilListValue + "name" + string("Apple"))
+            + (nilListValue + "price" + string("$2.99")));
+    const list<value> a = nilListValue + (nilListValue + "entry" 
+            + (nilListValue + "title" + string("item"))
+            + (nilListValue + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
+    const http::CURLSession ch("", "", "", "", 0);
+    const value rc = content(http::patch(a, testURI + "/111", ch));
+    assert(rc == trueValue);
+    return true;
+}
+
 const bool testDel() {
     const gc_scoped_pool pool;
     const http::CURLSession ch("", "", "", "", 0);
@@ -306,6 +321,7 @@ const bool testServer() {
     tuscany::server::testGet();
     tuscany::server::testPost();
     tuscany::server::testPut();
+    tuscany::server::testPatch();
     tuscany::server::testDel();
     tuscany::server::testEval();
     tuscany::server::testGetPerf();

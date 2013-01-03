@@ -63,6 +63,39 @@ const failable<value> put(const list<value>& params, const filedb::FileDB& db) {
 }
 
 /**
+ * Patch an item in the database.
+ */
+const failable<value> patch(const list<value>& params, const filedb::FileDB& db) {
+    // Read patch
+    value p = assoc<value>("patch", assoc<value>("content", car<value>(cadr(params))));
+    if (isNil(p))
+        return mkfailure<value>("Couldn't read patch script");
+    const string script = cadr<value>(p);
+    debug(script, "filedb::patch::script");
+    istringstream is(script);
+
+    // Get existing value from database
+    const failable<value> ival = filedb::get(car(params), db);
+    if (!hasContent(ival) && rcode(ival) != 404)
+        return mkfailure<value>(ival);
+
+    // Apply patch
+    scheme::Env env = scheme::setupEnvironment();
+    const value pval = scheme::evalScript(cons<value>("patch", scheme::quotedParameters(mklist<value>(car(params), hasContent(ival)? content(ival) : (value)list<value>()))), is, env);
+    if (isNil(pval)) {
+        ostringstream os;
+        os << "Couldn't patch file database entry: " << car(params);
+        return mkfailure<value>(str(os), 404, false);
+    }
+
+    // Push patched value to database
+    const failable<bool> val = filedb::patch(car(params), pval, db);
+    if (!hasContent(val))
+        return mkfailure<value>(val);
+    return value(content(val));
+}
+
+/**
  * Delete an item from the database.
  */
 const failable<value> del(const list<value>& params, const filedb::FileDB& db) {
@@ -91,6 +124,8 @@ const failable<value> start(const list<value>& params) {
             return post(cdr(params), db);
         if (func == "put")
             return put(cdr(params), db);
+        if (func == "patch")
+            return patch(cdr(params), db);
         if (func == "delete")
             return del(cdr(params), db);
         return mkfailure<value>();

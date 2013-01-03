@@ -37,6 +37,10 @@ public class ClientImpl {
         return server.put(id, item);
     }
     
+    public Boolean patch(Iterable<String> id, Iterable<?> item, Server server) {
+        return server.patch(id, item);
+    }
+    
     public Boolean delete(Iterable<String> id, Server server) {
         return server.delete(id);
     }

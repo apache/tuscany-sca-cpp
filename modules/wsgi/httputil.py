@@ -124,6 +124,20 @@ class client:
                 return None
             return True
 
+        # handle a PATCH request
+        if func == "patch":
+            u = requesturi(self.url, car(args))
+            print >> stderr, "Client PATCH request", u
+            req = StringIO()
+            writeStrings(atomutil.writeATOMEntry(atomutil.entryValuesToElements(cadr(args))), req)
+            headers["Content-type"] = "application/atom+xml"
+            c.request("PATCH", u, req.getvalue(), headers)
+            res = c.getresponse()
+            print >> stderr, "Client status", res.status
+            if res.status != 200:
+                return None
+            return True
+
         # handle a DELETE request
         if func == "delete":
             u = requesturi(self.url, car(args))

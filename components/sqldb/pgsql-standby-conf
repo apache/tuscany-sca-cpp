@@ -126,7 +126,7 @@ cat >$root/sqldb/data/recovery.conf << EOF
 
 # Start in standby mode
 standby_mode = 'on'
-primary_conninfo = 'host=$mhost port=$mport user=standby'
+primary_conninfo = 'host=$mhost port=$mport user=standby application_name=$host:$port'
 
 # Failover
 trigger_file = '$root/sqldb/failover'
@@ -165,7 +165,6 @@ cat >$root/sqldb/data/pgbouncer.conf <<EOF
 db = host=$host port=$port dbname=db user=bouncer
 
 [pgbouncer]
-pool_mode = session
 listen_addr = $listen
 listen_port = $bport
 unix_socket_dir =
@@ -176,9 +175,9 @@ pidfile = $root/logs/pgbouncer.pid
 max_client_conn = 1000
 pool_mode = transaction
 server_reset_query =
-default_pool_size = 500
+default_pool_size = 50
 min_pool_size = 5
-reserve_pool_size = 50
+reserve_pool_size = 5
 log_connections = 0
 log_disconnections = 0
 stats_period = 3600

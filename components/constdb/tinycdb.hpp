@@ -389,6 +389,37 @@ const failable<bool> put(const value& key, const value& val, const TinyCDB& cdb)
 }
 
 /**
+ * Patch an item in the database. If the item doesn't exist it is added.
+ */
+const failable<bool> patch(const value& key, const value& val, const TinyCDB& cdb) {
+    debug(key, "tinycdb::patch::key");
+    debug(val, "tinycdb::patch::value");
+    debug(dbname(cdb), "tinycdb::patch::dbname");
+
+    const string ks(write(content(scheme::writeValue(key))));
+    const string vs(write(content(scheme::writeValue(val))));
+
+    // Process each entry and skip existing key
+    const lambda<const failable<bool>(buffer&, const unsigned int, const unsigned int)> update = [ks](buffer& buf, const unsigned int klen, unused const unsigned int vlen) -> const failable<bool> {
+        if (ks == string((char*)buf, klen))
+            return false;
+        return true;
+    };
+
+    // Add the new entry to the db
+    const lambda<const failable<bool>(struct cdb_make&)> finish = [ks, vs](struct cdb_make& cdbm) -> const failable<bool> {
+        if (cdb_make_add(&cdbm, c_str(ks), (unsigned int)length(ks), c_str(vs), (unsigned int)length(vs)) == -1)
+            return mkfailure<bool>(string("Couldn't add tinycdb entry: ") + ks);
+        return true;
+    };
+
+    // Rewrite the db
+    const failable<bool> r = rewrite(update, finish, cdb);
+    debug(r, "tinycdb::patch::result");
+    return r;
+}
+
+/**
  * Get an item from the database.
  */
 const failable<value> get(const value& key, const TinyCDB& cdb) {
@@ -425,11 +456,14 @@ const failable<bool> del(const value& key, const TinyCDB& cdb) {
     debug(dbname(cdb), "tinycdb::delete::dbname");
 
     const string ks(write(content(scheme::writeValue(key))));
+    bool found = false;
 
     // Process each entry and skip existing key
-    const lambda<const failable<bool>(buffer&, const unsigned int, const unsigned int)> update = [ks](buffer& buf, const unsigned int klen, unused const unsigned int vlen) -> const failable<bool> {
-        if (ks == string((char*)buf, klen))
+    const lambda<const failable<bool>(buffer&, const unsigned int, const unsigned int)> update = [ks, &found](buffer& buf, const unsigned int klen, unused const unsigned int vlen) -> const failable<bool> {
+        if (ks == string((char*)buf, klen)) {
+            found = true;
             return false;
+        }
         return true;
     };
 
@@ -440,6 +474,11 @@ const failable<bool> del(const value& key, const TinyCDB& cdb) {
 
     // Rewrite the db
     const failable<bool> r = rewrite(update, finish, cdb);
+    if (!hasContent(r) || !found) {
+        ostringstream os;
+        os << "Couldn't delete tinycdb entry: " << key;
+        return hasContent(r)? mkfailure<bool>(str(os), 404, false) : r;
+    }
     debug(r, "tinycdb::delete::result");
     return r;
 }

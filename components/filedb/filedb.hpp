@@ -82,6 +82,7 @@ private:
     friend const failable<value> read(istream& is, const string& format);
     friend const failable<bool> post(const value& key, const value& val, const FileDB& db);
     friend const failable<bool> put(const value& key, const value& val, const FileDB& db);
+    friend const failable<bool> patch(const value& key, const value& val, const FileDB& db);
     friend const failable<value> get(const value& key, const FileDB& db);
     friend const failable<bool> del(const value& key, const FileDB& db);
 };
@@ -208,6 +209,30 @@ const failable<bool> put(const value& key, const value& val, const FileDB& db) {
 }
 
 /**
+ * Patch an item in the database. If the item doesn't exist it is added.
+ */
+const failable<bool> patch(const value& key, const value& val, const FileDB& db) {
+    debug(key, "filedb::patch::key");
+    debug(val, "filedb::patch::value");
+    debug(db.name, "filedb::patch::dbname");
+
+    if (isList(key))
+        mkdirs(key, db.name);
+    const string fn = filename(key, db.name);
+    debug(fn, "filedb::patch::filename");
+    ofstream os(fn);
+    if (os.fail()) {
+        ostringstream os;
+        os << "Couldn't patch file database entry: " << key;
+        return mkfailure<bool>(str(os));
+    }
+    const failable<bool> r = write(val, os, db.format);
+
+    debug(r, "filedb::patch::result");
+    return r;
+}
+
+/**
  * Get an item from the database.
  */
 const failable<value> get(const value& key, const FileDB& db) {
@@ -241,7 +266,7 @@ const failable<bool> del(const value& key, const FileDB& db) {
     if (rc == -1) {
         ostringstream os;
         os << "Couldn't delete file database entry: " << key;
-        return mkfailure<bool>(str(os));
+        return errno == ENOENT? mkfailure<bool>(str(os), 404, false) : mkfailure<bool>(str(os));
     }
 
     debug(true, "filedb::delete::result");

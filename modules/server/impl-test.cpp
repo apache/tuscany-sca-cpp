@@ -45,6 +45,10 @@ const failable<value> put(unused const list<value>& params) {
     return trueValue;
 }
 
+const failable<value> patch(unused const list<value>& params) {
+    return trueValue;
+}
+
 const failable<value> del(unused const list<value>& params) {
     return trueValue;
 }
@@ -66,6 +70,8 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::server::post(cdr(params));
     if (func == "put")
         return tuscany::server::put(cdr(params));
+    if (func == "patch")
+        return tuscany::server::patch(cdr(params));
     if (func == "delete")
         return tuscany::server::del(cdr(params));
     if (func == "echo")

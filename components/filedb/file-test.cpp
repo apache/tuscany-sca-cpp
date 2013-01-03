@@ -38,11 +38,14 @@ const bool testFileDB(const string& dbname, const string& format) {
 
     const list<value> a = mklist<value>(nilListValue + "ns1:a" + (nilListValue + "@xmlns:ns1" + string("http://aaa")) + (nilListValue + "text" + string("Hey!")));
     const list<value> b = mklist<value>(nilListValue + "ns1:b" + (nilListValue + "@xmlns:ns1" + string("http://bbb")) + (nilListValue + "text" + string("Hey!")));
+    const list<value> c = mklist<value>(nilListValue + "ns1:c" + (nilListValue + "@xmlns:ns1" + string("http://ccc")) + (nilListValue + "text" + string("Hey!")));
 
     assert(hasContent(post(k, a, db)));
     assert((get(k, db)) == value(a));
     assert(hasContent(put(k, b, db)));
     assert((get(k, db)) == value(b));
+    assert(hasContent(patch(k, c, db)));
+    assert((get(k, db)) == value(c));
     assert(hasContent(del(k, db)));
     assert(!hasContent(get(k, db)));
     assert(hasContent(post(k, a, db)));

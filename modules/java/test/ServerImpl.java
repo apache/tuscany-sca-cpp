@@ -49,6 +49,10 @@ public class ServerImpl {
         return true;
     }
 
+    public Boolean patch(final Iterable<String> id, final Iterable<?> item) {
+        return true;
+    }
+
     public Boolean delete(final Iterable<String> id) {
         return true;
     }

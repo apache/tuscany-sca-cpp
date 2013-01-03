@@ -95,6 +95,20 @@ const failable<value> put(const value& key, const value& val, unused const lvvla
 }
 
 /**
+ * Patch an item in the cache.
+ */
+const failable<value> patch(const value& key, const value& val, unused const lvvlambda& rcache1, const lvvlambda& wcache1, unused const lvvlambda& rcache2, const lvvlambda& wcache2) {
+
+    // Update level1 cache
+    wcache1(mklist<value>("patch", key, val));
+
+    // Update level2 cache
+    wcache2(mklist<value>("patch", key, val));
+
+    return trueValue;
+}
+
+/**
  * Delete an item from the cache.
  */
 const failable<value> del(const value& key, unused const lvvlambda& rcache1, const lvvlambda& wcache1, unused const lvvlambda& rcache2, const lvvlambda& wcache2) {
@@ -121,6 +135,8 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::datacache::post(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
     if (func == "put")
         return tuscany::datacache::put(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
+    if (func == "patch")
+        return tuscany::datacache::patch(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
     if (func == "delete")
         return tuscany::datacache::del(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params));
     return tuscany::mkfailure<tuscany::value>();

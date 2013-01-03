@@ -33,6 +33,10 @@
   (ref "put" id entry)
 )
 
+(define (patch id entry ref)
+  (ref "patch" id entry)
+)
+
 (define (delete id ref)
   (ref "delete" id)
 )

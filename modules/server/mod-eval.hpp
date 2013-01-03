@@ -206,7 +206,7 @@ public:
         debug(impls, "modeval::implProxy::callImpl::impls");
 
         // Lookup the component implementation
-        const list<value> impl(assoctree<value>(cname, (list<value>)impls));
+        const list<value> impl(rbtreeAssoc<value>(cname, (list<value>)impls));
         if (isNil(impl))
             return mkfailure<value>(string("Couldn't find component implementation: ") + (string)cname);
 
@@ -573,7 +573,7 @@ const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const 
  * arranged in trees of reference-name + reference-target pairs.
  */
 const list<value> componentReferenceToTargetTree(const value& c) {
-    return mklist<value>(scdl::name(c), mkbtree(sort(scdl::referenceToTargetAssoc(scdl::references(c)))));
+    return mklist<value>(scdl::name(c), mkbrbtree(sort(scdl::referenceToTargetAssoc(scdl::references(c)))));
 }
 
 const list<value> componentReferenceToTargetAssoc(const list<value>& c) {
@@ -634,13 +634,13 @@ const failable<Composite> confComponents(const string& contribPath, const string
     const list<value> comps = content(fcomps);
     debug(comps, "modeval::confComponents::comps");
 
-    const list<value> refs = mkbtree(sort(componentReferenceToTargetAssoc(comps)));
+    const list<value> refs = mkbrbtree(sort(componentReferenceToTargetAssoc(comps)));
     debug(flatten(refs), "modeval::confComponents::refs");
 
-    const list<value> svcs = mkbtree(sort(uriToComponentAssoc(comps)));
+    const list<value> svcs = mkbrbtree(sort(uriToComponentAssoc(comps)));
     debug(flatten(svcs), "modeval::confComponents::svcs");
 
-    const list<value> cimpls = mkbtree(sort(componentToImplementationAssoc(comps,
+    const list<value> cimpls = mkbrbtree(sort(componentToImplementationAssoc(comps,
                     isNil(contributor)? length(vhost) != 0? contribPath + vhost + "/" : contribPath : contribPath,
                     impls, lifecycle, sslc, timeout)));
     debug(flatten(cimpls), "modeval::confComponents::impls");
@@ -659,7 +659,7 @@ const failable<list<value> > startComponents(const list<value>& impls) {
 
     const list<value> simpls = content(fsimpls);
     debug(impls, "modeval::startComponents::simpls");
-    return mkbtree(sort(simpls));
+    return mkbrbtree(sort(simpls));
 }
 
 /**
@@ -696,7 +696,7 @@ const failable<int> get(const list<value>& rpath, request_rec* const r, const lv
     debug(r->uri, "modeval::get::uri");
 
     // Inspect the query string
-    const list<list<value> > args = httpd::unescapeArgs(httpd::queryArgs(r));
+    const list<value> args = httpd::unescapeArgs(httpd::queryArgs(r));
     const list<value> ia = assoc(value("id"), args);
     const list<value> ma = assoc(value("method"), args);
 
@@ -795,7 +795,7 @@ const failable<int> post(const list<value>& rpath, request_rec* const r, const l
         const list<string> ls = httpd::read(r);
         debug(ls, "modeval::post::input");
         const value jsreq = content(json::readValue(ls));
-        const list<list<value> > args = httpd::postArgs(jsreq);
+        const list<value> args = httpd::postArgs(jsreq);
 
         // Extract the request id, method and params
         const value id = cadr(assoc(value("id"), args));
@@ -878,6 +878,34 @@ const failable<int> put(const list<value>& rpath, request_rec* const r, const lv
 }
 
 /**
+ * Handle an HTTP PATCH.
+ */
+const failable<int> patch(const list<value>& rpath, request_rec* const r, const lvvlambda& impl) {
+    debug(r->uri, "modeval::put::patch");
+
+    // Read the ATOM entry
+    const int rc = httpd::setupReadPolicy(r);
+    if(rc != OK)
+        return rc;
+    const list<string> ls = httpd::read(r);
+    debug(ls, "modeval::patch::input");
+    const value aval = elementsToValues(content(atom::isATOMEntry(ls)? atom::readATOMEntry(ls) : atom::readATOMFeed(ls)));
+
+    // Evaluate the PATCH expression and update the corresponding resource
+    const failable<value> val = failableResult(impl(cons<value>("patch", mklist<value>(cddr(rpath), aval))));
+    if (!hasContent(val))
+        return mkfailure<int>(val);
+
+    // Report HTTP status
+    const value rval = content(val);
+    if (isNil(rval) || rval == falseValue)
+        return HTTP_NOT_FOUND;
+    if (isNumber(rval))
+        return (int)rval;
+    return OK;
+}
+
+/**
  * Handle an HTTP DELETE.
  */
 const failable<int> del(const list<value>& rpath, request_rec* const r, const lvvlambda& impl) {
@@ -928,7 +956,7 @@ int translateComponent(request_rec* const r, const list<value>& rpath, const lis
     // Find the requested component
     if (isNil(cdr(rpath)))
         return HTTP_NOT_FOUND;
-    const list<value> impl(assoctree(cadr(rpath), impls));
+    const list<value> impl(rbtreeAssoc(cadr(rpath), impls));
     if (isNil(impl))
         return HTTP_NOT_FOUND;
     debug(impl, "modeval::translateComponent::impl");
@@ -947,13 +975,13 @@ int translateReference(request_rec* const r, const list<value>& rpath, const lis
     // Find the requested component
     if (isNil(cdr(rpath)))
         return HTTP_NOT_FOUND;
-    const list<value> comp(assoctree(cadr(rpath), refs));
+    const list<value> comp(rbtreeAssoc(cadr(rpath), refs));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
     debug(comp, "modeval::translateReference::comp");
 
     // Find the requested reference and target configuration
-    const list<value> ref(assoctree<value>(caddr(rpath), cadr(comp)));
+    const list<value> ref(rbtreeAssoc<value>(caddr(rpath), cadr(comp)));
     if (isNil(ref))
         return HTTP_NOT_FOUND;
     debug(ref, "modeval::translateReference::ref");
@@ -1087,7 +1115,7 @@ const int translateRequest(request_rec* const r, const list<value>& rpath, const
  * Translate a request.
  */
 int translate(request_rec *r) {
-    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_PATCH && r->method_number != M_DELETE)
         return DECLINED;
 
     const gc_scoped_pool sp(r->pool);
@@ -1151,7 +1179,7 @@ const int handleRequest(const list<value>& rpath, request_rec* const r, const li
     debug(rpath, "modeval::handleRequest::path");
 
     // Get the component implementation lambda
-    const list<value> impl(assoctree<value>(cadr(rpath), impls));
+    const list<value> impl(rbtreeAssoc<value>(cadr(rpath), impls));
     if (isNil(impl)) {
         mkfailure<int>(string("Couldn't find component implementation: ") + (string)cadr(rpath));
         return HTTP_NOT_FOUND;
@@ -1167,6 +1195,8 @@ const int handleRequest(const list<value>& rpath, request_rec* const r, const li
         return httpd::reportStatus(post(rpath, r, l));
     if(r->method_number == M_PUT)
         return httpd::reportStatus(put(rpath, r, l));
+    if(r->method_number == M_PATCH)
+        return httpd::reportStatus(patch(rpath, r, l));
     if(r->method_number == M_DELETE)
         return httpd::reportStatus(del(rpath, r, l));
     return HTTP_NOT_IMPLEMENTED;
@@ -1219,7 +1249,7 @@ int handler(request_rec* r) {
         const list<value> simpls = content(fsimpls);
 
         // Merge the components in the virtual host with the components in the main host
-        reqc.impls = mkbtree(sort(append(flatten((const list<value>)sc.compos.impls), flatten(simpls))));
+        reqc.impls = mkbrbtree(sort(append(flatten((const list<value>)sc.compos.impls), flatten(simpls))));
 
         // Handle the request against the running components
         const int rc = handleRequest(reqc.rpath, r, reqc.impls);
@@ -1418,7 +1448,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
     
     // Get the vhost contributor component implementation lambda
     if (length(sc.vhostc.contributorName) != 0) {
-        const list<value> impl(assoctree<value>((string)sc.vhostc.contributorName, (const list<value>)sc.compos.impls));
+        const list<value> impl(rbtreeAssoc<value>((string)sc.vhostc.contributorName, (const list<value>)sc.compos.impls));
         if (isNil(impl)) {
             mkfailure<int>(string("Couldn't find contributor component implementation: ") + sc.vhostc.contributorName);
             failureExitChild();
@@ -1428,7 +1458,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
 
     // Get the vhost authenticator component implementation lambda
     if (length(sc.vhostc.authenticatorName) != 0) {
-        const list<value> impl(assoctree<value>((string)sc.vhostc.authenticatorName, (const list<value>)sc.compos.impls));
+        const list<value> impl(rbtreeAssoc<value>((string)sc.vhostc.authenticatorName, (const list<value>)sc.compos.impls));
         if (isNil(impl)) {
             mkfailure<int>(string("Couldn't find authenticator component implementation: ") + sc.vhostc.authenticatorName);
             failureExitChild();

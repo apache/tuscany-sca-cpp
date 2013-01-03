@@ -41,5 +41,8 @@ def post(collection, item):
 def put(id, item):
     return True
 
+def patch(id, item):
+    return True
+
 def delete(id):
     return True
