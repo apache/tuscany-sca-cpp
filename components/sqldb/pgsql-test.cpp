@@ -42,10 +42,10 @@ const bool testPGSql() {
 
     assert(hasContent(post(k, string("AAA"), pg)));
     assert(content(get(k, pg)) == value(string("AAA")));
-    assert(cadr<value>(car<value>(content(get(lk, pg)))) == value(string("AAA")));
-    assert(cadr<value>(car<value>(content(get(rx, pg)))) == value(string("AAA")));
-    assert(cadr<value>(car<value>(content(get(ts, pg)))) == value(string("AAA")));
-    assert(cadr<value>(car<value>(content(get(rxts, pg)))) == value(string("AAA")));
+    assert(car<value>(content(get(lk, pg))) == value(string("AAA")));
+    assert(car<value>(content(get(rx, pg))) == value(string("AAA")));
+    assert(car<value>(content(get(ts, pg))) == value(string("AAA")));
+    assert(car<value>(content(get(rxts, pg))) == value(string("AAA")));
 
     assert(hasContent(put(k, string("aaa"), pg)));
     assert(content(get(k, pg)) == value(string("aaa")));
