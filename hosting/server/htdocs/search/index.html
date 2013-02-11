@@ -38,8 +38,8 @@
         $('viewcontent').className = 'viewcontent flatscrollbars';
 
     $('viewhead').innerHTML = '<form id="searchForm">' +
-    '<span style="position: absolute; top: 0px; left: 5px; right: 70px; padding: 0px; background: transparent;"><input type="text" id="searchQuery" value="" class="flatentry" title="Search" autocapitalize="off" placeholder="Search for apps" style="position: absolute; left: 0px; top: 4px; width: 100%;"></span>' +
-    '<input type="submit" id="searchButton" title="Search" class="bluebutton search" style="position: absolute; top: 4px; right: 5px; width: 60px; background-position: center center; background-repeat: no-repeat; background-image: url(\'' + ui.b64png(appcache.get('/public/search.b64')) + '\');" value=" "/>' +
+    '<span style="position: absolute; top: 0px; left: 2px; right: 70px; padding: 0px; background: transparent;"><input type="text" id="searchQuery" value="" class="flatentry" title="Search" autocapitalize="off" placeholder="Search for apps" style="position: absolute; left: 0px; top: 4px; width: 100%;"></span>' +
+    '<input type="submit" id="searchButton" title="Search" class="bluebutton search" style="position: absolute; top: 4px; right: 2px; width: 60px; background-position: center center; background-repeat: no-repeat; background-image: url(\'' + ui.b64png(appcache.get('/public/search.b64')) + '\');" value=" "/>' +
     '</form>';
 
     $('viewcontent').appendChild(ui.declareCSS(
@@ -48,6 +48,11 @@
         'margin-top: 6px; width: 50px; height: 14px; display: inline-block; ' +
         ' }'));
 })();
+
+/**
+ * Get the requested search query.
+ */
+var query = ui.fragmentParams(location)['q'];
 
 /**
  * Initialize service references.
@@ -186,9 +191,15 @@ $('searchForm').onsubmit = function() {
         return false;
     if (ui.isMobile())
         $('searchQuery').blur();
-    getapps($('searchQuery').value.trim());
+    //getapps($('searchQuery').value.trim());
+    ui.navigate('/#view=search&q=' + $('searchQuery').value.trim(), '_view');
     return false;
 };
+
+if(query && query != '') {
+    $('searchQuery').value = query;
+    getapps(query);
+}
 
 })();
 </script>

@@ -184,43 +184,113 @@ HTTPBindingClient.jsonResult = function(http) {
 };
 
 /**
- * Schedule async requests, and limit to 4 concurrent running requests.
+ * Schedule async requests, limiting the number of concurrent running requests.
  */
 HTTPBindingClient.queuedRequests = new Array();
-HTTPBindingClient.runningRequests = 0;
-HTTPBindingClient.scheduleAsyncRequest = function(f) {
+HTTPBindingClient.runningRequests = new Array();
+HTTPBindingClient.concurrentRequests = 2;
+
+HTTPBindingClient.scheduleAsyncRequest = function(f, cancelable) {
+    //debug('schedule async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+
     // Queue the request function
-    HTTPBindingClient.queuedRequests.push(f);
+    var req = new Object();
+    req.f = f;
+    req.cancelable = cancelable;
+    req.canceled = false;
+    HTTPBindingClient.queuedRequests.push(req);
 
-    // Execute requests in the queue
-    (function runAsyncRequests() {
-        // Stop now if we already have enough requests running or there's no request in the queue
-        //debug('runAsyncRequests', 'running', HTTPBindingClient.runningRequests, 'queued', HTTPBindingClient.queuedRequests.length);
-        if(HTTPBindingClient.runningRequests >= 4 || HTTPBindingClient.queuedRequests.length == 0)
+    // Execute any requests in the queue
+    setTimeout(function() {
+        HTTPBindingClient.runAsyncRequests(true);
+    }, 0);
+    return true;
+};
+
+HTTPBindingClient.forgetRequest = function(req) {
+    req.http = null;
+
+    // Remove a request from the list of running requests
+    for (i in HTTPBindingClient.runningRequests) {
+        if (HTTPBindingClient.runningRequests[i] == req) {
+            HTTPBindingClient.runningRequests.splice(i, 1);
+            //debug('forget async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
             return true;
+        }
+    }
+    return false;
+};
 
-        // Run the first request in the queue
-        var req = HTTPBindingClient.queuedRequests.shift();
-        HTTPBindingClient.runningRequests++;
-        setTimeout(function runAsyncRequest() {
+HTTPBindingClient.cancelRequests = function() {
+    //debug('cancel async requests, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+
+    // Cancel any cancelable in flight HTTP requests
+    for (i in HTTPBindingClient.queuedRequests) {
+        var req = HTTPBindingClient.queuedRequests[i];
+        if (req.cancelable)
+            req.canceled = true;
+    }
+    for (i in HTTPBindingClient.runningRequests) {
+        var req = HTTPBindingClient.runningRequests[i];
+        if (req.cancelable) {
+            req.canceled = true;
+            if (req.http) {
+                req.http.abort();
+                req.http = null;
+                //debug('abort async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+            }
+        }
+    }
+
+    // Flush the queue
+    setTimeout(function() {
+        HTTPBindingClient.runAsyncRequests(true);
+    }, 0);
+}
+
+HTTPBindingClient.runAsyncRequests = function(fromui) {
+    // Stop now if we already have enough requests running or there's no request in the queue
+    if(HTTPBindingClient.runningRequests.length >= HTTPBindingClient.concurrentRequests || HTTPBindingClient.queuedRequests.length == 0)
+        return true;
+
+    // Run the first request in the queue
+    var req = HTTPBindingClient.queuedRequests.shift();
+    if (!req.canceled) {
+        HTTPBindingClient.runningRequests.push(req);
+        //debug('run async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+        var runAsyncRequest = function() {
+            if (req.canceled) {
+                HTTPBindingClient.forgetRequest(req);
+                //debug('canceled timed async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+                return false;
+            }
             try {
-                return req(function asyncRequestDone() {
+                req.http = new XMLHttpRequest();
+                return req.f(req.http, function asyncRequestDone() {
                     // Execute any requests left in the queue
-                    HTTPBindingClient.runningRequests--;
-                    runAsyncRequests();
+                    HTTPBindingClient.forgetRequest(req);
+                    //debug('done async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+                    HTTPBindingClient.runAsyncRequests(false);
                     return true;
                 });
             } catch(e) {
                 // Execute any requests left in the queue
-                HTTPBindingClient.runningRequests--;
-                runAsyncRequests();
+                HTTPBindingClient.forgetRequest(req);
+                //debug('err async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+                HTTPBindingClient.runAsyncRequests(false);
             }
-        }, 0);
+            return false;
+        };
+        if (false)
+            setTimeout(runAsyncRequest, 0);
+        else
+            runAsyncRequest();
+    } else {
+        //debug('canceled queued async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+    }
 
-        // Execute any requests left in the queue
-        runAsyncRequests();
-    })();
-    return true;
+    // Execute any requests left in the queue
+    HTTPBindingClient.runAsyncRequests(fromui);
 };
 
 /**
@@ -339,8 +409,7 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
     // Call asynchronously with a callback
     if(hascb) {
         var u = this.uri;
-        return HTTPBindingClient.scheduleAsyncRequest(function jsonApplyRequest(done) {
-            var http = new XMLHttpRequest();
+        return HTTPBindingClient.scheduleAsyncRequest(function jsonApplyRequest(http, done) {
             http.open("POST", u, true);
             http.setRequestHeader("Accept", "*/*");
             http.setRequestHeader("Content-Type", "application/json-rpc");
@@ -371,7 +440,7 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
             // Send the request
             http.send(req.data);
             return req.id;
-        });
+        }, false);
     }
 
     // Call synchronously and return the result or exception
@@ -402,16 +471,15 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
                 return item;
 
             // Pass local result to callback
-            try {
+            setTimeout(function() {
                 cb(item);
-            } catch (cbe) {}
+            }, 0);
         }
     }
 
     // Call asynchronously with a callback
     if(hascb) {
-        return HTTPBindingClient.scheduleAsyncRequest(function getRequest(done) {
-            var http = new XMLHttpRequest();
+        return HTTPBindingClient.scheduleAsyncRequest(function getRequest(http, done) {
             http.open("GET", u, true);
             http.setRequestHeader("Accept", "*/*");
             http.onreadystatechange = function() {
@@ -420,7 +488,8 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
                     // Pass result if different from local result
                     if(http.status == 200) {
                         var xl = http.getResponseHeader("X-Login");
-                        if(xl != null && xl != '') {
+                        var ct = http.getResponseHeader("Content-Type");
+                        if(xl != null && xl != '' && ct != null && ct.indexOf('text/html') == 0) {
                             // Detect redirect to a login page
                             try {
                                 var le = new HTTPBindingClient.Exception(403, 'X-Login');
@@ -431,7 +500,6 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
                             } catch(cbe) {}
 
                         }
-                        var ct = http.getResponseHeader("Content-Type");
                         if(http.responseText == '' || ct == null || ct == '') {
                             // Report empty response
                             try {
@@ -467,7 +535,7 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
             // Send the request
             http.send(null);
             return true;
-        });
+        }, true);
     }
 
     // Call synchronously and return the result or exception
@@ -477,7 +545,8 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
     http.send(null);
     if(http.status == 200) {
         var xl = http.getResponseHeader("X-Login");
-        if(xl != null && xl != '') {
+        var ct = http.getResponseHeader("Content-Type");
+        if(xl != null && xl != '' && ct != null && ct.indexOf('text/html') == 0) {
             // Detect redirect to a login page
             var le = new HTTPBindingClient.Exception(403, 'X-Login');
             if(window.onloginredirect)
@@ -504,8 +573,7 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
     // Call asynchronously with a callback
     if(hascb) {
         var u = this.uri;
-        return HTTPBindingClient.scheduleAsyncRequest(function postRequest(done) {
-            var http = new XMLHttpRequest();
+        return HTTPBindingClient.scheduleAsyncRequest(function postRequest(http, done) {
             http.open("POST", u, true);
             http.setRequestHeader("Accept", "*/*");
             http.setRequestHeader("Content-Type", "application/atom+xml");
@@ -529,7 +597,7 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
             // Send the request
             http.send(entry);
             return true;
-        });
+        }, false);
     }
 
     // Call synchronously
@@ -562,8 +630,7 @@ HTTPBindingClient.prototype.put = function(id, entry, cb, mode) {
 
     // Call asynchronously with a callback
     if(hascb) {
-        return HTTPBindingClient.scheduleAsyncRequest(function putRequest(done) {
-            var http = new XMLHttpRequest();
+        return HTTPBindingClient.scheduleAsyncRequest(function putRequest(http, done) {
             http.open("PUT", u, true);
             http.setRequestHeader("Accept", "*/*");
             http.setRequestHeader("Content-Type", "application/atom+xml");
@@ -599,7 +666,7 @@ HTTPBindingClient.prototype.put = function(id, entry, cb, mode) {
             // Send the request
             http.send(entry);
             return true;
-        });
+        }, false);
     }
 
     // Call synchronously
@@ -640,8 +707,7 @@ HTTPBindingClient.prototype.del = function(id, cb, mode) {
 
     // Call asynchronously with a callback
     if(hascb) {
-        return HTTPBindingClient.scheduleAsyncRequest(function delRequest(done) {
-            var http = new XMLHttpRequest();
+        return HTTPBindingClient.scheduleAsyncRequest(function delRequest(http, done) {
             http.open("DELETE", u, true);        
             http.setRequestHeader("Accept", "*/*");
             http.onreadystatechange = function() {
@@ -665,7 +731,7 @@ HTTPBindingClient.prototype.del = function(id, cb, mode) {
             // Send the request
             http.send(null);
             return true;
-        });
+        }, false);
     }
 
     // Call synchronously

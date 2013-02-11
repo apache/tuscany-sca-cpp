@@ -95,11 +95,12 @@ var appname = ui.fragmentParams(location)['app'];
     document.title = config.windowtitle() + ' - Page - ' + appname;
 
     $('viewhead').innerHTML = '<span id="appTitle" class="cmenu">' + appname + '</span>' +
-    '<input type="button" id="deleteWidgetButton" title="Delete a Widget" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" disabled="true" value="-"/>' +
-    '<span style="position: absolute; top: 0px; left: 45px; right: 115px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; display: none;" readonly="readonly"/></span>' +
-    '<input type="button" id="playPageButton" title="View page" class="greenbutton plusminus" style="position: absolute; top: 4px; right: 75px;" value="&gt;"/>' +
-    '<input type="button" id="copyWidgetButton" title="Copy a Widget" class="bluebutton" style="position: absolute; top: 4px; right: 40px; font-size: 16px;" disabled="true" value="C"/>' +
-    '<input type="button" id="addWidgetButton" title="Add a Widget" class="bluebutton plusminus" style="position: absolute; top: 4px; right: 5px;" disabled="true" value="+"/>';
+    '<input type="button" id="deleteWidgetButton" title="Delete a widget" class="redbutton plusminus" style="position: absolute; top: 4px; left: 2px;" disabled="true" value="-"/>' +
+    '<span style="position: absolute; top: 0px; left: 37px; right: 110px; padding: 0px; background: transparent;"><input id="widgetValue" type="text" value="" class="flatentry" title="Widget value" autocapitalize="off" placeholder="Value" style="position: absolute; left: 0px; top: 4px; width: 100%; display: none;" readonly="readonly"/></span>' +
+    '<input type="button" id="playPageButton" title="View page" class="greenbutton plusminus" style="position: absolute; top: 4px; right: 72px;" value="&gt;"/>' +
+    '<input type="button" id="copyWidgetButton" title="Copy a widget" class="bluebutton" style="position: absolute; top: 4px; right: 37px; font-size: 16px;" disabled="true" value="C"/>' +
+    '<input type="button" id="addWidgetButton" title="Add a widget" class="bluebutton plusminus" style="position: absolute; top: 4px; right: 2px;" disabled="true" value="+"/>';
+    //'<input type="button" id="appInfoButton" title="View app info" class="bluebutton" style="position: absolute; top: 4px; right: 2px; font-size: 16px;" value="i"/>';
 
     if (ui.isMobile()) {
         $('palettecontainer').className = 'palettecontainer3dm';
@@ -606,7 +607,7 @@ function showpalette() {
         $('paletteview').className = 'paletteloading3dm';
         $('paletteview').style.display = 'block';
         $('paletteview').visible = true;
-        ui.async(function transitionview() {
+        ui.delay(function transitionview() {
             $('paletteview').className = 'paletteloaded3dm';
         });
     } else {
@@ -624,7 +625,7 @@ function hidepalette() {
     if (ui.isMobile()) {
         $('paletteview').className = 'paletteunloading3dm';
         $('paletteview').visible = false;
-        ui.async(function transitionview() {
+        ui.delay(function transitionview() {
             $('paletteview').className = 'paletteunloaded3dm';
         });
     } else {
@@ -675,7 +676,7 @@ function mkeditor() {
             return save(newxml);
 
         // Autosave other changes after 1 second
-        ui.delay(function autosave() {
+        ui.async(function autosave() {
             if (savedxhtml == newxml) {
                 showstatus('Saved');
                 return false;
@@ -806,14 +807,6 @@ function mkeditor() {
             moved = false;
             return onmousedown(e);
         };
-        $('pagediv').addEventListener('touchstart', function(e) {
-            //debug('ontouchstart');
-            mdown = true;
-            moveX = e.touches[0].clientX;
-            moveY = e.touches[0].clientY;
-            moved = false;
-            return onmousedown(e);
-        }, false);
         $('palettecontent').ontouchstart = function(e) {
             //debug('ontouchstart');
             mdown = true;
@@ -977,24 +970,6 @@ function mkeditor() {
         return true;
     }
 
-    /*
-    if (!ui.isMobile()) {
-        $('pagediv').onclick = function(e) {
-            //debug('onclick');
-            moveX = e.clientX;
-            moveY = e.clientY;
-            return onclick(e);
-        };
-    } else {
-        window.onclick = function(e) {
-            //debug('onclick');
-            moveX = e.touches[0].clientX;
-            moveY = e.touches[0].clientY;
-            return onclick(e);
-        };
-    }
-    */
-
     /**
      * Handle field on change events.
      */
@@ -1009,16 +984,16 @@ function mkeditor() {
     };
 
     // Handle add widget event.
-    $('addWidgetButton').onclick = function() {
+    ui.onclick($('addWidgetButton'), function(e) {
 
         // Show / hide the palette
         if ($('paletteview').visible)
             return hidepalette();
         return showpalette();
-    };
+    });
 
     // Handle delete event.
-    $('deleteWidgetButton').onclick = function() {
+    ui.onclick($('deleteWidgetButton'), function(e) {
         if (selected == null)
             return false;
 
@@ -1035,10 +1010,10 @@ function mkeditor() {
         // Trigger page change event
         onpagechange(true);
         return false;
-    };
+    });
 
     // Handle copy event.
-    $('copyWidgetButton').onclick = function() {
+    ui.onclick($('copyWidgetButton'), function(e) {
         if (selected == null)
             return false;
         if (selected.id.substring(0, 8) == 'palette:')
@@ -1068,18 +1043,18 @@ function mkeditor() {
         // Trigger page change event
         onpagechange(true);
         return false;
-    };
+    });
 
     /**
-    * Handle play page button event.
-    */
-    $('playPageButton').onclick = function() {
+     * Handle play page button event.
+     */
+    ui.onclick($('playPageButton'), function(e) {
 
         // Show / hide the page play frame
         if ($('playdiv').visible)
             return showeditor();
         return showplaying();
-    }
+    });
 
     // Show the editor
     showeditor();
@@ -1232,6 +1207,15 @@ function save(newxml) {
     });
     return true;
 };
+
+/**
+ * Handle app info button event.
+ */
+/* Disabled for now.
+ui.onclick($('appInfoButton'), function(e) {
+    return ui.navigate('/#view=info&app=' + appname, '_view');
+});
+*/
 
 /**
  * Initialize the page editor.

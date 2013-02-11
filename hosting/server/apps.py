@@ -25,7 +25,7 @@ def appid(id):
     return ("apps", car(id), "app.info")
 
 # Put an app into the apps db
-def put(id, app, user, cache, dashboard, store, composites, pages, icons):
+def put(id, app, user, cache, db, dashboard, store, composites, pages, icons):
     debug('apps.py::put::id', id)
     debug('apps.py::put::app', app)
 
@@ -68,7 +68,7 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
         return False
 
     # Clone app
-    appentry = mkentry(title(app), car(id), user.get(()), now(), content(app))
+    appentry = mkentry(title(capp), car(id), user.get(()), now(), content(capp))
     debug('apps.py::put::appentry', appentry)
     cache.put(appid(id), appentry)
     composites.put(id, composites.get((eid,)))
@@ -78,10 +78,19 @@ def put(id, app, user, cache, dashboard, store, composites, pages, icons):
     return True
 
 # Get an app from the apps db
-def get(id, user, cache, dashboard, store, composites, pages, icons):
+def get(id, user, cache, db, dashboard, store, composites, pages, icons):
     debug('apps.py::get::id', id)
+
+    # Return the newest apps
     if isNull(id):
-        return (("'feed", ("'title", "Apps"), ("'id", "apps")),)
+        newentries = db.get((("'regex", '("apps" .* "app.info")'), ("'rank", "(regexp_matches(value, '(.*\(updated )([^\)]+)(\).*)'))[2]::timestamp"), ("'limit", 25)))
+        flatentries = tuple(map(lambda v: car(v), () if isNull(newentries) else newentries))
+        def sortkey(e):
+            return updated((e,))
+        sortedentries = tuple(sorted(flatentries, key = sortkey, reverse = True))[0:25]
+        newapps = ((("'feed", ("'title", "Apps"), ("'id", 'apps')) + sortedentries),)
+        debug('apps.py::get::newapps', newapps)
+        return newapps
 
     # Get the requested app
     app = cache.get(appid(id))
@@ -94,7 +103,7 @@ def get(id, user, cache, dashboard, store, composites, pages, icons):
     return app
 
 # Delete an app from the apps db
-def delete(id, user, cache, dashboard, store, composites, pages, icons):
+def delete(id, user, cache, db, dashboard, store, composites, pages, icons):
     debug('apps.py::delete::id', id)
 
     # Get the requested app

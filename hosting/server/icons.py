@@ -105,12 +105,22 @@ def put(id, icon, user, cache, apps):
         debug('icons.py::put::img', img)
         iconentry = mkentry(title(app), car(id), author(app), now(), ("'icon", ("'image", img)))
         debug('icons.py::put::iconentry', iconentry)
-        return cache.put(iconid(id), iconentry)
+        rc = cache.put(iconid(id), iconentry)
+        if rc == False:
+            return False
+
+        # Update the app's updated date
+        return apps.put(id, app)
 
     # Put default empty icon
     iconentry = mkentry(title(app), car(id), author(app), now(), ())
     debug('icons.py::put::iconentry', iconentry)
-    return cache.put(iconid(id), iconentry)
+    rc = cache.put(iconid(id), iconentry)
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 
 # Get an icon
 def get(id, user, cache, apps):
@@ -171,5 +181,10 @@ def delete(id, user, cache, apps):
         return False
 
     # Delete the icon
-    return cache.delete(iconid(id))
+    rc = cache.delete(iconid(id))
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 

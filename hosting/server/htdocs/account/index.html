@@ -28,7 +28,7 @@
 <tr><tr><td class="label">Email:</td></tr>
 <tr><td><input type="text" id="userEmail" class="readentry" size="30" readonly="readonly" placeholder="Your email address" style="width: 300px;"/></td></tr>
 <tr><tr><td class="label">Picture:</td></tr>
-<tr><td><img id="userPicture" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadPicture" type="button" class="lightbutton" value="Upload"/><input id="uploadFile" type="file" accept="image/*" style="display:none;"/><span id="refreshingPicture" class="refreshing" style="display:none;"/></td></tr>
+<tr><td><img id="userPicture" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadPicture" type="button" class="lightbutton" value="Upload"/><input id="uploadFile" type="file" accept="image/*" style="visibility: hidden;"/><span id="refreshingPicture" class="refreshing" style="display:none;"/></td></tr>
 <tr><tr><td class="label">Name:</td></tr>
 <tr><td><input type="text" id="userFullname" class="flatentry" size="30" placeholder="Your name" style="width: 300px;"/></td></tr>
 <tr><tr><td class="label">Bio:</td></tr>
@@ -86,7 +86,7 @@ TODO Disabled for now
 (function layout() {
     document.title = config.windowtitle() + ' - Account';
     $('viewhead').innerHTML = '<span class="cmenu">' + username + '</span>' +
-        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteUser" value="-" title="Delete your account" disabled="true"/>';
+        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 2px;" id="deleteUser" value="-" title="Delete your account" disabled="true"/>';
     if (!ui.isMobile())
         $('viewform').className = 'viewform flatscrollbars';
     $('userName').value = username;
@@ -133,7 +133,7 @@ var savedpicxml = '';
         var acct = cadr(assoc("'content", acctentry));
 
         var email = assoc("'email", acct);
-        $('userEmail').value = isNull(email) || isNull(cdr(email))? '' : cadr(email);
+        $('userEmail').value = isNull(email) || isNull(cdr(email))? (username.indexOf('@') != -1? username : '') : cadr(email);
 
         var desc = assoc("'description", acct);
         $('userDescription').innerHTML = isNull(desc) || isNull(cdr(desc))? '' : cadr(desc);
@@ -354,7 +354,7 @@ var lastkeyup = null;
 $('userFullname').onkeyup = $('userDescription').onkeyup = function() {
     var t = new Date().getTime();
     lastkeyup = t;
-    ui.delay(function() {
+    ui.async(function() {
             return t == lastkeyup? onaccountchange() : true;
         }, 2000);
 };
@@ -395,7 +395,7 @@ function readpic(files) {
             showstatus('Loaded');
 
             // Now upload it
-            ui.delay(function() {
+            ui.async(function() {
                 var picentry = mklist("'entry", mklist("'title", username), mklist("'id", username), mklist("'author", username), mklist("'content", mklist("'picture", mklist("'image", url))));
                 var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(picentry))));
                 if (savedpicxml == entryxml) {
@@ -429,7 +429,7 @@ function emailpicture() {
 
         // Open the email app
         var mailto = safeb64encode('p/' + username + '/' + token);
-        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Email to upload&body=Paste picture here', '_self');
+        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Uploading picture&body=Paste picture here', '_self');
 
         // Refresh app icon
         refreshingpic = true;
@@ -440,11 +440,12 @@ function emailpicture() {
 /**
  * Handle picture upload events.
  */
-$('uploadPicture').onclick = function() {
-    if (ui.isMobile())
-        return emailpicture();
-    return $('uploadFile').click();
-};
+ui.onclick($('uploadPicture'), function(e) {
+    debug('uploadPicture.onclick()');
+    if (ui.isMobile() && ((ui.isWebkit() && ui.browserVersion() < 6.0) || (ui.isAndroid() && ui.browserVersion() < 2.2)))
+        return ui.delay(function() { return emailpicture(); });
+    return ui.delay(function() { return $('uploadFile').click(); });
+});
 $('uploadFile').onchange = function(e) {
     return readpic(e.target.files);
 };

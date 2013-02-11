@@ -2055,7 +2055,7 @@ function showdata(gcomp) {
         return displaydata(t, '100%');
     });
 
-    ui.async(function hidegraphdiv() {
+    ui.delay(function hidegraphdiv() {
         graphdiv.style.display = 'none'
     });
     return true;
@@ -2071,7 +2071,7 @@ function showgraph(gcomp) {
     graphdiv.style.display = 'block'
     gvisible = true;
     graph.compselect(gcomp, true, atitle, cvalue, ccopy, cdelete);
-    ui.async(function hideplaydiv() {
+    ui.delay(function hideplaydiv() {
         pdiv.style.display = 'none';
         pdiv.innerHTML = '';
     });

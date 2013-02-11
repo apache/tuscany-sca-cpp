@@ -98,7 +98,7 @@ def testPages():
     # Put and get a page
     cache1 = mkcache('cache', {})
     page1updated = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content",)),)
-    assert pages.put(('app1',), page1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert pages.put(('app1',), page1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert pages.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == page1updated
     
     # Reject put from user other than the author
@@ -113,7 +113,7 @@ def testPages():
     assert pages.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == page1updated
 
     # Delete a page
-    assert pages.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert pages.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert pages.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == defpagefromapp
     return True
 
@@ -137,7 +137,7 @@ def testIcons():
     # Put and get a icon
     cache1 = mkcache('cache', {})
     icon1updated = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'icon", ("'image", img50)))),)
-    assert icons.put(('app1',), icon1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert icons.put(('app1',), icon1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert icons.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == icon1updated
     
     # Reject put from user other than the author
@@ -164,11 +164,11 @@ def testIcons():
 
     # Upload with valid token
     icon1oktoken = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'icon", ("'image", img50), ("'token", '1234')))),)
-    assert icons.put(('app1',), icon1oktoken, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert icons.put(('app1',), icon1oktoken, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert icons.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == icon1updated
 
     # Delete a icon
-    assert icons.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert icons.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert icons.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == deficonfromapp
     return True
 
@@ -187,7 +187,7 @@ def testComposites():
     # Put and get a composite
     cache1 = mkcache('cache', {})
     composite1updated = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content",)),)
-    assert composites.put(('app1',), composite1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert composites.put(('app1',), composite1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert composites.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == composite1updated
     
     # Reject put from user other than the author
@@ -202,36 +202,36 @@ def testComposites():
     assert composites.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == composite1updated
 
     # Delete a composite
-    assert composites.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
+    assert composites.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert composites.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == defcompositefromapp
     return True
 
 def testApps():
     # Get default app
-    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {}), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) is None
+    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {}), mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) is None
 
     # Get an app
     app1 = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'info", ("'description", '')))),)
-    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {('apps', 'app1', 'app.info') : app1}), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
+    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {('apps', 'app1', 'app.info') : app1}), mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
 
     # Put and get an app
     cache1 = mkcache('cache', {})
-    assert apps.put(('app1',), app1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('dashboard', lambda id, app: True), mkref('store', lambda id, app: True), mkref('composites', lambda id, app: True), mkref('pages', lambda id, app: True), mkref('icons', lambda id, app: True)) == True
-    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
+    assert apps.put(('app1',), app1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id, app: True), mkref('store', lambda id, app: True), mkref('composites', lambda id, app: True), mkref('pages', lambda id, app: True), mkref('icons', lambda id, app: True)) == True
+    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
     return True
     
     # Reject put from user other than the author
     app1otherauthor = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jane@example.com'), ("'updated", '2012-01-03T00:00:00+00:00'), ("'content",)),)
-    assert apps.put(('app1',), app1, mkref('user', lambda id: 'jane@example.com'), cache1, mkref('dashboard', lambda id, app: True), mkref('store', lambda id, app: True), mkref('composites', lambda id, app: True), mkref('pages', lambda id, app: True), mkref('icons', lambda id, app: True)) == false
-    assert apps.get(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
+    assert apps.put(('app1',), app1, mkref('user', lambda id: 'jane@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id, app: True), mkref('store', lambda id, app: True), mkref('composites', lambda id, app: True), mkref('pages', lambda id, app: True), mkref('icons', lambda id, app: True)) == false
+    assert apps.get(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
 
     # Reject delete from user other than the author
-    assert apps.delete(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == False
-    assert apps.get(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
+    assert apps.delete(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == False
+    assert apps.get(('app1',), mkref('user', lambda id: 'jane@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == app1
 
     # Delete an app
-    assert apps.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == True
-    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {}), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) is None
+    assert apps.delete(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) == True
+    assert apps.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {}), mkref('db', lambda id: None), mkref('dashboard', lambda id: None), mkref('store', lambda id: None), mkref('composites', lambda id: None), mkref('pages', lambda id: None), mkref('icons', lambda id: None)) is None
     return True
 
 def testStore():

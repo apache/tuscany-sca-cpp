@@ -72,6 +72,7 @@ function saveapp(name, entryxml) {
     apps.put(name, savedappxml, function(e) {
         if (e) {
             if (e.code && e.code == 404) {
+                alert('name taken');
                 errorstatus('App name is taken, please pick another name');
                 workingstatus(false);
                 return false;
@@ -115,6 +116,7 @@ $('createAppForm').onsubmit = function() {
     // Check reserved app names
     var reserved = mklist('account', 'app', 'cache', 'clone', 'create', 'delete', 'graph', 'home', 'login', 'new', 'page', 'proxy', 'public', 'private', 'info', 'store');
     if (!isNull(assoc(name, map(function(r) { return mklist(r, r); }, reserved)))) {
+        alert('invalid name');
         errorstatus('App name is taken, please pick another name');
         return false;
     }
@@ -129,9 +131,9 @@ $('createAppForm').onsubmit = function() {
 /**
  * Cancel creating an app.
  */
-$('createAppCancelButton').onclick = function() {
+ui.onclick($('createAppCancelButton'), function(e) {
     history.back();
-};
+});
 
 /**
  * Show the status.

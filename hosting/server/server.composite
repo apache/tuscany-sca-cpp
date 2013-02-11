@@ -105,6 +105,7 @@
         <implementation.python script="apps.py"/>
         <reference name="user" target="User"/>
         <reference name="cache" target="Cache"/>
+        <reference name="db" target="Database"/>
         <reference name="dashboard" target="Dashboards"/>
         <reference name="store" target="AppStore"/>
         <reference name="composites" target="Composites"/>

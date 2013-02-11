@@ -1,1 +1,1 @@
-((entry (title "My online store") (id "shoppingcart") (author "admin@example.com") (updated "Jan 01, 2012") (content (info (description "Sample app")))))
+((entry (title "My online store") (id "shoppingcart") (author "admin@example.com") (updated "2012-01-01T00:00:00+00:00") (content (info (description "Sample app")))))

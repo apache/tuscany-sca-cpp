@@ -102,6 +102,14 @@ def get(id, user, cache, apps, ratings):
         debug('store.py::get::store', topstore)
         return topstore
 
+    # Collect the newest apps
+    if tag == 'new':
+        newapps = apps.get(()) 
+        newapps = mergeapps(cdddr(car(newapps)), apps, ratings)
+        newstore = ((("'feed", ("'title", 'App Store'), ("'id", tag)) + newapps),)
+        debug('store.py::get::store', newstore)
+        return newstore
+
     # Collect the featured apps
     appid = cdr(id)
     def findapp(appid, store):

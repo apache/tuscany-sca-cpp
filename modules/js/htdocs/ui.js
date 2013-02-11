@@ -29,6 +29,8 @@ var ui = {};
 ui.elementByID = function(node, id) {
     if (node.skipNode == true)
         return null;
+    if (node == document)
+        return document.getElementById(id);
     for (var i in node.childNodes) {
         var child = node.childNodes[i];
         if (isNull(child))
@@ -40,6 +42,21 @@ ui.elementByID = function(node, id) {
             return gchild;
     }
     return null;
+};
+
+/**
+ * Remove ids in a tree of elements.
+ */
+ui.removeElementIDs = function(node) {
+    if (!isNull(node.id))
+        node.id = null;
+    for (var i in node.childNodes) {
+        var child = node.childNodes[i];
+        if (isNull(child))
+            continue;
+        ui.removeElementIDs(child);
+    }
+    return true;
 };
 
 /**
@@ -229,6 +246,20 @@ ui.webkitVersion = function() {
 };
 
 /**
+ * Return the Safari version.
+ */
+ui.browserVersion = function() {
+    return Number(navigator.userAgent.replace(/.*Version\/(\d+\.\d+).*/, '$1'));
+};
+
+/**
+ * Return true if the client is Android based.
+ */
+ui.isAndroid = function() {
+    return navigator.userAgent.match(/Android/i);
+};
+
+/**
  * Return true if the client is Firefox.
  */
 ui.isFirefox = function() {
@@ -273,16 +304,11 @@ ui.msieVersion = function() {
 /**
  * Run a UI rendering function asynchronously.
  */
-ui.asyncFrame = null;
-ui.async = function(f) {
-    if (isNull(ui.asyncFrame))
-        // Use requestAnimationFrame when available, fallback to setTimeout
-        ui.asyncFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-            function(f) {
-                return window.setTimeout(f, 16);
-            };
-    return ui.asyncFrame.call(window, f);
+ui.async = function(f, t) {
+    window.setTimeout(function() {
+        return f();
+    }, isNull(t)? 0 : t);
+    return true;
 };
 
 /**
@@ -290,10 +316,10 @@ ui.async = function(f) {
  */
 ui.delayed = {}
 ui.delay = function(f, t) {
-    var id =  window.setTimeout(function() {
+    var id = window.setTimeout(function() {
         delete ui.delayed[id];
         return f();
-    }, isNull(t)? 16 : t);
+    }, isNull(t)? 0 : t);
     ui.delayed[id] = id;
     return id;
 };
@@ -443,6 +469,9 @@ ui.navigate = function(url, win) {
             window.ontouchmove = null;
         }
 
+        // Cancel any cancelable HTTP requests
+        HTTPBindingClient.cancelRequests();
+
         // Cleanup memoized element lookups
         ui.unmemo$();
 
@@ -460,12 +489,65 @@ ui.navigate = function(url, win) {
 }
 
 /**
+ * Bind a click handler to a widget.
+ */
+ui.ontouchstart = function(widget, e) {
+    //debug('ontouchstart');
+    widget.down = true;
+    widget.moved = false;
+    var t = e.touches[0];
+    widget.moveX = t.clientX;
+    widget.moveY = t.clientY;
+};
+
+ui.ontouchmove = function(widget, e) {
+    //debug('ontouchmove');
+    var t = e.touches[0];
+    if (t.clientX != widget.moveX) {
+        widget.moveX = t.clientX;
+        widget.moved = true;
+    }
+    if (t.clientY != widget.moveY) {
+        widget.moveY = t.clientY;
+        widget.moved = true;
+    }
+};
+
+ui.ontouchend = function(widget, e) {
+    //debug('ontouchend');
+    widget.down = false;
+    if (!widget.moved) {
+        e.preventDefault();
+        return widget.onclick(e);
+    }
+};
+
+ui.onclick = function(widget, handler) {
+    if (ui.isMobile()) {
+        widget.ontouchstart = function(e) {
+            return ui.ontouchstart(widget, e);
+        };
+        widget.ontouchmove = function(e) {
+            return ui.ontouchmove(widget, e);
+        };
+        widget.ontouchend = function(e) {
+            return ui.ontouchend(widget, e);
+        };
+    }
+    widget.onclick = function(e) {
+        //debug('onclick');
+        return handler(e);
+    };
+    return widget;
+};
+
+/**
  * Build a portable <a href> tag.
  */
 ui.href = function(id, loc, target, html) {
     if (target == '_blank')
         return '<a id="' + id + '" href="' + loc + '" target="_blank">' + html + '</a>';
-    return '<a id="' + id + '" href="' + loc + '" onclick="return ui.navigate(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
+    return '<a id="' + id + '" href="' + loc + '" ' + (ui.isMobile()? 'ontouchstart="return ui.ontouchstart(this, event);" ontouchmove="return ui.ontouchmove(this, event);" ontouchend="return ui.ontouchend(this, event);" ' : '') + 'onclick="return ui.navigate(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
 };
 
 /**
@@ -489,7 +571,7 @@ ui.menufunc = function(id, name, fun, hilight) {
     function Menu() {
         this.content = function() {
             function href(id, fun, html) {
-                return '<a id="' + id + '" href="/" onclick="' + fun + '">' + html + '</a>';
+                return '<a id="' + id + '" href="/" ' + (ui.isMobile()? 'ontouchstart="return ui.ontouchstart(this, event);" ontouchmove="return ui.ontouchmove(this, event);" ontouchend="return ui.ontouchend(this, event);" ' : '') + 'onclick="' + fun + '">' + html + '</a>';
             }
 
             if (hilight == true)

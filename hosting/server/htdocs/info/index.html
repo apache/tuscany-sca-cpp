@@ -26,7 +26,7 @@
 <tr><td class="label">URL:</td></tr>
 <tr><td><input type="text" id="appURL" class="readentry" size="30" readonly="readonly" placeholder="App URL" style="width: 300px;"/></td></tr>
 <tr><td class="label">Icon:</td></tr>
-<tr><td><img id="appIcon" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadIcon" type="button" class="lightbutton" value="Upload" style="display:none;"/><input id="uploadFile" type="file" accept="image/*" style="display: none;"/><span id="refreshingIcon" class="refreshing" style="display:none;"/></td></tr>
+<tr><td><img id="appIcon" style="width: 50px; height: 50px; vertical-align: top;"/><input id="uploadIcon" type="button" class="lightbutton" value="Upload" style="display: none;"/><input id="uploadFile" type="file" accept="image/*" style="visibility: hidden;"/><span id="refreshingIcon" class="refreshing" style="display:none;"/></td></tr>
 <tr><td class="label">Author:</td></tr>
 <tr><td><img id="authorPicture" style="width: 50px; height: 50px; vertical-align: middle;"/><input type="text" id="appAuthor" class="readentry" size="30" readonly="readonly" placeholder="Author of the app" style="width: 248px;"/></td></tr>
 <tr><td class="label">Rating:</td></tr>
@@ -55,12 +55,11 @@ var appname = ui.fragmentParams(location)['app'];
  */
 (function layout() {
     document.title = config.windowtitle() + ' - Info - ' + appname;
-    $('viewhead').innerHTML = '<span id="appname" class="cmenu">' + appname + '</span>' +
-        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 5px;" id="deleteApp" value="-" title="Delete this app" disabled="true"/>' +
-        '<span style="position: absolute; top: 0px; right: 5px;">' +
-        '<input type="button" class="greenbutton" id="runApp" value="Run" title="Run this app"/>' +
-        '<input type="button" class="bluebutton" id="cloneApp" value="'+ config.clone() +'" title="' + config.clone() + ' this app"/>' +
-        '</span>';
+    $('viewhead').innerHTML = '<span id="appname" class="cmenu">' + appname + 
+        '<input type="button" class="redbutton plusminus" style="position: absolute; top: 4px; left: 2px;" id="deleteApp" value="-" title="Delete this app" disabled="true"/>' +
+        '<input type="button" class="bluebutton" id="editApp" style="position: absolute; top: 4px; right: 72px;" value="Edit" title="Edit this app" disabled="true"/>' +
+        '<input type="button" class="greenbutton plusminus" id="runApp" style="position: absolute; top: 4px; right: 37px;" value="&gt;" title="Run this app"/>' +
+        '<input type="button" class="bluebutton" style="position: absolute; top: 4px; right: 2px; font-size: 16px;" id="cloneApp" value="C" title="' + config.clone() + ' this app"/>';
     if (!ui.isMobile())
         $('viewform').className = 'viewform flatscrollbars';
     $('appURL').value = window.location.hostname + '/' + appname + '/';
@@ -133,9 +132,13 @@ var savediconxml;
             $('appDescription').className = 'flatentry';
             $('uploadIcon').style.display = 'inline';
             $('deleteApp').disabled = false;
-            $('deleteApp').onclick = function() {
+            $('editApp').disabled = false;
+            ui.onclick($('editApp'), function(e) {
+                return ui.navigate('/#view=page&app=' + appname, '_view');
+            });
+            ui.onclick($('deleteApp'), function(e) {
                 return ui.navigate('/#view=delete&app=' + appname, '_view');
-            }
+            });
             onlinestatus();
         } else {
             showstatus('Read only');
@@ -360,7 +363,7 @@ var lastkeyup = null;
 $('appDescription').onkeyup = function() {
     var t = new Date().getTime();
     lastkeyup = t;
-    ui.delay(function() {
+    ui.async(function() {
             return t == lastkeyup? onappchange() : true;
         }, 2000);
 };
@@ -376,16 +379,16 @@ $('appForm').onsubmit = function() {
 /**
  * Handle Clone button event.
  */
-$('cloneApp').onclick = function() {
+ui.onclick($('cloneApp'), function(e) {
     return ui.navigate('/#view=clone&app=' + appname, '_view');
-};
+});
 
 /**
  * Handle Run button event.
  */
-$('runApp').onclick = function() {
+ui.onclick($('runApp'), function(e) {
     return ui.navigate('/' + appname + '/', '_blank');
-};
+});
 
 /**
  * Read and upload icon file.
@@ -417,7 +420,7 @@ function uploadicon(files) {
             showstatus('Loaded');
 
             // Now upload it
-            ui.delay(function() {
+            ui.async(function() {
                 var iconentry = mklist("'entry", mklist("'title", appname), mklist("'id", appname), mklist("'author", username), mklist("'content", mklist("'icon", mklist("'image", url))));
                 var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(iconentry))));
                 if (savediconxml == entryxml) {
@@ -451,7 +454,7 @@ function emailicon() {
 
         // Open the email app
         var mailto = safeb64encode('i/' + appname + '/' + token);
-        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Email to upload&body=Paste icon here', '_self');
+        ui.navigate('mailto:' + mailto + '@' + topdomainname(window.location.hostname) + '?subject=Uploading icon&body=Paste icon here', '_self');
 
         // Refresh app icon
         refreshingicon = true;
@@ -462,11 +465,11 @@ function emailicon() {
 /**
  * Handle icon upload events.
  */
-$('uploadIcon').onclick = function() {
-    if (ui.isMobile())
-        return emailicon();
-    return $('uploadFile').click();
-};
+ui.onclick($('uploadIcon'), function(e) {
+    if (ui.isMobile() && ((ui.isWebkit() && ui.browserVersion() < 6.0) || (ui.isAndroid() && ui.browserVersion() < 2.2)))
+        return ui.delay(function() { return emailicon(); });
+    return ui.delay(function() { return $('uploadFile').click(); });
+});
 $('uploadFile').onchange = function(e) {
     return uploadicon(e.target.files);
 };
@@ -484,9 +487,9 @@ $('appIcon').ondrop = function(e) {
 /**
  * Handle rate button event.
  */
-$('rateApp').onclick = function() {
+ui.onclick($('rateApp'), function(e) {
     return ui.navigate('/#view=rate&app=' + appname, '_view');
-};
+});
 
 })();
 </script>

@@ -28,11 +28,9 @@
 <script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
 -->
 <title></title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
-<!--
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
--->
 <link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/"/>
 <script type="text/javascript">
@@ -172,6 +170,11 @@ window.username = 'anonymous';
  */
 var storecat = 'top';
 var storeidx = 0;
+
+/**
+ * The current search query.
+ */
+var searchquery = '';
 
 /**
  * Populate cache with app resources.
@@ -329,19 +332,18 @@ function showmenu(view, appname) {
      $('menu').innerHTML = ui.menubar(
         append(mklist(ui.menu('menuhome', 'Home', '/', '_view', view == 'home'),
                     ui.menu('menustore', 'Store', '/#view=store&category=' + storecat + '&idx=' + storeidx, '_view', view == 'store'),
-                    ui.menu('menusearch', 'Search', '/#view=search', '_view', view == 'search')),
+                    ui.menu('menusearch', 'Search', '/#view=search&q=' + searchquery, '_view', view == 'search')),
                 (isNull(appname) || appname == 'undefined')?
                     mklist() :
                     mklist(
-                        ui.menu('menuinfo', 'Info', '/#view=info&app=' + appname, '_view', view == 'info'),
-                        ui.menu('menupage', 'Edit', '/#view=page&app=' + appname, '_view', view == 'page')
                         /* TODO disabled for now
-                        ,
+                        ui.menu('menuinfo', 'Info', '/#view=info&app=' + appname, '_view', view == 'info'),
+                        ui.menu('menupage', 'Edit', '/#view=page&app=' + appname, '_view', view == 'page'),
                         ui.menu('menulogic', config.logic(), '/#view=graph&app=' + appname, '_view', view == 'graph'),
                         ui.menu('menurun', '<span class="greentext" style="font-weight: bold">Run!</span>', '/' + appname + '/', '_blank', false)
                         */
                         )),
-        (isNull(appname) || appname == 'undefined')? mklist(
+        (true || isNull(appname) || appname == 'undefined')? mklist(
             ui.menufunc('menusignout', 'Sign out', 'return logout();', false),
             ui.menu('menuaccount', 'Account', '/#view=account', '_view', view == 'account')) :
             mklist());
@@ -380,11 +382,15 @@ function showview(url) {
     var uri = '/' + view + '/';
     var idx = isNull(params['idx'])? 0 : parseInt(params['idx']);
 
-    // Track store category view
+    // Track store category
     if (view == 'store') {
         storecat = isNull(params['category'])? 'top' : params['category'];
         storeidx = idx;
     }
+
+    // Track search query
+    if (view == 'search')
+        searchquery = isNull(params['q'])? '' : params['q'];
 
     // Determine the transition to use
     var vtransition = uri == viewuri? (idx >= viewidx? 'left' : 'right') : viewtransition(viewuri, uri);
@@ -407,7 +413,7 @@ function showview(url) {
         // Prepare current view for transition out
         var ovdiv = viewdiv;
         if (!isNull(ovdiv)) {
-            ovdiv.skipNode = true;
+            ui.removeElementIDs(ovdiv);
             ovdiv.className = 'viewunloading3dm';
         }
 
@@ -416,7 +422,6 @@ function showview(url) {
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
         $('viewcontainer').appendChild(vdiv);
-        map(ui.evalScript, ui.innerScripts(vdiv));
 
         ui.async(function mtransitionview() {
             // Transition the old view out
@@ -425,20 +430,23 @@ function showview(url) {
 
             // Transition the new view in
             vdiv.className = 'viewloaded3dm';
+
+            ui.async(function mtransitioneval() {
+                map(ui.evalScript, ui.innerScripts(vdiv));
+            });
         });
 
     } else {
         // Prepare current view for transition out
         var ovdiv = viewdiv;
         if (!isNull(ovdiv))
-            ovdiv.skipNode = true;
+            ui.removeElementIDs(ovdiv);
 
         // Load the requested doc into the view
         var vdiv = mkviewdiv('viewloading3d');
         var vdoc = appcache.get(uri);
         vdiv.innerHTML = vdoc;
         $('viewcontainer').appendChild(vdiv);
-        map(ui.evalScript, ui.innerScripts(vdiv));
 
         ui.async(function transitionview() {
             // Transition the new view in
@@ -447,6 +455,10 @@ function showview(url) {
             // Transition the old view out
             if (!isNull(ovdiv))
                 ovdiv.parentNode.removeChild(ovdiv);
+
+            ui.async(function mtransitioneval() {
+                map(ui.evalScript, ui.innerScripts(vdiv));
+            });
         });
     }
 
@@ -622,7 +634,7 @@ document.body.onorientationchange = function(e) {
             //debug('appcache iframe loaded');
         };
 
-        ui.delay(function() {
+        ui.async(function() {
             $('installer').innerHTML = '<iframe src="/cache/" class="installer"></iframe>';
         });
 
@@ -639,10 +651,10 @@ document.body.onorientationchange = function(e) {
         }
 
         //debug('cache-manifest changed, reloading');
-        ui.delay(function() {
+        ui.async(function() {
             workingstatus(true);
             showstatus('Updating');
-            ui.delay(function() {
+            ui.async(function() {
                 workingstatus(true);
                 showstatus('Updating');
                 map(function(res) {

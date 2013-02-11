@@ -82,14 +82,14 @@ var reviews = sca.reference(editorComp, "reviews");
  * Initialize the rate buttons.
  */
 var rateAppButtons = [
-    [$('rateApp1'), 1, function() { return onclickrating(1); }, 'Don\'t like it'],
-    [$('rateApp2'), 2, function() { return onclickrating(2); }, 'It\'s ok'],
-    [$('rateApp3'), 3, function() { return onclickrating(3); }, 'It\'s good'],
-    [$('rateApp4'), 4, function() { return onclickrating(4); }, 'It\'s great']
+    [$('rateApp1'), 1, function(e) { return onclickrating(1); }, 'Don\'t like it'],
+    [$('rateApp2'), 2, function(e) { return onclickrating(2); }, 'It\'s ok'],
+    [$('rateApp3'), 3, function(e) { return onclickrating(3); }, 'It\'s good'],
+    [$('rateApp4'), 4, function(e) { return onclickrating(4); }, 'It\'s great']
 ];
 (function initRateAppButtons() {
     map(function(b) {
-        b[0].onclick = b[2];
+        ui.onclick(b[0], b[2]);
     }, rateAppButtons);
 })();
 
@@ -180,9 +180,9 @@ function onclickrating(r) {
 /**
  * Navigate back.
  */
-$('rateAppDoneButton').onclick = function() {
+ui.onclick($('rateAppDoneButton'), function(e) {
     history.back();
-};
+});
 
 })();
 </script>

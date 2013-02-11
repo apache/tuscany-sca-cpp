@@ -1,1 +1,1 @@
-((entry (title "An empty app template") (id "new") (author "admin@example.com") (updated "Jan 01, 2012") (content (info (description "Sample app")))))
+((entry (title "A new app") (id "new") (author "admin@example.com") (updated "2012-01-01T00:00:00+00:00") (content (info (description "A new app")))))

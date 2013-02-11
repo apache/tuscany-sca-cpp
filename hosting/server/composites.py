@@ -43,7 +43,12 @@ def put(id, comp, user, cache, apps):
     # Update the composite in the composite db
     compentry = mkentry(title(app), car(id), user.get(()), now(), content(comp))
     debug('composites.py::put::compentry', compentry)
-    return cache.put(compid(id), compentry)
+    rc = cache.put(compid(id), compentry)
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 
 # Get a composite from the composite db
 def get(id, user, cache, apps):
@@ -88,5 +93,10 @@ def delete(id, user, cache, apps):
         return False
 
     # Delete the composite
-    return cache.delete(compid(id))
+    rc = cache.delete(compid(id))
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 

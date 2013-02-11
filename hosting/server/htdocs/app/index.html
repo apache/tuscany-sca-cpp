@@ -28,11 +28,9 @@
 <script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
 -->
 <title></title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
-<!--
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
--->
 <link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/"/>
 <script type="text/javascript">
@@ -311,7 +309,7 @@ function setwidgetvalue(e, dv) {
 
                 // Define the stylesheet
                 if (s != '') {
-                    var esheet = ui.elementByID(contentdiv, 'style_' + e.id);
+                    var esheet = ui.elementByID(document, 'style_' + e.id);
                     if (isNull(esheet)) {
                         var nesheet = document.createElement('style');
                         nesheet.id = 'style_' + e.id;
@@ -434,7 +432,7 @@ function updatepage(l) {
         return e;
     }
 
-    map(updatewidget, filter(function(e) { return !isNull(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
+    map(updatewidget, filter(function(e) { return !isNull(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(document, 'page').childNodes)));
     return true;
 }
 
@@ -464,18 +462,19 @@ function bindwidgethandler(e, appname) {
     if (e.className == 'button') {
         var b = car(childElements(e));
         b.name = e.id;
-        b.onclick = function() { return buttonClickHandler(b.value, appname); };
+        ui.onclick(b, function(e) {
+            return buttonClickHandler(b.value, appname);
+        });
         return e;
     }
     if (e.className == 'link') {
         var l = car(childElements(e));
         var hr = l.href;
         if (hr.substring(0, 5) == 'link:' && hr.indexOf('://') == -1) {
-            var f = function(e) {
+            ui.onclick(l, function(e) {
                 e.preventDefault();
                 return buttonClickHandler(hr.substring(5), appname);
-            };
-            l.ontouchstart = l.onclick = f;
+            });
             l.href = 'javascript:void()';
         }
         return e;
@@ -609,7 +608,7 @@ function getappdata(appname, page, compos) {
         }
 
         // Setup the widgets
-        map(setupwidget, filter(function(e) { return !isNull(e.id); }, nodeList(ui.elementByID(contentdiv, 'page').childNodes)));
+        map(setupwidget, filter(function(e) { return !isNull(e.id); }, nodeList(ui.elementByID(document, 'page').childNodes)));
 
         // Get the app components
         var comps = scdl.components(compos);
@@ -720,7 +719,7 @@ function compquery() {
         return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNull(e.id) && !isNull(inputvalue(e)); }, childrenList(ui.elementByID(contentdiv, 'page'))));
+    var args = map(queryarg, filter(function(e) { return !isNull(e.id) && !isNull(inputvalue(e)); }, childrenList(ui.elementByID(document, 'page'))));
 
     // Append current location properties if known
     if (!isNull(geoposition)) {

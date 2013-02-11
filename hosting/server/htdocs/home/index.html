@@ -32,7 +32,7 @@
 <input type="button" class="bluebutton" style="font-size: 21px; padding: 10px; height: 50px;" id="getstarted" title="Get Started" value="Get Started"/>
 
 <br/><br/>
-<div class="note">Requires Safari 5+, Chrome 11+, Firefox 4+ or IE 9+</div>
+<div class="note">Requires Safari 6+, Chrome 24+, Firefox 18+ or IE 10+</div>
 <br/>
 
 </div>
@@ -51,9 +51,9 @@
         $('viewcontent').className = 'viewcontent flatscrollbars';
 })();
 
-$('getstarted').onclick = function() {
+ui.onclick($('getstarted'), function(e) {
     return ui.navigate('/#view=store', '_view');
-};
+});
 
 /**
  * Display animation.

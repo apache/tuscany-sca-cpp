@@ -110,9 +110,9 @@ def get(id, user, cache, db, apps):
     if isNull(id):
         topentries = db.get((("'regex", '("ratings" .* "app.ratings")'), ("'rank", "(regexp_matches(value, '(.*\(rating )([^\)]+)(\).*)'))[2]::float"), ("'limit", 25)))
         flatentries = tuple(map(lambda v: car(v), () if isNull(topentries) else topentries))
-        def rating(e):
+        def sortkey(e):
             return cadr(assoc("'rating", assoc("'ratings", assoc("'content", e))))
-        sortedentries = tuple(sorted(flatentries, key = rating, reverse = True))
+        sortedentries = tuple(sorted(flatentries, key = sortkey, reverse = True))[0:25]
         topratings = ((("'feed", ("'title", "Ratings"), ("'id", 'ratings')) + sortedentries),)
         debug('ratings.py::get::topratings', topratings)
         return topratings

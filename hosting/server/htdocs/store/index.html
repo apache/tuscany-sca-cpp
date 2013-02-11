@@ -50,8 +50,7 @@
 var categories = [
     ['Featured', 'featured', 1],
     ['Top', 'top', 2],
-    //['New', 'new', 3],
-    //['Search', 'all', 4],
+    ['New', 'new', 3],
     ['My Apps', 'myapps', 5]
 ];
 
@@ -83,7 +82,7 @@ $('viewhead').innerHTML = (function catmenu() {
 
     var m = '';
     map(function(c) { m += catmenuitem(car(c), cadr(c), caddr(c)); }, categories);
-    m += '<span class="rmenu"><input type="button" class="bluebutton" id="createApp" title="Create a new app" Value="Create"/></span>';
+    m += '<input type="button" class="bluebutton" id="createApp" style="position: absolute; top: 4px; right: 2px;" title="Create a new app" Value="Create"/>';
     return m;
 })();
 
@@ -113,9 +112,9 @@ function viewapp(appname) {
 /**
  * Create an app.
  */
-$('createApp').onclick = function() {
+ui.onclick($('createApp'), function(e) {
     return ui.navigate('/#view=create', '_view');
-};
+});
 
 /**
  * Get and display an app icon.

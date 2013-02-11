@@ -28,11 +28,9 @@
 <script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
 -->
 <title>Oops</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
-<!--
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
--->
 <link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/public/oops/"/>
 <script type="text/javascript">
@@ -304,7 +302,7 @@ var appresources = [
             //debug('appcache iframe loaded');
         };
 
-        ui.delay(function() {
+        ui.async(function() {
             $('installer').innerHTML = '<iframe src="/public/cache/" class="installer"></iframe>';
         });
 
@@ -321,9 +319,9 @@ var appresources = [
         }
 
         //debug('cache-manifest changed, reloading');
-        ui.delay(function() {
+        ui.async(function() {
             showstatus('Updating');
-            ui.delay(function() {
+            ui.async(function() {
                 map(function(res) {
                     appcache.remove(res[0]);
                     appcache.get(res[0], 'remote');

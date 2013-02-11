@@ -138,9 +138,9 @@ $('deleteAppForm').onsubmit = function() {
 /**
  * Cancel cloning an app.
  */
-$('deleteAppCancelButton').onclick = function() {
+ui.onclick($('deleteAppCancelButton'), function(e) {
     history.back();
-};
+});
 
 })();
 </script>

@@ -28,11 +28,9 @@
 <script src="http://www.example.com:9998/target/target-script-min.js#anonymous"></script>
 -->
 <title>Sign in</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
-<!--
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
--->
 <link rel="apple-touch-icon-precomposed" href="/public/touchicon.png"/>
 <base href="/login/"/>
 <script type="text/javascript">
@@ -137,7 +135,7 @@ ui.includeCSS(appcache.get('/ui-min.css'));
 <tr><td><span id="loginprompt" style="font-size: 16px;"></span></tr></td>
 <tr><td><input type="text" class="flatentry" name="httpd_username" value="" placeholder="Username or email"/></td></tr>
 <tr><td><input type="password" class="flatentry" name="httpd_password" value="" placeholder="Password"/></td></tr>
-<tr><td><input type="submit" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" value="Sign in"/></td></tr>
+<tr><td><input type="submit" class="bluebutton" style="font-size: 16px; line-height: 16px;" value="Sign in"/></td></tr>
 </table>
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
@@ -146,7 +144,7 @@ ui.includeCSS(appcache.get('/ui-min.css'));
 <form name="facebookOAuth2Form" style="width: 100%;">
 <table style="width: 100%;">
 <tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;">Facebook</span> account</span></td></tr>
-<tr><td><input type="button" id="facebookOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+<tr><td><input type="button" id="facebookOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px;"/></td></tr>
 </table>
 </form>
 <br/>
@@ -154,7 +152,7 @@ ui.includeCSS(appcache.get('/ui-min.css'));
 <form name="googleOAuth2Form" style="width: 100%;">
 <table style="width: 100%;">
 <tr><td><span style="font-size: 16px;">Sign in with your <span style="font-weight: bold;" >Google</span> account</span></td></tr>
-<tr><td><input type="button" id="googleOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px"/></td></tr>
+<tr><td><input type="button" id="googleOAuth2Signin" value="Sign in" class="bluebutton" style="font-size: 16px;"/></td></tr>
 </table>
 </form>
 <br/>
@@ -194,7 +192,7 @@ try {
     $('loginprompt').innerHTML = config.loginprompt();
     document.title = config.windowtitle() + ' - Sign in';
     $('viewhead').innerHTML = '<span class="bcmenu">' + config.pagetitle() + '</span>' +
-        '<span class="rmenu"><input type="button" id="signUp" class="redbutton" style="font-size: 16px; line-height: 16px; padding: 6px; height: 32px" title="' + config.signuptitle() + '" value="Sign up"/></span>';
+        '<input type="button" id="signUp" class="redbutton" style="position: absolute; top: 4px; right: 2px; font-size: 16px;" title="' + config.signuptitle() + '" value="Sign up"/>';
     if (!ui.isMobile())
         $('viewcontent').className = 'viewcontent flatscrollbars';
     $('status').className = ui.isMobile()? 'status3dm' : 'status3d';
@@ -337,13 +335,13 @@ function withgoogle() {
     return parms;
 }
 
-$('facebookOAuth2Signin').onclick = function() {
+ui.onclick($('facebookOAuth2Signin'), function(e) {
     return submitoauth2signin(withfacebook);
-};
+});
 
-$('googleOAuth2Signin').onclick = function() {
+ui.onclick($('googleOAuth2Signin'), function(e) {
     return submitoauth2signin(withgoogle);
-};
+});
 
 /**
  * Signin with a username and password.
@@ -356,9 +354,9 @@ $('formSignin').onsubmit = function submitformsignin() {
 /**
  * Signup.
  */
-$('signUp').onclick = function submitsignup() {
+ui.onclick($('signUp'), function submitsignup(e) {
     ui.navigate('/public/notyet/', '_self');
-};
+});
 
 /**
  * Handle orientation change.
@@ -442,7 +440,7 @@ var appresources = [
             //debug('appcache iframe loaded');
         };
 
-        ui.delay(function() {
+        ui.async(function() {
             $('installer').innerHTML = '<iframe src="/public/cache/" class="installer"></iframe>';
         });
 
@@ -459,10 +457,10 @@ var appresources = [
         }
 
         //debug('cache-manifest changed, reloading');
-        ui.delay(function() {
+        ui.async(function() {
             workingstatus(true);
             showstatus('Updating');
-            ui.delay(function() {
+            ui.async(function() {
                 workingstatus(true);
                 showstatus('Updating');
                 map(function(res) {

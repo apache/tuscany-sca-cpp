@@ -43,7 +43,12 @@ def put(id, page, user, cache, apps):
     # Update the page in the page db
     pageentry = mkentry(title(app), car(id), user.get(()), now(), content(page))
     debug('pages.py::put::pageentry', pageentry)
-    return cache.put(pageid(id), pageentry)
+    rc = cache.put(pageid(id), pageentry)
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 
 # Get a page from the page db
 def get(id, user, cache, apps):
@@ -90,5 +95,10 @@ def delete(id, user, cache, apps):
         return False
 
     # Delete the page
-    return cache.delete(pageid(id))
+    rc = cache.delete(pageid(id))
+    if rc == False:
+        return False
+
+    # Update the app's updated date
+    return apps.put(id, app)
 
