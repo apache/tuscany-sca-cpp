@@ -141,7 +141,7 @@ public:
     }
 
 private:
-    const bool owner;
+    unused const bool owner;
 #ifdef WANT_THREADS
     pthread_mutex_t mutex;
     pthread_mutex_t pidmutex;
@@ -272,7 +272,7 @@ public:
     }
 
 private:
-    PythonRuntime* const py;
+    unused PythonRuntime* const py;
 #ifdef WANT_THREADS
     PyGILState_STATE gstate;
 #endif
@@ -300,7 +300,7 @@ public:
     }
 
 private:
-    PythonRuntime* const py;
+    unused PythonRuntime* const py;
 #ifdef WANT_THREADS
     PyThreadState* tstate;
 #endif

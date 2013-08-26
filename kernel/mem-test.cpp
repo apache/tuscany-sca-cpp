@@ -67,7 +67,7 @@ private:
     friend ostream& operator<<(ostream& out, const Element& v);
 
     const int i;
-    char c[20];
+    unused char c[20];
 };
 
 ostream& operator<<(ostream& out, const Element& v) {

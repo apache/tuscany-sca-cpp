@@ -121,7 +121,7 @@ if test "${want_maintainer_mode}" = "true"; then
   if test "${cxxtype}" = "clang"; then
     cxxflags="${cxxflags} -O1 -stdlib=libc++ -Qunused-arguments -Wno-return-type-c-linkage"
   else
-    cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion"
+    cxxflags="${cxxflags} -O2 -Wlogical-op -Wconversion -Wno-attributes"
   fi
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])

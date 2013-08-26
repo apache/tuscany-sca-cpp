@@ -74,7 +74,7 @@ public:
     }
 
 private:
-    const bool owner;
+    unused const bool owner;
     const string name;
     const string format;
 

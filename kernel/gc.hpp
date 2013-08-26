@@ -325,7 +325,7 @@ public:
     gc_child_pool& operator=(const gc_child_pool& p) = delete;
 
 private:
-    const bool owner;
+    unused const bool owner;
 
     inline apr_pool_t* const mkpool() noexcept {
         apr_pool_t* p;

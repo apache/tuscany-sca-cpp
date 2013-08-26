@@ -68,7 +68,7 @@ public:
 
 private:
     const gc_child_pool p;
-    const bool owner;
+    unused const bool owner;
     apr_memcache_t* const mc;
 
     friend const failable<bool> post(const value& key, const value& val, const MemCached& cache);
