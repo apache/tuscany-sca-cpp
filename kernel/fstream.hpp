@@ -233,7 +233,7 @@ public:
 private:
     const int level;
     int len;
-    char buf[513];
+    char buf[4097];
 };
 
 /**
