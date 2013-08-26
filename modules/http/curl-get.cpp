@@ -35,8 +35,10 @@ namespace http {
 const bool testGet(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
     const CURLSession ch(ca, cert, key, "", 0);
     const failable<value> val = get(url, ch);
-    assert(hasContent(val));
-    cout << content(val) << endl;
+    if(!hasContent(val))
+        cerr << reason(val) << endl;
+    else
+        cout << content(val) << endl;
     return true;
 }
 
