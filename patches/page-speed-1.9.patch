@@ -1,0 +1,11 @@
+--- third_party/instaweb/src/net/instaweb/rewriter/elide_attributes_filter.cc
++++ third_party/instaweb/src/net/instaweb/rewriter/elide_attributes_filter.cc
+@@ -82,7 +82,7 @@
+ 
+ const TagAttrValue kDefaultList[] = {
+   {"script", "language", NULL},
+-  {"script", "type", NULL},
++  {"script", "type", "text/javascript"},
+   {"style", "type", NULL},
+   {"br", "clear", "none"},
+   {"a", "shape", "rect"},

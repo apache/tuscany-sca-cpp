@@ -63,12 +63,11 @@ json.jsPropertiesToValues = function(propertiesSoFar, o, i) {
     var v = json.jsValToValue(jsv);
 
     if (typeof p == 'string') {
-        var n = '' + p;
-        if (n.slice(0, 1) == '@')
-            return json.jsPropertiesToValues(cons(mklist(attribute, "'" + n.slice(1), v), propertiesSoFar), o, cdr(i));
+        if (p[0] == '@')
+            return json.jsPropertiesToValues(cons(mklist(attribute, "'" + p.substring(1), v), propertiesSoFar), o, cdr(i));
         if (isList(v) && !json.isJSArray(v))
-            return json.jsPropertiesToValues(cons(cons(element, cons("'" + n, v)), propertiesSoFar), o, cdr(i));
-        return json.jsPropertiesToValues(cons(mklist(element, "'" + n, v), propertiesSoFar), o, cdr(i));
+            return json.jsPropertiesToValues(cons(cons(element, cons("'" + p, v)), propertiesSoFar), o, cdr(i));
+        return json.jsPropertiesToValues(cons(mklist(element, "'" + p, v), propertiesSoFar), o, cdr(i));
     }
     return json.jsPropertiesToValues(cons(v, propertiesSoFar), o, cdr(i));
 };
@@ -80,9 +79,9 @@ json.jsValToValue = function(jsv) {
     if (jsv == null)
         return null;
     if (isList(jsv))
-        return json.jsPropertiesToValues(mklist(), jsv, reverse(range(0, jsv.length)));
+        return json.jsPropertiesToValues(nil, jsv, reverse(seq(0, jsv.length)));
     if (typeof jsv == 'object')
-        return json.jsPropertiesToValues(mklist(), jsv, reverse(properties(jsv)));
+        return json.jsPropertiesToValues(nil, jsv, reverse(properties(jsv)));
     if (typeof jsv == 'string')
         return '' + jsv;
     return jsv;
@@ -94,7 +93,7 @@ json.jsValToValue = function(jsv) {
 json.isJSON = function(l) {
     if (isNull(l))
         return false;
-    var s = car(l).slice(0, 1);
+    var s = car(l)[0];
     return s == "[" || s == "{";
 };
 
@@ -102,10 +101,8 @@ json.isJSON = function(l) {
  * Convert a list of strings representing a JSON document to a list of values.
  */
 json.readJSON = function(l) {
-    var s = writeStrings(l);
-    var obj;
-    eval('obj = { \"val\": ' + s + " }");
-    return json.jsValToValue(obj.val);
+    var v = JSON.parse(writeStrings(l));
+    return json.jsValToValue(v);
 };
 
 /**
@@ -126,7 +123,7 @@ json.valueToJSVal = function(v) {
     if (!isList(v))
         return v;
     if (json.isJSArray(v))
-        return json.valuesToJSElements(range(0, v.length), v, 0);
+        return json.valuesToJSElements(seq(0, v.length), v, 0);
     return json.valuesToJSProperties({}, v);
 };
 
@@ -139,14 +136,14 @@ json.valuesToJSProperties = function(o, l) {
     var token = car(l);
     if (isTaggedList(token, attribute)) {
         var pv = json.valueToJSVal(attributeValue(token));
-        o['@' + attributeName(token).slice(1)] = pv;
+        o['@' + attributeName(token).substring(1)] = pv;
     } else if (isTaggedList(token, element)) {
         if (elementHasValue(token)) {
             var pv = json.valueToJSVal(elementValue(token));
-            o[elementName(token).slice(1)] = pv;
+            o[elementName(token).substring(1)] = pv;
         } else {
             var child = {};
-            o[elementName(token).slice(1)] = child;
+            o[elementName(token).substring(1)] = child;
             json.valuesToJSProperties(child, elementChildren(token));
         }
     }
@@ -159,11 +156,10 @@ json.valuesToJSProperties = function(o, l) {
 json.writeJSON = function(l) {
     var jsv;
     if (json.isJSArray(l))
-        jsv = json.valuesToJSElements(range(0, l.length), l, 0);
+        jsv = json.valuesToJSElements(seq(0, l.length), l, 0);
     else
         jsv = json.valuesToJSProperties({}, l);
-    var s = json.toJSON(jsv);
-    return mklist(s);
+    return mklist(JSON.stringify(jsv));
 }
 
 /**
@@ -191,71 +187,5 @@ json.jsonResultValue = function(s) {
     if (isList(val) && !json.isJSArray(val))
         return mklist(val);
     return val;
-};
-
-/**
- * Escape a character.
- */
-json.escapeJSONChar = function(c) {
-    if(c == "\"" || c == "\\") return "\\" + c;
-    if (c == "\b") return "\\b";
-    if (c == "\f") return "\\f";
-    if (c == "\n") return "\\n";
-    if (c == "\r") return "\\r";
-    if (c == "\t") return "\\t";
-    var hex = c.charCodeAt(0).toString(16);
-    if(hex.length == 1) return "\\u000" + hex;
-    if(hex.length == 2) return "\\u00" + hex;
-    if(hex.length == 3) return "\\u0" + hex;
-    return "\\u" + hex;
-};
-
-/**
- * Encode a string into JSON format.
- */
-json.escapeJSONString = function(s) {
-    // The following should suffice but Safari's regex is broken (doesn't support callback substitutions)
-    // return "\"" + s.replace(/([^\u0020-\u007f]|[\\\"])/g, json.escapeJSONChar) + "\"";
-
-    // Rather inefficient way to do it
-    var parts = s.split("");
-    for(var i = 0; i < parts.length; i++) {
-        var c = parts[i];
-        if(c == '"' || c == '\\' || c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 128)
-            parts[i] = json.escapeJSONChar(parts[i]);
-    }
-    return "\"" + parts.join("") + "\"";
-};
-
-/**
- * Marshall objects to JSON format.
- */
-json.toJSON = function(o) {
-    if(o == null)
-        return "null";
-    if(o.constructor == String)
-        return json.escapeJSONString(o);
-    if(o.constructor == Number)
-        return o.toString();
-    if(o.constructor == Boolean)
-        return o.toString();
-    if(o.constructor == Date)
-        return '{javaClass: "java.util.Date", time: ' + o.valueOf() +'}';
-    if(o.constructor == Array) {
-        var v = [];
-        for(var i = 0; i < o.length; i++)
-            v.push(json.toJSON(o[i]));
-        return "[" + v.join(", ") + "]";
-    }
-    var v = [];
-    for(attr in o) {
-        if(o[attr] == null)
-            v.push("\"" + attr + "\": null");
-        else if(typeof o[attr] == "function")
-            ; // Skip
-        else
-            v.push(json.escapeJSONString(attr) + ": " + json.toJSON(o[attr]));
-    }
-    return "{" + v.join(", ") + "}";
 };
 

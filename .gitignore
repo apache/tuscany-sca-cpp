@@ -57,11 +57,14 @@ config.guess
 config.sub
 config.status
 all.js
+base.js
 cache-manifest.cmf
 *-min.html
+*-ssi.html
 *-min.js
 *-min.css
 *.b64
+*.off
 intro*.png
 depcomp
 install-sh

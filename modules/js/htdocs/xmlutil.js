@@ -22,18 +22,6 @@
  */
 
 /**
- * Convert a DOM node list to a regular list.
- */
-function nodeList(n) {
-    var l = new Array();
-    if (isNull(n))
-        return l;
-    for (var i = 0; i < n.length; i++)
-        l[i] = n[i];
-    return l;
-}
-
-/**
  * Append a list of nodes to a parent node.
  */
 function appendNodes(nodes, p) {
@@ -41,7 +29,7 @@ function appendNodes(nodes, p) {
         return p;
     p.appendChild(car(nodes));
     return appendNodes(cdr(nodes), p);
-};
+}
 
 /**
  * Return the child attributes of an element.
@@ -61,31 +49,29 @@ function childElements(e) {
  * Return the child text nodes of an element.
  */
 function childText(e) {
-    function trim(s) {
-        return s.replace(/^\s*/, '').replace(/\s*$/, '');
-    }
-    return filter(function(n) { return n.nodeType == 3 && trim(n.nodeValue) != ''; }, nodeList(e.childNodes));
+    return filter(function(n) { return n.nodeType == 3 && n.nodeValue.trim().length != 0; }, nodeList(e.childNodes));
 }
 
 /**
  * Read a list of XML attributes.
  */
-function readAttributes(p, a) {
+function readAttributes(a) {
     if (isNull(a))
         return a;
     var x = car(a);
-    return cons(mklist(attribute, "'" + x.nodeName, x.nodeValue), readAttributes(p, cdr(a)));
+    return cons(mklist(attribute, "'" + x.name, x.value), readAttributes(cdr(a)));
 }
 
 /**
  * Read an XML element.
  */
 function readElement(e, childf) {
-    var l = append(append(mklist(element, "'" + e.nodeName), readAttributes(e, childf(e))), readElements(childElements(e), childf));
+    var l = append(append(mklist(element, "'" + e.nodeName), readAttributes(childf(e))), readElements(childElements(e), childf));
     var t = childText(e);
     if (isNull(t))
         return l;
-    return append(l, mklist(car(t).nodeValue));
+    var tv = reduce(function(a, n) { return a + n.nodeValue; }, '', t);
+    return append(l, mklist(tv));
 }
 
 /**
@@ -109,10 +95,10 @@ function isXML(l) {
 /**
  * Parse a list of strings representing an XML document.
  */
+var xmlParser = new DOMParser();
 function parseXML(l) {
     var s = writeStrings(l);
-    var p = new DOMParser();
-    return p.parseFromString(s, "text/xml");
+    return xmlParser.parseFromString(s, "text/xml");
 }
 
 /**
@@ -121,7 +107,7 @@ function parseXML(l) {
 function readXMLDocument(doc) {
     var root = childElements(doc);
     if (isNull(root))
-        return mklist();
+        return nil;
     return mklist(readElement(car(root), childAttributes));
 }
 
@@ -129,29 +115,7 @@ function readXMLDocument(doc) {
  * Read a list of values from an XHTML element.
  */
 function readXHTMLElement(xhtml) {
-    // Special XHTML attribute filtering on IE
-    function ieChildAttributes(e) {
-        var a = filter(function(n) {
-            // Filter out empty and internal DOM attributes
-            if (n.nodeType != 2 || isNull(n.nodeValue) || n.nodeValue == '')
-                return false;
-            if (n.nodeName == 'contentEditable' || n.nodeName == 'maxLength' || n.nodeName == 'loop' || n.nodeName == 'start')
-                return false;
-            return true;
-        }, nodeList(e.attributes));
-
-        if (e.style.cssText == '')
-            return a;
-
-        // Add style attribute
-        var sa = new Object();
-        sa.nodeName = 'style';
-        sa.nodeValue = e.style.cssText;
-        return cons(sa, a);
-    }
-
-    var childf = (typeof(XMLSerializer) != 'undefined')? childAttributes : ieChildAttributes;
-    return mklist(readElement(xhtml, childf));
+    return mklist(readElement(xhtml, childAttributes));
 }
 
 /**
@@ -164,10 +128,9 @@ function readXML(l) {
 /**
  * Return a list of strings representing an XML document.
  */
+var xmlSerializer = new XMLSerializer();
 function writeXMLDocument(doc) {
-    if (typeof(XMLSerializer) != 'undefined')
-        return mklist(new XMLSerializer().serializeToString(doc));
-    return mklist(doc.xml);
+    return mklist(xmlSerializer.serializeToString(doc));
 }
 
 /**
@@ -185,7 +148,7 @@ function writeList(l, node, doc) {
 
     var token = car(l);
     if (isTaggedList(token, attribute)) {
-        if (isIE()) {
+        if (isMSIE()) {
             var aname = attributeName(token).substring(1);
             if (aname != 'xmlns')
                 node.setAttribute(aname, '' + attributeValue(token));
@@ -207,7 +170,7 @@ function writeList(l, node, doc) {
             }
 
             var ns = xmlns(elementChildren(tok));
-            if (isIE())
+            if (isMSIE())
                 return doc.createElementNS(ns != null? ns : node.namespaceURI, elementName(tok).substring(1));
             if (ns == null)
                 return doc.createElement(elementName(tok).substring(1));
@@ -251,6 +214,6 @@ function writeXML(l, xmlTag) {
     writeList(l, doc, doc);
     if (!xmlTag)
         return writeXMLDocument(doc);
-    return mklist('<?xml version="1.0" encoding="UTF-8"?>\n' + writeXMLDocument(doc) + '\n');
+    return mklist('<?xml version="1.0" encoding="UTF-8"?>\n' + car(writeXMLDocument(doc)) + '\n');
 }
 

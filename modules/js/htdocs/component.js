@@ -15,16 +15,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * The JSON-RPC client code is based on Jan-Klaas' JavaScript
- * o lait library (jsolait).
- *
- * $Id: jsonrpc.js,v 1.36.2.3 2006/03/08 15:09:37 mclark Exp $
- *
- * Copyright (c) 2003-2004 Jan-Klaas Kollhof
- * Copyright (c) 2005 Michael Clark, Metaparadigm Pte Ltd
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
  */
 
 /**
@@ -32,72 +22,6 @@
  */
 
 var JSONClient = {};
-
-/**
- * Escape a character.
- */
-JSONClient.escapeJSONChar = function(c) {
-    if(c == "\"" || c == "\\") return "\\" + c;
-    if(c == "\b") return "\\b";
-    if(c == "\f") return "\\f";
-    if(c == "\n") return "\\n";
-    if(c == "\r") return "\\r";
-    if(c == "\t") return "\\t";
-    var hex = c.charCodeAt(0).toString(16);
-    if(hex.length == 1) return "\\u000" + hex;
-    if(hex.length == 2) return "\\u00" + hex;
-    if(hex.length == 3) return "\\u0" + hex;
-    return "\\u" + hex;
-};
-
-/**
- * Encode a string into JSON format.
- */
-JSONClient.escapeJSONString = function(s) {
-    // The following should suffice but Safari's regex is broken (doesn't support callback substitutions)
-    // return "\"" + s.replace(/([^\u0020-\u007f]|[\\\"])/g, JSONClient.escapeJSONChar) + "\"";
-
-    // Rather inefficient way to do it
-    var parts = s.split("");
-    for(var i = 0; i < parts.length; i++) {
-        var c = parts[i];
-        if(c == '"' || c == '\\' || c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 128)
-            parts[i] = JSONClient.escapeJSONChar(parts[i]);
-    }
-    return "\"" + parts.join("") + "\"";
-};
-
-/**
- * Marshall objects to JSON format.
- */
-JSONClient.toJSON = function(o) {
-    if(o == null)
-        return "null";
-    if(o.constructor == String)
-        return JSONClient.escapeJSONString(o);
-    if(o.constructor == Number)
-        return o.toString();
-    if(o.constructor == Boolean)
-        return o.toString();
-    if(o.constructor == Date)
-        return '{javaClass: "java.util.Date", time: ' + o.valueOf() +'}';
-    if(o.constructor == Array) {
-        var v = [];
-        for(var i = 0; i < o.length; i++)
-            v.push(JSONClient.toJSON(o[i]));
-        return "[" + v.join(", ") + "]";
-    }
-    var v = [];
-    for(attr in o) {
-        if(o[attr] == null)
-            v.push("\"" + attr + "\": null");
-        else if(typeof o[attr] == "function")
-            ; // Skip
-        else
-            v.push(JSONClient.escapeJSONString(attr) + ": " + JSONClient.toJSON(o[attr]));
-    }
-    return "{" + v.join(", ") + "}";
-};
 
 /**
  * Construct an HTTPBindingClient.
@@ -114,6 +38,17 @@ function HTTPBindingClient(name, uri, domain) {
  */
 
 /**
+ * Run a function asynchronously.
+ */
+HTTPBindingClient.delaying = false;
+HTTPBindingClient.delay = function(f) {
+    if (HTTPBindingClient.delaying)
+        return window.setTimeout(f, 0);
+    else
+        return f();
+};
+
+/**
  * Generate client proxy apply method.
  */
 HTTPBindingClient.prototype.createApplyMethod = function() {
@@ -121,10 +56,10 @@ HTTPBindingClient.prototype.createApplyMethod = function() {
         var methodName = arguments[0];
         var args = [];
         for(var i = 1; i < arguments.length; i++)
-            args.push(arguments[i]);
+            args[args.length] = arguments[i];
 
-        var cb = null;
-        if(typeof args[args.length - 1] == "function")
+        var cb;
+        if(typeof args[args.length - 1] == 'function')
             cb = args.pop();
 
         var req = HTTPBindingClient.makeJSONRequest(methodName, args, cb);
@@ -151,7 +86,7 @@ HTTPBindingClient.makeJSONRequest = function(methodName, args, cb) {
     obj.id = req.id;
     obj.method = methodName;
     obj.params = args;
-    req.data = JSONClient.toJSON(obj);
+    req.data = JSON.stringify(obj);
     return req;
 };
 
@@ -159,62 +94,39 @@ HTTPBindingClient.makeJSONRequest = function(methodName, args, cb) {
  * Return the JSON result from an XMLHttpRequest.
  */
 HTTPBindingClient.jsonResult = function(http) {
-    // Get the charset
-    function httpCharset(http) {
-        try {
-            var contentType = http.getResponseHeader("Content-Type");
-            var parts = contentType.split(/\s*;\s*/);
-            for(var i = 0; i < parts.length; i++) {
-                if(parts[i].substring(0, 8) == "charset=")
-                    return parts[i].substring(8, parts[i].length);
-            }
-        } catch (e) {}
-        return "UTF-8";
-    }
-    if(!HTTPBindingClient.charset)
-        HTTPBindingClient.charset = httpCharset(http);
-
-    // Unmarshall the JSON response
-    var obj;
-    eval("obj = " + http.responseText);
-    if(obj.error)
-        throw new HTTPBindingClient.Exception(obj.error.code, obj.error.msg);
-    var res = obj.result;
-    return res;
+    var obj = JSON.parse(http.responseText);
+    return obj.result;
 };
 
 /**
  * Schedule async requests, limiting the number of concurrent running requests.
  */
-HTTPBindingClient.queuedRequests = new Array();
-HTTPBindingClient.runningRequests = new Array();
-HTTPBindingClient.concurrentRequests = 2;
+HTTPBindingClient.queuedRequests = [];
+HTTPBindingClient.runningRequests = [];
+HTTPBindingClient.concurrentRequests = 4;
 
 HTTPBindingClient.scheduleAsyncRequest = function(f, cancelable) {
-    //debug('schedule async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+    debug('component schedule async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
 
     // Queue the request function
     var req = new Object();
     req.f = f;
     req.cancelable = cancelable;
     req.canceled = false;
-    HTTPBindingClient.queuedRequests.push(req);
+    HTTPBindingClient.queuedRequests[HTTPBindingClient.queuedRequests.length] = req;
 
     // Execute any requests in the queue
-    setTimeout(function() {
-        HTTPBindingClient.runAsyncRequests(true);
-    }, 0);
-    return true;
+    return HTTPBindingClient.runAsyncRequests();
 };
 
 HTTPBindingClient.forgetRequest = function(req) {
-    req.http = null;
+    req.http = undefined;
 
     // Remove a request from the list of running requests
-    for (i in HTTPBindingClient.runningRequests) {
+    for (var i in HTTPBindingClient.runningRequests) {
         if (HTTPBindingClient.runningRequests[i] == req) {
             HTTPBindingClient.runningRequests.splice(i, 1);
-            //debug('forget async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+            debug('forget async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
             return true;
         }
     }
@@ -222,33 +134,32 @@ HTTPBindingClient.forgetRequest = function(req) {
 };
 
 HTTPBindingClient.cancelRequests = function() {
-    //debug('cancel async requests, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+    debug('component cancel async requests', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
 
     // Cancel any cancelable in flight HTTP requests
-    for (i in HTTPBindingClient.queuedRequests) {
+    for (var i in HTTPBindingClient.queuedRequests) {
         var req = HTTPBindingClient.queuedRequests[i];
         if (req.cancelable)
             req.canceled = true;
     }
-    for (i in HTTPBindingClient.runningRequests) {
+    for (var i in HTTPBindingClient.runningRequests) {
         var req = HTTPBindingClient.runningRequests[i];
         if (req.cancelable) {
             req.canceled = true;
             if (req.http) {
+                req.http.aborted = true;
                 req.http.abort();
-                req.http = null;
-                //debug('abort async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+                req.http = undefined;
+                debug('component abort async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
             }
         }
     }
 
     // Flush the queue
-    setTimeout(function() {
-        HTTPBindingClient.runAsyncRequests(true);
-    }, 0);
+    return HTTPBindingClient.runAsyncRequests();
 }
 
-HTTPBindingClient.runAsyncRequests = function(fromui) {
+HTTPBindingClient.runAsyncRequests = function() {
     // Stop now if we already have enough requests running or there's no request in the queue
     if(HTTPBindingClient.runningRequests.length >= HTTPBindingClient.concurrentRequests || HTTPBindingClient.queuedRequests.length == 0)
         return true;
@@ -256,41 +167,38 @@ HTTPBindingClient.runAsyncRequests = function(fromui) {
     // Run the first request in the queue
     var req = HTTPBindingClient.queuedRequests.shift();
     if (!req.canceled) {
-        HTTPBindingClient.runningRequests.push(req);
-        //debug('run async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
-        var runAsyncRequest = function() {
-            if (req.canceled) {
-                HTTPBindingClient.forgetRequest(req);
-                //debug('canceled timed async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
-                return false;
-            }
+        HTTPBindingClient.runningRequests[HTTPBindingClient.runningRequests.length] = req;
+        debug('component run async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
+        if (req.canceled) {
+            HTTPBindingClient.forgetRequest(req);
+            debug('component canceled timed async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
+            return false;
+        }
+        HTTPBindingClient.delay(function asyncRequest() {
             try {
                 req.http = new XMLHttpRequest();
+                req.http.aborted = false;
                 return req.f(req.http, function asyncRequestDone() {
                     // Execute any requests left in the queue
                     HTTPBindingClient.forgetRequest(req);
-                    //debug('done async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
-                    HTTPBindingClient.runAsyncRequests(false);
+                    debug('component done async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
+                    HTTPBindingClient.runAsyncRequests();
                     return true;
                 });
             } catch(e) {
                 // Execute any requests left in the queue
                 HTTPBindingClient.forgetRequest(req);
-                //debug('err async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
-                HTTPBindingClient.runAsyncRequests(false);
+                debug('component async request error', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length, 'error', e);
+                HTTPBindingClient.runAsyncRequests();
             }
             return false;
-        };
-        if (false)
-            setTimeout(runAsyncRequest, 0);
-        else
-            runAsyncRequest();
+        });
     } else {
-        //debug('canceled queued async request, running ' + HTTPBindingClient.runningRequests.length + ' queued ' + HTTPBindingClient.queuedRequests.length);
+        debug('component canceled queued async request', 'running', HTTPBindingClient.runningRequests.length, 'queued', HTTPBindingClient.queuedRequests.length);
     }
 
     // Execute any requests left in the queue
-    HTTPBindingClient.runAsyncRequests(fromui);
+    HTTPBindingClient.runAsyncRequests();
 };
 
 /**
@@ -298,24 +206,24 @@ HTTPBindingClient.runAsyncRequests = function(fromui) {
  */
 HTTPBindingClient.getCacheItem = function(k) {
     var ls = lstorage || localStorage;
-    return ls.getItem('cache.d.' + k);
+    return ls.getItem('dc.d.' + k);
 };
 
 /**
  * Set a cache item in local storage.
  */
 HTTPBindingClient.setCacheItem = function(k, v) {
+    if (v && v.length > 65535)
+        return HTTPBindingClient.removeCacheItem(k);
     HTTPBindingClient.collectCacheItems();
     var ls = lstorage || localStorage;
-    try {
-        var s = ls.getItem('cache.size');
-        var size = parseInt(s);
-        var ov = ls.getItem('cache.d.' + k);
-        var nsize = size - (ov != null? ov.length : 0) + (v != null? v.length : 0);
-        if (nsize != size)
-            ls.setItem('cache.size', nsize.toString());
-    } catch(e) {}
-    return ls.setItem('cache.d.' + k, v);
+    var s = ls.getItem('dc.size');
+    var size = s? parseInt(s) : 0;
+    var ov = ls.getItem('dc.d.' + k);
+    var nsize = size - (ov? ov.length : 0) + (v? v.length : 0);
+    if (nsize != size)
+        ls.setItem('dc.size', nsize.toString());
+    return ls.setItem('dc.d.' + k, v);
 };
 
 /**
@@ -323,16 +231,14 @@ HTTPBindingClient.setCacheItem = function(k, v) {
 */
 HTTPBindingClient.removeCacheItem = function(k) {
     var ls = lstorage || localStorage;
-    try {
-        var s = ls.getItem('cache.size');
-        var size = parseInt(s);
-        var ov = ls.getItem('cache.d' + k);
-        if (ov != null) {
-            var nsize = size - ov.length;
-            ls.setItem('cache.size', nsize.toString());
-        }
-    } catch(e) {}
-    return ls.removeItem('cache.d.' + k);
+    var s = ls.getItem('dc.size');
+    var size = s? parseInt(s) : 0;
+    var ov = ls.getItem('dc.d.' + k);
+    if (ov) {
+        var nsize = size - ov.length;
+        ls.setItem('dc.size', nsize.toString());
+    }
+    return ls.removeItem('dc.d.' + k);
 };
 
 /**
@@ -343,61 +249,59 @@ HTTPBindingClient.collectCacheSize = /* 10000; */ 1048576;
 HTTPBindingClient.collectCacheItems = function() {
     var ls = window.lstorage || localStorage;
     var nkeys = window.lstorage? function() { return ls.length(); } : function() { return ls.length; };
-    try {
-        // Get the current cache size
-        var size = 0;
-        var s = ls.getItem('cache.size');
-        if(s == null) {
-            // Calculate and store initial cache size
-            //debug('calculating cache size');
-            var n = nkeys();
-            for(var i = 0; i < n; i++) {
-                var k = ls.key(i);
-                if(k == null || k.substr(0, 8) != 'cache.d.')
-                    continue;
-                var v = ls.getItem(k);
-                if(v == null)
-                    continue;
-                size += v.length;
-            }
-            ls.setItem('cache.size', size.toString());
-        } else
-            size = parseInt(s);
 
-        // Nothing to do if it's below the max size
-        //debug('cache.size', size);
-        if (size <= HTTPBindingClient.maxCacheSize)
-            return false;
-
-        // Collect random cache entries until we reach our min size
-        //debug('collecting cache items');
-        var keys = new Array();
+    // Get the current cache size
+    var size = 0;
+    var s = ls.getItem('dc.size');
+    if(!s) {
+        // Calculate and store initial cache size
+        debug('component calculating cache size');
         var n = nkeys();
         for(var i = 0; i < n; i++) {
             var k = ls.key(i);
-            if(k == null || k.substr(0, 8) != 'cache.d.')
+            if(!k || k.substr(0, 5) != 'dc.d.')
                 continue;
-            keys.push(k);
-        }
-        while (keys.length != 0 && size >= HTTPBindingClient.collectCacheSize) {
-            var r = Math.floor(keys.length * Math.random());
-            if (r == keys.length)
-                continue;
-            var k = keys[r];
             var v = ls.getItem(k);
-            //debug('collect cache item', k);
-            ls.removeItem(k);
-            keys.splice(r, 1);
-            if (v != null)
-                size = size - v.length;
+            if(!v)
+                continue;
+            size += v.length;
         }
+        ls.setItem('dc.size', size.toString());
+    } else
+        size = parseInt(s);
 
-        // Store the new cache size
-        //debug('updated cache.size', size);
-        ls.setItem('cache.size', size.toString());
-        return true;
-    } catch(e) {}
-    return false;
+    // Nothing to do if it's below the max size
+    debug('component cache size', size);
+    if (size <= HTTPBindingClient.maxCacheSize)
+        return false;
+
+    // Collect random cache entries until we reach our min size
+    debug('component collecting cache items');
+    var keys = [];
+    var n = nkeys();
+    for(var i = 0; i < n; i++) {
+        var k = ls.key(i);
+        if(!k || k.substr(0, 5) != 'dc.d.')
+            continue;
+        keys[keys.length] = k;
+    }
+    while (keys.length != 0 && size >= HTTPBindingClient.collectCacheSize) {
+        var r = Math.floor(keys.length * Math.random());
+        if (r == keys.length)
+            continue;
+        var k = keys[r];
+        var v = ls.getItem(k);
+        debug('component collect cache item', k);
+        ls.removeItem(k);
+        keys.splice(r, 1);
+        if (v)
+            size = size - v.length;
+    }
+
+    // Store the new cache size
+    debug('component updated cache size', size);
+    ls.setItem('dc.size', size.toString());
+    return true;
 };
 
 /**
@@ -410,28 +314,19 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
     if(hascb) {
         var u = this.uri;
         return HTTPBindingClient.scheduleAsyncRequest(function jsonApplyRequest(http, done) {
-            http.open("POST", u, true);
-            http.setRequestHeader("Accept", "*/*");
-            http.setRequestHeader("Content-Type", "application/json-rpc");
+            http.open('POST', u, true);
+            http.setRequestHeader('Accept', '*/*');
+            http.setRequestHeader('Content-Type', 'application/json-rpc');
+            http.setRequestHeader('X-Cache-Control', 'no-cache');
             http.onreadystatechange = function() {
                 if(http.readyState == 4) {
                     // Pass the result or exception
                     if(http.status == 200) {
-                        var res = null;
-                        try {
-                            res = HTTPBindingClient.jsonResult(http);
-                            try {
-                                req.cb(res);
-                            } catch(cbe) {}
-                        } catch(e) {
-                            try {
-                                req.cb(null, e);
-                            } catch(cbe) {}
-                        }
-                    } else {
-                        try {
-                            req.cb(null, HTTPBindingClient.Exception(http.status, http.statusText));
-                        } catch(cbe) {}
+                        var res = HTTPBindingClient.jsonResult(http);
+                        req.cb(res);
+                    } if(!http.aborted) {
+                        error('jsonApply error', 'status', http.status, http.statusText);
+                        req.cb(undefined, new Error('' + http.status + ' ' + http.statusText));
                     }
                     return done();
                 }
@@ -445,13 +340,15 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
 
     // Call synchronously and return the result or exception
     var http = new XMLHttpRequest();
-    http.open("POST", this.uri, false);
-    http.setRequestHeader("Accept", "*/*");
-    http.setRequestHeader("Content-Type", "application/json-rpc");
+    http.open('POST', this.uri, false);
+    http.setRequestHeader('Accept', '*/*');
+    http.setRequestHeader('Content-Type', 'application/json-rpc');
+    http.setRequestHeader('X-Cache-Control', 'no-cache');
     http.send(req.data);
     if(http.status == 200)
         return HTTPBindingClient.jsonResult(http);
-    throw new HTTPBindingClient.Exception(http.status, http.statusText);
+    error('jsonApply error', 'status', http.status, http.statusText);
+    throw new Error('' + http.status + ' ' + http.statusText);
 };
 
 
@@ -463,69 +360,64 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
     var hascb = cb? true : false;
 
     // Get from local storage first
-    var item = null;
+    var item;
     if(mode != 'remote') {
         item = HTTPBindingClient.getCacheItem(u);
-        if(item != null && item != '') {
+        if(item && item != '') {
             if(!hascb)
                 return item;
 
             // Pass local result to callback
-            setTimeout(function() {
-                cb(item);
-            }, 0);
+            cb(item);
         }
     }
 
     // Call asynchronously with a callback
     if(hascb) {
         return HTTPBindingClient.scheduleAsyncRequest(function getRequest(http, done) {
-            http.open("GET", u, true);
-            http.setRequestHeader("Accept", "*/*");
+            http.open('GET', u, true);
+            http.setRequestHeader('Accept', '*/*');
+            http.setRequestHeader('X-Cache-Control', 'no-cache');
             http.onreadystatechange = function() {
-                //debug('readystate', http.readyState, 'status', http.status, 'headers', http.getAllResponseHeaders());
                 if(http.readyState == 4) {
+
                     // Pass result if different from local result
+                    //debug('readystate', http.readyState, 'status', http.status, 'headers', http.getAllResponseHeaders());
                     if(http.status == 200) {
-                        var xl = http.getResponseHeader("X-Login");
-                        var ct = http.getResponseHeader("Content-Type");
-                        if(xl != null && xl != '' && ct != null && ct.indexOf('text/html') == 0) {
-                            // Detect redirect to a login page
-                            try {
-                                var le = new HTTPBindingClient.Exception(403, 'X-Login');
-                                if(window.onloginredirect)
-                                    window.onloginredirect(le);
-                                cb(null, le);
-                                return done();
-                            } catch(cbe) {}
+                        var ct = http.getResponseHeader('Content-Type');
+                        if(http.responseText == '' || !ct || ct == '') {
 
-                        }
-                        if(http.responseText == '' || ct == null || ct == '') {
                             // Report empty response
-                            try {
-                                cb(null, new HTTPBindingClient.Exception(403, 'No-Content'));
-                                return done();
-                            } catch(cbe) {}
+                            error('get received empty response', 'url', u);
+                            cb(undefined, new Error('500 No-Content'));
+                            return done();
 
-                        } else {
-                            if(item == null || http.responseText != item) {
-                                // Store retrieved entry in local storage
-                                if(http.responseText != null)
-                                    HTTPBindingClient.setCacheItem(u, http.responseText);
-                                try {
-                                    cb(http.responseText);
-                                    return done();
-                                } catch(cbe) {}
-                            }
+                        } else if(!item || http.responseText != item) {
+
+                            // Store retrieved entry in local storage
+                            //debug('received response', 'url', u, 'response', http.responseText);
+                            if(http.responseText != null)
+                                HTTPBindingClient.setCacheItem(u, http.responseText);
+                            cb(http.responseText);
+                            return done();
                         }
-                    }
-                    else {
+                    } else if (http.status == 403) {
+
+                        // Redirect to login page
+                        error('get received 403 response', 'url', u);
+                        var le = new Error('' + http.status + ' ' + http.statusText);
+                        if(window.onloginredirect)
+                            window.onloginredirect(le);
+                        cb(undefined, le);
+                        return done();
+
+                    } else if(!http.aborted) {
+
                         // Pass exception if we didn't have a local result
-                        if(item == null) {
-                            try {
-                                cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
-                                return done();
-                            } catch(cbe) {}
+                        error('get received error', 'url', u, 'status', http.status, http.statusText);
+                        if(!item) {
+                            cb(undefined, new Error('' + http.status + ' ' + http.statusText));
+                            return done();
                         }
                     }
                     return done();
@@ -540,28 +432,29 @@ HTTPBindingClient.prototype.get = function(id, cb, mode) {
 
     // Call synchronously and return the result or exception
     var http = new XMLHttpRequest();
-    http.open("GET", u, false);
-    http.setRequestHeader("Accept", "*/*");
+    http.open('GET', u, false);
+    http.setRequestHeader('Accept', '*/*');
+    http.setRequestHeader('X-Cache-Control', 'no-cache');
     http.send(null);
     if(http.status == 200) {
-        var xl = http.getResponseHeader("X-Login");
-        var ct = http.getResponseHeader("Content-Type");
-        if(xl != null && xl != '' && ct != null && ct.indexOf('text/html') == 0) {
-            // Detect redirect to a login page
-            var le = new HTTPBindingClient.Exception(403, 'X-Login');
-            if(window.onloginredirect)
-                window.onloginredirect(le);
-            throw le;
-
-        }
-        var ct = http.getResponseHeader("Content-Type");
-        if(http.responseText == '' || ct == null || ct == '') {
+        var ct = http.getResponseHeader('Content-Type');
+        if(http.responseText == '' || !ct || ct == '') {
             // Report empty response
-            throw new HTTPBindingClient.Exception(403, 'No-Content');
+            error('get received empty response', 'url', u);
+            throw new Error('500 No Content');
         }
         return http.responseText;
     }
-    throw new HTTPBindingClient.Exception(http.status, http.statusText);
+    if(http.status == 403) {
+        // Redirect to login page
+        error('get received 403 response', 'url', u);
+        var le = new Error('' + http.status + ' ' + http.statusText);
+        if(window.onloginredirect)
+            window.onloginredirect(le);
+        throw le;
+    }
+    error('get received error', 'url', u, 'status', http.status, http.statusText);
+    throw new Error('' + http.status + ' ' + http.statusText);
 };
 
 /**
@@ -574,22 +467,20 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
     if(hascb) {
         var u = this.uri;
         return HTTPBindingClient.scheduleAsyncRequest(function postRequest(http, done) {
-            http.open("POST", u, true);
-            http.setRequestHeader("Accept", "*/*");
-            http.setRequestHeader("Content-Type", "application/atom+xml");
+            http.open('POST', u, true);
+            http.setRequestHeader('Accept', '*/*');
+            http.setRequestHeader('Content-Type', 'application/atom+xml');
+            http.setRequestHeader('X-Cache-Control', 'no-cache');
             http.onreadystatechange = function() {
                 if(http.readyState == 4) {
                     if(http.status == 201) {
+
                         // Successful result
-                        try {
-                            cb(http.responseText);
-                        } catch(cbe) {}
+                        cb(http.responseText);
                     }
                     else {
                         // Report status code as an exception
-                        try {
-                            cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
-                        } catch(cbe) {}
+                        cb(undefined, new Error('' + http.status + ' ' + http.statusText));
                     }
                     return done();
                 }
@@ -603,15 +494,16 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
     // Call synchronously
     var http = new XMLHttpRequest();
     var hascb = cb? true : false;
-    http.open("POST", this.uri, false);
-    http.setRequestHeader("Accept", "*/*");
-    http.setRequestHeader("Content-Type", "application/atom+xml");
+    http.open('POST', this.uri, false);
+    http.setRequestHeader('Accept', '*/*');
+    http.setRequestHeader('Content-Type', 'application/atom+xml');
+    http.setRequestHeader('X-Cache-Control', 'no-cache');
     http.send(entry);
     if(http.status == 201)
         return http.responseText;
 
     // Return status code as an exception
-    throw new HTTPBindingClient.Exception(http.status, http.statusText);
+    throw new Error('' + http.status + ' ' + http.statusText);
 };
 
 /**
@@ -622,7 +514,7 @@ HTTPBindingClient.prototype.put = function(id, entry, cb, mode) {
     var hascb = cb? true : false;
 
     // Update local storage
-    var oentry = null;
+    var oentry;
     if(mode != 'remote') {
         oentry = HTTPBindingClient.getCacheItem(u);
         HTTPBindingClient.setCacheItem(u, entry);
@@ -631,33 +523,31 @@ HTTPBindingClient.prototype.put = function(id, entry, cb, mode) {
     // Call asynchronously with a callback
     if(hascb) {
         return HTTPBindingClient.scheduleAsyncRequest(function putRequest(http, done) {
-            http.open("PUT", u, true);
-            http.setRequestHeader("Accept", "*/*");
-            http.setRequestHeader("Content-Type", "application/atom+xml");
+            http.open('PUT', u, true);
+            http.setRequestHeader('Accept', '*/*');
+            http.setRequestHeader('Content-Type', 'application/atom+xml');
+            http.setRequestHeader('X-Cache-Control', 'no-cache');
             http.onreadystatechange = function() {
                 if(http.readyState == 4) {
                     if(http.status == 200) {
+
                         // Successful result
-                        try {
-                            cb();
-                        } catch(cbe) {}
+                        cb();
+
                     } else {
                         if(http.status == 404) {
+
                             // Undo local storage update
                             if(mode != 'remote') {
-                                try {
-                                    if(oentry != null)
-                                        HTTPBindingClient.setCacheItem(u, oentry);
-                                    else
-                                        HTTPBindingClient.removeCacheItem(u);
-                                } catch(e) {}
+                                if(oentry)
+                                    HTTPBindingClient.setCacheItem(u, oentry);
+                                else
+                                    HTTPBindingClient.removeCacheItem(u);
                             }
                         }
 
                         // Report status code as an exception
-                        try {
-                            cb(new HTTPBindingClient.Exception(http.status, http.statusText));
-                        } catch(cbe) {}
+                        cb(new Error('' + http.status + ' ' + http.statusText));
                     }
                     return done();
                 }
@@ -671,26 +561,25 @@ HTTPBindingClient.prototype.put = function(id, entry, cb, mode) {
 
     // Call synchronously
     var http = new XMLHttpRequest();
-    http.open("PUT", u, false);
-    http.setRequestHeader("Accept", "*/*");
-    http.setRequestHeader("Content-Type", "application/atom+xml");
+    http.open('PUT', u, false);
+    http.setRequestHeader('Accept', '*/*');
+    http.setRequestHeader('Content-Type', 'application/atom+xml');
+    http.setRequestHeader('X-Cache-Control', 'no-cache');
     http.send(entry);
     if(http.status == 200)
         return true;
     if(http.status == 404) {
         // Undo local storage update
         if(mode != 'remote') {
-            try {
-                if(oentry != null)
-                    HTTPBindingClient.setCacheItem(u, oentry);
-                else
-                    HTTPBindingClient.removeCacheItem(u);
-            } catch(e) {}
+            if(oentry)
+                HTTPBindingClient.setCacheItem(u, oentry);
+            else
+                HTTPBindingClient.removeCacheItem(u);
         }
     }
 
     // Return status code as an exception
-    throw new HTTPBindingClient.Exception(http.status, http.statusText);
+    throw new Error('' + http.status + ' ' + http.statusText);
 };
 
 /**
@@ -708,21 +597,19 @@ HTTPBindingClient.prototype.del = function(id, cb, mode) {
     // Call asynchronously with a callback
     if(hascb) {
         return HTTPBindingClient.scheduleAsyncRequest(function delRequest(http, done) {
-            http.open("DELETE", u, true);        
-            http.setRequestHeader("Accept", "*/*");
+            http.open('DELETE', u, true);        
+            http.setRequestHeader('Accept', '*/*');
+            http.setRequestHeader('X-Cache-Control', 'no-cache');
             http.onreadystatechange = function() {
                 if(http.readyState == 4) {
                     if(http.status == 200) {
+
                         // Successful result
-                        try {
-                            cb();
-                        } catch(cbe) {}
+                        cb();
                     }
                     else {
                         // Report status code as an exception
-                        try {
-                            cb(new HTTPBindingClient.Exception(http.status, http.statusText));
-                        } catch(cbe) {}
+                        cb(new Error('' + http.status + ' ' + http.statusText));
                     }
                     return done();
                 }
@@ -736,29 +623,15 @@ HTTPBindingClient.prototype.del = function(id, cb, mode) {
 
     // Call synchronously
     var http = new XMLHttpRequest();
-    http.open("DELETE", u, false);        
-    http.setRequestHeader("Accept", "*/*");
+    http.open('DELETE', u, false);        
+    http.setRequestHeader('Accept', '*/*');
+    http.setRequestHeader('X-Cache-Control', 'no-cache');
     http.send(null);
     if(http.status == 200)
         return true;
 
     // Report status code as an exception
-    throw new HTTPBindingClient.Exception(http.status, http.statusText);
-};
-
-/**
- * HTTPBindingClient exceptions.
- */
-HTTPBindingClient.Exception = function(code, message) {
-    this.name = "HTTPBindingClientException";
-    this.code = code;
-    this.message = message;
-};
-
-HTTPBindingClient.Exception.prototype = new Error();
-
-HTTPBindingClient.Exception.prototype.toString = function() {
-    return this.name + ": " + this.message;
+    throw new Error('' + http.status + ' ' + http.statusText);
 };
 
 /**
@@ -770,7 +643,7 @@ var sca = {};
 /**
  * Return an HTTP client proxy.
  */
-sca.httpclient = function(name, uri, domain) {
+sca.httpClient = function(name, uri, domain) {
     return new HTTPBindingClient(name, uri, domain);
 };
 
@@ -798,15 +671,15 @@ sca.reference = function(comp, rname) {
 sca.defun = function(ref) {
     function defapply(name) {
         return function() {
-            var args = new Array();
+            var args = [];
             args[0] = name;
-            for(i = 0, n = arguments.length; i < n; i++)
+            for(var i = 0; i < arguments.length; i++)
                 args[i + 1] = arguments[i];
             return this.apply.apply(this, args);
         };
     }
 
-    for(f = 1; f < arguments.length; f++) {
+    for(var f = 1; f < arguments.length; f++) {
         var fn = arguments[f];
         ref[fn]= defapply(fn);
     }

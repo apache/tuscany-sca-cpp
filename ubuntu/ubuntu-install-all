@@ -416,6 +416,8 @@ cd $build
 curl -OL https://dl-ssl.google.com/page-speed/sdk/current/page-speed-sdk.zip
 unzip page-speed-sdk.zip
 cd page-speed-1.9
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/page-speed-1.9.patch
+patch -p0 <page-speed-1.9.patch
 make builddir=$build/page-speed-1.9-bin CXXFLAGS="-Wno-unused-but-set-variable"
 if [ "$?" != "0" ]; then
     exit $?
