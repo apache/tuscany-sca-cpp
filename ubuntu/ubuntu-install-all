@@ -393,7 +393,7 @@ sudo apt-get -y install libssl-dev
 curl -OL http://www.python.org/ftp/python/2.6.6/Python-2.7.3.tgz
 tar xzf Python-2.7.3.tgz
 cd Python-2.7.3
-./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin
+./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin -enable-unicode=ucs4
 make
 make install
 if [ "$?" != "0" ]; then

@@ -299,7 +299,7 @@ sudo apt-get -y install libssl-dev
 curl -OL http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
 tar xzf Python-2.7.3.tgz
 cd Python-2.7.3
-./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin
+./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin -enable-unicode=ucs4
 make
 make install
 if [ "$?" != "0" ]; then
@@ -311,6 +311,8 @@ cd $build
 curl -OL https://dl-ssl.google.com/page-speed/sdk/current/page-speed-sdk.zip
 unzip page-speed-sdk.zip
 cd page-speed-1.9
+curl -OL http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/patches/page-speed-1.9.patch
+patch -p0 <page-speed-1.9.patch
 make builddir=$build/page-speed-1.9-bin CXXFLAGS="-Wno-unused-but-set-variable"
 if [ "$?" != "0" ]; then
     exit $?

@@ -136,7 +136,7 @@ fi
 cd $build
 
 # Build libevent
-curl -OL http://www.monkey.org/~provos/libevent-2.0.13-stable.tar.gz
+curl -OL https://github.com/downloads/libevent/libevent/libevent-2.0.13-stable.tar.gz
 tar xzf libevent-2.0.13-stable.tar.gz
 cd libevent-2.0.13-stable
 ./configure --prefix=$build/libevent-2.0.13-stable-bin
@@ -152,7 +152,7 @@ curl -OL http://memcached.googlecode.com/files/memcached-1.4.13.tar.gz
 tar xzf memcached-1.4.13.tar.gz
 cd memcached-1.4.13
 autoreconf --install
-./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.13-bin
+./configure --with-libevent=$build/libevent-2.0.13-stable-bin --prefix=$build/memcached-1.4.13-bin CFLAGS="-w"
 make
 make install
 if [ "$?" != "0" ]; then
@@ -304,7 +304,7 @@ cd $build
 curl -OL http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
 tar xzf Python-2.7.3.tgz
 cd Python-2.7.3
-./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin
+./configure --prefix=$build/python-2.7.3-bin --enable-shared --with-system-expat=$build/expat-2.0.1-bin -enable-unicode=ucs4
 make
 make install
 if [ "$?" != "0" ]; then
