@@ -20,12 +20,11 @@ from imaplib2 import IMAP4_SSL
 from threading import Thread, Event
 from email import message_from_string
 import re
-from StringIO import StringIO
-from PIL import Image
 from base64 import b64encode, b64decode
 from httplib import HTTPConnection, HTTPSConnection
 from urlparse import urlparse
 from util import *
+from imgutil import *
 from sys import stderr, argv, exit
 from traceback import print_exc
 
@@ -64,12 +63,8 @@ def fetchmail(id, imap):
     if len(parts) == 0:
         return (None, 'Email doesn\'t contain an image')
 
-    # Convert image to a 50x50 PNG image
-    img = Image.open(StringIO(parts[0]))
-    t = img.resize((50, 50))
-    obuf = StringIO()
-    t.save(obuf, 'PNG')
-    dataurl = 'data:image/png;base64,' + b64encode(obuf.getvalue()).replace('\n', '')
+    # Convert image to a 50x50 JPEG image
+    dataurl = bufto50x50jpeg(parts[0])
 
     # Return address, image url pair
     return (address, dataurl)

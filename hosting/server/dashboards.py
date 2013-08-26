@@ -97,8 +97,11 @@ def get(id, user, cache, apps, ratings):
         return findapp(id, cdr(dashboard))
 
     if isNull(id):
-        dashboardapps = mergeapps(getdashboard(dashboardid(user), cache), apps, ratings)
-        dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + dashboardapps),)
+        entries = mergeapps(getdashboard(dashboardid(user), cache), apps, ratings)
+        def sortkey(e):
+            return updated((e,))
+        sortedentries = tuple(sorted(entries, key = sortkey, reverse = True))
+        dashboard = ((("'feed", ("'title", "Your Apps"), ("'id", user.get(()))) + sortedentries),)
         debug('dashboards.py::get::dashboard', dashboard)
         return dashboard
 

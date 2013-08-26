@@ -83,12 +83,12 @@ def get(id, user, cache, db, dashboard, store, composites, pages, icons):
 
     # Return the newest apps
     if isNull(id):
-        newentries = db.get((("'regex", '("apps" .* "app.info")'), ("'rank", "(regexp_matches(value, '(.*\(updated )([^\)]+)(\).*)'))[2]::timestamp"), ("'limit", 25)))
-        flatentries = tuple(map(lambda v: car(v), () if isNull(newentries) else newentries))
-        def sortkey(e):
-            return updated((e,))
-        sortedentries = tuple(sorted(flatentries, key = sortkey, reverse = True))[0:25]
-        newapps = ((("'feed", ("'title", "Apps"), ("'id", 'apps')) + sortedentries),)
+        newentries = db.get((("'regex", '("apps" .* "app.info")'), ("'rank", "(regexp_matches(value, '(.*\\(updated )([^\\)]+)(\\).*)'))[2]::timestamp"), ("'limit", 50)))
+        entries = tuple(map(lambda v: car(v), () if isNull(newentries) else newentries))
+        #def sortkey(e):
+        #    return updated((e,))
+        #sortedentries = tuple(sorted(entries, key = sortkey, reverse = True))
+        newapps = ((("'feed", ("'title", "Apps"), ("'id", 'apps')) + entries),)
         debug('apps.py::get::newapps', newapps)
         return newapps
 

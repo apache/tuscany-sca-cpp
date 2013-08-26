@@ -51,7 +51,7 @@ import search
 
 def testUser():
     # Return current user
-    assert user.get((), mkprop('user', lambda: 'johndoe'), mkprop('email', lambda: 'jdoe@example.com'), mkprop('nick', lambda: 'jdoe'), mkprop('full', lambda: 'john doe'), mkprop('first', lambda: 'john'), mkprop('last', lambda: 'doe'), mkprop('realm', lambda: 'example.com'), mkprop('host', lambda: 'localhost')) == 'jdoe@example.com'
+    assert user.get((), mkprop('user', lambda: 'jdoe'), mkprop('email', lambda: 'jdoe@example.com'), mkprop('nick', lambda: 'jdoe'), mkprop('full', lambda: 'john doe'), mkprop('first', lambda: 'john'), mkprop('last', lambda: 'doe'), mkprop('realm', lambda: 'example.com'), mkprop('host', lambda: 'localhost')) == 'jdoe'
     return True
 
 def testAccounts():
@@ -60,20 +60,24 @@ def testAccounts():
     assert accounts.get((), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {})) == defaccount
 
     # Get user's account
-    jdoe = (("'entry", ("'title", 'John Doe'), ("'id", 'jdoe@example.com'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'key", 'value'))),)
+    jdoe = (("'entry", ("'title", 'John Doe'), ("'id", 'jdoe@example.com'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'account", ("'email", 'jdoe@example.com'), ("'description", 'This is joe')))),)
     assert accounts.get((), mkref('user', lambda id: 'jdoe@example.com'), mkcache('cache', {('accounts', 'jdoe@example.com', 'user.account') : jdoe})) == jdoe
 
     # Put and get account
-    cache1 = mkcache('cache', {})
-    assert accounts.put((), jdoe, mkref('user', lambda id: 'jdoe@example.com'), cache1) == True
+    cache1 = mkcache('cache', {('accounts', 'jdoe@example.com', 'user.account') : jdoe})
+    jdoe1 = (("'entry", ("'title", 'John Doe'), ("'id", 'jdoe@example.com'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'account", ("'email", 'bad@example.com'), ("'description", 'This is joe')))),)
+    jdoe2 = (("'entry", ("'title", 'John Doe'), ("'id", 'jdoe@example.com'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'account", ("'email", 'jdoe@example.com'), ("'description", 'This is joe again')))),)
+    assert accounts.put((), jdoe1, mkref('user', lambda id: 'jdoe@example.com'), cache1) == True
     assert accounts.get((), mkref('user', lambda id: 'jdoe@example.com'), cache1) == jdoe
+    assert accounts.put((), jdoe2, mkref('user', lambda id: 'jdoe@example.com'), cache1) == True
+    assert accounts.get((), mkref('user', lambda id: 'jdoe@example.com'), cache1) == jdoe2
     return True
 
 def testPictures():
     if PIL is None:
         return True
-    img16 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOUlEQVQ4y2N0b3/7nwEH2FkpzGg7hQGn/OEcBkYmBgrBqAFUMIBiQDCeL3qY4ZTX33FqNB0Mj3QAAFC7Dhs7i7zzAAAAAElFTkSuQmCC'
-    img50 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nO3YsRVFUBAG4Xu1oBCZTEwxGlDBa0AxxDKZQtRARAfrzWG+aLP/TLq5/e1HCjAPZb7uZkwhG0uf7o0iYuAfDKExhMYQGkNoDKExhMYQGkNoDKExRPqI/MTzbOvqkI1qWn3QYRlCYwiNITSG0BhCYwiNITSG0BhC85oQKcgJzukOV+8REuQAAAAASUVORK5CYII='
+    img16 = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOUlEQVQ4y2N0b3/7nwEH2FkpzGg7hQGn/OEcBkYmBgrBqAFUMIBiQDCeL3qY4ZTX33FqNB0Mj3QAAFC7Dhs7i7zzAAAAAElFTkSuQmCC'
+    img50 = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACV0lEQVR4nO2YPU8UURSG3zMzO2wiIrguXwmthSEkJtBZmFgYG6n5Rf4VKmlILIw/YIstNgoVJhICy8zuyrIzy97vY6F8aH2LG3Of8hbnzZOZM5P70tsPI4ZHjKyr8ujwoN/7uD86+fK5tYXd9jb2WlvYpQSZjwwrUA17OBh0sX91jE8AkPgYHAJRJDSiSGhEkdCIIqERRUIjioRGFAmNKBIaUSQ0MiPryudAK+vaGSHYWQMA7GCcxsxKVESe7uwStdMQ7GBuz7Ly6PDAx/C7ECPF5LzXVXVZgMFqjPPqBzpsoUFIfWSwhqjP0NUTFLdn9Oz5m3c+ht+FOGtUXRayKvrqZjTMH2MlX8BaYwHL8PUqOxg1QaEm6OsaAwAgXxXNPzAzHBhMABFRQgB5DQCYmR0DDABZawu7XgMcjBzjQo1xpico2s18fbWZb7TnGutE5EXGOjalVBeXQp2NpL4EgKy9jT0fw29xCrPqFJ3r7zCmosFqM994uTj/anNxfieBnx0Rzs2+jacd6ypzJ+L7iViBylnoWYkTAVC7ma9vPnm083p58X1K5OU1nhpbWcf69Eac4M83N/O9I5QgowQp6PdOEEAJUZoSZb5EUqIsIUof7t1/80OMIqERRUIjioRGFAmNKBIaUSQ0okhoRJHQyKyA54Lu7/LMMhvp3GxqbOXrhnhjbS2dE5b5vqAb9uC1oHtYnjHApVDnX8fTjmHWCchL+SCdE8fX0+5I6fuCbukFvBZ0D8szU2P4dK6x0p5rrLXyhreCzjLMT6WLgVT9K2UGPmZGfPMLWsI5A943r6EAAAAASUVORK5CYII='
 
     # Put and get picture
     pic16 = (("'entry", ("'title", 'jdoe@example.com'), ("'id", 'jdoe@example.com'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'picture", ("'image", img16)))),)
@@ -120,8 +124,8 @@ def testPages():
 def testIcons():
     if PIL is None:
         return True
-    img16 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOUlEQVQ4y2N0b3/7nwEH2FkpzGg7hQGn/OEcBkYmBgrBqAFUMIBiQDCeL3qY4ZTX33FqNB0Mj3QAAFC7Dhs7i7zzAAAAAElFTkSuQmCC'
-    img50 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nO3YsRVFUBAG4Xu1oBCZTEwxGlDBa0AxxDKZQtRARAfrzWG+aLP/TLq5/e1HCjAPZb7uZkwhG0uf7o0iYuAfDKExhMYQGkNoDKExhMYQGkNoDKExRPqI/MTzbOvqkI1qWn3QYRlCYwiNITSG0BhCYwiNITSG0BhC85oQKcgJzukOV+8REuQAAAAASUVORK5CYII='
+    img16 = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOUlEQVQ4y2N0b3/7nwEH2FkpzGg7hQGn/OEcBkYmBgrBqAFUMIBiQDCeL3qY4ZTX33FqNB0Mj3QAAFC7Dhs7i7zzAAAAAElFTkSuQmCC'
+    img50 = 'data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACV0lEQVR4nO2YPU8UURSG3zMzO2wiIrguXwmthSEkJtBZmFgYG6n5Rf4VKmlILIw/YIstNgoVJhICy8zuyrIzy97vY6F8aH2LG3Of8hbnzZOZM5P70tsPI4ZHjKyr8ujwoN/7uD86+fK5tYXd9jb2WlvYpQSZjwwrUA17OBh0sX91jE8AkPgYHAJRJDSiSGhEkdCIIqERRUIjioRGFAmNKBIaUSQ0MiPryudAK+vaGSHYWQMA7GCcxsxKVESe7uwStdMQ7GBuz7Ly6PDAx/C7ECPF5LzXVXVZgMFqjPPqBzpsoUFIfWSwhqjP0NUTFLdn9Oz5m3c+ht+FOGtUXRayKvrqZjTMH2MlX8BaYwHL8PUqOxg1QaEm6OsaAwAgXxXNPzAzHBhMABFRQgB5DQCYmR0DDABZawu7XgMcjBzjQo1xpico2s18fbWZb7TnGutE5EXGOjalVBeXQp2NpL4EgKy9jT0fw29xCrPqFJ3r7zCmosFqM994uTj/anNxfieBnx0Rzs2+jacd6ypzJ+L7iViBylnoWYkTAVC7ma9vPnm083p58X1K5OU1nhpbWcf69Eac4M83N/O9I5QgowQp6PdOEEAJUZoSZb5EUqIsIUof7t1/80OMIqERRUIjioRGFAmNKBIaUSQ0okhoRJHQyKyA54Lu7/LMMhvp3GxqbOXrhnhjbS2dE5b5vqAb9uC1oHtYnjHApVDnX8fTjmHWCchL+SCdE8fX0+5I6fuCbukFvBZ0D8szU2P4dK6x0p5rrLXyhreCzjLMT6WLgVT9K2UGPmZGfPMLWsI5A943r6EAAAAASUVORK5CYII='
 
     # Get default icon
     deficon = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content",)),)
@@ -137,6 +141,7 @@ def testIcons():
     # Put and get a icon
     cache1 = mkcache('cache', {})
     icon1updated = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'icon", ("'image", img50)))),)
+
     assert icons.put(('app1',), icon1, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id, app = None: app1 if app is None else True)) == True
     assert icons.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == icon1updated
     
@@ -153,8 +158,10 @@ def testIcons():
 
     # Put an upload token in an icon 
     icon1token = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'icon", ("'token", '1234')))),)
+
     assert icons.put(('app1',), icon1token, mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == True
     assert icons.get(('app1',), mkref('user', lambda id: 'another@example.com'), cache1, mkref('apps', lambda id: app1)) == icon1updated
+
     icon1updatedwithtoken = (("'entry", ("'title", 'app1'), ("'id", 'app1'), ("'author", 'jdoe@example.com'), ("'updated", '2012-01-01T00:00:00+00:00'), ("'content", ("'icon", ("'image", img50), ("'token", '1234')))),)
     assert icons.get(('app1',), mkref('user', lambda id: 'jdoe@example.com'), cache1, mkref('apps', lambda id: app1)) == icon1updatedwithtoken
 

@@ -19,17 +19,19 @@
 
 here=`echo "import os; print os.path.realpath('$0')" | python`; here=`dirname $here`
 cd $here
-var=$HOME/var
 httpd_prefix=`cat $here/../../modules/http/httpd.prefix`
 
-user=$1
-pass=$2
+email=$1
+user=$2
+pass=$3
 
-tmp=$3
+tmp=$4
 if [ "$tmp" = "" ]; then
     tmp="$here/tmp"
 fi
-host=$4
+mkdir -p $tmp/sqldb
+
+host=$5
 if [ "$host" = "" ]; then
     host="localhost"
 fi
@@ -37,21 +39,16 @@ fi
 # Get password hash
 rm -f $tmp/sqldb/load-authn.passwd
 touch $tmp/sqldb/load-authn.passwd
-$httpd_prefix/bin/htpasswd -b $tmp/sqldb/load-authn.passwd "$user" "$pass" 2>/dev/null
+$httpd_prefix/bin/htpasswd -b $tmp/sqldb/load-authn.passwd "$email" "$pass" 2>/dev/null
 hash=`cat $tmp/sqldb/load-authn.passwd | awk -F ":" '{ print $2 }'`
 rm -f $tmp/sqldb/load-authn.passwd
 
 # Compute user id
-slash=`echo $user | grep "/"`
-if [ "$slash" = "" ]; then
-    id="\"$user\""
-else
-    id=`echo $user | awk -F "/" '{ printf "\"%s\" \"%s\"", $2, $3 }'`
-fi
+id="\"$email\""
 
 # Load into database
 cat >$tmp/sqldb/load-authn.sql <<EOF
-insert into data values('("authn" $id "user.authn")', '((entry (title "$user") (id "$user") (content (hash "$hash"))))');
+insert into data values('("authn" $id "user.authn")', '((entry (title "$email") (id "$email") (content (user "$user") (hash "$hash"))))');
 EOF
 
 $here/../../components/sqldb/pgsql <$tmp/sqldb/load-authn.sql

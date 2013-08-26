@@ -132,7 +132,8 @@ def cons_stream(car, cdr):
 def assoc(k, l):
     if l == ():
         return ()
-    if k == car(car(l)):
+    a = car(l)
+    if isTaggedList(a, k):
         return car(l)
     return assoc(k, cdr(l))
 

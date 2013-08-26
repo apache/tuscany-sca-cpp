@@ -21,22 +21,70 @@ from atomutil import *
 from sys import debug
 
 # Convert a particular user id to an account id
-def accountid(user):
-    return ('accounts', user.get(()), 'user.account')
+def accountid(uid):
+    return ('accounts', uid, 'user.account')
 
-# Get the current user's account
+# Get a user account
 def get(id, user, cache):
     debug('accounts.py::get::id', id)
-    account = cache.get(accountid(user))
+
+    # Default to the current user's account
+    uid = user.get(()) if isNull(id) else car(id)
+
+    # Get the account
+    account = cache.get(accountid(uid))
     if isNull(account):
-        return mkentry(user.get(()), user.get(()), user.get(()), now(), ())
+        return mkentry(uid, uid, uid, now(), ())
+
+    # Strip private info from account
+    if uid != user.get(()) and user.get(()) != 'admin':
+        desc = assoc("'description", content(account))
+        return mkentry(title(account), uid, uid, now(), ("'account",) + (() if isNull(desc) else (desc,)))
+
     return account
 
-# Update the user's account
+# Update a user account
 def put(id, account, user, cache):
     debug('accounts.py::put::id', id)
     debug('accounts.py::put::account', account)
 
-    accountentry = mkentry(title(account), user.get(()), user.get(()), now(), content(account))
-    return cache.put(accountid(user), accountentry)
+    # Default to the current user's account
+    uid = user.get(()) if isNull(id) else car(id)
+
+    # Only the admin can create or update somebody else's account
+    if uid != user.get(()) and user.get(()) != 'admin':
+        debug('accounts.py::put', 'not owner or admin', user.get(()))
+        return False
+
+    # Get existing account
+    eaccount = cache.get(accountid(uid))
+    if isNull(eaccount) and user.get(()) != 'admin':
+        # Only the admin can create a new account
+        debug('accounts.py::put', 'account not found', (uid,))
+        return False
+
+    # Merge new account info
+    email = assoc("'email", content(account)) if isNull(eaccount) else assoc("'email", content(eaccount))
+    desc = assoc("'description", content(account))
+    accountentry = mkentry(title(account), uid, uid, now(), ("'account",) + (() if isNull(email) else (email,)) + (() if isNull(desc) else (desc,)))
+
+    return cache.put(accountid(uid), accountentry)
+
+def delete(id, user, cache):
+    debug('accounts.py::delete::id', id)
+    uid = car(id)
+
+    # Only the admin can delete an account
+    if user.get(()) != 'admin':
+        debug('accounts.py::delete', 'not admin', user.get(()))
+        return False
+
+    # Get the requested id
+    account = cache.get(accountid(uid))
+    if isNull(account):
+        debug('accounts.py::delete', 'account not found', (uid,))
+        return False
+
+    # Delete the account
+    return cache.delete(accountid(uid))
 

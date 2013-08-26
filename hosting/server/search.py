@@ -45,7 +45,7 @@ def get(id, user, cache, db, apps, ratings):
         return None
 
     # Run the search
-    foundentries = db.get((("'regex", '("apps" .* "app.info")'), ("'textsearch", cadr(q)), ("'limit", 25)))
+    foundentries = db.get((("'regex", '("apps" .* "app.info")'), ("'textsearch", cadr(q)), ("'limit", 50)))
     debug('search.py::get::foundentries', foundentries)
 
     # Merge app ratings

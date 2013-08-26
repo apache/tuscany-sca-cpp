@@ -16,31 +16,14 @@
 #  under the License.
 
 # App icons collection implementation
-from StringIO import StringIO
-try:
-    from PIL import Image
-except:
-    Image = None
-from base64 import b64encode, b64decode
-from urllib import urlopen
 from util import *
 from atomutil import *
+from imgutil import *
 from sys import debug
 
 # Convert an id to an icon id
 def iconid(id):
     return ("apps", car(id), "app.icon")
-
-# Convert image to a 50x50 PNG image
-def to50x50png(url):
-    debug('icons.py::to50x50png::url', url)
-    if Image is None:
-        return url
-    img = Image.open(StringIO(b64decode(url.split(',')[1])) if url.startswith('data:') else StringIO(urlopen(url).read()))
-    t = img.resize((50, 50))
-    obuf = StringIO()
-    t.save(obuf, 'PNG')
-    return 'data:image/png;base64,' + b64encode(obuf.getvalue()).replace('\n', '')
 
 # Put an icon
 def put(id, icon, user, cache, apps):
@@ -61,7 +44,7 @@ def put(id, icon, user, cache, apps):
     # Get image and token from input icon
     def image(c):
         img = assoc("'image", c)
-        return None if isNull(img) else to50x50png(cadr(img))
+        return None if isNull(img) else urlto50x50jpeg(cadr(img))
     def token(c):
         tok = assoc("'token", c)
         return None if isNull(tok) else cadr(tok)

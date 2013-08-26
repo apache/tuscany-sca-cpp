@@ -19,8 +19,6 @@
 
 # Return the current user id
 def get(i, user, email, nick, full, first, last, realm, host):
-    if email.eval() != '?':
-        return email.eval()
     if user.eval() != '?':
         return user.eval()
     return 'anonymous'

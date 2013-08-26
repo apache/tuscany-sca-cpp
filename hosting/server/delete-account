@@ -22,10 +22,8 @@ mkdir -p $1/conf
 root=`echo "import os; print os.path.realpath('$1')" | python`
 admin=$2
 apass=$3
-email=$4
-user=$5
-upass=$6
-host=$7
+user=$4
+host=$5
 
 httpd_prefix=`cat $here/../../modules/http/httpd.prefix`
 
@@ -54,30 +52,6 @@ else
     port="443"
 fi
 
-# Get password hash
-rm -f $root/conf/auth.passwd
-touch $root/conf/auth.passwd
-$httpd_prefix/bin/htpasswd -b $root/conf/auth.passwd "$email" "$upass" 2>/dev/null
-hash=`cat $root/conf/auth.passwd | awk -F ":" '{ print $2 }'`
-rm -f $root/conf/auth.passwd
-
-# Compute user URI
-upath=$email
-
-# Put user auth
-cat >$root/conf/auth.entry <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom">
- <title type="text">$email</title>
- <id>$email</id>
- <content type="application/xml">
-  <authn>
-   <user>$user</user>
-   <hash>$hash</hash>
-  </authn>
- </content>
-</entry>
-EOF
-curl -k -L -u $admin:$apass -X PUT -H "X-Forwarded-Server: $host" --data-binary @$root/conf/auth.entry $scheme://$host:$port/c/Authenticator/$upath
-rm $root/conf/auth.entry
+# Delete user account
+curl -k -L -u $admin:$apass -X DELETE -H "X-Forwarded-Server: $host" $scheme://$host:$port/c/Accounts/$user
 

@@ -209,10 +209,7 @@ EOF
 sleep 2
 
 # Configure authorized users
-./put-auth tmp admin admin admin admin
-./put-auth tmp admin admin john john
-./put-auth tmp admin admin jane jane
-# Configure the email addresses associated with your OAuth ids here
-./put-auth tmp admin admin /oauth1/john@example.com password
-./put-auth tmp admin admin /oauth2/jane@example.com password
+./put-auth tmp admin admin admin@example.com admin admin
+./put-auth tmp admin admin john@example.com john john
+./put-auth tmp admin admin jane@example.com jane jane
 
