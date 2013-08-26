@@ -139,7 +139,7 @@ const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) 
 /**
  * Handle an authenticated request.
  */
-const failable<int> authenticated(const list<value>& userinfo, const bool check, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
+const failable<int> authenticated(const list<value>& userinfo, request_rec* const r, const list<value>& scopeattrs, const list<AuthnProviderConf>& apcs) {
     debug(userinfo, "modoauth2::authenticated::userinfo");
 
     if (isNull(scopeattrs)) {
@@ -156,8 +156,15 @@ const failable<int> authenticated(const list<value>& userinfo, const bool check,
             r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
 
         // Run the authnz hooks to check the authenticated user
-        if (check)
-            return checkAuthnz(r->user == NULL? emptyString : r->user, r, apcs);
+        const failable<int> arc = checkAuthnz(r->user == NULL? emptyString : r->user, r, apcs);
+        if (!hasContent(arc))
+            return arc;
+
+        // Update the request user field with the authorized user id returned by the authnz hooks
+        const char* auser = apr_table_get(r->subprocess_env, "AUTHZ_USER");
+        if (auser != NULL)
+            r->user = apr_pstrdup(r->pool, auser);
+
         return OK;
     }
 
@@ -172,7 +179,7 @@ const failable<int> authenticated(const list<value>& userinfo, const bool check,
         else
             apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, c_str(car(a))), apr_pstrdup(r->pool, c_str(cadr(v))));
     }
-    return authenticated(userinfo, check, r, cdr(scopeattrs), apcs);
+    return authenticated(userinfo, r, cdr(scopeattrs), apcs);
 }
 
 /**
@@ -293,8 +300,7 @@ const failable<int> authorize(const list<value>& args, request_rec* const r, con
 
 /**
  * Extract user info from a profile/info response.
- * TODO This currently only works for Twitter, Foursquare and LinkedIn.
- * User profile parsing needs to be made configurable.
+ * TODO Make this configurable
  */
 const failable<list<value> > profileUserInfo(const value& cid, const string& info) {
     const string b = substr(info, 0, 1);
@@ -424,7 +430,7 @@ const failable<int> accessToken(const list<value>& args, request_rec* r, const l
         return mkfailure<int>(userinfo);
 
     // Validate the authenticated user
-    const failable<int> authrc = authenticated(content(userinfo), true, r, scopeattrs, apcs);
+    const failable<int> authrc = authenticated(content(userinfo), r, scopeattrs, apcs);
     if (!hasContent(authrc))
         return authrc;
 
@@ -471,7 +477,7 @@ static int checkAuthn(request_rec *r) {
         if (!hasContent(userinfo))
             return openauth::reportStatus(mkfailure<int>(reason(userinfo), HTTP_UNAUTHORIZED), dc.login, nilValue, r);
         r->ap_auth_type = const_cast<char*>(atype);
-        return openauth::reportStatus(authenticated(content(userinfo), false, r, dc.scopeattrs, dc.apcs), dc.login, nilValue, r);
+        return openauth::reportStatus(authenticated(content(userinfo), r, dc.scopeattrs, dc.apcs), dc.login, nilValue, r);
     }
 
     // Get the request args

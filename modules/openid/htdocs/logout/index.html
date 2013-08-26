@@ -31,16 +31,16 @@
 
 <form name="signout" action="/login" method="GET">
 <script type="text/javascript">
-function clearauthcookie() {
-    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+function clearAuthCookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
     return true;
 }
 
 function submitSignout() {
-    clearauthcookie();
+    clearAuthCookie();
     document.signout.submit();
     return true;
 }

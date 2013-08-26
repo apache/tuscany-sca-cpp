@@ -418,9 +418,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     const string ob(str(os));
 
     // Make sure browsers come back and check for updated dynamic content
-    apr_table_set(r->headers_out, "Cache-Control", "must-revalidate, max-age=0");
-    apr_table_set(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
-    apr_table_set(r->subprocess_env, "private-cache", "1");
+    apr_table_setn(r->headers_out, "Cache-Control", "must-revalidate, max-age=0");
 
     // Compute and return an Etag for the returned content
     const string etag(ap_md5_binary(r->pool, (const unsigned char*)c_str(ob), (int)length(ob)));
@@ -698,8 +696,8 @@ const int externalRedirect(const string& uri, request_rec* const r) {
     debug(uri, "httpd::externalRedirect");
     r->status = HTTP_MOVED_TEMPORARILY;
     apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
-    apr_table_setn(r->headers_out, "Cache-Control", "no-store");
-    apr_table_addn(r->err_headers_out, "Cache-Control", "no-store");
+    apr_table_setn(r->headers_out, "Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+    apr_table_setn(r->err_headers_out, "Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + uri));
     return HTTP_MOVED_TEMPORARILY;
 }

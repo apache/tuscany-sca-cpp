@@ -423,6 +423,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     // Set the request headers
     curl_slist* hl = headers(NULL, car(hdr));
     hl = curl_slist_append(hl, "X-Accept: text/x-scheme; charset=utf-8");
+    hl = curl_slist_append(hl, "X-Cache-Control: no-cache");
     curl_easy_setopt(ch, CURLOPT_HTTPHEADER, hl);
 
     // Convert request body to a string

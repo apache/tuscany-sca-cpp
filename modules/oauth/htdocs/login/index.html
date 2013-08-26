@@ -55,17 +55,17 @@ if (typeof(oauthReferrer()) == 'undefined') {
     document.location = '/';
 }
 
-function clearauthcookie() {
-    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+function clearAuthCookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
     return true;
 }
 
 function submitSignin2(w) {
     parms = w();
-    clearauthcookie();
+    clearAuthCookie();
     document.signin2.oauth2_authorize.value = parms[0];
     document.signin2.oauth2_access_token.value = parms[1];
     document.signin2.oauth2_client_id.value = parms[2];
@@ -89,7 +89,7 @@ function withGithub() {
 
 function submitSignin1(w) {
     parms = w();
-    clearauthcookie();
+    clearAuthCookie();
     document.signin1.oauth1_request_token.value = parms[0];
     document.signin1.oauth1_authorize.value = parms[1];
     document.signin1.oauth1_access_token.value = parms[2];

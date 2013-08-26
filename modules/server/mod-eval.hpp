@@ -1266,14 +1266,14 @@ int handler(request_rec* r) {
 /**
  * Call an authenticator component to check a user's password.
  */
-authn_status checkPassword(request_rec* r, const char* u, const char* p) {
+authn_status checkAuthnz(request_rec* r, const char* u, const char* p) {
     const gc_scoped_pool sp(r->pool);
 
     // Prevent FakeBasicAuth spoofing
     const string user = u;
-    const string password = p;
-    debug(user, "modeval::checkPassword::user");
-    if (substr(user, 0, 1) != "/" && find(user, "/") != length(user) && password == "password") {
+    debug(user, "modeval::checkAuthnz::user");
+    const bool extauth = find(user, "/") != length(user);
+    if (extauth && substr(user, 0, 1) != "/") {
         mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
         return AUTH_DENIED;
     }
@@ -1286,35 +1286,46 @@ authn_status checkPassword(request_rec* r, const char* u, const char* p) {
     }
 
     // Retrieve the user's password hash
-    const list<value> uid = pathValues(user);
+    const list<value> uid = extauth? cdr(pathValues(user)) : pathValues(user);
     const failable<value> val = failableResult(((value)sc.vhostc.authenticator)(cons<value>("get", mklist<value>(uid))));
-    if (!hasContent(val)) {
+    if (!hasContent(val) || isNull(content(val))) {
         mkfailure<int>(string("SCA authentication check user failed, user not found: ") + user, rcode(val), user != "admin");
         return AUTH_USER_NOT_FOUND;
     }
-    const value hval = content(val);
-    const list<value> hcontent = isList(hval) && !isNull(hval) && isList(car<value>(hval)) && !isNull(car<value>(hval))?  assoc<value>(value("content"), cdr<value>(car<value>(hval))) : nilListValue;
-    const list<value> hassoc = isNull(hcontent)? nilListValue : assoc<value>(value("hash"), cdr<value>(hcontent));
-    if (isNull(hassoc)) {
+    debug(content(val), "modeval::checkAuthnz::val");
+
+    const value authn = cdr<value>(car<value>(content(val)));
+    const list<value> acontent = assoc<value>(value("content"), authn);
+    const list<value> aauthn = isNull(acontent)? nilListValue : assoc<value>(value("authn"), cdr<value>(acontent));
+    const list<value> ahash = isNull(aauthn)? nilListValue : assoc<value>(value("hash"), cdr<value>(aauthn));
+    if (isNull(ahash)) {
         mkfailure<int>(string("SCA authentication check user failed, hash not found: ") + user, -1, user != "admin");
         return AUTH_USER_NOT_FOUND;
     }
-    const string hash = cadr<value>(hassoc);
-    if (length(hash) == 0) {
+    const string uhash = cadr<value>(ahash);
+    if (length(uhash) == 0) {
         mkfailure<int>(string("SCA authentication check user failed: ") + user);
         return AUTH_USER_NOT_FOUND;
     }
 
-    // Cache the hash in the auth cache provider, if available
-    if (authnCacheStore != NULL)
-        authnCacheStore(r, "component", u, NULL, c_str(hash));
+    // Use a fixed hash of the string 'password' for externally authenticated users as they
+    // don't present an actual password
+    const string hash = extauth? "$apr1$OPUrN0Kr$/tc96p1r6LdmvB0mly6gg0" : uhash;
 
-    // Validate the presented password against the hash
+    // Validate the password against the hash
     const apr_status_t rv = apr_password_validate(p, c_str(hash));
     if (rv != APR_SUCCESS) {
         mkfailure<int>(string("SCA authentication user password check failed: ") + user);
         return AUTH_DENIED;
     }
+
+    // Update the user field of the request with the authenticated user
+    const list<value> auser = assoc<value>(value("user"), cdr<value>(aauthn));
+    if (!isNull(auser)) {
+        debug(c_str(cadr(auser)), "modeval::checkAuthnz::auth_user");
+        apr_table_set(r->subprocess_env, "AUTHZ_USER", apr_pstrdup(r->pool, c_str(cadr(auser))));
+    }
+
     return AUTH_GRANTED;
 }
 
@@ -1569,7 +1580,7 @@ const command_rec commands[] = {
 
 
 const authn_provider AuthnProvider = {
-    &checkPassword,
+    &checkAuthnz,
     NULL
 };
 

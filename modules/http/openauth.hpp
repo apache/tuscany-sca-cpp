@@ -72,6 +72,16 @@ const maybe<string> sessionID(const request_rec* const r, const string& key) {
 }
 
 /**
+ * Convert a number of seconds to an expiration date.
+ */
+const string expires(const int s) {
+    const time_t t = time(NULL) + s;
+    char exp[32];
+    strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
+    return string(exp);
+}
+
+/**
  * Convert a session id to a cookie string.
  */
 const string cookie(const string& key, const string& sid, const string& domain) {
@@ -80,10 +90,8 @@ const string cookie(const string& key, const string& sid, const string& domain) 
         debug(c, "openauth::cookie");
         return c;
     }
-    const time_t t = time(NULL) + 86400;
-    char exp[32];
-    strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = key + string("=") + sid + "; expires=" + string(exp) + "; domain=." + httpd::realm(domain) + "; path=/; secure; httponly";
+    const string exp = "604800";
+    const string c = key + string("=") + sid + (length(exp) != 0? string("; max-age=") + exp : emptyString)  + "; domain=." + httpd::realm(domain) + "; path=/; secure; httponly";
     debug(c, "openauth::cookie");
     return c;
 }
@@ -92,6 +100,16 @@ const string cookie(const string& key, const string& sid, const string& domain) 
  * Redirect to the configured login page.
  */
 const failable<int> login(const string& page, const value& ref, const value& attempt, request_rec* const r) {
+
+    // Don't redirect non-cacheable requests, just respond with an uncacheable 403 response
+    const char* cc = apr_table_get(r->headers_in, "X-Cache-Control");
+    if(cc != NULL && !strcmp(cc, "no-cache")) {
+        apr_table_setn(r->headers_out, "Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        apr_table_setn(r->err_headers_out, "Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        return HTTP_FORBIDDEN;
+    }
+
+    // Redirect to the login page
     const list<value> rarg = ref == string("/")? nilListValue : mklist<value>(mklist<value>("openauth_referrer", httpd::escape(httpd::url(isNull(ref)? r->uri : ref, r))));
     const list<value> aarg = isNull(attempt)? nilListValue : mklist<value>(mklist<value>("openauth_attempt", attempt));
     const list<value> largs = append(rarg, aarg);

@@ -74,7 +74,7 @@ ServerSignature Off
 ServerTokens Prod
 Timeout 45
 RequestReadTimeout header=20-40,MinRate=500 body=20,MinRate=500
-LimitRequestBody 1048576
+LimitRequestBody 8388608
 HostNameLookups Off
 #MaxKeepAliveRequests 25
 #MaxConnectionsPerChild 100
@@ -93,9 +93,9 @@ AddCharset utf-8 .html .js .css
 
 # Configure cache control
 <Directory />
-ExpiresActive On
-ExpiresDefault A604800
-Header onsuccess merge Cache-Control public env=!private-cache
+SetEnvIf X-Cache-Control no-cache x-no-cache
+Header merge Cache-Control max-age=604800 env=!x-no-cache
+Header merge Cache-Control public env=!x-no-cache
 </Directory>
 
 # Enable Linux Kernel sendfile
@@ -262,8 +262,6 @@ cat >$root/conf/pubauth.conf <<EOF
 AuthType None
 Session Off
 Require all granted
-# Mark login page with a header
-Header set X-Login open-auth
 </Location>
 <Location /login/dologin>
 Session Off

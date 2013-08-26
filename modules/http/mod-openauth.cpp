@@ -28,6 +28,7 @@
  * - OAuth2 using Tuscany's mod-tuscany-oauth2
  * - OpenID using mod_auth_openid
  * - Form-based using HTTPD's mod_auth_form
+ * - HTTP basic auth using mod_auth_basic
  * - SSL certificate using SSLFakeBasicAuth and mod_auth_basic
  */
 
@@ -142,7 +143,7 @@ const failable<int> checkAuthnzProviders(const string& user, const string& pw, r
 }
 
 const failable<int> checkAuthnz(const string& user, const string& pw, request_rec* const r, const DirConf& dc) {
-    if(substr(user, 0, 1) == "/" && pw == "password")
+    if(substr(user, 0, 1) == "/")
         return mkfailure<int>(string("Encountered FakeBasicAuth spoof: ") + user, HTTP_UNAUTHORIZED);
 
     if(isNull((const list<AuthnProviderConf>)dc.apcs)) {
@@ -224,9 +225,17 @@ const failable<int> authenticated(const list<value>& info, request_rec* const r)
     const list<value> id = assoc<value>("id", info);
     if(isNull(id) || isNull(cdr(id)))
         return mkfailure<int>("Couldn't retrieve user id", HTTP_UNAUTHORIZED);
-    r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
+    const string sid = cadr(id);
+    if (find(sid, '@') != length(sid))
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "EMAIL"), apr_pstrdup(r->pool, c_str(sid)));
+    r->user = apr_pstrdup(r->pool, c_str(sid));
 
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, c_str(cadr(id))));
+    // Update the request user field with the authorized user id returned by the authnz hooks
+    const char* auser = apr_table_get(r->subprocess_env, "AUTHZ_USER");
+    if (auser != NULL)
+        r->user = apr_pstrdup(r->pool, auser);
+
+    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, r->user));
     return OK;
 }
 

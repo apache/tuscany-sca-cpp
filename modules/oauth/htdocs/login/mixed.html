@@ -29,16 +29,16 @@
 <h1>Sign in with a Form, an OpenID provider or an OAuth provider</h1>
 
 <script type="text/javascript">
-function clearauthcookie() {
-    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
-    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainname(window.location.hostname) + '; path=/';
+function clearAuthCookie() {
+    document.cookie = 'TuscanyOpenAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth1=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOAuth2=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
+    document.cookie = 'TuscanyOpenIDAuth=; expires=' + new Date(1970,01,01).toGMTString() + '; domain=.' + domainName(window.location.hostname) + '; path=/';
     return true;
 }
 
 function submitFormSignin() {
-    clearauthcookie();
+    clearAuthCookie();
     document.formSignin.httpd_location.value = '/';
     document.formSignin.submit();
 }
@@ -69,7 +69,7 @@ if (typeof(openauthReferrer()) == 'undefined') {
 }
 
 function submitOpenIDSignin(w) {
-    clearauthcookie();
+    clearAuthCookie();
     document.openIDSignin.openid_identifier.value = w();
     document.openIDSignin.action = openauthReferrer();
     document.openIDSignin.submit();
@@ -117,7 +117,7 @@ function withXRDSEndpoint() {
 
 function submitOAuth2Signin(w) {
     parms = w();
-    clearauthcookie();
+    clearAuthCookie();
     document.oauth2Signin.oauth2_authorize.value = parms[0];
     document.oauth2Signin.oauth2_access_token.value = parms[1];
     document.oauth2Signin.oauth2_client_id.value = parms[2];
@@ -141,7 +141,7 @@ function withGithub() {
 
 function submitOAuth1Signin(w) {
     parms = w();
-    clearauthcookie();
+    clearAuthCookie();
     document.oauth1Signin.oauth1_request_token.value = parms[0];
     document.oauth1Signin.oauth1_authorize.value = parms[1];
     document.oauth1Signin.oauth1_access_token.value = parms[2];
