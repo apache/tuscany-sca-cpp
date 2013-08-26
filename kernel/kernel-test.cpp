@@ -477,6 +477,19 @@ const bool testAppend() {
     return true;
 }
 
+const bool testSublist() {
+    assert(listHead(mklist(1, 2), 0) == list<int>());
+    assert(listHead(mklist(1, 2), 1) == mklist(1));
+    assert(listHead(mklist(1, 2), 2) == mklist(1, 2));
+    assert(listHead(mklist(1, 2), 3) == mklist(1, 2));
+
+    assert(listTail(mklist(1, 2), 0) == mklist(1, 2));
+    assert(listTail(mklist(1, 2), 1) == mklist(2));
+    assert(listTail(mklist(1, 2), 2) == list<int>());
+    assert(listTail(mklist(1, 2), 3) == list<int>());
+    return true;
+}
+
 class Complex {
 public:
     Complex() : x(0), y(0) {
@@ -675,7 +688,7 @@ const double testSeqMap(const double x) {
     return x;
 }
 
-double testSeqReduce(unused const double v, const double accum) {
+double testSeqReduce(const double accum, unused const double v) {
     return accum + 1.0;
 }
 
@@ -956,6 +969,7 @@ int main() {
     tuscany::testEquals();
     tuscany::testLength();
     tuscany::testAppend();
+    tuscany::testSublist();
     tuscany::testComplex();
     tuscany::testMap();
     tuscany::testReduce();

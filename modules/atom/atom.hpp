@@ -46,7 +46,7 @@ const value entry("entry");
  */
 const list<value> entryElementValues(const list<value>& e) {
     const list<value> lt = elementChildren("title", e);
-    const list<value> t = nilListValue + element + value("title") + (isNull(lt)? value(emptyString) : elementValue(car(lt)));
+    const list<value> t = nilListValue + element + value("title") + (isNull(lt) || !elementHasValue(car(lt))? value(emptyString) : elementValue(car(lt)));
 
     const list<value> li = elementChildren("id", e);
     const list<value> i = nilListValue + element + value("id") + (isNull(li)? value(emptyString) : elementValue(car(li)));
@@ -60,11 +60,14 @@ const list<value> entryElementValues(const list<value>& e) {
     const list<value> lu = elementChildren("updated", e);
     const list<value> u = isNull(lu)? nilListValue : mklist<value>(nilListValue + element + value("updated") + elementValue(car(lu)));
 
+    const list<value> lr = elementChildren("rank", e);
+    const list<value> r = isNull(lr)? nilListValue : mklist<value>(nilListValue + element + value("rank") + elementValue(car(lr)));
+
     const list<value> lc = elementChildren("content", e);
     const list<value> c = isNull(lc)? nilListValue : isAttribute(elementValue(car(lc)))? nilListValue :
         mklist<value>(nilListValue + element + value("content") + elementValue(car(lc)));
 
-    return append<value>(append<value>(append<value>(nilListValue + element + entry + value(t) + value(i), a), u), c);
+    return append<value>(append<value>(append<value>(append<value>(nilListValue + element + entry + value(t) + value(i), a), u), r), c);
 }
 
 /**
@@ -138,15 +141,17 @@ const list<value> entryElement(const list<value>& l) {
     const value author = elementChild("author", l);
     const bool email = isNull(author)? false : contains(elementValue(author), "@");
     const value updated = elementChild("updated", l);
+    const value rank = elementChild("rank", l);
     const value content = elementChild("content", l);
     const bool text = isNull(content)? false : elementHasValue(content);
     return nilListValue
         + element + entry + (nilListValue + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
-        + (nilListValue + element + "title" + (nilListValue + attribute + "type" + "text") + elementValue(title))
+        + (nilListValue + element + "title" + (nilListValue + attribute + "type" + "text") + (elementHasValue(title)? elementValue(title) : value("")))
         + (nilListValue + element + "id" + elementValue(id))
         + (isNull(author)? nilListValue : (nilListValue + element + "author" +
             (email? (nilListValue + element + "email" + elementValue(author)) : (nilListValue + element + "name" + elementValue(author)))))
         + (isNull(updated)? nilListValue : (nilListValue + element + "updated" + elementValue(updated)))
+        + (isNull(rank)? nilListValue : (nilListValue + element + "rank" + elementValue(rank)))
         + (isNull(content)?
             nilListValue :
             append<value>(nilListValue + element + "content" + (nilListValue + attribute + "type" + (text? "text" : "application/xml")),

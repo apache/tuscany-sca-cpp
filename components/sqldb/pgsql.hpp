@@ -339,13 +339,50 @@ const list<value> keyparams(const list<value>& key) {
 }
 
 /**
- * Convert a get result to a list of items.
+ * Convert an SQL result row to a result item.
  */
-const list<value> getitems(PGresult* const r, const int i, const int n) {
+const value getitem(PGresult* const r, const int i, const int rk) {
+    const value val(content(scheme::readValue(string(PQgetvalue(r, i, 1)))));
+    if (rk > 0) {
+        // Add row tsrank and rank to result item if it's an ATOM entry
+        if (isList(val) && !isNull(val)) {
+            const value e = car<value>(val);
+            if (isList(e) && !isNull(e)) {
+                if (car<value>(e) == "entry") {
+                    const list<value> ae = cdr<value>(e);
+                    const list<value> lt = assoc<value>("title", ae);
+                    const list<value> li = assoc<value>("id", ae);
+                    const list<value> la = assoc<value>("author", ae);
+                    const list<value> lu = assoc<value>("updated", ae);
+                    const list<value> lc = assoc<value>("content", ae);
+
+                    ostringstream ros;
+                    ros << string(PQgetvalue(r, i, 2));
+                    if (rk > 1)
+                        ros << " " << string(PQgetvalue(r, i, 3));
+                    const list<value> lr = mklist<value>("rank", str(ros));
+
+                    const value rval = mklist<value>("entry") +
+                        (isNull(lt)? nilListValue : lt) + (isNull(li)? nilListValue : li) + (isNull(la)? nilListValue : la) +
+                        (isNull(lu)? nilListValue : lu) + lr + (isNull(lc)? nilListValue : lc);
+                    debug(rval, "pgsql::getitem::rval");
+                    return mklist<value>(rval);
+                }
+            }
+        }
+    }
+
+    debug(val, "pgsql::getitem::val");
+    return val;
+}
+
+/**
+ * Convert an SQL result to a list of result items.
+ */
+const list<value> getitems(PGresult* const r, const int i, const int n, const int rk) {
     if (i == n)
         return nilListValue;
-    const value val(content(scheme::readValue(string(PQgetvalue(r, i, 1)))));
-    return cons<value>(val, getitems(r, i + 1, n));
+    return cons<value>(getitem(r, i, rk), getitems(r, i + 1, n, rk));
 }
 
 /**
@@ -396,42 +433,51 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     const char* sqlparams[6];
     int p = 0;
     int w = 0;
+    int rk = 0;
     ostringstream sqlos;
     sqlos << "select data." << kname << ", data." << vname;
     if (!isNull(textsearch)) {
         // Text search, setup text result ranking
         sqlos << ", ts_rank_cd(to_tsvector(data." << vname << "), tsquery, 32) as tsrank";
+        rk++;
     }
     if (!isNull(rank)) {
         // Ranking, setup rank expression
         const string rs = (string)cadr(rank);
-        sqlparams[p++] = c_str(rs);
-        sqlos << ", $" << p << " as rank";
+        sqlos << ", " << rs << " as rank";
+        rk++;
     }
     sqlos << " from " << table << " data";
     if (!isNull(textsearch)) {
         // Text search, define the query
         const string ts = tstranslate((string)cadr(textsearch));
+        debug(ts, "pgsql::get::sqlparam");
         sqlparams[p++] = c_str(ts);
         sqlos << ", plainto_tsquery($" << p << ") tsquery";
     }
     if (!lk || !isNull(id)) {
         // Query of the form key = id
-        sqlparams[p++] = c_str(write(content(scheme::writeValue(lk? (value)id : key))));
+        const string ks = write(content(scheme::writeValue(lk? (value)id : key)));
+        debug(ks, "pgsql::get::sqlparam");
+        sqlparams[p++] = c_str(ks);
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " = $" << p;
         w++;
     }
     if (!isNull(regex)) {
         // Query of the form key ~ param
-        sqlparams[p++] = c_str((string)cadr(regex));
+        const string rs = cadr(regex);
+        debug(rs, "pgsql::get::sqlparam");
+        sqlparams[p++] = c_str(rs);
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " ~ $" << p;
         w++;
     }
     if (!isNull(like)) {
         // Query of the form key like param
-        sqlparams[p++] = c_str((string)cadr(like));
+        const string ls = cadr(like);
+        debug(ls, "pgsql::get::sqlparam");
+        sqlparams[p++] = c_str(ls);
         sqlos << (w == 0? " where" : " and");
         sqlos << " data." << kname << " like $" << p;
         w++;
@@ -442,7 +488,7 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
         sqlos << " tsquery @@ to_tsvector(data." << vname << ")";
         w++;
     }
-    if (!isNull(textsearch) || !isNull(rank)) {
+    if (!isNull(rank) || !isNull(textsearch)) {
         // Result ordering
         sqlos << " order by" << (isNull(rank)? "" : " rank desc") << ((isNull(rank) || isNull(textsearch))? "" : ",") << (isNull(textsearch)? "" : " tsrank desc");
     }
@@ -473,14 +519,14 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
 
     // Return a collection of items
     if (l != 1) {
-        const list<value> lval = getitems(r, 0, n);
+        const list<value> lval = getitems(r, 0, n, rk);
         PQclear(r);
         debug(lval, "pgsql::get::result");
         return (value)lval;
     }
 
     // Return a single item
-    const value val(content(scheme::readValue(string(PQgetvalue(r, 0, 1)))));
+    const value val = getitem(r, 0, rk);
     PQclear(r);
     debug(val, "pgsql::get::result");
     return val;

@@ -42,45 +42,47 @@ function isAttribute(v) {
 /**
  * Return the name of an attribute.
  */
-attributeName = cadr;
+var attributeName = cadr;
 
 /**
  * Return the value of an attribute.
  */
-attributeValue = caddr;
+var attributeValue = caddr;
 
 /**
  * Return the name of an element.
  */
-elementName = cadr;
+var elementName = cadr;
 
 /**
  * Return true if an element has children.
  */
 function elementHasChildren(l) {
-    return !isNull(cddr(l));
+    return !isNull(l) && !isNull(cddr(l));
 }
 
 /**
  * Return the children of an element.
  */
-elementChildren = cddr;
+var elementChildren = cddr;
 
 /**
  * Return true if an element has a value.
  */
 function elementHasValue(l) {
-    var r = reverse(l);
-    if (isSymbol(car(r)))
+    if (isNull(l))
         return false;
-    return (!(isList(car(r)) && !isNull(car(r)) && isSymbol(car(car(r)))))
+    var v = last(l);
+    if (isSymbol(v))
+        return false;
+    return (!(isList(v) && !isNull(v) && isSymbol(car(v))))
 }
 
 /**
  * Return the value of an element.
  */
 function elementValue(l) {
-    return car(reverse(l));
+    return last(l);
 }
 
 /**
@@ -140,7 +142,7 @@ function elementsToValues(e) {
 function valueToElement(t) {
     if (isList(t) && !isNull(t) && isSymbol(car(t))) {
         var n = car(t);
-        var v = isNull(cdr(t))? mklist() : cadr(t);
+        var v = isNull(cdr(t))? nil : cadr(t);
         if (!isList(v)) {
             if (n.substring(0, 2) == atsign)
                 return mklist(attribute, "'" + n.substring(2), v);
@@ -171,7 +173,7 @@ function selector(s) {
     function evalSelect(s, v) {
         if (isNull(s))
             return true;
-        if (isNull(v))
+        if (!isList(v) || isNull(v))
             return false;
         if (car(s) != car(v))
             return false;
@@ -230,7 +232,7 @@ function namedElementChild(name, l) {
  * Set the contents of an element.
  */
 function setElement(l, e) {
-    setlist(l, e);
+    setList(l, e);
     l.memo = {};
 }
 

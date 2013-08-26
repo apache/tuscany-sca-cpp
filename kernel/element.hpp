@@ -167,6 +167,8 @@ inline const bool elementToValueIsSymbol(const value& v) {
 }
 
 inline const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
+    debug(v, "elementToValueGroupValues::v");
+    debug(l, "elementToValueGroupValues::l");
     if (isNull(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
         return cons(v, l);
     if (car<value>(car(l)) != car<value>(v))
@@ -175,7 +177,8 @@ inline const list<value> elementToValueGroupValues(const value& v, const list<va
         const value g = mklist<value>(car<value>(v), mklist<value>(isList(cadr<value>(v))? (value)cdr<value>(v) : cadr<value>(v), isList(cadr<value>(car(l)))? (value)cdr<value>(car(l)) : cadr<value>(car(l))));
         return elementToValueGroupValues(g, cdr(l));
     }
-    const value g = mklist<value>(car<value>(v), cons<value>(isList(cadr<value>(v))? (value)cdr<value>(v) : cadr<value>(v), (list<value>)cadr<value>(car(l))));
+    const value g = isNull(cdr<value>(v))? mklist<value>(car<value>(v), (list<value>)cadr<value>(car(l))) :
+        mklist<value>(car<value>(v), cons<value>(isList(cadr<value>(v))? (value)cdr<value>(v) : cadr<value>(v), (list<value>)cadr<value>(car(l))));
     return elementToValueGroupValues(g, cdr(l));
 
 }

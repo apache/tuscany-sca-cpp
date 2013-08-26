@@ -523,6 +523,17 @@ template<typename T> inline const T listRef(const list<T>& l, const size_t i) no
 }
 
 /**
+ * Returns a new list consisting of the first k elements of a list.
+ */
+template<typename T> inline const list<T> listHead(const list<T>& l, const size_t k) noexcept {
+    if(k == 0)
+        return list<T>();
+    if(isNull(l))
+        return l;
+    return cons<T>(car(l), listHead(cdr(l), k - 1));
+}
+
+/**
  * Returns the tail of a list, ommiting the first k elements.
  */
 template<typename T> inline const list<T> listTail(const list<T>& l, const size_t k) noexcept {

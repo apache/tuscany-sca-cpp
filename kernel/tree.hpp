@@ -174,25 +174,37 @@ template<typename T> inline const list<T> rbtreeAssoc(const T& k, const list<T>&
 }
 
 /**
+ * Default function used to compare two values while building a rooted binary tree.
+ */
+template<typename T> inline const int rbtreeComp(const T& a, const T& b) {
+    if (a == b)
+        return 0;
+    if (a < b)
+        return -1;
+    return 1;
+}
+
+/**
  * Construct a new rooted binary tree from a leaf and a tree.
  */
-template<typename T> inline const list<T> rbtreeCons(const T& e, const list<T>& tree) {
+template<typename T> inline const list<T> rbtreeCons(const T& e, const list<T>& tree, const lambda<int(const T&, const T&)>& comp = rbtreeComp<T>) {
     if (isNull(tree))
         return mkrbtree(e, list<T>(), list<T>());
-    if (e == car(tree))
+    const int c = comp(e, car(tree));
+    if (c == 0)
         return tree;
-    if (e < car(tree))
-        return mkrbtree<T>(car(tree), rbtreeCons<T>(e, cadr(tree)), caddr(tree));
-    return mkrbtree<T>(car(tree), cadr(tree), rbtreeCons<T>(e, caddr(tree)));
+    if (c == -1)
+        return mkrbtree<T>(car(tree), rbtreeCons<T>(e, cadr(tree), comp), caddr(tree));
+    return mkrbtree<T>(car(tree), cadr(tree), rbtreeCons<T>(e, caddr(tree), comp));
 }
 
 /**
  * Make a rooted binary tree from an unordered list of leaves.
  */
-template<typename T> inline const list<T> mkrbtree(const list<T>& l) {
+template<typename T> inline const list<T> mkrbtree(const list<T>& l, const lambda<int(const T&, const T&)>& comp = rbtreeComp<T>) {
     if (isNull(l))
         return l;
-    return rbtreeCons(car(l), mkrbtree(cdr(l)));
+    return rbtreeCons(car(l), mkrbtree(cdr(l), comp), comp);
 }
 
 /**
@@ -207,8 +219,8 @@ template<typename T> inline const list<T> flatten(const list<T>& tree) {
 /**
  * Sort a list, using a rooted binary tree.
  */
-template<typename T> inline const list<T> sort(const list<T>& l) {
-    return flatten(mkrbtree(l));
+template<typename T> inline const list<T> sort(const list<T>& l,  const lambda<int(const T&, const T&)>& comp = rbtreeComp<T>) {
+    return flatten(mkrbtree(l, comp));
 }
 
 /**

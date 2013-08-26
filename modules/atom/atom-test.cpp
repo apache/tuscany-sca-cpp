@@ -77,6 +77,17 @@ const string itemNoContentEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
         "</entry>\n");
 
+const string itemEmptyTitleEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\"></title>"
+        "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>"
+        "<author>"
+        "<name>jane</name>"
+        "</author>"
+        "<updated>Fri Jan 01 08:11:36 PDT 2012</updated>"
+        "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
+        "</entry>\n");
+
 const string incompleteEntry("<entry xmlns=\"http://www.w3.org/2005/Atom\">\n"
         "<title>item</title>"
         "<content type=\"text/xml\">"
@@ -153,6 +164,12 @@ const bool testEntry() {
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemNoContentEntry);
+    }
+    {
+        const list<value> a = content(readATOMEntry(mklist(itemEmptyTitleEntry)));
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemEmptyTitleEntry);
     }
     {
         const list<value> a = content(readATOMEntry(mklist(incompleteEntry)));

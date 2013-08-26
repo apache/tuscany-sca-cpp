@@ -27,24 +27,27 @@ var atom = {};
  */
 atom.entryElementValues = function(e) {
     var lt = filter(selector(mklist(element, "'title")), e);
-    var t = mklist(element, "'title", isNull(lt)? '' : elementValue(car(lt)));
+    var t = mklist(element, "'title", isNull(lt) || !elementHasValue(car(lt))? '' : elementValue(car(lt)));
 
     var li = filter(selector(mklist(element, "'id")), e);
     var i = mklist(element, "'id", isNull(li)? '' : elementValue(car(li)));
 
     var la = filter(selector(mklist(element, "'author")), e);
-    var lan = isNull(la)? mklist() : filter(selector(mklist(element, "'name")), car(la));
-    var lae = isNull(la)? mklist() : filter(selector(mklist(element, "'email")), car(la));
+    var lan = isNull(la)? nil : filter(selector(mklist(element, "'name")), car(la));
+    var lae = isNull(la)? nil : filter(selector(mklist(element, "'email")), car(la));
     var laa = isNull(lan)? lae : lan;
-    var a = isNull(laa)? mklist() : mklist(mklist(element, "'author", elementValue(car(laa))));
+    var a = isNull(laa)? nil : mklist(mklist(element, "'author", elementValue(car(laa))));
 
     var lu = filter(selector(mklist(element, "'updated")), e);
-    var u = isNull(lu)? mklist() : mklist(mklist(element, "'updated", elementValue(car(lu))));
+    var u = isNull(lu)? nil : mklist(mklist(element, "'updated", elementValue(car(lu))));
+
+    var lr = filter(selector(mklist(element, "'rank")), e);
+    var r = isNull(lr)? nil : mklist(mklist(element, "'rank", elementValue(car(lr))));
 
     var lc = filter(selector(mklist(element, "'content")), e);
-    var c = isNull(lc)? mklist() : isAttribute(elementValue(car(lc)))? mklist() : mklist(mklist(element, "'content", elementValue(car(lc))));
+    var c = isNull(lc)? nil : isAttribute(elementValue(car(lc)))? nil : mklist(mklist(element, "'content", elementValue(car(lc))));
 
-    return append(append(append(mklist(element, "'entry", t, i), a), u), c);
+    return append(append(append(append(mklist(element, "'entry", t, i), a), u), r), c);
 };
 
 /**
@@ -71,7 +74,7 @@ atom.isATOMEntry = function(l) {
 atom.readATOMEntryDocument = function(doc) {
     var e = readXMLDocument(doc);
     if (isNull(e))
-        return mklist();
+        return nil;
     return mklist(atom.entryElementValues(car(e)));
 };
 
@@ -97,7 +100,7 @@ atom.isATOMFeed = function(l) {
 atom.readATOMFeedDocument = function(doc) {
     var f = readXMLDocument(doc);
     if (isNull(f))
-        return mklist();
+        return nil;
     var t = filter(selector(mklist(element, "'title")), car(f));
     var i = filter(selector(mklist(element, "'id")), car(f));
     var e = filter(selector(mklist(element, "'entry")), car(f));
@@ -117,20 +120,23 @@ atom.readATOMFeed = function(l) {
  * Convert a list of values representy an ATOM entry to a list of elements.
  */
 atom.entryElement = function(l) {
-    var title = elementValue(namedElementChild("'title", l));
+    var etitle = namedElementChild("'title", l);
+    var title = elementHasValue(etitle)? elementValue(etitle) : '';
     var id = elementValue(namedElementChild("'id", l));
     var author = namedElementChild("'author", l);
     var email = isNull(author)? false : (elementValue(author).indexOf('@') != -1);
     var updated = namedElementChild("'updated", l);
+    var rank = namedElementChild("'rank", l);
     var content = namedElementChild("'content", l);
     var text = isNull(content)? false : elementHasValue(content);
-    return append(append(append(append(
+    return append(append(append(append(append(
             mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
                 mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
-                isNull(author)? mklist() : mklist(mklist(element, "'author",
+                isNull(author)? nil : mklist(mklist(element, "'author",
                     (email? mklist(element, "'email", elementValue(author)) : mklist(element, "'name", elementValue(author)))))),
-                isNull(updated)? mklist() : mklist(mklist(element, "'updated", elementValue(updated)))),
-                isNull(content)? mklist() :
+                isNull(updated)? nil : mklist(mklist(element, "'updated", elementValue(updated)))),
+                isNull(rank)? nil : mklist(mklist(element, "'rank", elementValue(rank)))),
+                isNull(content)? nil :
                     mklist(append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")),
                         text? mklist(elementValue(content)) : elementChildren(content)))),
                 mklist(mklist(element, "'link", mklist(attribute, "'href", id))));
@@ -181,4 +187,18 @@ atom.writeATOMFeed = function(ll) {
     var fe = append(f, atom.entriesElements(le));
     return writeXML(mklist(fe), true);
 };
+
+/**
+ * Uncomment to test.
+ */
+/*
+(function testAtom() {
+    console.log('Testing...');
+    var entry = mklist("'entry", mklist("'title", 'test'), mklist("'id", 'test'), mklist("'content", mklist("'rating", '1')));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(entry))));
+    assert(entryxml == '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">test</title><id>test</id><content type="application/xml"><rating>1</rating></content><link href="test"/></entry>\n');
+    console.log('OK');
+})();
+*/
 

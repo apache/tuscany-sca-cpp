@@ -70,7 +70,8 @@ def readATOMFeed(l):
 
 # Convert a list of values representy an ATOM entry to a list of elements
 def entryElement(l):
-    title = elementValue(namedElementChild("'title", l))
+    etitle = namedElementChild("'title", l)
+    title = elementValue(etitle) if elementHasValue(etitle) else ''
     id = elementValue(namedElementChild("'id", l))
     content = namedElementChild("'content", l)
     text = False if isNull(content) else elementHasValue(content)

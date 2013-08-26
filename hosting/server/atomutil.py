@@ -32,7 +32,7 @@ def title(e):
     if isNull(e):
         return ()
     t = assoc("'title", car(e))
-    return None if isNull(t) else cadr(t)
+    return None if isNull(t) or isNull(cdr(t)) else cadr(t)
 
 def entryid(e):
     if isNull(e):
@@ -51,6 +51,12 @@ def updated(e):
         return ()
     u = assoc("'updated", car(e))
     return None if isNull(u) else cadr(u)
+
+def rank(e):
+    if isNull(e):
+        return ()
+    r = assoc("'rank", car(e))
+    return None if isNull(r) else cadr(r)
 
 def content(e):
     if isNull(e):

@@ -31,6 +31,7 @@
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"
+#include "tree.hpp"
 #include "value.hpp"
 #include "monad.hpp"
 
@@ -78,9 +79,53 @@ const failable<list<value> > getlist(const value& key, const list<value>& partit
 }
 
 /**
+ * Return the rank of a result item if available.
+ */
+const value itemrank(const value& val) {
+    if (isList(val) && !isNull(val)) {
+        const value e = car<value>(val);
+        if (isList(e) && !isNull(e)) {
+            if (car<value>(e) == "entry") {
+                const list<value> ae = cdr<value>(e);
+                const list<value> li = assoc<value>("id", ae);
+                const list<value> lr = assoc<value>("rank", ae);
+                if (!isNull(li) && !isNull(lr))
+                    return mklist<value>(lr, li);
+            }
+        }
+    }
+    return val;
+}
+
+/**
+ * Compare the ranks of two result items.
+ */
+const int rankitems(const value& a, const value& b) {
+    const value ra = itemrank(a);
+    const value rb = itemrank(b);
+    if (ra == rb)
+        return 0;
+    if (ra < rb)
+        return -1;
+    return 1;
+}
+
+/**
+ * Convert a key to a (param name, value) assoc.
+ */
+const list<value> keyparams(const list<value>& key) {
+    if (isNull(key))
+        return nilListValue;
+    if (!isList(car(key)))
+        return keyparams(cdr(key));
+    return cons<value>(car(key), keyparams(cdr(key)));
+}
+
+/**
  * Get an item from a partition.
  */
 const failable<value> get(const value& key, const lvvlambda& selector, const list<value>& partitions) {
+    debug(key, "partitioner::get::key");
 
     // Select partition
     const failable<list<value> > fp = partition(key, selector, partitions);
@@ -97,6 +142,7 @@ const failable<value> get(const value& key, const lvvlambda& selector, const lis
             os << "Couldn't get entry from partition: " << key;
             return mkfailure<value>(str(os), 404, false);
         }
+        debug(val, "partitioner::get::val");
         return val;
     }
 
@@ -104,7 +150,17 @@ const failable<value> get(const value& key, const lvvlambda& selector, const lis
     const failable<list<value> > val = getlist(key, p);
     if (!hasContent(val))
         return mkfailure<value>(val);
-    return (value)content(val);
+    const list<value> cval = content(val);
+    debug(cval, "partitioner::get::cval");
+
+    // Apply any ranking sort and result limit
+    const list<value> kparams = isList(key)? keyparams(key) : nilListValue;
+    const list<value> sval = (!isNull(assoc<value>("textsearch", kparams)) || !isNull(assoc<value>("rank", kparams)))? reverse<value>(sort<value>(cval, rankitems)) : cval;
+    const list<value> limit = assoc<value>("limit", kparams);
+    const list<value> lval = !isNull(limit)? listHead(sval, (int)cadr(limit)) : sval;
+    debug(lval, "partitioner::get::lval");
+
+    return (value)lval;
 }
 
 /**
